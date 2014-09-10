@@ -1,0 +1,59 @@
+# =================================================================
+#
+# Authors: Tom Kralidis <tomkralidis@gmail.com>
+#
+# Copyright (c) 2014 Tom Kralidis
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation
+# files (the "Software"), to deal in the Software without
+# restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following
+# conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+#
+# =================================================================
+
+from flask import (abort, Flask, make_response, redirect, render_template,
+                   request)
+
+import views
+
+APP = Flask(__name__)
+APP.config.from_pyfile('config.py')
+APP.config.from_pyfile('../instance/config.py')
+
+
+@APP.route('/')
+def home():
+    """homepage"""
+
+    resources = views.list_resources()
+    return str(resources)
+
+APP.route('/resources/<identifier>')
+def get_resource_by_id():
+    """show resource"""
+
+    resource = view.get_resource_by_id(identifier)
+
+if __name__ == '__main__':  # run locally, for fun
+    import sys
+    HOST = '0.0.0.0'
+    PORT = 8000
+    if len(sys.argv) > 1:
+        HOST, PORT = sys.argv[1].split(':')
+    APP.run(host=HOST, port=int(PORT), use_reloader=True, debug=True)
