@@ -1,26 +1,26 @@
-geohealthcheck
+GeoHealthCheck
 ==============
 
 Service Status Checker for OGC Web Services
 
 ```bash
-virtualenv geohealthcheck && cd $_
+virtualenv GeoHealthCheck && cd $_
 . bin/activate
-git clone https://github.com/geopython/geohealthcheck.git
-cd geohealthcheck
+git clone https://github.com/geopython/GeoHealthCheck.git
+cd GeoHealthCheck
 pip install -r requirements.txt
 vi instance/config.py  # edit SQLALCHEMY_DATABASE_URI
 # setup database
-python geohealthcheck/models.py create
+python GeoHealthCheck/models.py create
 # drop database
-python geohealthcheck/models.py drop
+python GeoHealthCheck/models.py drop
 
 # start server (default is 0.0.0.0:8000)
-python geohealthcheck/app.py  
+python GeoHealthCheck/app.py  
 # start server on another port
-python geohealthcheck/app.py 0.0.0.0:8881
+python GeoHealthCheck/app.py 0.0.0.0:8881
 # start server on another IP
-python geohealthcheck/app.py 192.168.0.105:8001
+python GeoHealthCheck/app.py 192.168.0.105:8001
 ```
 
 
