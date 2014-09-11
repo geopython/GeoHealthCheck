@@ -30,6 +30,7 @@
 from flask import (abort, Flask, make_response, redirect, render_template,
                    request)
 
+from __init__ import __version__
 import views
 
 APP = Flask(__name__)
@@ -37,18 +38,23 @@ APP.config.from_pyfile('config.py')
 APP.config.from_pyfile('../instance/config.py')
 
 
+@APP.context_processor
+def app_version():
+    return {'app_version': __version__}
+
+
 @APP.route('/')
 def home():
     """homepage"""
 
-    resources = views.list_resources()
-    return str(resources)
+    return render_template('layout.html')
+
 
 APP.route('/resources/<identifier>')
 def get_resource_by_id():
     """show resource"""
 
-    resource = view.get_resource_by_id(identifier)
+    pass
 
 if __name__ == '__main__':  # run locally, for fun
     import sys
