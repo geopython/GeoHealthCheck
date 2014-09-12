@@ -34,7 +34,7 @@ setup: deps
 	@echo "development instance with 'python GeoHealthCheck/app.py'\n"
 
 deps: tmp instance static_libs
-	wget -P tmp http://startbootstrap.com/downloads/sb-admin-2.zip | lwp-download http://startbootstrap.com/downloads/sb-admin-2.zip tmp/sb-admin-2.zip
+	wget -P tmp http://startbootstrap.com/downloads/sb-admin-2.zip || lwp-download http://startbootstrap.com/downloads/sb-admin-2.zip tmp/sb-admin-2.zip
 	cd tmp && unzip sb-admin-2.zip
 	cd tmp/sb-admin-2/ && mv css font-awesome-4.1.0 fonts js less ../../GeoHealthCheck/static/lib
 
