@@ -54,5 +54,6 @@ docs/_build/
 
 # Flask
 instance/config.py
+instance/*.db
 tmp/
 GeoHealthCheck/static/lib
