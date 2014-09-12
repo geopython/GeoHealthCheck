@@ -29,6 +29,8 @@
 
 from datetime import datetime
 
+from sqlalchemy import func
+
 from init import DB
 
 
@@ -59,14 +61,20 @@ class Resource(DB.Model):
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_type = DB.Column(DB.Text, nullable=False)
+    title = DB.Column(DB.Text, nullable=False)
     url = DB.Column(DB.Text, nullable=False)
 
-    def __init__(self, resource_type, url):
+    def __init__(self, resource_type, title, url):
         self.resource_type = resource_type
+        self.title = title
         self.url = url
 
     def __repr__(self):
-        return '<Resource %r>' % self.url
+        return '<Resource %r>' % self.title
+
+    def last_run_status(self):
+        return self.runs.having(func.max(Run.checked_datetime)).group_by(
+            Run.checked_datetime).first().success
 
 if __name__ == '__main__':
     import sys

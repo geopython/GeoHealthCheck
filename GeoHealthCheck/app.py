@@ -47,14 +47,28 @@ def app_version():
 def home():
     """homepage"""
 
-    return render_template('layout.html')
+    response = views.list_resources()
+    return render_template('home.html', response=response)
 
 
-APP.route('/resources/<identifier>')
-def get_resource_by_id():
+@APP.route('/settings')
+def settings():
+    """settings"""
+    pass
+
+
+@APP.route('/search')
+def search():
+    """settings"""
+    pass
+
+
+@APP.route('/resource/<identifier>')
+def get_resource_by_id(identifier):
     """show resource"""
 
-    pass
+    resource = views.get_resource_by_id(identifier)
+    return render_template('resource.html', resource=resource)
 
 if __name__ == '__main__':  # run locally, for fun
     import sys

@@ -27,13 +27,14 @@
 #
 # =================================================================
 
-templates: tmp
-	#wget -P tmp http://startbootstrap.com/downloads/sb-admin-2.zip
-	cd tmp && unzip sb-admin-2.zip
-	cd tmp/sb-admin-2/ && mv css font-awesome-4.1.0 fonts js less ../../GeoHealthCheck/static
 
-tmp:
-	mkdir -p tmp
+def average(values):
+    """calculates average from a list"""
 
-clean:
-	rm -fr tmp
+    return float(sum(values) / len(values))
+
+
+def percentage(number, total):
+    """calculates a percentage"""
+
+    return float((float(float(number)/float(total)))*100.0)

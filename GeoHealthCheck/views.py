@@ -28,16 +28,44 @@
 # =================================================================
 
 import models
+import util
 
 
 def list_resources():
     """return all resources"""
-    return models.Resource.query.all()
+
+    response = {
+        'total': 0,
+        'success': {
+            'number': 0,
+            'percentage': 0
+        },
+        'fail': {
+            'number': 0,
+            'percentage': 0
+        }
+    }
+
+    response['resources'] = models.Resource.query.all()
+    response['total'] = len(response['resources'])
+    for resource in response['resources']:
+        if resource.last_run_status:
+            response['success']['number'] += 1
+        else:
+            response['fail']['number'] += 1
+
+    response['success']['percentage'] = util.percentage(
+        response['success']['number'], response['total'])
+    response['fail']['percentage'] = util.percentage(
+        response['fail']['number'], response['total'])
+
+    return response
 
 
 def get_resource_by_id(identifier):
     """return one resource by identifier"""
-    return models.Resource.query.filter_by(identifer=identifier).first_or_404()
+    return models.Resource.query.filter_by(
+        identifier=identifier).first_or_404()
 
 
 def add_resource(resource_type, url):
