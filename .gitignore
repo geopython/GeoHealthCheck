@@ -53,7 +53,6 @@ coverage.xml
 docs/_build/
 
 # Flask
-instance/config.py
-instance/*.db
+instance
 tmp/
 GeoHealthCheck/static/lib

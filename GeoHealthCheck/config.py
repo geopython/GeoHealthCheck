@@ -29,3 +29,5 @@
 
 DEBUG = False
 SQLALCHEMY_ECHO = False
+SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+

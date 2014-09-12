@@ -9,7 +9,7 @@
         <link rel="icon" href="../../favicon.ico">
         <title>GeoHealthCheck Dashboard</title>
         <link href="{{ url_for('static', filename='lib/css/bootstrap.min.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='site/dashboard.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='site/css/dashboard.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='lib/css/sb-admin-2.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='lib/font-awesome-4.1.0/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
         <!--[if lt IE 9]>
@@ -54,7 +54,7 @@
                 {% endblock %}
             </div>
         </div>
-        <div class="footer text-right">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div>
+        <div class="footer text-center">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div>
         <script src="{{ url_for('static', filename='lib/js/jquery-1.11.0.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/bootstrap.min.js') }}"></script>
     </body>

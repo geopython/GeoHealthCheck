@@ -49,7 +49,7 @@ def list_resources():
     response['resources'] = models.Resource.query.all()
     response['total'] = len(response['resources'])
     for resource in response['resources']:
-        if resource.last_run_status:
+        if resource.last_run_status():
             response['success']['number'] += 1
         else:
             response['fail']['number'] += 1
