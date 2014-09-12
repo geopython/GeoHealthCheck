@@ -30,10 +30,12 @@
 deps: tmp
 	wget -P tmp http://startbootstrap.com/downloads/sb-admin-2.zip
 	cd tmp && unzip sb-admin-2.zip
-	cd tmp/sb-admin-2/ && mv css font-awesome-4.1.0 fonts js less ../../GeoHealthCheck/static
+	cd tmp/sb-admin-2/ && mv css font-awesome-4.1.0 fonts js less ../../GeoHealthCheck/static/lib
 
 tmp:
 	mkdir -p tmp
+	mkdir -p GeoHealthCheck/static/lib
 
 clean:
 	rm -fr tmp
+	rm -fr GeoHealthCheck/static/lib
