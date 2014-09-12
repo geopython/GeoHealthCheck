@@ -9,6 +9,9 @@ virtualenv GeoHealthCheck && cd $_
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
 pip install -r requirements.txt
+# download and install dependencies
+make deps
+# setup local configuration
 vi instance/config.py  # edit SQLALCHEMY_DATABASE_URI
 # setup database
 python GeoHealthCheck/models.py create
