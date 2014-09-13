@@ -32,6 +32,7 @@ from datetime import datetime
 from sqlalchemy import func
 
 from init import DB
+import util
 
 
 class Run(DB.Model):
@@ -75,6 +76,9 @@ class Resource(DB.Model):
     def last_run_status(self):
         return self.runs.having(func.max(Run.checked_datetime)).group_by(
             Run.checked_datetime).first().success
+
+    def snippet(self):
+        return util.get_python_snippet(self)
 
 if __name__ == '__main__':
     import sys

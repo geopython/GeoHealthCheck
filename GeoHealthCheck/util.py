@@ -38,3 +38,19 @@ def percentage(number, total):
     """calculates a percentage"""
 
     return float((float(float(number)/float(total)))*100.0)
+
+
+def get_python_snippet(resource):
+    """return sample interactive session"""
+
+    lines = []
+    lines.append('# testing via OWSLib')
+    lines.append('# test GetCapabilities')
+    if resource.resource_type == 'OGC:WMS':
+        lines.append('from owslib.wms import WebMapService')
+        lines.append('myows = WebMapService(\'%s\')' % resource.url)
+    elif resource.resource_type == 'OGC:CSW':
+        lines.append('from owslib.csw import CatalogueServiceWeb')
+        lines.append('myows = CatalogueServiceWeb(\'%s\')' % resource.url)
+    lines.append('myows.identification.title\n\'%s\'' % resource.title)
+    return '\n>>> '.join(lines)

@@ -17,19 +17,15 @@
                 <th>URL</th>
                 <td><a href="{{ resource.url }}">{{ resource.url}}</a></td>
             </tr>
-            <tr>
-                <th>Test Now</th>
-                <td><button type="button" class="btn btn-primary btn-circle btn-lg"><i class="fa fa-link"></i></button></td>
-            </tr>
         </table>
+        <div class="text-center">
+            <a href="{{ request.path }}/test"><button type="button" class="btn btn-outline btn-primary btn-lg">Test Now</button></a>
+            <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-outline btn-lg">Delete</button></a>
+        </div>
     </div>
     <div>
-        <h4>Under the Hood</h4>
         <pre>
-            >>> from owslib.csw import CatalogueServiceWeb
-            >>> csw = CatalogueServiceWeb('{{ resource.url }}')
-            >>> csw.identification.title
-            >>> csw.getrecords2()
+{{ resource.snippet() }}
         </pre>
     </div>
     <div class="clearfix"></div>
@@ -49,7 +45,7 @@
                     <td>{{ run.checked_datetime }}</td>
                     <td>{{ run.response_time }}</td>
                     {% if run.success %}
-                    <td><button type="button" class="btn btn-success btn-circle btn"><i class="fa fa-check"></i></button></td>
+                    <td><button type="button" class="btn btn-success btn-circle"><i class="fa fa-check"></i></button></td>
                     {% else %}
                     <td><button type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
                     {% endif %}

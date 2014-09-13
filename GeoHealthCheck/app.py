@@ -48,6 +48,7 @@ def home():
     """homepage"""
 
     response = views.list_resources()
+
     return render_template('home.html', response=response)
 
 
@@ -67,8 +68,9 @@ def search():
 def get_resource_by_id(identifier):
     """show resource"""
 
-    resource = views.get_resource_by_id(identifier)
-    return render_template('resource.html', resource=resource)
+    response = views.get_resource_by_id(identifier)
+    return render_template('resource.html', resource=response)
+
 
 if __name__ == '__main__':  # run locally, for fun
     import sys
