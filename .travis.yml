@@ -6,7 +6,7 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
-  - make deps
+  - make setup
 
 script:
   - python GeoHealthCheck/models.py create
