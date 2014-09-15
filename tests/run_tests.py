@@ -36,6 +36,7 @@ sys.path.append('..')
 
 from GeoHealthCheck.models import DB, Resource, Run
 
+
 class GeoHealthCheckTest(unittest.TestCase):
     def setUp(self):
         self.db = DB
@@ -53,7 +54,7 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.db.session.commit()
 
     def tearDown(self):
-        #self.db.drop_all()
+        # self.db.drop_all()
         pass
 
     def testFoo(self):

@@ -47,7 +47,8 @@ class Run(DB.Model):
     success = DB.Column(DB.Boolean, nullable=False)
     response_time = DB.Column(DB.Float, nullable=False)
 
-    def __init__(self, resource, success, response_time, checked_datetime=datetime.utcnow()):
+    def __init__(self, resource, success, response_time,
+                 checked_datetime=datetime.utcnow()):
         self.resource = resource
         self.success = success
         self.response_time = response_time

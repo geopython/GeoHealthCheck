@@ -66,7 +66,6 @@ def get_resource_by_id(identifier):
     """return one resource by identifier"""
     return models.Resource.query.filter_by(
         identifier=identifier).first_or_404()
-#    return models.Resource.query.filter_by(resource_type='OGC:CSW').join(models.Run).order_by(models.Run.checked_datetime.desc()).first_or_404()
 
 
 def add_resource(resource_type, url):
