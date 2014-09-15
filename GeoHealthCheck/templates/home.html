@@ -80,7 +80,7 @@
                 <tr>
                     <th>Type</th>
                     <th>Name</th>
-                    <th>URL</th>
+                    <th>Last Check</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -89,8 +89,8 @@
                 <tr>
                     <td>{{ resource.resource_type }}</td>
                     <td><a href="/resource/{{ resource.identifier }}">{{ resource.title }}</a></td>
-                    <td><a href="{{ resource.url}}">{{ resource.url }}</a></td>
-                    {% if resource.last_run_status() %}
+                    <td>{{ resource.last_run.checked_datetime }}</a></td>
+                    {% if resource.last_run.success %}
                     <td><button type="button" class="btn btn-success btn-circle btn"><i class="fa fa-check"></i></button></td>
                     {% else %}
                     <td><button type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>

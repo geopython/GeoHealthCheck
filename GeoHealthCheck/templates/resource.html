@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block extrahead%}
+<link href="{{ url_for('static', filename='lib/css/plugins/morris.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">Health Check Information</h1>
@@ -40,7 +44,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for run in resource.runs %}
+            {% for run in resource.runs|sort(reverse=True, attribute='checked_datetime') %}
                 <tr>
                     <td>{{ run.checked_datetime }}</td>
                     <td>{{ run.response_time }}</td>
@@ -54,5 +58,14 @@
             </tbody>
         </table>
     </div>
+    <div><div id="morris-bar-chart"><span>graph goes here</span></div></div>
 </div>
+
+
+{% endblock %}
+
+{% block extrafoot %}
+<script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/js/plugins/morris/morris-data.js') }}"></script>
 {% endblock %}

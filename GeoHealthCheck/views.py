@@ -49,7 +49,7 @@ def list_resources():
     response['resources'] = models.Resource.query.all()
     response['total'] = len(response['resources'])
     for resource in response['resources']:
-        if resource.last_run_status():
+        if resource.last_run.success:
             response['success']['number'] += 1
         else:
             response['fail']['number'] += 1
@@ -66,6 +66,7 @@ def get_resource_by_id(identifier):
     """return one resource by identifier"""
     return models.Resource.query.filter_by(
         identifier=identifier).first_or_404()
+#    return models.Resource.query.filter_by(resource_type='OGC:CSW').join(models.Run).order_by(models.Run.checked_datetime.desc()).first_or_404()
 
 
 def add_resource(resource_type, url):

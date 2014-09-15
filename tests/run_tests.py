@@ -27,31 +27,37 @@
 #
 # =================================================================
 
-setup: deps
-	cp GeoHealthCheck/config.py instance/config.py
-	@echo "\nGeoHealthCheck is now built.  Edit settings in instance/config.py"
-	@echo "before deploying the application.  Alternatively, you can start a"
-	@echo "development instance with 'python GeoHealthCheck/app.py'\n"
+import datetime
+import json
+import unittest
+import sys
 
-deps: tmp instance static_libs
-	wget -P tmp http://startbootstrap.com/downloads/sb-admin-2.zip || lwp-download http://startbootstrap.com/downloads/sb-admin-2.zip tmp/sb-admin-2.zip
-	cd tmp && unzip sb-admin-2.zip
-	cd tmp/sb-admin-2/ && mv css font-awesome-4.1.0 fonts js less ../../GeoHealthCheck/static/lib
+sys.path.append('..')
 
-tmp:
-	mkdir -p $@
+from GeoHealthCheck.models import DB, Resource, Run
 
-instance:
-	mkdir -p $@
+class GeoHealthCheckTest(unittest.TestCase):
+    def setUp(self):
+        self.db = DB
+        self.db.create_all()
+        data = json.load(open('fixtures.json'))
+        for record in data['data']:
+            resource = Resource(record['resource']['resource_type'],
+                                record['resource']['title'],
+                                record['resource']['url'])
+            self.db.session.add(resource)
+            for run in record['runs']:
+                dt = datetime.datetime.strptime(run[0], '%Y-%m-%dT%H:%M:%SZ')
+                run2 = Run(resource, run[1], run[2], dt)
+                self.db.session.add(run2)
+        self.db.session.commit()
 
-static_libs:
-	mkdir -p GeoHealthCheck/static/lib
+    def tearDown(self):
+        #self.db.drop_all()
+        pass
 
-clean:
-	rm -fr tmp
-	rm -fr instance
-	rm -fr GeoHealthCheck/static/lib
+    def testFoo(self):
+        self.assertEqual(1, 1)
 
-test:
-	python GeoHealthCheck/models.py create
-	python tests/run_tests
+if __name__ == '__main__':
+    unittest.main()

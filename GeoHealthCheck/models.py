@@ -47,11 +47,11 @@ class Run(DB.Model):
     success = DB.Column(DB.Boolean, nullable=False)
     response_time = DB.Column(DB.Float, nullable=False)
 
-    def __init__(self, resource, success, response_time):
+    def __init__(self, resource, success, response_time, checked_datetime=datetime.utcnow()):
         self.resource = resource
         self.success = success
         self.response_time = response_time
-        self.checked_datetime = datetime.utcnow()
+        self.checked_datetime = checked_datetime
 
     def __repr__(self):
         return '<Run %r>' % (self.identifier)
@@ -71,11 +71,12 @@ class Resource(DB.Model):
         self.url = url
 
     def __repr__(self):
-        return '<Resource %r>' % self.title
+        return '<Resource %r %r>' % (self.identifier, self.title)
 
-    def last_run_status(self):
+    @property
+    def last_run(self):
         return self.runs.having(func.max(Run.checked_datetime)).group_by(
-            Run.checked_datetime).first().success
+            Run.checked_datetime).first()
 
     def snippet(self):
         return util.get_python_snippet(self)
