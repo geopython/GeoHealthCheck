@@ -34,15 +34,22 @@ import sys
 
 sys.path.append('..')
 
-from GeoHealthCheck.models import DB, Resource, Run
+from GeoHealthCheck.models import DB, Resource, Run, User
 
 
 class GeoHealthCheckTest(unittest.TestCase):
     def setUp(self):
         self.db = DB
         self.db.create_all()
-        data = json.load(open('fixtures.json'))
-        for record in data['data']:
+        fixtures = json.load(open('fixtures.json'))
+        # add users
+        for user in fixtures['users']:
+            account = User(user['user']['username'],
+                           user['user']['password'],
+                           user['user']['email'])
+            self.db.session.add(account)
+        # add data
+        for record in fixtures['data']:
             resource = Resource(record['resource']['resource_type'],
                                 record['resource']['title'],
                                 record['resource']['url'])

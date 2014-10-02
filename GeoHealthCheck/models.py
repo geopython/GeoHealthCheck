@@ -82,6 +82,39 @@ class Resource(DB.Model):
     def snippet(self):
         return util.get_python_snippet(self)
 
+
+class User(DB.Model):
+    """user accounts"""
+
+    identifier = DB.Column('user_id', DB.Integer, primary_key=True, autoincrement=True)
+    username = DB.Column(DB.String(20), unique=True, index=True,
+                         nullable=False)
+    password = DB.Column(DB.String(10), nullable=False)
+    email = DB.Column(DB.String(50), unique=True, index=True, nullable=False)
+    registered_on = DB.Column(DB.DateTime)
+
+    def __init__(self, username, password, email):
+        self.username = username
+        self.password = password
+        self.email = email
+        self.registered_on = datetime.utcnow()
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.identifier)
+
+    def __repr__(self):
+        return '<User %r>' % (self.username)
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:

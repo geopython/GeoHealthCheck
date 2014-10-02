@@ -27,15 +27,35 @@
 #
 # =================================================================
 
-from flask import (abort, Flask, make_response, redirect, render_template,
-                   request)
+from flask import (abort, Flask, g, make_response, redirect, render_template,
+                   request, url_for)
+
+from flask.ext.login import (flash, LoginManager, login_user, logout_user,
+                             current_user, login_required)
 
 from __init__ import __version__
+from init import DB
+from models import User
 import views
 
 APP = Flask(__name__)
 APP.config.from_pyfile('config.py')
 APP.config.from_pyfile('../instance/config.py')
+
+APP.secret_key = APP.config['SECRET_KEY']
+
+LOGIN_MANAGER = LoginManager()
+LOGIN_MANAGER.init_app(APP)
+
+
+@LOGIN_MANAGER.user_loader
+def load_user(identifier):
+    return User.query.get(int(identifier))
+
+
+@APP.before_request
+def before_request():
+    g.user = current_user
 
 
 @APP.context_processor
@@ -70,6 +90,42 @@ def get_resource_by_id(identifier):
 
     response = views.get_resource_by_id(identifier)
     return render_template('resource.html', resource=response)
+
+
+@APP.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+    user = User(request.form['username'],
+                request.form['password'], request.form['email'])
+    DB.session.add(user)
+    try:
+        DB.session.commit()
+    except:
+        DB.session.rollback()
+        flash('Username %s already registered' % request.form['username'])
+        return redirect(url_for('register'))
+    return redirect(url_for('login'))
+
+
+@APP.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    username = request.form['username']
+    password = request.form['password']
+    registered_user = User.query.filter_by(username=username,
+                                           password=password).first()
+    if registered_user is None:
+        return redirect(url_for('login'))
+    login_user(registered_user)
+    return redirect(url_for('home'))
+
+
+@APP.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':  # run locally, for fun

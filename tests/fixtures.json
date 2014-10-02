@@ -1,4 +1,11 @@
 {
+    "users": [{
+        "user": {
+            "username": "admin",
+            "password": "admin",
+            "email": "foo@example.com"
+        }
+    }],
     "data": [{
         "resource": {
             "resource_type": "OGC:CSW",
