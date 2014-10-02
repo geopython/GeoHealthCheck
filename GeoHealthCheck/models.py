@@ -86,7 +86,8 @@ class Resource(DB.Model):
 class User(DB.Model):
     """user accounts"""
 
-    identifier = DB.Column('user_id', DB.Integer, primary_key=True, autoincrement=True)
+    identifier = DB.Column('user_id', DB.Integer, primary_key=True,
+                           autoincrement=True)
     username = DB.Column(DB.String(20), unique=True, index=True,
                          nullable=False)
     password = DB.Column(DB.String(10), nullable=False)
