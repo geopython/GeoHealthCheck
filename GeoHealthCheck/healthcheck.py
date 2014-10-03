@@ -39,6 +39,7 @@ from enums import RESOURCE_TYPES
 
 LOGGER = logging.getLogger(__name__)
 
+
 def run_test_resource(resource_type, url):
     """tests a CSW service and provides run metrics"""
 

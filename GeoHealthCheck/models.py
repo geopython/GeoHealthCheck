@@ -165,7 +165,8 @@ if __name__ == '__main__':
                 DB.session.add(run)
             DB.session.commit()
         elif sys.argv[1] == 'flush':
-            print('Flushing runs older than %d days' % config.GHC_RETENTION_DAYS)
+            print('Flushing runs older than %d days' %
+                  config.GHC_RETENTION_DAYS)
             for run in Run.query.all():
                 here_and_now = datetime.utcnow()
                 days_old = (here_and_now - run.checked_datetime).days
@@ -173,4 +174,3 @@ if __name__ == '__main__':
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run)
             DB.session.commit()
-              
