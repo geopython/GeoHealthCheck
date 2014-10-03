@@ -28,22 +28,27 @@
 # =================================================================
 
 import datetime
+import logging
+from urllib2 import urlopen
 
 from owslib.wms import WebMapService
 from owslib.wfs import WebFeatureService
 from owslib.csw import CatalogueServiceWeb
 
-from models import RESOURCE_TYPES
+from enums import RESOURCE_TYPES
 
+LOGGER = logging.getLogger(__name__)
 
 def run_test_resource(resource_type, url):
     """tests a CSW service and provides run metrics"""
 
     if resource_type not in RESOURCE_TYPES.keys():
-        raise RuntimeError('Invalid resource type: %s' % resource_type)
+        msg = 'Invalid resource type: %s' % resource_type
+        LOGGER.error(msg)
+        raise RuntimeError(msg)
 
     title = None
-    start_time = datetime.datetime.now()
+    start_time = datetime.datetime.utcnow()
 
     try:
         if resource_type == 'OGC:WMS':
@@ -52,13 +57,16 @@ def run_test_resource(resource_type, url):
             ows = WebFeatureService(url)
         elif resource_type == 'OGC:CSW':
             ows = CatalogueServiceWeb(url)
+        elif resource_type == 'WWW:LINK':
+            ows = urlopen(url)
         success = 1
-        title = ows.identification.title
+        if resource_type != 'WWW:LINK':
+            title = ows.identification.title
     except Exception, err:
-        print(err)
+        LOGGER.exception(err)
         success = 0
 
-    end_time = datetime.datetime.now()
+    end_time = datetime.datetime.utcnow()
 
     delta = end_time - start_time
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
@@ -72,4 +80,4 @@ if __name__ == '__main__':
         print('Usage: %s <resource_type> <url>' % sys.argv[0])
         sys.exit(1)
 
-    print run_test_resource(sys.argv[1], sys.argv[2])
+    print(run_test_resource(sys.argv[1], sys.argv[2]))

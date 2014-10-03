@@ -36,7 +36,8 @@ from flask.ext.login import (flash, LoginManager, login_user, logout_user,
 from __init__ import __version__
 from healthcheck import run_test_resource
 from init import DB
-from models import RESOURCE_TYPES, Resource, Run, User
+from enums import RESOURCE_TYPES
+from models import Resource, Run, User
 import views
 
 APP = Flask(__name__)

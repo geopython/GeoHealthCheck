@@ -1,0 +1,2 @@
+@hourly /virtualenv/bin/python /path/to/GeoHealthCheck/GeoHealthCheck/models.py run
+@daily /virtualenv/bin/python /path/to/GeoHealthCheck/GeoHealthCheck/models.py flush

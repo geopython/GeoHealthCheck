@@ -27,8 +27,9 @@
 #
 # =================================================================
 
-DEBUG = False
-SQLALCHEMY_ECHO = False
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
-
-GHC_RETENTION_DAYS = 30
+RESOURCE_TYPES = {
+    'OGC:WMS': 'Web Map Service (WMS)',
+    'OGC:WFS': 'Web Feature Service (WFS)',
+    'OGC:CSW': 'Catalogue Service (CSW)',
+    'WWW:LINK': 'Web Address (URL)'
+}
