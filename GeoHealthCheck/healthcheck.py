@@ -60,12 +60,15 @@ def run_test_resource(resource_type, url):
             ows = CatalogueServiceWeb(url)
         elif resource_type == 'WWW:LINK':
             ows = urlopen(url)
-        success = 1
+            import re
+            title_re = re.compile("<title>(.+?)</title>")
+            title = title_re.search(ows.read()).group(1)
+        success = True
         if resource_type != 'WWW:LINK':
             title = ows.identification.title
     except Exception, err:
         LOGGER.exception(err)
-        success = 0
+        success = False
 
     end_time = datetime.datetime.utcnow()
 

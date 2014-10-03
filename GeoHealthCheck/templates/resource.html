@@ -6,12 +6,19 @@
 
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
     <h1 class="page-header">Health Check Information</h1>
     <div class="table-responsive col-md-4">
         <table class="table">
             <tr>
                 <th>Type</th>
-                <td>{{ resource.resource_type }}</td>
+                <td>{{ resource_types[resource.resource_type] }}</td>
             </tr>
             <tr>
                 <th>Owner</th>
@@ -27,14 +34,13 @@
             </tr>
             <tr>
                 <th>Reliability</th>
-                <td><button class="btn btn-{{ resource.reliability| cssize_reliability }}">{{ resource.reliability }}%</button></td>
-                <!--<td class="text-right"><button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-block">{{ resource.reliability }}%</button></td>-->
+                <td>
+                    <button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-sm">{{ resource.reliability }}%</button>
+                    <a href="{{ request.path }}/test"><button type="button" class="btn btn-primary btn-sm">Test Now</button></a>
+                    <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-sm">Delete</button></a>
+                </td>
             </tr>
         </table>
-        <div class="text-center">
-            <a href="{{ request.path }}/test"><button type="button" class="btn btn-outline btn-primary btn-lg">Test Now</button></a>
-            <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-outline btn-lg">Delete</button></a>
-        </div>
     </div>
     <div>
         <pre>
@@ -42,6 +48,7 @@
         </pre>
     </div>
     <div class="clearfix"></div>
+    <div id="morris-bar-chart" style="height: 250px;"></div>
     <div class="table-responsive">
         <h2 class="sub-header">History</h2>
         <table class="table table-striped table-bordered table-hover">
@@ -67,7 +74,6 @@
             </tbody>
         </table>
     </div>
-    <div id="morris-bar-chart" style="height: 250px;"></div>
 </div>
 {% endblock %}
 {% block extrafoot %}
@@ -75,13 +81,17 @@
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
     <script type="text/javascript">
     var run_data = {{ resource.runs_to_json()|safe }};
+    var colors_data = {{ resource.success_to_colors()|safe }};
 
-        Morris.Line({
+        Morris.Area({
             element: 'morris-bar-chart',
             data: run_data,
+            lineColors: colors_data,
             xkey: 'datetime',
             ykeys: ['value'],
-            labels: ['Value'],
+            labels: ['Response Time'],
+            fillOpacity: 0.5,
+            hideHover: true,
             //events: [run_data[1]['datetime']],
             resize: true
     });

@@ -2,10 +2,10 @@
 
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-{% with messages = get_flashed_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        {% for message in messages %}
-    <div class="alert alert-success">{{ message }}</div>
+        {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
         {% endfor %}
     {% endif %}
 {% endwith %}
@@ -95,7 +95,7 @@
             <tbody>
             {% for resource in response['resources'] %}
                 <tr>
-                    <td>{{ resource.resource_type }}</td>
+                    <td>{{ resource_types[resource.resource_type] }}</td>
                     <td><a href="/resource/{{ resource.identifier }}">{{ resource.title }}</a></td>
                     <td>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%ST') }}</td>
                     {% if resource.last_run.success %}

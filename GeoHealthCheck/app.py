@@ -138,7 +138,7 @@ def register():
         DB.session.rollback()
         bad_column = err.message.split()[2]
         bad_value = request.form[bad_column]
-        flash('%s %s already registered' % (bad_column, bad_value))
+        flash('%s %s already registered' % (bad_column, bad_value), 'danger')
         return redirect(url_for('register'))
     return redirect(url_for('login'))
 
@@ -154,7 +154,8 @@ def add():
     resource = Resource.query.filter_by(resource_type=resource_type,
                                         url=url).first()
     if resource is not None:
-        flash('service already registered (%s, %s)' % (resource_type, url))
+        flash('service already registered (%s, %s)' % (resource_type, url),
+              'danger')
         if 'resource_type' in request.args:
             rtype = request.args.get('resource_type')
             return redirect(url_for('add',
@@ -169,8 +170,25 @@ def add():
     DB.session.add(resource_to_add)
     DB.session.add(run_to_add)
     DB.session.commit()
-    flash('service registered (%s, %s)' % (resource_type, url))
+    flash('service registered (%s, %s)' % (resource_type, url), 'success')
     return redirect(url_for('home'))
+
+
+@login_required
+@APP.route('/resource/<int:resource_identifier>/test')
+def test(resource_identifier):
+    resource = Resource.query.filter_by(identifier=resource_identifier).first()
+    if resource is None:
+        flash('resource not found', 'danger')
+        return redirect(request.referrer)
+
+    [title, success, response_time] = run_test_resource(resource.resource_type, resource.url)
+    run_to_add = Run(resource, success, response_time)
+
+    DB.session.add(run_to_add)
+    DB.session.commit()
+    flash('resource tested', 'success')
+    return redirect(request.referrer)
 
 
 @APP.route('/login', methods=['GET', 'POST'])
@@ -182,7 +200,7 @@ def login():
     registered_user = User.query.filter_by(username=username,
                                            password=password).first()
     if registered_user is None:
-        flash('invalid username and / or password')
+        flash('invalid username and / or password', 'danger')
         return redirect(url_for('login'))
     login_user(registered_user)
 
