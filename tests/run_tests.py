@@ -50,7 +50,8 @@ class GeoHealthCheckTest(unittest.TestCase):
             self.db.session.add(account)
         # add data
         for record in fixtures['data']:
-            resource = Resource(record['resource']['resource_type'],
+            resource = Resource(account,
+                                record['resource']['resource_type'],
                                 record['resource']['title'],
                                 record['resource']['url'])
             self.db.session.add(resource)

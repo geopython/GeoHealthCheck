@@ -8,6 +8,7 @@
     }],
     "data": [{
         "resource": {
+            "owner": "admin",
             "resource_type": "OGC:CSW",
             "title": "WOUDC Catalogue Service",
             "url": "http://geo.woudc.org/csw"
@@ -19,6 +20,7 @@
             ["2014-09-09T04:11:11Z", 1, 1.395]
         ]}, {
         "resource": {
+            "owner": "admin",
             "resource_type": "OGC:WMS",
             "title": "WOUDC Web Map Service",
             "url": "http://geo.woudc.org/ows"
@@ -30,6 +32,7 @@
             ["2014-09-11T08:22:22Z", 0, 22.2]
         ]}, {
         "resource": {
+            "owner": "admin",
             "resource_type": "OGC:WFS",
             "title": "WOUDC Web Feature Service",
             "url": "http://geo.woudc.org/ows"
@@ -46,6 +49,7 @@
             ["2014-09-01T09:22:22Z", 0, 22.2]
         ]}, {
         "resource": {
+           "owner": "admin",
            "resource_type": "WWW:LINK",
            "title": "WOUDC Definitions Service",
            "url": "http://geo.woudc.org/def"

@@ -2,6 +2,13 @@
 
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
     <h1 class="page-header">Dashboard</h1>
     <div class="row col-md-offset-0">
         <div class="col-lg-3 col-md-6">
@@ -82,6 +89,7 @@
                     <th>Name</th>
                     <th>Last Check</th>
                     <th>Status</th>
+                    <th class="col-md-1">Reliability</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,12 +97,13 @@
                 <tr>
                     <td>{{ resource.resource_type }}</td>
                     <td><a href="/resource/{{ resource.identifier }}">{{ resource.title }}</a></td>
-                    <td>{{ resource.last_run.checked_datetime }}</a></td>
+                    <td>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%ST') }}</td>
                     {% if resource.last_run.success %}
                     <td><button type="button" class="btn btn-success btn-circle btn"><i class="fa fa-check"></i></button></td>
                     {% else %}
                     <td><button type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
                     {% endif %}
+                    <td class="text-right"><button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-block">{{ resource.reliability }}%</button></td>
                 </tr>
             {% endfor %}
             </tbody>

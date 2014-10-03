@@ -14,12 +14,21 @@
                 <td>{{ resource.resource_type }}</td>
             </tr>
             <tr>
+                <th>Owner</th>
+                <td>{{ resource.owner.username }}</td>
+            </tr>
+            <tr>
                 <th>Name</th>
-                <td>{{ resource.title}}</td>
+                <td>{{ resource.title }}</td>
             </tr>
             <tr>
                 <th>URL</th>
-                <td><a href="{{ resource.url }}">{{ resource.url}}</a></td>
+                <td><a href="{{ resource.url }}">{{ resource.url }}</a></td>
+            </tr>
+            <tr>
+                <th>Reliability</th>
+                <td><button class="btn btn-{{ resource.reliability| cssize_reliability }}">{{ resource.reliability }}%</button></td>
+                <!--<td class="text-right"><button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-block">{{ resource.reliability }}%</button></td>-->
             </tr>
         </table>
         <div class="text-center">
@@ -58,14 +67,23 @@
             </tbody>
         </table>
     </div>
-    <div><div id="morris-bar-chart"><span>graph goes here</span></div></div>
+    <div id="morris-bar-chart" style="height: 250px;"></div>
 </div>
-
-
 {% endblock %}
-
 {% block extrafoot %}
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
-<script src="{{ url_for('static', filename='lib/js/plugins/morris/morris-data.js') }}"></script>
+    <script type="text/javascript">
+    var run_data = {{ resource.runs_to_json()|safe }};
+
+        Morris.Line({
+            element: 'morris-bar-chart',
+            data: run_data,
+            xkey: 'datetime',
+            ykeys: ['value'],
+            labels: ['Value'],
+            //events: [run_data[1]['datetime']],
+            resize: true
+    });
+    </script>
 {% endblock %}

@@ -34,6 +34,12 @@ from sqlalchemy import func
 from init import DB
 import util
 
+RESOURCE_TYPES = (
+    ('OGC:WMS', 'Web Map Service (WMS)'),
+    ('OGC:WFS', 'Web Feature Service (WFS)'),
+    ('OGC:CSW', 'Catalogue Service (CSW)'),
+)
+
 
 class Run(DB.Model):
     """measurement of resource state"""
@@ -65,11 +71,15 @@ class Resource(DB.Model):
     resource_type = DB.Column(DB.Text, nullable=False)
     title = DB.Column(DB.Text, nullable=False)
     url = DB.Column(DB.Text, nullable=False)
+    owner_identifier = DB.Column(DB.Text, DB.ForeignKey('user.username'))
+    owner = DB.relationship('User',
+                            backref=DB.backref('username2', lazy='dynamic'))
 
-    def __init__(self, resource_type, title, url):
+    def __init__(self, owner, resource_type, title, url):
         self.resource_type = resource_type
         self.title = title
         self.url = url
+        self.owner = owner
 
     def __repr__(self):
         return '<Resource %r %r>' % (self.identifier, self.title)
@@ -79,8 +89,21 @@ class Resource(DB.Model):
         return self.runs.having(func.max(Run.checked_datetime)).group_by(
             Run.checked_datetime).first()
 
+    @property
+    def reliability(self):
+        total_runs = self.runs.count()
+        success_runs = self.runs.filter_by(success=True).count()
+        return util.percentage(success_runs, total_runs)
+
     def snippet(self):
         return util.get_python_snippet(self)
+
+    def runs_to_json(self):
+        runs = []
+        for run in self.runs.group_by(Run.checked_datetime).all():
+            runs.append({'datetime': run.checked_datetime.isoformat(),
+                         'value': run.response_time})
+        return runs
 
 
 class User(DB.Model):

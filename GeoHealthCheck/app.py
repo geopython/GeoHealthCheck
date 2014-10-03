@@ -33,9 +33,11 @@ from flask import (abort, Flask, g, make_response, redirect, render_template,
 from flask.ext.login import (flash, LoginManager, login_user, logout_user,
                              current_user, login_required)
 
+from owslib.csw import CatalogueServiceWeb
+
 from __init__ import __version__
 from init import DB
-from models import User
+from models import RESOURCE_TYPES, Resource, Run, User
 import views
 
 APP = Flask(__name__)
@@ -53,14 +55,41 @@ def load_user(identifier):
     return User.query.get(int(identifier))
 
 
+@LOGIN_MANAGER.unauthorized_handler
+def unauthorized_callback():
+    return redirect(url_for('login', next=request.path))
+
+
 @APP.before_request
 def before_request():
     g.user = current_user
 
 
+@APP.template_filter('cssize_reliability')
+def cssize_reliability(value):
+    """returns CSS class snippet based on score"""
+
+    number = int(value)
+
+    if 0 <= number <= 49:
+        score = 'danger'
+    elif 50 <= number <= 79:
+        score = 'warning'
+    elif 80 <= number <= 100:
+        score = 'success'
+    else:  # should never really get here
+        score = 'info'
+    return score
+
+
 @APP.context_processor
 def app_version():
     return {'app_version': __version__}
+
+
+@APP.context_processor
+def resource_types():
+    return {'resource_types': RESOURCE_TYPES}
 
 
 @APP.route('/')
@@ -101,12 +130,43 @@ def register():
     DB.session.add(user)
     try:
         DB.session.commit()
-    except:
+    except Exception, err:
         DB.session.rollback()
-        flash('Username %s already registered' % request.form['username'])
+        bad_column = err.message.split()[2]
+        bad_value = request.form[bad_column]
+        flash('%s %s already registered' % (bad_column, bad_value))
         return redirect(url_for('register'))
     return redirect(url_for('login'))
 
+
+@APP.route('/add', methods=['GET', 'POST'])
+@login_required
+def add():
+    if request.method == 'GET':
+        return render_template('add.html')
+
+    resource_type = request.form['resource_type']
+    url = request.form['url'].strip()
+    resource = Resource.query.filter_by(resource_type=resource_type,
+                                        url=url).first()
+    if resource is not None:
+        flash('service already registered (%s, %s)' % (resource_type, url))
+        if 'resource_type' in request.args:
+            return redirect(url_for('add',
+                                    resource_type=request.args.get('resource_type')))
+        return redirect(url_for('add'))
+
+    c = CatalogueServiceWeb('http://catalog.data.gov/csw')
+    resource_to_add = Resource(current_user, resource_type, c.identification.title, url)
+    run_to_add = Run(resource_to_add, 1, 0.1)
+
+
+    DB.session.add(resource_to_add)
+    DB.session.add(run_to_add)
+    DB.session.commit()
+    flash('service registered (%s, %s)' % (resource_type, url))
+    return redirect(url_for('home'))
+    
 
 @APP.route('/login', methods=['GET', 'POST'])
 def login():
@@ -117,8 +177,12 @@ def login():
     registered_user = User.query.filter_by(username=username,
                                            password=password).first()
     if registered_user is None:
+        flash('invalid username and / or password')
         return redirect(url_for('login'))
     login_user(registered_user)
+
+    if 'next' in request.args:
+        return redirect(request.args.get('next'))
     return redirect(url_for('home'))
 
 

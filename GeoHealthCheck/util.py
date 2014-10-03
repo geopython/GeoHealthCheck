@@ -37,7 +37,10 @@ def average(values):
 def percentage(number, total):
     """calculates a percentage"""
 
-    return float((float(float(number)/float(total)))*100.0)
+    percentage = float((float(float(number)/float(total)))*100.0)
+    if percentage in [0.0, 100.0]:
+        return int(percentage)
+    return round(percentage, 2)
 
 
 def get_python_snippet(resource):
