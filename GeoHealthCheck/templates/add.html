@@ -13,13 +13,13 @@
     <div class="form-group input-group col-sm-3">
         <select class="form-control" name="resource_type">
             <option value="none">Select Resource Type</option>
-            {% for restype in resource_types %}
-              {% if 'resource_type' in request.args and request.args['resource_type'] == restype[0] %}
+            {% for key, value in resource_types.iteritems() %}
+              {% if 'resource_type' in request.args and request.args['resource_type'] == key %}
                 {% set selected = 'selected' %}
               {% else %}
                 {% set selected = '' %}
               {% endif %}
-            <option value="{{ restype[0] }}" {{ selected }}>{{ restype[1] }}</option>
+            <option value="{{ key }}" {{ selected }}>{{ value }}</option>
             {% endfor %}
         </select>
     </div>

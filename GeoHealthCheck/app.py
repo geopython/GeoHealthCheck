@@ -33,9 +33,8 @@ from flask import (abort, Flask, g, make_response, redirect, render_template,
 from flask.ext.login import (flash, LoginManager, login_user, logout_user,
                              current_user, login_required)
 
-from owslib.csw import CatalogueServiceWeb
-
 from __init__ import __version__
+from healthcheck import run_test_resource
 from init import DB
 from models import RESOURCE_TYPES, Resource, Run, User
 import views
@@ -57,7 +56,11 @@ def load_user(identifier):
 
 @LOGIN_MANAGER.unauthorized_handler
 def unauthorized_callback():
-    return redirect(url_for('login', next=request.path))
+    if request.query_string:
+        url = '%s?%s' % (request.path, request.query_string)
+    else:
+        url = request.path
+    return redirect(url_for('login', next=url))
 
 
 @APP.before_request
@@ -152,21 +155,22 @@ def add():
     if resource is not None:
         flash('service already registered (%s, %s)' % (resource_type, url))
         if 'resource_type' in request.args:
+            rtype = request.args.get('resource_type')
             return redirect(url_for('add',
-                                    resource_type=request.args.get('resource_type')))
+                                    resource_type=rtype))
         return redirect(url_for('add'))
 
-    c = CatalogueServiceWeb('http://catalog.data.gov/csw')
-    resource_to_add = Resource(current_user, resource_type, c.identification.title, url)
-    run_to_add = Run(resource_to_add, 1, 0.1)
+    [title, success, response_time] = run_test_resource(resource_type, url)
 
+    resource_to_add = Resource(current_user, resource_type, title, url)
+    run_to_add = Run(resource_to_add, success, response_time)
 
     DB.session.add(resource_to_add)
     DB.session.add(run_to_add)
     DB.session.commit()
     flash('service registered (%s, %s)' % (resource_type, url))
     return redirect(url_for('home'))
-    
+
 
 @APP.route('/login', methods=['GET', 'POST'])
 def login():

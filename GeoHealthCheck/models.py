@@ -34,11 +34,11 @@ from sqlalchemy import func
 from init import DB
 import util
 
-RESOURCE_TYPES = (
-    ('OGC:WMS', 'Web Map Service (WMS)'),
-    ('OGC:WFS', 'Web Feature Service (WFS)'),
-    ('OGC:CSW', 'Catalogue Service (CSW)'),
-)
+RESOURCE_TYPES = {
+    'OGC:WMS': 'Web Map Service (WMS)',
+    'OGC:WFS': 'Web Feature Service (WFS)',
+    'OGC:CSW': 'Catalogue Service (CSW)'
+}
 
 
 class Run(DB.Model):
