@@ -114,11 +114,9 @@ class Resource(DB.Model):
         for run in self.runs.group_by(Run.checked_datetime).all():
             print run.success
             if run.success == 1:
-                #colors.append('#5CB85C')  # green
-                colors.append('green')  # green
+                colors.append('#5CB85C')  # green
             else:
-                #colors.append('#D9534F')  # red
-                colors.append('red')  # red
+                colors.append('#D9534F')  # red
         return colors
 
 

@@ -182,7 +182,8 @@ def test(resource_identifier):
         flash('resource not found', 'danger')
         return redirect(request.referrer)
 
-    [title, success, response_time] = run_test_resource(resource.resource_type, resource.url)
+    [title, success, response_time] = run_test_resource(resource.resource_type,
+                                                        resource.url)
     run_to_add = Run(resource, success, response_time)
 
     DB.session.add(run_to_add)
