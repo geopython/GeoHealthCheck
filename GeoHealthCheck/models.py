@@ -90,8 +90,9 @@ class Resource(DB.Model):
 
     @property
     def last_run(self):
-        return self.runs.having(func.max(Run.checked_datetime)).group_by(
-            Run.checked_datetime).first()
+        query = self.runs.having(func.max(Run.checked_datetime)).group_by(
+            Run.checked_datetime).order_by(
+                Run.checked_datetime.desc()).first()
 
     @property
     def reliability(self):
@@ -112,7 +113,6 @@ class Resource(DB.Model):
     def success_to_colors(self):
         colors = []
         for run in self.runs.group_by(Run.checked_datetime).all():
-            print run.success
             if run.success == 1:
                 colors.append('#5CB85C')  # green
             else:
