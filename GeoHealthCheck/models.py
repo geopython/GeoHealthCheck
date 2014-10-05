@@ -96,7 +96,8 @@ class Resource(DB.Model):
 
     @property
     def average_response_time(self):
-        return self.runs.session.query(func.avg(Run.response_time)).first()[0]
+        query = [run.response_time for run in self.runs]
+        return util.average(query)
 
     @property
     def reliability(self):
