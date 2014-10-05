@@ -92,7 +92,7 @@ class Resource(DB.Model):
     def last_run(self):
         return self.runs.having(func.max(Run.checked_datetime)).group_by(
             Run.checked_datetime).order_by(
-                Run.checked_datetime).first()
+                Run.checked_datetime.desc()).first()
 
     @property
     def average_response_time(self):
