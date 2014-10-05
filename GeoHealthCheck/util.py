@@ -43,7 +43,7 @@ def percentage(number, total):
     percentage = float((float(float(number)/float(total)))*100.0)
     if percentage in [0.0, 100.0]:
         return int(percentage)
-    return round(percentage, 2)
+    return percentage
 
 
 def get_python_snippet(resource):
