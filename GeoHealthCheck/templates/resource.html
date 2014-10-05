@@ -14,14 +14,14 @@
     {% endif %}
 {% endwith %}
     <h1 class="page-header">{{ resource.title }}
-                    <a href="{{ request.path }}/test"><button type="button" class="btn btn-primary btn-sm">Test Now</button></a>
-                    <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-sm">Delete</button></a>
-                </h1>
+        <a href="{{ request.path }}/test"><button type="button" class="btn btn-primary btn-sm">Test Now</button></a>
+        <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-sm">Delete</button></a>
+    </h1>
     <div class="table-responsive col-md-4">
         <table class="table">
             <tr>
                 <th>Type</th>
-                <td>{{ resource_types[resource.resource_type] }} {{ resource.average_response_time }}</td>
+                <td>{{ resource_types[resource.resource_type] }}</td>
             </tr>
             <tr>
                 <th>Owner</th>
