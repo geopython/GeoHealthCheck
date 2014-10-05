@@ -13,12 +13,15 @@
         {% endfor %}
     {% endif %}
 {% endwith %}
-    <h1 class="page-header">Health Check Information</h1>
+    <h1 class="page-header">{{ resource.title }}
+                    <a href="{{ request.path }}/test"><button type="button" class="btn btn-primary btn-sm">Test Now</button></a>
+                    <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-sm">Delete</button></a>
+                </h1>
     <div class="table-responsive col-md-4">
         <table class="table">
             <tr>
                 <th>Type</th>
-                <td>{{ resource_types[resource.resource_type] }}</td>
+                <td>{{ resource_types[resource.resource_type] }} {{ resource.average_response_time }}</td>
             </tr>
             <tr>
                 <th>Owner</th>
@@ -33,11 +36,13 @@
                 <td><a href="{{ resource.url }}">{{ resource.url }}</a></td>
             </tr>
             <tr>
+                <th>Response Time</th>
+                <td>{{ resource.average_response_time }}</td>
+            </tr>
+            <tr>
                 <th>Reliability</th>
                 <td>
                     <button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-sm">{{ resource.reliability }}%</button>
-                    <a href="{{ request.path }}/test"><button type="button" class="btn btn-primary btn-sm">Test Now</button></a>
-                    <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-sm">Delete</button></a>
                 </td>
             </tr>
         </table>

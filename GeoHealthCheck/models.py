@@ -90,9 +90,13 @@ class Resource(DB.Model):
 
     @property
     def last_run(self):
-        query = self.runs.having(func.max(Run.checked_datetime)).group_by(
+        return self.runs.having(func.max(Run.checked_datetime)).group_by(
             Run.checked_datetime).order_by(
-                Run.checked_datetime.desc()).first()
+                Run.checked_datetime).first()
+
+    @property
+    def average_response_time(self):
+        return self.runs.session.query(func.avg(Run.response_time)).first()[0]
 
     @property
     def reliability(self):
