@@ -32,17 +32,12 @@ import logging
 
 from sqlalchemy import func
 
+from enums import RESOURCE_TYPES
 from init import DB
 import config
 import util
 
 LOGGER = logging.getLogger(__name__)
-
-RESOURCE_TYPES = {
-    'OGC:WMS': 'Web Map Service (WMS)',
-    'OGC:WFS': 'Web Feature Service (WFS)',
-    'OGC:CSW': 'Catalogue Service (CSW)'
-}
 
 
 class Run(DB.Model):
@@ -87,6 +82,10 @@ class Resource(DB.Model):
 
     def __repr__(self):
         return '<Resource %r %r>' % (self.identifier, self.title)
+
+    @property
+    def get_capabilities_url(self):
+        return '%s%s' % (self.url, RESOURCE_TYPES[self.resource_type]['capabilities'])
 
     @property
     def last_run(self):

@@ -19,7 +19,7 @@
               {% else %}
                 {% set selected = '' %}
               {% endif %}
-            <option value="{{ key }}" {{ selected }}>{{ value }}</option>
+            <option value="{{ key }}" {{ selected }}>{{ value['label'] }}</option>
             {% endfor %}
         </select>
     </div>

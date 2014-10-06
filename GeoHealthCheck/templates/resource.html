@@ -21,7 +21,7 @@
         <table class="table">
             <tr>
                 <th>Type</th>
-                <td>{{ resource_types[resource.resource_type] }}</td>
+                <td>{{ resource_types[resource.resource_type]['label'] }}</td>
             </tr>
             <tr>
                 <th>Owner</th>
@@ -33,7 +33,7 @@
             </tr>
             <tr>
                 <th>URL</th>
-                <td><a href="{{ resource.url }}">{{ resource.url }}</a></td>
+                <td><a href="{{ resource.get_capabilities_url }}">{{ resource.url }}</a></td>
             </tr>
             <tr>
                 <th>Average Response Time (seconds)</th>

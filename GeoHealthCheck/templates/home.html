@@ -96,7 +96,7 @@
             <tbody>
             {% for resource in response['resources'] %}
                 <tr>
-                    <td>{{ resource_types[resource.resource_type] }}</td>
+                    <td>{{ resource_types[resource.resource_type]['label'] }}</td>
                     <td><a href="/resource/{{ resource.identifier }}">{{ resource.title }}</a></td>
                     <td>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</td>
                     {% if resource.last_run.success %}

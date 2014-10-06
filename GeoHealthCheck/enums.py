@@ -28,8 +28,19 @@
 # =================================================================
 
 RESOURCE_TYPES = {
-    'OGC:WMS': 'Web Map Service (WMS)',
-    'OGC:WFS': 'Web Feature Service (WFS)',
-    'OGC:CSW': 'Catalogue Service (CSW)',
-    'WWW:LINK': 'Web Address (URL)'
+    'OGC:WMS': {
+        'label': 'Web Map Service (WMS)',
+        'capabilities': '?service=WMS&version=1.1.1&request=GetCapabilities'
+    },
+    'OGC:WFS': {
+        'label': 'Web Feature Service (WFS)',
+        'capabilities': '?service=WFS&version=1.1.0&request=GetCapabilities'
+    },
+    'OGC:CSW': {
+        'label': 'Catalogue Service (CSW)',
+        'capabilities': '?service=CSW&version=2.0.2&request=GetCapabilities'
+    },
+    'WWW:LINK': {
+        'label': 'Web Address (URL)'
+    }
 }
