@@ -1,13 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-3 main">
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
   <form role="form" action="" method="post">
     <h2>Login <i class="fa fa-sign-in fa-fw"></i></h2>
     <div class="form-group input-group col-sm-2">

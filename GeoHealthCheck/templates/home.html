@@ -2,13 +2,6 @@
 
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
     <h1 class="page-header">Dashboard</h1>
     <div class="row col-md-offset-0">
         <div class="col-lg-3 col-md-6">
