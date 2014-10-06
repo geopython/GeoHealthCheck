@@ -85,7 +85,8 @@ class Resource(DB.Model):
 
     @property
     def get_capabilities_url(self):
-        return '%s%s' % (self.url, RESOURCE_TYPES[self.resource_type]['capabilities'])
+        return '%s%s' % (self.url,
+                         RESOURCE_TYPES[self.resource_type]['capabilities'])
 
     @property
     def last_run(self):
@@ -111,7 +112,8 @@ class Resource(DB.Model):
         runs = []
         for run in self.runs.group_by(Run.checked_datetime).all():
             runs.append({'datetime': run.checked_datetime.isoformat(),
-                         'value': run.response_time})
+                         'value': run.response_time,
+                         'success': 1 if run.success else 0})
         return runs
 
     def success_to_colors(self):

@@ -33,6 +33,8 @@ from urllib2 import urlopen
 
 from owslib.wms import WebMapService
 from owslib.wfs import WebFeatureService
+from owslib.wcs import WebCoverageService
+from owslib.wps import WebProcessingService
 from owslib.csw import CatalogueServiceWeb
 
 from enums import RESOURCE_TYPES
@@ -56,6 +58,10 @@ def run_test_resource(resource_type, url):
             ows = WebMapService(url)
         elif resource_type == 'OGC:WFS':
             ows = WebFeatureService(url)
+        elif resource_type == 'OGC:WCS':
+            ows = WebCoverageService(url)
+        elif resource_type == 'OGC:WPS':
+            ows = WebProcessingService(url)
         elif resource_type == 'OGC:CSW':
             ows = CatalogueServiceWeb(url)
         elif resource_type == 'WWW:LINK':

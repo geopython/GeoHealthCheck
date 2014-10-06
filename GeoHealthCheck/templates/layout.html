@@ -7,7 +7,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="../../favicon.ico">
-        <title>{{ site_title }}</title>
+        <title>{{ config['GHC_SITE_TITLE'] }}</title>
         <link href="{{ url_for('static', filename='lib/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', filename='lib/css/sb-admin-2.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', filename='lib/font-awesome-4.1.0/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
@@ -29,7 +29,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ url_for('home') }}"><i class="fa fa-home fa-fw"></i> {{ site_title }}</a>
+                    <a class="navbar-brand" href="{{ url_for('home') }}"><i class="fa fa-home fa-fw"></i> {{ config['GHC_SITE_TITLE'] }}</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">

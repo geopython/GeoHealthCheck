@@ -36,6 +36,14 @@ RESOURCE_TYPES = {
         'label': 'Web Feature Service (WFS)',
         'capabilities': '?service=WFS&version=1.1.0&request=GetCapabilities'
     },
+    'OGC:WCS': {
+        'label': 'Web Coverage Service (WCS)',
+        'capabilities': '?service=WCS&version=1.1.0&request=GetCapabilities'
+    },
+    'OGC:WPS': {
+        'label': 'Web Processing Service (WPS)',
+        'capabilities': '?service=WPS&version=1.0.0&request=GetCapabilities'
+    },
     'OGC:CSW': {
         'label': 'Catalogue Service (CSW)',
         'capabilities': '?service=CSW&version=2.0.2&request=GetCapabilities'

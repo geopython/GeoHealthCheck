@@ -42,7 +42,7 @@
             <tr>
                 <th>Reliability</th>
                 <td>
-                    <button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-sm">{{ resource.reliability }}%</button>
+                    <button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-sm">{{ resource.reliability|round(2) }}%</button>
                 </td>
             </tr>
         </table>
@@ -53,7 +53,7 @@
         </pre>
     </div>
     <div class="clearfix"></div>
-    <div id="morris-bar-chart" style="height: 250px;"></div>
+    <div id="run-chart" style="height: 250px;"></div>
     <div class="table-responsive">
         <h2 class="sub-header">History</h2>
         <table class="table table-striped table-bordered table-hover">
@@ -85,20 +85,33 @@
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
     <script type="text/javascript">
-    var run_data = {{ resource.runs_to_json()|safe }};
-    var colors_data = {{ resource.success_to_colors()|safe }};
-
+        var run_data = {{ resource.runs_to_json()|safe }};
         Morris.Area({
-            element: 'morris-bar-chart',
+            element: 'run-chart',
+            lineWidth: 1,
             data: run_data,
-            lineColors: colors_data,
             xkey: 'datetime',
             ykeys: ['value'],
             labels: ['Response Time'],
-            fillOpacity: 0.5,
+            fillOpacity: 0.05,
             hideHover: true,
-            //events: [run_data[1]['datetime']],
-            resize: true
-    });
+            resize: true,
+            pointStrokeColors: ['black'],
+            pointSize: 5,
+            postUnits: ' seconds',
+            dateFormat: function (x) { return new Date(x).toString(); },
+            xLabelAngle: 45,
+            xLabels: 'day',
+            lineColors: function(row, series, ttype) {
+                if (row !== null) {
+                    if (row.src.success === 1) {
+                        return '#5CB85C';
+                    } else {
+                        return '#D9534F';
+                    }
+                }
+                return '#00f';
+            }
+        });
     </script>
 {% endblock %}

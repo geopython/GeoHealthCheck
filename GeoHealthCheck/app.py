@@ -91,7 +91,6 @@ def context_processors():
     return {
         'app_version': __version__,
         'resource_types': RESOURCE_TYPES,
-        'site_title': APP.config['GHC_SITE_TITLE']
     }
 
 
