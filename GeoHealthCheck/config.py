@@ -30,5 +30,9 @@
 DEBUG = False
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+SECRET_KEY = None
 
 GHC_RETENTION_DAYS = 30
+GHC_SELF_REGISTER = False
+GHC_ADMIN_EMAIL = 'you@example.com'
+GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
