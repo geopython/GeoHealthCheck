@@ -164,10 +164,11 @@ def add():
                                     resource_type=rtype))
         return redirect(url_for('add'))
 
-    [title, success, response_time] = run_test_resource(resource_type, url)
+    [title, success, response_time, message, start_time] = run_test_resource(resource_type,
+                                                                 url)
 
     resource_to_add = Resource(current_user, resource_type, title, url)
-    run_to_add = Run(resource_to_add, success, response_time)
+    run_to_add = Run(resource_to_add, success, response_time, message, start_time)
 
     DB.session.add(resource_to_add)
     DB.session.add(run_to_add)
@@ -184,9 +185,9 @@ def test(resource_identifier):
         flash('resource not found', 'danger')
         return redirect(request.referrer)
 
-    [title, success, response_time] = run_test_resource(resource.resource_type,
+    [title, success, response_time, message, start_time] = run_test_resource(resource.resource_type,
                                                         resource.url)
-    run_to_add = Run(resource, success, response_time)
+    run_to_add = Run(resource, success, response_time, message, start_time)
 
     DB.session.add(run_to_add)
     DB.session.commit()

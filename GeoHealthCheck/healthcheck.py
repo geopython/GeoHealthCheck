@@ -52,6 +52,8 @@ def run_test_resource(resource_type, url):
 
     title = None
     start_time = datetime.datetime.utcnow()
+    message = None
+
 
     try:
         if resource_type == 'OGC:WMS':
@@ -74,6 +76,7 @@ def run_test_resource(resource_type, url):
             title = ows.identification.title
     except Exception, err:
         LOGGER.exception(err)
+        message = err
         success = False
 
     end_time = datetime.datetime.utcnow()
@@ -81,7 +84,7 @@ def run_test_resource(resource_type, url):
     delta = end_time - start_time
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
 
-    return [title, success, response_time]
+    return [title, success, response_time, message, start_time]
 
 
 if __name__ == '__main__':

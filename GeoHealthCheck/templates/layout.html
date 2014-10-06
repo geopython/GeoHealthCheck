@@ -66,7 +66,7 @@
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
+                    <div id="flashed_message" class="alert alert-{{ category }} fade in">{{ message }}</div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
@@ -78,6 +78,9 @@
         <footer><div class="footer text-center">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
         <script src="{{ url_for('static', filename='lib/js/jquery-1.11.0.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript">
+            $("#flashed_message").fadeOut(3000);
+        </script>
         {% block extrafoot %}
         {% endblock %}
     </body>

@@ -65,7 +65,7 @@
                     {% if run.success %}
                     <td><button type="button" class="btn btn-success btn-circle"><i class="fa fa-check"></i></button></td>
                     {% else %}
-                    <td><button type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
+                    <td><button title="{{ run.message }}" type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
                     {% endif %}
                 </tr>
             {% endfor %}

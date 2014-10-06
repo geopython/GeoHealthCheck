@@ -57,7 +57,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             self.db.session.add(resource)
             for run in record['runs']:
                 dt = datetime.datetime.strptime(run[0], '%Y-%m-%dT%H:%M:%SZ')
-                run2 = Run(resource, run[1], run[2], dt)
+                run2 = Run(resource, run[1], run[2], run[3], dt)
                 self.db.session.add(run2)
         self.db.session.commit()
 

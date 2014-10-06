@@ -51,13 +51,15 @@ class Run(DB.Model):
     checked_datetime = DB.Column(DB.DateTime, nullable=False)
     success = DB.Column(DB.Boolean, nullable=False)
     response_time = DB.Column(DB.Float, nullable=False)
+    message = DB.Column(DB.Text, default='OK')
 
-    def __init__(self, resource, success, response_time,
+    def __init__(self, resource, success, response_time, message='OK',
                  checked_datetime=datetime.utcnow()):
         self.resource = resource
         self.success = success
         self.response_time = response_time
         self.checked_datetime = checked_datetime
+        self.message = message
 
     def __repr__(self):
         return '<Run %r>' % (self.identifier)
@@ -176,7 +178,8 @@ if __name__ == '__main__':
                                          resource.url))
                 run_to_add = run_test_resource(resource.resource_type,
                                                resource.url)
-                run = Run(resource, run_to_add[1], run_to_add[2])
+                run = Run(resource, run_to_add[1], run_to_add[2],
+                          run_to_add[3], run_to_add[4])
                 print('Adding run')
                 DB.session.add(run)
             DB.session.commit()
