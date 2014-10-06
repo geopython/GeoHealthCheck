@@ -87,13 +87,12 @@ def cssize_reliability(value):
 
 
 @APP.context_processor
-def app_version():
-    return {'app_version': __version__}
-
-
-@APP.context_processor
-def resource_types():
-    return {'resource_types': RESOURCE_TYPES}
+def context_processors():
+    return {
+        'app_version': __version__,
+        'resource_types': RESOURCE_TYPES,
+        'site_title': APP.config['GHC_SITE_TITLE']
+    }
 
 
 @APP.route('/')
@@ -127,6 +126,10 @@ def get_resource_by_id(identifier):
 
 @APP.route('/register', methods=['GET', 'POST'])
 def register():
+    if not APP.config['GHC_SELF_REGISTER']:
+        flash('This site is not configured for self-registration.  '
+              'Please contact %s ' % APP.config['GHC_ADMIN_EMAIL'], 'warning')
+        return redirect(url_for('login'))
     if request.method == 'GET':
         return render_template('register.html')
     user = User(request.form['username'],
