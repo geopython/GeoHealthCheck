@@ -54,7 +54,6 @@ def run_test_resource(resource_type, url):
     start_time = datetime.datetime.utcnow()
     message = None
 
-
     try:
         if resource_type == 'OGC:WMS':
             ows = WebMapService(url)
@@ -75,8 +74,9 @@ def run_test_resource(resource_type, url):
         if resource_type != 'WWW:LINK':
             title = ows.identification.title
     except Exception, err:
-        LOGGER.exception(err)
-        message = err
+        msg = str(err)
+        LOGGER.exception(msg)
+        message = msg
         success = False
 
     end_time = datetime.datetime.utcnow()

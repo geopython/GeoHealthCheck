@@ -27,10 +27,10 @@
 #
 # =================================================================
 
-from flask import (abort, Flask, g, make_response, redirect, render_template,
-                   request, url_for)
+from flask import (abort, flash, Flask, g, make_response, redirect,
+                   render_template, request, url_for)
 
-from flask.ext.login import (flash, LoginManager, login_user, logout_user,
+from flask.ext.login import (LoginManager, login_user, logout_user,
                              current_user, login_required)
 
 from __init__ import __version__
@@ -43,7 +43,6 @@ import views
 APP = Flask(__name__)
 APP.config.from_pyfile('config.py')
 APP.config.from_pyfile('../instance/config.py')
-
 APP.secret_key = APP.config['SECRET_KEY']
 
 LOGIN_MANAGER = LoginManager()
@@ -99,18 +98,11 @@ def home():
     """homepage"""
 
     response = views.list_resources()
-
     return render_template('home.html', response=response)
 
 
 @APP.route('/settings')
 def settings():
-    """settings"""
-    pass
-
-
-@APP.route('/search')
-def search():
     """settings"""
     pass
 
@@ -164,16 +156,21 @@ def add():
                                     resource_type=rtype))
         return redirect(url_for('add'))
 
-    [title, success, response_time, message, start_time] = run_test_resource(resource_type,
-                                                                 url)
+    [title, success, response_time, message, start_time] = run_test_resource(
+        resource_type, url)
 
     resource_to_add = Resource(current_user, resource_type, title, url)
-    run_to_add = Run(resource_to_add, success, response_time, message, start_time)
+    run_to_add = Run(resource_to_add, success, response_time, message,
+                     start_time)
 
     DB.session.add(resource_to_add)
     DB.session.add(run_to_add)
-    DB.session.commit()
-    flash('service registered (%s, %s)' % (resource_type, url), 'success')
+    try:
+        DB.session.commit()
+        flash('service registered (%s, %s)' % (resource_type, url), 'success')
+    except Exception, err:
+        DB.session.rollback()
+        flash(str(err), 'danger')
     return redirect(url_for('home'))
 
 
@@ -185,13 +182,22 @@ def test(resource_identifier):
         flash('resource not found', 'danger')
         return redirect(request.referrer)
 
-    [title, success, response_time, message, start_time] = run_test_resource(resource.resource_type,
-                                                        resource.url)
+    [title, success, response_time, message, start_time] = run_test_resource(
+        resource.resource_type, resource.url)
     run_to_add = Run(resource, success, response_time, message, start_time)
 
+    if message not in ['OK', None, 'None']:
+        flash('ERROR: %s' % message, 'danger')
+    else:
+        flash('Resource tested successfully', 'success')
+
     DB.session.add(run_to_add)
-    DB.session.commit()
-    flash('resource tested', 'success')
+
+    try:
+        DB.session.commit()
+    except Exception, err:
+        DB.session.rollback()
+        flash(str(err), 'danger')
     return redirect(request.referrer)
 
 
