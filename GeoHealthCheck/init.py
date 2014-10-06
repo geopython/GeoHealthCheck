@@ -27,8 +27,7 @@
 #
 # =================================================================
 
-from flask import (abort, Flask, make_response, redirect, render_template,
-                   request)
+from flask import Flask
 
 from flask.ext.sqlalchemy import SQLAlchemy
 
