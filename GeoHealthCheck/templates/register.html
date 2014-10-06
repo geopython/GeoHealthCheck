@@ -3,7 +3,7 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-3 main">
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        {% for caterogy, message in messages %}
+        {% for category, message in messages %}
     <div class="alert alert-{{ category }}">{{ message }}</div>
         {% endfor %}
     {% endif %}
