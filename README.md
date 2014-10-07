@@ -15,8 +15,9 @@ pip install Paver
 paver setup
 # setup local configuration
 vi instance/config.py  # edit SQLALCHEMY_DATABASE_URI
-# setup database
-python GeoHealthCheck/models.py create
+# setup database and superuser account
+paver create
+
 # drop database
 python GeoHealthCheck/models.py drop
 

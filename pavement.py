@@ -96,6 +96,12 @@ def setup():
 
 
 @task
+def create():
+    """create database objects and superuser account"""
+    sh('python GeoHealthCheck/models.py create')
+
+
+@task
 def clean():
     """clean environment"""
 

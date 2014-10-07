@@ -137,12 +137,14 @@ class User(DB.Model):
                          nullable=False)
     password = DB.Column(DB.String(10), nullable=False)
     email = DB.Column(DB.String(50), unique=True, index=True, nullable=False)
+    role = DB.Column(DB.Text, nullable=False, default='user')
     registered_on = DB.Column(DB.DateTime)
 
-    def __init__(self, username, password, email):
+    def __init__(self, username, password, email, role='user'):
         self.username = username
         self.password = password
         self.email = email
+        self.role = role
         self.registered_on = datetime.utcnow()
 
     def is_authenticated(self):
@@ -165,8 +167,29 @@ if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
+            import getpass
             print('Creating database objects')
             DB.create_all()
+
+            print('Creating superuser account')
+            username = raw_input('Enter your username: ').strip()
+            password1 = getpass.getpass('Enter your password: ').strip()
+            password2 = getpass.getpass('Enter your password again: ').strip()
+            if password1 != password2:
+                raise ValueError('Passwords must match')
+            email1 = raw_input('Enter your email: ').strip()
+            email2 = raw_input('Enter your email again: ').strip()
+            if email1 != email2:
+                raise ValueError('Emails must match')
+
+            user_to_add = User(username, password1, email1, role='admin')
+            DB.session.add(user_to_add)
+            try:
+                DB.session.commit()
+            except Exception, err:
+                DB.session.rollback()
+                msg = str(err)
+                print(msg)
         elif sys.argv[1] == 'drop':
             print('Dropping database objects')
             DB.drop_all()

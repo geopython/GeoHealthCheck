@@ -3,7 +3,8 @@
         "user": {
             "username": "admin",
             "password": "admin",
-            "email": "foo@example.com"
+            "email": "foo@example.com",
+            "role": 'admin'
         }
     }],
     "data": [{

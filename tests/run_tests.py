@@ -46,7 +46,8 @@ class GeoHealthCheckTest(unittest.TestCase):
         for user in fixtures['users']:
             account = User(user['user']['username'],
                            user['user']['password'],
-                           user['user']['email'])
+                           user['user']['email'],
+                           user['user']['role'])
             self.db.session.add(account)
         # add data
         for record in fixtures['data']:

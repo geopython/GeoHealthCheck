@@ -10,7 +10,7 @@
         {% if g.user.is_authenticated() %} 
         <a href="{{ request.path }}/test"><button type="button" class="btn btn-primary btn-sm">Test Now</button></a>
         {% endif %}
-        {% if g.user.username == 'admin' %}
+        {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
         <a href="{{ request.path }}/delete"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">Delete</button></a>
         {% endif %}
     </h1>
@@ -84,7 +84,7 @@
 <script type="text/javascript">
     {% if g.user.is_authenticated() %}
     $('#confirm-delete').click(function() {
-        if (confirm('Delete resource?') === false) {
+        if (confirm('Delete resource "{{ resource.title }}"?') === false) {
             return false;
         }
     });
