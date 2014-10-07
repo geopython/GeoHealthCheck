@@ -200,7 +200,8 @@ def test(resource_identifier):
     except Exception, err:
         DB.session.rollback()
         flash(str(err), 'danger')
-    return redirect(request.referrer)
+    return redirect(url_for('get_resource_by_id',
+                    identifier=resource_identifier))
 
 
 @APP.route('/login', methods=['GET', 'POST'])
