@@ -252,7 +252,10 @@ def login():
 def logout():
     logout_user()
     flash('logged out', 'success')
-    return redirect(url_for('home'))
+    if request.referrer:
+        return redirect(request.referrer)
+    else:
+        return redirect(url_for('home'))
 
 
 if __name__ == '__main__':  # run locally, for fun

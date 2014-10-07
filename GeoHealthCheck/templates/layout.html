@@ -43,7 +43,7 @@
                         </li>
                         <li><a href="https://github.com/geopython/GeoHealthCheck">Help <i class="fa fa-question-circle fa-fw"></i></a></li>
                         {% if not g.user.is_authenticated() %}
-                        <li><a href="{{ url_for('login') }}">Login <i class="fa fa-sign-in fa-fw"></i></a></li>
+                        <li><a href="{{ url_for('login', next=request.path) }}">Login<i class="fa fa-sign-in fa-fw"></i></a></li>
                         {% endif %}
                         {% if g.user.is_authenticated() %}
                         <li><a href="{{ url_for('settings') }}">{{ g.user.username }} <i class="fa fa-cog"></i></a></li>
@@ -61,9 +61,23 @@
                             <i class="fa fa-filter fa-fw"></i>Filter by Resource Type
                             <ul class="nav nav-second-level">
                                 {% for key, value in resource_types.iteritems() %}
+                                {% if request.args.get('resource_type') == key %}
+                                <li><a class="active" href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                {% else%}
                                 <li><a href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                {% endif %}
                                 {% endfor %}
                                 <li><a href="{{ url_for('home') }}">Clear</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-sidebar">
+                        <li>
+                            <i class="fa fa-cog fa-fw"></i>Settings
+                            <ul class="nav nav-second-level">
+                                <li><a>History: {{ config['GHC_RETENTION_DAYS'] }} days</a></li>
+                                <li><a>Test Frequency: {{ config['GHC_RUN_FREQUENCY'] }}</a></li>
+                                <li><a>All Times UTC</a></li>
                             </ul>
                         </li>
                     </ul>

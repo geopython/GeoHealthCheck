@@ -7,8 +7,12 @@
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">{{ resource.title }}
+        {% if g.user.is_authenticated() %} 
         <a href="{{ request.path }}/test"><button type="button" class="btn btn-primary btn-sm">Test Now</button></a>
-        <a href="{{ request.path }}/delete"><button type="button" class="btn btn-danger btn-sm">Delete</button></a>
+        {% endif %}
+        {% if g.user.username == 'admin' %}
+        <a href="{{ request.path }}/delete"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">Delete</button></a>
+        {% endif %}
     </h1>
     <div class="table-responsive col-md-4">
         <table class="table">
@@ -78,6 +82,13 @@
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
 <script type="text/javascript">
+    {% if g.user.is_authenticated() %}
+    $('#confirm-delete').click(function() {
+        if (confirm('Delete resource?') === false) {
+            return false;
+        }
+    });
+    {% endif %}
     var run_data = {{ resource.runs_to_json()|safe }};
     Morris.Area({
         element: 'run-chart',
