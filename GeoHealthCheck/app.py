@@ -140,6 +140,8 @@ def register():
 @APP.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
+    if not g.user.is_authenticated():
+        return render_template('add.html')
     if request.method == 'GET':
         return render_template('add.html')
 
@@ -174,8 +176,8 @@ def add():
     return redirect(url_for('home'))
 
 
-@login_required
 @APP.route('/resource/<int:resource_identifier>/test')
+@login_required
 def test(resource_identifier):
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if resource is None:
