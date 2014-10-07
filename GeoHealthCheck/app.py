@@ -99,8 +99,7 @@ def home():
 
     resource_type = None
 
-    if ('resource_type' in request.args and
-        request.args['resource_type'] in RESOURCE_TYPES.keys()):
+    if request.args.get('resource_type') in RESOURCE_TYPES.keys():
         resource_type = request.args['resource_type']
 
     response = views.list_resources(resource_type)
