@@ -113,12 +113,13 @@ def export():
     response = views.list_resources()
     json_dict = {'resources': []}
     for r in response['resources']:
-       json_dict['resources'].append({
-           'resource_type': r.resource_type,
-           'title': r.title,
-           'url': r.url
-       })
+        json_dict['resources'].append({
+            'resource_type': r.resource_type,
+            'title': r.title,
+            'url': r.url
+        })
     return jsonify(json_dict)
+
 
 @APP.route('/settings')
 def settings():
@@ -222,10 +223,12 @@ def test(resource_identifier):
     return redirect(url_for('get_resource_by_id',
                     identifier=resource_identifier))
 
+
 @APP.route('/resource/<int:resource_identifier>/delete')
 @login_required
 def delete(resource_identifier):
     pass
+
 
 @APP.route('/login', methods=['GET', 'POST'])
 def login():

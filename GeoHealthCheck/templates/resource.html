@@ -77,34 +77,34 @@
 {% block extrafoot %}
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
-    <script type="text/javascript">
-        var run_data = {{ resource.runs_to_json()|safe }};
-        Morris.Area({
-            element: 'run-chart',
-            lineWidth: 1,
-            data: run_data,
-            xkey: 'datetime',
-            ykeys: ['value'],
-            labels: ['Response Time'],
-            fillOpacity: 0.05,
-            hideHover: true,
-            resize: true,
-            pointStrokeColors: ['black'],
-            pointSize: 5,
-            postUnits: ' seconds',
-            dateFormat: function (x) { return new Date(x).toString(); },
-            xLabelAngle: 45,
-            xLabels: 'day',
-            lineColors: function(row, series, ttype) {
-                if (row !== null) {
-                    if (row.src.success === 1) {
-                        return '#5CB85C';
-                    } else {
-                        return '#D9534F';
-                    }
+<script type="text/javascript">
+    var run_data = {{ resource.runs_to_json()|safe }};
+    Morris.Area({
+        element: 'run-chart',
+        lineWidth: 1,
+        data: run_data,
+        xkey: 'datetime',
+        ykeys: ['value'],
+        labels: ['Response Time'],
+        fillOpacity: 0.05,
+        hideHover: true,
+        resize: true,
+        pointStrokeColors: ['black'],
+        pointSize: 5,
+        postUnits: ' seconds',
+        dateFormat: function (x) { return new Date(x).toString(); },
+        xLabelAngle: 45,
+        xLabels: 'day',
+        lineColors: function(row, series, ttype) {
+            if (row !== null) {
+                if (row.src.success === 1) {
+                    return '#5CB85C';
+                } else {
+                    return '#D9534F';
                 }
-                return '#00f';
             }
-        });
-    </script>
+            return '#00f';
+        }
+    });
+</script>
 {% endblock %}

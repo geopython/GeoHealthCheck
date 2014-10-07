@@ -2,6 +2,7 @@
 
 {% block extrahead%}
 <link href="{{ url_for('static', filename='lib/css/plugins/dataTables.bootstrap.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='lib/css/plugins/morris.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -50,6 +51,15 @@
                         <div class="clearfix"></div>
                     </div>
                 </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel">
+                <div class="panel-footer">
+                    <div class="row">
+                            <div id="totals-chart" style="height: 120px;"></div>
+                    </div>
+                </div>
             </div>
         </div>
         {% if response['fail']['number'] > 0 %}
@@ -112,12 +122,23 @@
 {% endblock %}
 
 {% block extrafoot %}
+<script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
-    <script type="text/javascript">
-        $('#mytable').dataTable({
-            'paging': false,
-            'sDom': ''//false // no search box
-        });
-    </script>
+<script type="text/javascript">
+    $('#mytable').dataTable({
+        'paging': false,
+        'sDom': ''//false // no search box
+    });
+    Morris.Donut({
+        element: 'totals-chart',
+        colors: ['#5CB85C', '#D9534F'],
+        data: [
+            {label: 'Working', value: {{ response['success']['number']|safe }} },
+            {label: 'Broken', value: {{ response['fail']['number']|safe }} },
+        ],
+        resize: true
+    });
+</script>
 {% endblock %}
