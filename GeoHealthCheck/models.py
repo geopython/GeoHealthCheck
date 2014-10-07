@@ -178,7 +178,7 @@ if __name__ == '__main__':
                                          res.url))
                 run_to_add = run_test_resource(res.resource_type,
                                                res.url)
-                run1 = Run(resource, run_to_add[1], run_to_add[2],
+                run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
                 print('Adding run')
                 DB.session.add(run1)
