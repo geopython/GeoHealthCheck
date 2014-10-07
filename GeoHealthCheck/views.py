@@ -66,13 +66,3 @@ def get_resource_by_id(identifier):
     """return one resource by identifier"""
     return models.Resource.query.filter_by(
         identifier=identifier).first_or_404()
-
-
-def add_resource(resource_type, url):
-    """add new resource"""
-    pass
-
-
-def delete_resource(identifier):
-    """remove resource"""
-    pass

@@ -173,23 +173,34 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'run':
             print('Running health check tests')
             from healthcheck import run_test_resource
-            for resource in Resource.query.all():  # run all tests
-                print('Testing %s %s' % (resource.resource_type,
-                                         resource.url))
-                run_to_add = run_test_resource(resource.resource_type,
-                                               resource.url)
-                run = Run(resource, run_to_add[1], run_to_add[2],
-                          run_to_add[3], run_to_add[4])
+            for res in Resource.query.all():  # run all tests
+                print('Testing %s %s' % (res.resource_type,
+                                         res.url))
+                run_to_add = run_test_resource(res.resource_type,
+                                               res.url)
+                run1 = Run(resource, run_to_add[1], run_to_add[2],
+                           run_to_add[3], run_to_add[4])
                 print('Adding run')
-                DB.session.add(run)
-            DB.session.commit()
+                DB.session.add(run1)
+            try:
+                DB.session.commit()
+            except Exception, err:
+                DB.session.rollback()
+                msg = str(err)
+                print(msg)
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
                   config.GHC_RETENTION_DAYS)
-            for run in Run.query.all():
+            for run1 in Run.query.all():
                 here_and_now = datetime.utcnow()
-                days_old = (here_and_now - run.checked_datetime).days
+                days_old = (here_and_now - run1.checked_datetime).days
                 if days_old > config.GHC_RETENTION_DAYS:
                     print('Run older than %d days. Deleting' % days_old)
-                    DB.session.delete(run)
-            DB.session.commit()
+                    DB.session.delete(run1)
+            try:
+                DB.session.commit()
+            except Exception, err:
+                DB.session.rollback()
+                msg = str(err)
+                print(msg)
+        elif sys.argv[1] == 'flush':
