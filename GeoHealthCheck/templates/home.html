@@ -53,15 +53,6 @@
                 </a>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="panel">
-                <div class="panel-footer">
-                    <div class="row">
-                            <div id="totals-chart" style="height: 120px;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
         {% if response['fail']['number'] > 0 %}
         <div class="col-lg-3 col-md-6">
             <div class="panel panel-red">
@@ -86,6 +77,15 @@
             </div>
         </div>
         {% endif %}
+        <div class="col-lg-3 col-md-6">
+            <div class="panel">
+                <div class="panel-footer">
+                    <div class="row">
+                            <div id="totals-chart" style="height: 120px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <h2 id="all-resources">Resources <a href="{{ url_for('export') }}"</h2><button type="button" class="btn btn-primary btn-xs"><i class="fa fa-download"></i> Export</button></a></h2>
     <div class="table-responsive">
