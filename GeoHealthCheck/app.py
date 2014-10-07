@@ -27,7 +27,7 @@
 #
 # =================================================================
 
-from flask import (abort, flash, Flask, g, make_response, redirect,
+from flask import (abort, flash, Flask, g, jsonify, redirect,
                    render_template, request, url_for)
 
 from flask.ext.login import (LoginManager, login_user, logout_user,
@@ -105,6 +105,20 @@ def home():
     response = views.list_resources(resource_type)
     return render_template('home.html', response=response)
 
+
+@APP.route('/export')
+def export():
+    """export resource list as JSON"""
+
+    response = views.list_resources()
+    json_dict = {'resources': []}
+    for r in response['resources']:
+       json_dict['resources'].append({
+           'resource_type': r.resource_type,
+           'title': r.title,
+           'url': r.url
+       })
+    return jsonify(json_dict)
 
 @APP.route('/settings')
 def settings():
@@ -208,6 +222,10 @@ def test(resource_identifier):
     return redirect(url_for('get_resource_by_id',
                     identifier=resource_identifier))
 
+@APP.route('/resource/<int:resource_identifier>/delete')
+@login_required
+def delete(resource_identifier):
+    pass
 
 @APP.route('/login', methods=['GET', 'POST'])
 def login():

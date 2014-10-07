@@ -10,9 +10,9 @@ virtualenv GeoHealthCheck && cd $_
 . bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
-pip install -r requirements.txt
-# download and install dependencies
-make setup
+pip install Paver
+# setup installation
+paver setup
 # setup local configuration
 vi instance/config.py  # edit SQLALCHEMY_DATABASE_URI
 # setup database
