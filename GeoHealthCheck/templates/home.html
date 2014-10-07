@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block extrahead%}
+<link href="{{ url_for('static', filename='lib/css/plugins/dataTables.bootstrap.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">Dashboard</h1>
@@ -73,9 +77,9 @@
         </div>
         {% endif %}
     </div>
-    <h2 id="all-resources" class="sub-header">Resources</h2>
+    <h2 id="all-resources">Resources</h2>
     <div class="table-responsive">
-        <table class="table table-striped table-bordered table-hover">
+        <table id="mytable" class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
                     <th>Type</th>
@@ -105,4 +109,15 @@
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block extrafoot %}
+<script src="{{ url_for('static', filename='lib/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
+    <script type="text/javascript">
+        $('#mytable').dataTable({
+            'paging': false,
+            'sDom': ''//false // no search box
+        });
+    </script>
 {% endblock %}

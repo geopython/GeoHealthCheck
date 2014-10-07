@@ -97,7 +97,13 @@ def context_processors():
 def home():
     """homepage"""
 
-    response = views.list_resources()
+    resource_type = None
+
+    if ('resource_type' in request.args and
+        request.args['resource_type'] in RESOURCE_TYPES.keys()):
+        resource_type = request.args['resource_type']
+
+    response = views.list_resources(resource_type)
     return render_template('home.html', response=response)
 
 

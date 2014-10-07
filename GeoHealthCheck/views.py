@@ -31,7 +31,7 @@ import models
 import util
 
 
-def list_resources():
+def list_resources(resource_type=None):
     """return all resources"""
 
     response = {
@@ -46,7 +46,12 @@ def list_resources():
         }
     }
 
-    response['resources'] = models.Resource.query.all()
+    if resource_type is not None:
+        response['resources'] = models.Resource.query.filter_by(
+            resource_type=resource_type).all()
+    else:
+        response['resources'] = models.Resource.query.all()
+
     response['total'] = len(response['resources'])
     for resource in response['resources']:
         if resource.last_run.success:
