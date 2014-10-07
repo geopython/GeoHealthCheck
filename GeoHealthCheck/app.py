@@ -110,7 +110,12 @@ def home():
 def export():
     """export resource list as JSON"""
 
-    response = views.list_resources()
+    resource_type = None
+
+    if request.args.get('resource_type') in RESOURCE_TYPES.keys():
+        resource_type = request.args['resource_type']
+
+    response = views.list_resources(resource_type)
     json_dict = {'resources': []}
     for r in response['resources']:
         json_dict['resources'].append({

@@ -87,7 +87,7 @@
             </div>
         </div>
     </div>
-    <h2 id="all-resources">Resources <a href="{{ url_for('export') }}"</h2><button type="button" class="btn btn-primary btn-xs"><i class="fa fa-download"></i> Export</button></a></h2>
+    <h2 id="all-resources">Resources <a href="{{ url_for('export', resource_type=request.args.get('resource_type')) }}"</h2><button type="button" class="btn btn-primary btn-xs"><i class="fa fa-download"></i> Export</button></a></h2>
     <div class="table-responsive">
         <table id="mytable" class="table table-striped table-bordered table-hover">
             <thead>
