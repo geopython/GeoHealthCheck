@@ -1,10 +1,5 @@
 {% extends "layout.html" %}
 
-{% block extrahead%}
-<link href="{{ url_for('static', filename='lib/css/plugins/dataTables.bootstrap.css') }}" rel="stylesheet">
-<link href="{{ url_for('static', filename='lib/css/plugins/morris.css') }}" rel="stylesheet">
-{% endblock %}
-
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">Dashboard</h1>
@@ -89,7 +84,7 @@
     </div>
     <h2 id="all-resources">Resources <a href="{{ url_for('export', resource_type=request.args.get('resource_type')) }}"</h2><button type="button" class="btn btn-primary btn-xs"><i class="fa fa-download"></i> Export</button></a></h2>
     <div class="table-responsive">
-        <table id="mytable" class="table table-striped table-bordered table-hover">
+        <table id="resources-table" class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
                     <th>Type</th>
@@ -122,12 +117,8 @@
 {% endblock %}
 
 {% block extrafoot %}
-<script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
-<script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
-<script src="{{ url_for('static', filename='lib/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
-<script src="{{ url_for('static', filename='lib/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
 <script type="text/javascript">
-    $('#mytable').dataTable({
+    $('#resources-table').dataTable({
         'paging': false,
         'sDom': ''//false // no search box
     });
