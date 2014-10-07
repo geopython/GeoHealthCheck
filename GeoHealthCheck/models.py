@@ -203,4 +203,3 @@ if __name__ == '__main__':
                 DB.session.rollback()
                 msg = str(err)
                 print(msg)
-        elif sys.argv[1] == 'flush':
