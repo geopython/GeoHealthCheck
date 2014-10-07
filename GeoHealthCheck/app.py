@@ -230,6 +230,7 @@ def login():
 @APP.route('/logout')
 def logout():
     logout_user()
+    flash('logged out', 'success')
     return redirect(url_for('home'))
 
 

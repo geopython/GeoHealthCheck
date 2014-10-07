@@ -99,7 +99,7 @@
                     {% if resource.last_run.success %}
                     <td><button type="button" class="btn btn-success btn-circle btn"><i class="fa fa-check"></i></button></td>
                     {% else %}
-                    <td><button type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
+                    <td><button title="{{ resource.last_run.message }}" type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
                     {% endif %}
                     <td>{{ resource.average_response_time|round(2) }}</td>
                     <td class="text-right"><button class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block">{{ resource.reliability|round(2) }}%</button></td>
