@@ -183,14 +183,13 @@ if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
-            import getpass
             print('Creating database objects')
             DB.create_all()
 
             print('Creating superuser account')
             username = raw_input('Enter your username: ').strip()
-            password1 = getpass.getpass('Enter your password: ').strip()
-            password2 = getpass.getpass('Enter your password again: ').strip()
+            password1 = raw_input('Enter your password: ').strip()
+            password2 = raw_input('Enter your password again: ').strip()
             if password1 != password2:
                 raise ValueError('Passwords must match')
             email1 = raw_input('Enter your email: ').strip()

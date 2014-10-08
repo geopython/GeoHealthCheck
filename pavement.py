@@ -94,6 +94,13 @@ def setup():
     info('before deploying the application. Alternatively, you can start a')
     info('development instance with "python GeoHealthCheck/app.py"')
 
+@task
+def create_secret_key():
+    """create secret key for SECRET_KEY in instance/config.py"""
+    info('Secret key: %s' % os.urandom(24))
+    info('Copy/paste this key to set the SECRET_KEY')
+    info('value in instance/config.py')
+
 
 @task
 def create():

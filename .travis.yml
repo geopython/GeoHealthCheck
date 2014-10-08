@@ -9,7 +9,7 @@ install:
   - paver setup
 
 script:
-  - python GeoHealthCheck/models.py create
+  - echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com | python GeoHealthCheck/models.py create
   - find . -name "*.py" | xargs pep8
 
 after-script:
