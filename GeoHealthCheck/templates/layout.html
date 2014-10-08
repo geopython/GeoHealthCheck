@@ -79,7 +79,7 @@
                             <ul class="nav nav-second-level">
                                 <li><a>History: {{ config['GHC_RETENTION_DAYS'] }} days</a></li>
                                 <li><a>Test Frequency: {{ config['GHC_RUN_FREQUENCY'] }}</a></li>
-                                <li><a>All Times UTC</a></li>
+                                <li><a id="clockbox"></a></li>
                             </ul>
                         </li>
                     </ul>
@@ -105,7 +105,11 @@
         <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
         <script type="text/javascript">
-            $("#flashed_message").fadeOut(3000);
+            function updateClock() {
+                $('#clockbox').html(new Date().toISOString().slice(0, 19)+'Z');
+            }
+            setInterval('updateClock()', 1000);
+            $('#flashed_message').fadeOut(3000);
         </script>
         {% block extrafoot %}
         {% endblock %}

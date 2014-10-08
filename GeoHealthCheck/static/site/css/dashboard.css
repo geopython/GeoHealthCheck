@@ -111,3 +111,15 @@ footer {
     width: 100%;
     background-color: black;
 }
+
+.totals-chart {
+    height: 120px;
+}
+
+.resource-map {
+    height: 200px;
+}
+
+.run-chart {
+    height: 250px;
+}

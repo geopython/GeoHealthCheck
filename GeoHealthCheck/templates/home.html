@@ -76,7 +76,7 @@
             <div class="panel">
                 <div class="panel-footer">
                     <div class="row">
-                            <div id="totals-chart" style="height: 120px;"></div>
+                            <div id="totals-chart" class="totals-chart"></div>
                     </div>
                 </div>
             </div>
@@ -107,7 +107,7 @@
                     <td><button title="{{ resource.last_run.message }}" type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
                     {% endif %}
                     <td>{{ resource.average_response_time|round(2) }}</td>
-                    <td class="text-right"><button class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block">{{ resource.reliability|round(2) }}%</button></td>
+                    <td class="text-right"><button class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block">{{ resource.reliability|round2 }}%</button></td>
                 </tr>
             {% endfor %}
             </tbody>

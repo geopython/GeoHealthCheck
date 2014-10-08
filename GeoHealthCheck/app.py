@@ -85,6 +85,15 @@ def cssize_reliability(value):
     return score
 
 
+@APP.template_filter('round2')
+def round2(value):
+    """rounds a number to 2 decimal places except for values of 0 or 100"""
+
+    if value in [0.0, 100.0]:
+        return int(value)
+    return round(value, 2)
+
+
 @APP.context_processor
 def context_processors():
     return {
