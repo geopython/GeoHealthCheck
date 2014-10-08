@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block extrahead %}
+<link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+{% endblock %}
+
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">{{ resource.title }}
@@ -40,10 +44,15 @@
             </tr>
         </table>
     </div>
-    <div>
+    <div class="row">
+        <div class="col-lg-2 col-md-2">
+            <div id="resource-map" style="width: 200px; height: 200px;"></div>
+        </div>
+        <div class="col-lg-4 col-md-4">
         <pre>
 {{ resource.snippet() }}
         </pre>
+        </div>
     </div>
     <div class="clearfix"></div>
     <div id="run-chart" style="height: 250px;"></div>
@@ -75,6 +84,7 @@
 </div>
 {% endblock %}
 {% block extrafoot %}
+<script type="text/javascript" src="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 <script type="text/javascript">
     {% if g.user.is_authenticated() %}
     $('#confirm-delete').click(function() {
@@ -119,5 +129,15 @@
             return '#00f';
         }
     });
+
+    var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 1);
+
+    map.addLayer(new L.TileLayer(
+        'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            subdomains: '1234',
+        }
+    ));
+    L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
 </script>
 {% endblock %}
