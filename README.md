@@ -13,8 +13,19 @@ cd GeoHealthCheck
 pip install Paver
 # setup installation
 paver setup
+# generate secret key
+paver create_secret_key
 # setup local configuration
-vi instance/config.py  # edit SQLALCHEMY_DATABASE_URI
+vi instance/config.py
+# edit:
+# - SQLALCHEMY_DATABASE_URI
+# - SECRET_KEY  # from paver create_secret_key
+# - GHC_RETENTION_DAYS
+# - GHC_RUN_FREQUENCY
+# - GHC_SELF_REGISTER
+# - GHC_ADMIN_EMAIL
+# - GHC_SITE_TITLE
+
 # setup database and superuser account
 paver create
 
