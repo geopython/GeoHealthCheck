@@ -94,6 +94,7 @@ def setup():
     info('before deploying the application. Alternatively, you can start a')
     info('development instance with "python GeoHealthCheck/app.py"')
 
+
 @task
 def create_secret_key():
     """create secret key for SECRET_KEY in instance/config.py"""
