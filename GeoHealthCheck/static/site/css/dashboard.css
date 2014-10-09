@@ -113,11 +113,15 @@ footer {
 }
 
 .totals-chart {
-    height: 120px;
+    height: 110px;
 }
 
 .resource-map {
     height: 200px;
+}
+
+#all-resources-map {
+    height: 135px;
 }
 
 .run-chart {
