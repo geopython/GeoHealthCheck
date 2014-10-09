@@ -13,7 +13,9 @@
         <link href="{{ url_for('static', filename='lib/font-awesome-4.1.0/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', filename='lib/css/plugins/dataTables.bootstrap.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='lib/css/plugins/morris.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='lib/css/plugins/metisMenu/metisMenu.min.css') }}" type="text/css" rel="stylesheet">
         <link href="{{ url_for('static', filename='site/css/dashboard.css') }}" rel="stylesheet" type="text/css">
+
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -43,14 +45,17 @@
                                 {% endfor %}
                             </ul>
                         </li>
-                        <li><a href="https://github.com/geopython/GeoHealthCheck">Help <i class="fa fa-question-circle fa-fw"></i></a></li>
-                        {% if not g.user.is_authenticated() %}
+                        {% if g.user.is_authenticated() %}
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ g.user.username }} <i class="fa fa-caret-down"></i></a>
+                            <ul class="dropdown-menu dropdown-messages">
+                                <li><a href="{{ url_for('logout', next=request.path) }}">Logout <i class="fa fa-sign-out fa-fw"></i></a></li>
+                            </ul>
+                        </li>
+                        {% else %}
                         <li><a href="{{ url_for('login', next=request.path) }}">Login<i class="fa fa-sign-in fa-fw"></i></a></li>
                         {% endif %}
-                        {% if g.user.is_authenticated() %}
-                        <li><a href="{{ url_for('settings') }}">{{ g.user.username }} <i class="fa fa-cog"></i></a></li>
-                        <li><a href="{{ url_for('logout') }}">Logout <i class="fa fa-sign-out fa-fw"></i></a></li>
-                        {% endif %}
+                        <li><a href="https://github.com/geopython/GeoHealthCheck">Help <i class="fa fa-question-circle fa-fw"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -60,16 +65,35 @@
                 <div class="col-sm-3 col-md-2 sidebar">
                     <ul class="nav nav-sidebar">
                         <li>
-                            <i class="fa fa-filter fa-fw"></i>Filter by Resource Type
+                            <i class="fa fa-filter fa-fw"></i><span>Resource Type <a href="{{ url_for('home') }}">Clear All</a></span>
                             <ul class="nav nav-second-level">
                                 {% for key, value in resource_types.iteritems() %}
+                                {% if key in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
                                 {% if request.args.get('resource_type') == key %}
                                 <li><a class="active" href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
                                 {% else%}
                                 <li><a href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
                                 {% endif %}
+                                {% endif %}
                                 {% endfor %}
-                                <li><a href="{{ url_for('home') }}">Clear</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul id="menu" class="nav nav-second-level">
+                                <li>
+                                    <a href="#" id="moreless">More <i class="fa fa-caret-down fa-fw"></i></a>
+                                    <ul class="nav nav-second-level">
+                                    {% for key, value in resource_types.iteritems() %}
+                                    {% if key not in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
+                                    {% if request.args.get('resource_type') == key %}
+                                    <li><a class="active" href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                    {% else%}
+                                    <li><a href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -104,12 +128,17 @@
         <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/js/plugins/metisMenu/metisMenu.min.js') }}"></script>
         <script type="text/javascript">
             function updateClock() {
                 $('#clockbox').html(new Date().toISOString().slice(0, 19)+'Z');
             }
             setInterval('updateClock()', 1000);
             $('#flashed_message').fadeOut(3000);
+            $('#menu').metisMenu();
+            $('#moreless').click(function() {
+                $(this).html($(this).html() == 'Less <i class="fa fa-caret-up fa-fw"></i>' ? 'More <i class="fa fa-caret-down fa-fw"></i>' : 'Less <i class="fa fa-caret-up fa-fw"></i>');
+            });
         </script>
         {% block extrafoot %}
         {% endblock %}
