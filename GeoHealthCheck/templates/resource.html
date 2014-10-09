@@ -1,9 +1,5 @@
 {% extends "layout.html" %}
 
-{% block extrahead %}
-<link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
-{% endblock %}
-
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">{{ resource.title }}
@@ -84,7 +80,6 @@
 </div>
 {% endblock %}
 {% block extrafoot %}
-<script type="text/javascript" src="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 <script type="text/javascript">
     {% if g.user.is_authenticated() %}
     $('#confirm-delete').click(function() {
