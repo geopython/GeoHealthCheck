@@ -61,5 +61,8 @@ def get_python_snippet(resource):
     elif resource.resource_type == 'OGC:WFS':
         lines.append('from owslib.wfs import WebFeatureService')
         lines.append('myows = WebFeatureService(\'%s\')' % resource.url)
+    elif resource.resource_type == 'OGC:SOS':
+        lines.append('from owslib.wfs import SensorObservationService')
+        lines.append('myows = SensorObservationService(\'%s\')' % resource.url)
     lines.append('myows.identification.title\n\'%s\'' % resource.title)
     return '\n>>> '.join(lines)

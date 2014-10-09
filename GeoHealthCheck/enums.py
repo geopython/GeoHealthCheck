@@ -53,6 +53,11 @@ RESOURCE_TYPES = {
         'versions': ['2.0.2'],
         'capabilities': '?service=CSW&version=2.0.2&request=GetCapabilities'
     },
+    'OGC:SOS': {
+        'label': 'Sensor Observation Service (SOS)',
+        'versions': ['1.0.0'],
+        'capabilities': '?service=SOS&version=1.0.0&request=GetCapabilities'
+    },
     'WWW:LINK': {
         'label': 'Web Address (URL)'
     }

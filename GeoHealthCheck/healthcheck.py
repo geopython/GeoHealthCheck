@@ -36,6 +36,7 @@ from owslib.wfs import WebFeatureService
 from owslib.wcs import WebCoverageService
 from owslib.wps import WebProcessingService
 from owslib.csw import CatalogueServiceWeb
+from owslib.sos import SensorObservationService
 
 from enums import RESOURCE_TYPES
 
@@ -65,6 +66,8 @@ def run_test_resource(resource_type, url):
             ows = WebProcessingService(url)
         elif resource_type == 'OGC:CSW':
             ows = CatalogueServiceWeb(url)
+        elif resource_type == 'OGC:SOS':
+            ows = SensorObservationService(url)
         elif resource_type == 'WWW:LINK':
             ows = urlopen(url)
             import re

@@ -241,7 +241,30 @@ def test(resource_identifier):
 @APP.route('/resource/<int:resource_identifier>/delete')
 @login_required
 def delete(resource_identifier):
-    pass
+    resource = Resource.query.filter_by(identifier=resource_identifier).first()
+    if g.user.role != 'admin' and g.user.username != resource.owner.username:
+        flash('you do not have access to delete this resource', 'danger')
+        return redirect('/resource/%s' % resource_identifier)
+
+    if resource is None:
+        flash('resource not found', 'danger')
+        return redirect(url_for('home'))
+
+    runs = Run.query.filter_by(resource_identifier=resource_identifier).all()
+
+    for run in runs:
+        DB.session.delete(run)
+
+    DB.session.delete(resource)
+
+    try:
+        DB.session.commit()
+        flash('Resource deleted', 'success')
+        return redirect(url_for('home'))
+    except Exception, err:
+        DB.session.rollback()
+        flash(str(err), 'danger')
+        return redirect(url_for(request.referrer))
 
 
 @APP.route('/login', methods=['GET', 'POST'])
