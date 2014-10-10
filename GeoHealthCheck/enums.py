@@ -58,7 +58,13 @@ RESOURCE_TYPES = {
         'versions': ['1.0.0'],
         'capabilities': '?service=SOS&version=1.0.0&request=GetCapabilities'
     },
+    'urn:geoss:waf': {
+        'label': 'Web Accessible Folder (WAF)'
+    },
     'WWW:LINK': {
         'label': 'Web Address (URL)'
+    },
+    'FTP': {
+        'label': 'File Transfer Protocol (FTP)'
     }
 }

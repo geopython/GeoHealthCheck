@@ -50,8 +50,12 @@ def get_python_snippet(resource):
     """return sample interactive session"""
 
     lines = []
-    lines.append('# testing via OWSLib')
-    lines.append('# test GetCapabilities')
+    if resource.resource_type.startswith('OGC:'):
+        lines.append('# testing via OWSLib')
+        lines.append('# test GetCapabilities')
+    else:
+        lines.append('# testing via urllib2 and urlparse')
+
     if resource.resource_type == 'OGC:WMS':
         lines.append('from owslib.wms import WebMapService')
         lines.append('myows = WebMapService(\'%s\')' % resource.url)
@@ -61,8 +65,32 @@ def get_python_snippet(resource):
     elif resource.resource_type == 'OGC:WFS':
         lines.append('from owslib.wfs import WebFeatureService')
         lines.append('myows = WebFeatureService(\'%s\')' % resource.url)
+    elif resource.resource_type == 'OGC:WPS':
+        lines.append('from owslib.wfs import WebProcessingService')
+        lines.append('myows = WebFeatureService(\'%s\')' % resource.url)
     elif resource.resource_type == 'OGC:SOS':
         lines.append('from owslib.wfs import SensorObservationService')
         lines.append('myows = SensorObservationService(\'%s\')' % resource.url)
-    lines.append('myows.identification.title\n\'%s\'' % resource.title)
+    elif resource.resource_type == 'WWW:LINK':
+        lines.append('import re')
+        lines.append('from urllib2 import urlopen')
+        lines.append('ows = urlopen(\'%s\')' % resource.url)
+        lines.append('try:')
+        lines.append('    title_re = re.compile("<title>(.+?)</title>")')
+        lines.append('    title = title_re.search(ows.read()).group(1)')
+    elif resource.resource_type == 'urn:geoss:waf':
+        lines.append('from urllib2 import urlopen')
+        lines.append('from urlparse import urlparse')
+        lines.append('ows = urlopen(\'%s\')' % resource.url)
+        lines.append('title = urlparse(url).hostname')
+    elif resource.resource_type == 'FTP':
+        lines.append('from urllib2 import urlopen')
+        lines.append('from urlparse import urlparse')
+        lines.append('ows = urlopen(\'%s\')' % resource.url)
+        lines.append('title = urlparse(url).hostname')
+
+    if resource.resource_type.startswith('OGC:'):
+        lines.append('myows.identification.title\n\'%s\'' % resource.title)
+    else:
+        lines.append('title\n\'%s\'' % resource.title)
     return '\n>>> '.join(lines)

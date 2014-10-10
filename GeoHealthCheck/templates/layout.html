@@ -135,7 +135,7 @@
                 $('#clockbox').html(new Date().toISOString().slice(0, 19)+'Z');
             }
             setInterval('updateClock()', 1000);
-            $('#flashed_message').fadeOut(3000);
+            $('#flashed_message').fadeOut(5000);
             $('#menu').metisMenu();
             $('#moreless').click(function() {
                 $(this).html($(this).html() == 'Less <i class="fa fa-caret-up fa-fw"></i>' ? 'More <i class="fa fa-caret-down fa-fw"></i>' : 'Less <i class="fa fa-caret-up fa-fw"></i>');

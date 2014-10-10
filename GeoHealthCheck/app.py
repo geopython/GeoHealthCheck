@@ -195,6 +195,10 @@ def add():
     [title, success, response_time, message, start_time] = run_test_resource(
         resource_type, url)
 
+    if not success:
+        flash(message, 'danger')
+        return redirect(url_for('add', resource_type=resource_type))
+
     resource_to_add = Resource(current_user, resource_type, title, url)
     run_to_add = Run(resource_to_add, success, response_time, message,
                      start_time)

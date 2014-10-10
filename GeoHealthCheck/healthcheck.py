@@ -30,6 +30,7 @@
 import datetime
 import logging
 from urllib2 import urlopen
+from urlparse import urlparse
 
 from owslib.wms import WebMapService
 from owslib.wfs import WebFeatureService
@@ -68,13 +69,22 @@ def run_test_resource(resource_type, url):
             ows = CatalogueServiceWeb(url)
         elif resource_type == 'OGC:SOS':
             ows = SensorObservationService(url)
-        elif resource_type == 'WWW:LINK':
+        elif resource_type in ['WWW:LINK', 'urn:geoss:waf']:
             ows = urlopen(url)
-            import re
-            title_re = re.compile("<title>(.+?)</title>")
-            title = title_re.search(ows.read()).group(1)
+            if resource_type == 'WWW:LINK':
+                import re
+                try:
+                    title_re = re.compile("<title>(.+?)</title>")
+                    title = title_re.search(ows.read()).group(1)
+                except:
+                    title = url
+            elif resource_type == 'urn:geoss:waf':
+                title = 'WAF for %s' % urlparse(url).hostname
+        elif resource_type == 'FTP':
+            ows = urlopen(url)
+            title = urlparse(url).hostname
         success = True
-        if resource_type != 'WWW:LINK':
+        if resource_type.startswith('OGC:'):
             title = ows.identification.title
     except Exception, err:
         msg = str(err)

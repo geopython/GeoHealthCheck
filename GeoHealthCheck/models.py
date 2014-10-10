@@ -103,8 +103,12 @@ class Resource(DB.Model):
 
     @property
     def get_capabilities_url(self):
-        return '%s%s' % (self.url,
-                         RESOURCE_TYPES[self.resource_type]['capabilities'])
+        if self.resource_type.startswith('OGC:'):
+            url = '%s%s' % (self.url,
+                            RESOURCE_TYPES[self.resource_type]['capabilities'])
+        else:
+            url = self.url
+        return url
 
     @property
     def last_run(self):
