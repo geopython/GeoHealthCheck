@@ -203,12 +203,6 @@ if __name__ == '__main__':
 
             user_to_add = User(username, password1, email1, role='admin')
             DB.session.add(user_to_add)
-            try:
-                DB.session.commit()
-            except Exception, err:
-                DB.session.rollback()
-                msg = str(err)
-                print(msg)
         elif sys.argv[1] == 'drop':
             print('Dropping database objects')
             DB.drop_all()
@@ -224,12 +218,6 @@ if __name__ == '__main__':
                            run_to_add[3], run_to_add[4])
                 print('Adding run')
                 DB.session.add(run1)
-            try:
-                DB.session.commit()
-            except Exception, err:
-                DB.session.rollback()
-                msg = str(err)
-                print(msg)
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
                   config.GHC_RETENTION_DAYS)
@@ -239,9 +227,10 @@ if __name__ == '__main__':
                 if days_old > config.GHC_RETENTION_DAYS:
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run1)
-            try:
-                DB.session.commit()
-            except Exception, err:
-                DB.session.rollback()
-                msg = str(err)
-                print(msg)
+        # commit or rollback
+        try:
+            DB.session.commit()
+        except Exception, err:
+            DB.session.rollback()
+            msg = str(err)
+            print(msg)
