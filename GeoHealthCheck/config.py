@@ -30,6 +30,8 @@
 DEBUG = False
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+
+# Replace None with 'your secret key string' in quotes
 SECRET_KEY = None
 
 GHC_RETENTION_DAYS = 30
