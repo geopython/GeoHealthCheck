@@ -37,5 +37,16 @@ SECRET_KEY = None
 GHC_RETENTION_DAYS = 30
 GHC_RUN_FREQUENCY = 'hourly'
 GHC_SELF_REGISTER = False
+GHC_NOTIFICATIONS = False
 GHC_ADMIN_EMAIL = 'you@example.com'
 GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
+GHC_SITE_URL = 'http://host'
+
+GHC_SMTP = {
+    'server': None,
+    'port': None,
+    'tls': False,
+    'ssl': False,
+    'username': None,
+    'password': None
+}

@@ -1,0 +1,19 @@
+Subject: {{ result }}: {{ resource.title }}
+
+
+Hi: This is an automated message from the {{ config.GHC_SITE_TITLE }} service.
+
+Resource: {{ resource.title }}
+Resource type: {{ resource.resource_type }}
+Resource URL: {{ resource.url }}
+
+Details:
+
+Date: {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} 
+
+Message: {{ resource.last_run.message }}
+
+Details: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
+
+{{ config.GHC_SITE_TITLE }}
+{{ config.GHC_SITE_URL }}

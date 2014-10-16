@@ -38,7 +38,7 @@ from sqlalchemy import func
 
 from enums import RESOURCE_TYPES
 from init import DB
-import config
+from notifications import notify
 import util
 
 LOGGER = logging.getLogger(__name__)
@@ -185,6 +185,10 @@ class User(DB.Model):
 
 if __name__ == '__main__':
     import sys
+    from flask import Flask
+    APP = Flask(__name__)
+    APP.config.from_pyfile('config.py')
+    APP.config.from_pyfile('../instance/config.py')
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
             print('Creating database objects')
@@ -218,13 +222,17 @@ if __name__ == '__main__':
                            run_to_add[3], run_to_add[4])
                 print('Adding run')
                 DB.session.add(run1)
+
+                if APP.config['GHC_NOTIFICATIONS']:
+                    notify(APP.config, res, run1)
+
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
-                  config.GHC_RETENTION_DAYS)
+                  APP.config['GHC_RETENTION_DAYS'])
             for run1 in Run.query.all():
                 here_and_now = datetime.utcnow()
                 days_old = (here_and_now - run1.checked_datetime).days
-                if days_old > config.GHC_RETENTION_DAYS:
+                if days_old > APP.config['GHC_RETENTION_DAYS']:
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run1)
         # commit or rollback
