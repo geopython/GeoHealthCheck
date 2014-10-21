@@ -27,6 +27,9 @@
 #
 # =================================================================
 
+import os
+from jinja2 import Environment, FileSystemLoader
+
 
 def average(values):
     """calculates average from a list"""
@@ -94,3 +97,15 @@ def get_python_snippet(resource):
     else:
         lines.append('title\n\'%s\'' % resource.title)
     return '\n>>> '.join(lines)
+
+
+def render_template2(template, template_vars):
+    """convenience function to render template in a non-Flask context"""
+
+    loader_dir = os.path.join(os.path.dirname(__file__), 'templates')
+    loader = FileSystemLoader(loader_dir)
+
+    env = Environment(loader=template_loader)
+    template = env.get_template(template)
+
+    return template.render(template_vars)

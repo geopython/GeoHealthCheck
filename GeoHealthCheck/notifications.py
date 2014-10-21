@@ -30,17 +30,16 @@
 import logging
 import smtplib
 
-import jinja2
+from util import render_template2
 
 LOGGER = logging.getLogger(__name__)
 
 
-def notify(config, resource, run):
+def notify(config, resource, run, last_run_success):
     """execute a notification"""
 
     status_changed = False
 
-    last_run_success = resource.last_run.success
     this_run_success = run.success
 
     if last_run_success and not this_run_success:
@@ -58,14 +57,6 @@ def notify(config, resource, run):
     if not status_changed:
         return
 
-    template_loader = jinja2.FileSystemLoader('GeoHealthCheck/templates')
-    template_env = jinja2.Environment(loader=template_loader)
-    template = template_env.get_template('notification_email.txt')
-
-    fromaddr = '%s <%s>' % (config['GHC_SITE_TITLE'],
-                            config['GHC_ADMIN_EMAIL'])
-    toaddrs = config['GHC_ADMIN_EMAIL']
-
     template_vars = {
         'result': result,
         'config': config,
@@ -73,7 +64,11 @@ def notify(config, resource, run):
         'run': run
     }
 
-    msg = template.render(template_vars)
+    msg = render_template2('notifications_email.txt', template_vars)
+
+    fromaddr = '%s <%s>' % (config['GHC_SITE_TITLE'],
+                            config['GHC_ADMIN_EMAIL'])
+    toaddrs = config['GHC_ADMIN_EMAIL']
 
     server = smtplib.SMTP('%s:%s' % (config['GHC_SMTP']['server'],
                                      config['GHC_SMTP']['port']))

@@ -220,11 +220,14 @@ if __name__ == '__main__':
                                                res.url)
                 run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
+
+                last_run_success = res.last_run.success
+
                 print('Adding run')
                 DB.session.add(run1)
 
                 if APP.config['GHC_NOTIFICATIONS']:
-                    notify(APP.config, res, run1)
+                    notify(APP.config, res, run1, last_run_success)
 
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
