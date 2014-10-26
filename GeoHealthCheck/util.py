@@ -105,7 +105,7 @@ def render_template2(template, template_vars):
     loader_dir = os.path.join(os.path.dirname(__file__), 'templates')
     loader = FileSystemLoader(loader_dir)
 
-    env = Environment(loader=template_loader)
-    template = env.get_template(template)
+    env = Environment(loader=loader)
+    template_obj = env.get_template(template)
 
-    return template.render(template_vars)
+    return template_obj.render(template_vars)

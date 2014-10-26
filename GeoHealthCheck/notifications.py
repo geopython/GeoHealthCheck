@@ -64,7 +64,7 @@ def notify(config, resource, run, last_run_success):
         'run': run
     }
 
-    msg = render_template2('notifications_email.txt', template_vars)
+    msg = render_template2('notification_email.txt', template_vars)
 
     fromaddr = '%s <%s>' % (config['GHC_SITE_TITLE'],
                             config['GHC_ADMIN_EMAIL'])
