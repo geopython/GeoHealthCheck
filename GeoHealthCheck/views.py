@@ -34,6 +34,8 @@ import util
 def list_resources(resource_type=None):
     """return all resources"""
 
+    reliability_values = []
+
     response = {
         'total': 0,
         'success': {
@@ -43,7 +45,8 @@ def list_resources(resource_type=None):
         'fail': {
             'number': 0,
             'percentage': 0
-        }
+        },
+        'reliability': 0
     }
 
     if resource_type is not None:
@@ -58,11 +61,13 @@ def list_resources(resource_type=None):
             response['success']['number'] += 1
         else:
             response['fail']['number'] += 1
+        reliability_values.append(resource.reliability)
 
     response['success']['percentage'] = util.percentage(
         response['success']['number'], response['total'])
     response['fail']['percentage'] = util.percentage(
         response['fail']['number'], response['total'])
+    response['reliability'] = util.average(reliability_values)
 
     return response
 

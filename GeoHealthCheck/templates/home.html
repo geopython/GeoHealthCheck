@@ -48,6 +48,26 @@
                 </a>
             </div>
         </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-{{ response['reliability']|cssize_reliability2 }}">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-link fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{ response['reliability']|round2 }}%</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-right">Reliable</span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
         {% if response['fail']['number'] > 0 %}
         <div class="col-lg-3 col-md-6">
             <div class="panel panel-red">
@@ -71,6 +91,7 @@
         </div>
         {% endif %}
         <div class="col-lg-3 col-md-6" id="all-resources-map"></div>
+<!--
         <div class="col-lg-3 col-md-6">
             <div class="panel">
                 <div class="panel-footer">
@@ -80,6 +101,7 @@
                 </div>
             </div>
         </div>
+-->
     </div>
     <h2 id="all-resources">Resources <a class="btn btn-primary btn-xs" href="{{ url_for('export', resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> Export</a></h2>
     <div class="table-responsive">
@@ -121,15 +143,15 @@
         'paging': false,
         'sDom': ''//false // no search box
     });
-    Morris.Donut({
-        element: 'totals-chart',
-        colors: ['#5CB85C', '#D9534F'],
-        data: [
-            {label: 'Working', value: {{ response['success']['number']|safe }} },
-            {label: 'Broken', value: {{ response['fail']['number']|safe }} },
-        ],
-        resize: true
-    });
+//    Morris.Donut({
+//        element: 'totals-chart',
+//        colors: ['#5CB85C', '#D9534F'],
+//        data: [
+//            {label: 'Working', value: {{ response['success']['number']|safe }} },
+//            {label: 'Broken', value: {{ response['fail']['number']|safe }} },
+//        ],
+//        resize: true
+//    });
 
     var map = L.map('all-resources-map').setView([42.3626, -71.0843], 1);
 

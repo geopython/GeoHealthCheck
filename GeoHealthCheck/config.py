@@ -50,3 +50,18 @@ GHC_SMTP = {
     'username': None,
     'password': None
 }
+
+GHC_RELIABILITY_MATRIX = {
+    'red': {
+        'min': 0,
+        'max': 49
+    },
+    'orange': {
+        'min': 50,
+        'max': 79
+    },
+    'green': {
+        'min': 80,
+        'max': 100
+    }
+}

@@ -34,7 +34,10 @@ from jinja2 import Environment, FileSystemLoader
 def average(values):
     """calculates average from a list"""
 
-    return float(sum(values) / len(values))
+    try:
+        return float(sum(values) / len(values))
+    except ZeroDivisionError:
+        return 0
 
 
 def percentage(number, total):

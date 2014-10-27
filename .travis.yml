@@ -10,7 +10,8 @@ install:
 
 script:
   - echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
-  - find . -name "*.py" | xargs pep8
+  - find . -not -path "docs" -name "*.py" | xargs pep8
+  - cd docs && make html
 
 after-script:
   - python GeoHealthCheck/models.py drop

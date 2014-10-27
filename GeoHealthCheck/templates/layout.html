@@ -121,7 +121,7 @@
                 {% endblock %}
             </div>
         </div>
-        <footer><div class="footer text-center">Powered by <a href="https://github.com/geopython/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
+        <footer><div class="footer text-center">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
         <script src="{{ url_for('static', filename='lib/js/jquery-1.11.0.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
@@ -135,7 +135,7 @@
                 $('#clockbox').html(new Date().toISOString().slice(0, 19)+'Z');
             }
             setInterval('updateClock()', 1000);
-            $('#flashed_message').fadeOut(5000);
+            $('#flashed_message').fadeOut(7000);
             $('#menu').metisMenu();
             $('#moreless').click(function() {
                 $(this).html($(this).html() == 'Less <i class="fa fa-caret-up fa-fw"></i>' ? 'More <i class="fa fa-caret-down fa-fw"></i>' : 'Less <i class="fa fa-caret-up fa-fw"></i>');

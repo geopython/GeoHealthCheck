@@ -69,20 +69,38 @@ def before_request():
 
 
 @APP.template_filter('cssize_reliability')
-def cssize_reliability(value):
-    """returns CSS class snippet based on score"""
+def cssize_reliability(value, css_type=None):
+    """returns CSS button class snippet based on score"""
 
     number = int(value)
 
-    if 0 <= number <= 49:
+    if (APP.config['GHC_RELIABILITY_MATRIX']['red']['min'] <= number <=
+        APP.config['GHC_RELIABILITY_MATRIX']['red']['max']):
         score = 'danger'
-    elif 50 <= number <= 79:
+        panel = 'red'
+    elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
+          APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
-    elif 80 <= number <= 100:
+        panel = 'orange'
+    elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
+          APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
+        panel = 'green'
     else:  # should never really get here
         score = 'info'
-    return score
+        panel = 'blue'
+
+    if css_type is not None and css_type == 'panel':
+        return panel
+    else:
+        return score
+
+
+@APP.template_filter('cssize_reliability2')
+def cssize_reliability2(value):
+    """returns CSS panel class snippet based on score"""
+
+    return cssize_reliability(value, 'panel')
 
 
 @APP.template_filter('round2')
@@ -154,7 +172,7 @@ def register():
     if not APP.config['GHC_SELF_REGISTER']:
         flash('This site is not configured for self-registration.  '
               'Please contact %s ' % APP.config['GHC_ADMIN_EMAIL'], 'warning')
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     if request.method == 'GET':
         return render_template('register.html')
     user = User(request.form['username'],
