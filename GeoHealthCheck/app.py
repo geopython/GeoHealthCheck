@@ -74,8 +74,8 @@ def cssize_reliability(value, css_type=None):
 
     number = int(value)
 
-    if (APP.config['GHC_RELIABILITY_MATRIX']['red']['min'] <= number <=
-        APP.config['GHC_RELIABILITY_MATRIX']['red']['max']):
+    if APP.config['GHC_RELIABILITY_MATRIX']['red']['min'] <= number <= \
+       APP.config['GHC_RELIABILITY_MATRIX']['red']['max']:
         score = 'danger'
         panel = 'red'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
