@@ -84,14 +84,16 @@ def setup():
         zipfile_obj.extractall(options.base.static_lib)
 
         for zf_mem in skin_dirs:
-            src_loc = path(options.base.static_lib / 'sb-admin-2' / zf_mem)
+            src_loc = path(options.base.static_lib /
+                           'startbootstrap-sb-admin-2-gh-pages' / zf_mem)
             dest_loc = path(options.base.static_lib / zf_mem)
             if not os.path.exists(dest_loc):
                 src_loc.move(dest_loc)
             else:
                 info('directory already exists.  Skipping')
 
-        shutil.rmtree(path(options.base.static_lib / 'sb-admin-2'))
+        shutil.rmtree(path(options.base.static_lib /
+                           'startbootstrap-sb-admin-2-gh-pages'))
 
     # message user
     info('GeoHealthCheck is now built. Edit settings in %s' % config_file)
