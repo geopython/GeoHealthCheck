@@ -242,20 +242,12 @@ def test(resource_identifier):
 
     [title, success, response_time, message, start_time] = run_test_resource(
         resource.resource_type, resource.url)
-    run_to_add = Run(resource, success, response_time, message, start_time)
 
     if message not in ['OK', None, 'None']:
         flash('ERROR: %s' % message, 'danger')
     else:
         flash('Resource tested successfully', 'success')
 
-    DB.session.add(run_to_add)
-
-    try:
-        DB.session.commit()
-    except Exception, err:
-        DB.session.rollback()
-        flash(str(err), 'danger')
     return redirect(url_for('get_resource_by_id',
                     identifier=resource_identifier))
 
