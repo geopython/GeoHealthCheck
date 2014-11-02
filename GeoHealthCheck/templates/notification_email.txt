@@ -1,7 +1,7 @@
 Subject: {{ result }}: {{ resource.title }}
 
 
-Hi: This is an automated message from the {{ config.GHC_SITE_TITLE }} service.
+Hi: this is an automated message from the {{ config.GHC_SITE_TITLE }} service.
 
 Resource: {{ resource.title }}
 Resource type: {{ resource.resource_type }}

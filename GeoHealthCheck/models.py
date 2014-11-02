@@ -214,14 +214,12 @@ if __name__ == '__main__':
             print('Running health check tests')
             from healthcheck import run_test_resource
             for res in Resource.query.all():  # run all tests
-                print('Testing %s %s' % (res.resource_type,
-                                         res.url))
-                run_to_add = run_test_resource(res.resource_type,
-                                               res.url)
+                print('Testing %s %s' % (res.resource_type, res.url))
+                last_run_success = res.last_run.success
+                run_to_add = run_test_resource(res.resource_type, res.url)
+
                 run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
-
-                last_run_success = res.last_run.success
 
                 print('Adding run')
                 DB.session.add(run1)
