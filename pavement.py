@@ -123,6 +123,7 @@ def create_wsgi():
         ff.write('sys.path.insert(0, \'%s\')\n' % BASEDIR)
         ff.write('from GeoHealthCheck.app import APP as application')
 
+
 @task
 def clean():
     """clean environment"""
