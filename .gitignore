@@ -56,3 +56,4 @@ docs/_build/
 instance
 tmp/
 GeoHealthCheck/static/lib
+GeoHealthCheck.wsgi

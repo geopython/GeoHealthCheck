@@ -116,6 +116,14 @@ def create():
 
 
 @task
+def create_wsgi():
+    """create WSGI wrapper"""
+    with open('%s%sGeoHealthCheck.wsgi' % (BASEDIR, os.sep), 'w') as ff:
+        ff.write('import sys\n')
+        ff.write('sys.path.insert(0, \'%s\')\n' % BASEDIR)
+        ff.write('from GeoHealthCheck.app import APP as application')
+
+@task
 def clean():
     """clean environment"""
 
