@@ -49,11 +49,11 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ g.user.username }} <i class="fa fa-caret-down"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
-                                <li><a href="{{ url_for('logout', next=request.path) }}">Logout <i class="fa fa-sign-out fa-fw"></i></a></li>
+                                <li><a href="{{ url_for('logout', next=request.script_root+request.path) }}">Logout <i class="fa fa-sign-out fa-fw"></i></a></li>
                             </ul>
                         </li>
                         {% else %}
-                        <li><a href="{{ url_for('login', next=request.path) }}">Login<i class="fa fa-sign-in fa-fw"></i></a></li>
+                        <li><a href="{{ url_for('login', next=request.script_root+request.path) }}">Login<i class="fa fa-sign-in fa-fw"></i></a></li>
                         {% endif %}
                         <li><a href="https://github.com/geopython/GeoHealthCheck">Help <i class="fa fa-question-circle fa-fw"></i></a></li>
                     </ul>
