@@ -1,4 +1,4 @@
-Subject: {{ result }}: {{ resource.title }}
+Subject: [{{ config.GHC_SITE_TITLE }}] {{ result }}: {{ resource.title }}
 
 
 Hi: this is an automated message from the {{ config.GHC_SITE_TITLE }} service.
