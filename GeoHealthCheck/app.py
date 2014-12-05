@@ -82,7 +82,7 @@ def cssize_reliability(value, css_type=None):
     elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
           APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
-        panel = 'orange'
+        panel = 'yellow'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
           APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
