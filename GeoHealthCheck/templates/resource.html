@@ -21,8 +21,13 @@
                 <td>{{ resource.owner.username }}</td>
             </tr>
             <tr>
-                <th>Name</th>
-                <td>{{ resource.title }}</td>
+                <th>
+                    Name
+                    {% if g.user.is_authenticated() %} 
+                    <button id="title_edit" type="button" class="btn btn-default btn-sm">Edit</button>
+                    {% endif %}
+                </th>
+                <td id="resource_title">{{ resource.title }}</td>
             </tr>
             <tr>
                 <th>URL</th>
@@ -94,6 +99,31 @@
         'ordering': false,
         'searching': false,
         'lengthChange': false
+    });
+
+    $('#title_edit').click(function() {
+        var title_value = $('#resource_title').html();
+        // catch/stop recursive display
+        if (title_value.search('<input') > -1) {
+            return false;
+        }
+        var html_text = '<input type="text" id="input_resource_title" name="resource_title_value" value="' + title_value + '"/>';
+        html_text += '<button id="title_save" type="button" class="btn btn-default btn-xs">Save</button>';
+        html_text += '<button id="title_cancel" type="button" class="btn btn-default btn-xs">Cancel</button>';
+
+        $('#resource_title').html(html_text);
+
+        $('#title_cancel').click(function() {
+           $('#resource_title').html(title_value);
+           return false;
+        });
+
+        $('#title_save').click(function() {
+           var new_title = $('input[name="resource_title_value"]').val();
+           $('#resource_title').html(new_title);
+           // TODO: save to Flask/SQLAlchemy
+           return false;
+        });
     });
 
     var run_data = {{ resource.runs_to_json()|safe }};
