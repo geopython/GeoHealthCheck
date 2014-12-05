@@ -161,7 +161,6 @@
             subdomains: '1234',
         }
     ));
-    L.marker([42.3626, -71.0843]).addTo(map)
     {% for resource in response['resources'] %}
     L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map).bindPopup('{{ resource.title }}');
     {% endfor %}
