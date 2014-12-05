@@ -12,7 +12,6 @@
         <link href="{{ url_for('static', filename='lib/font-awesome-4.1.0/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', filename='lib/css/plugins/dataTables.bootstrap.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='lib/css/plugins/morris.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='lib/css/plugins/metisMenu/metisMenu.min.css') }}" type="text/css" rel="stylesheet">
         <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
         <link href="{{ url_for('static', filename='site/css/dashboard.css') }}" rel="stylesheet" type="text/css">
 
@@ -68,32 +67,12 @@
                             <i class="fa fa-filter fa-fw"></i><span>Resource Type <a href="{{ url_for('home') }}">Clear All</a></span>
                             <ul class="nav nav-second-level">
                                 {% for rt in resource_types_counts %}
-                                {% if rt[0] in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
                                 {% if request.args.get('resource_type') == rt[0] %}
                                 <li><a class="active" href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
-                                {% else%}
+                                {% else %}
                                 <li><a href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                 {% endif %}
-                                {% endif %}
                                 {% endfor %}
-                            </ul>
-                        </li>
-                        <li>
-                            <ul id="menu" class="nav nav-second-level">
-                                <li>
-                                    <a href="#" id="moreless">More <i class="fa fa-caret-down fa-fw"></i></a>
-                                    <ul class="nav nav-second-level">
-                                    {% for rt in resource_types_counts %}
-                                    {% if rt[0] not in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
-                                    {% if request.args.get('resource_type') == rt[0] %}
-                                    <li><a class="active" href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
-                                    {% else%}
-                                    <li><a href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
-                                    {% endif %}
-                                    {% endif %}
-                                    {% endfor %}
-                                    </ul>
-                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -128,7 +107,6 @@
         <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/js/plugins/metisMenu/metisMenu.min.js') }}"></script>
         <script type="text/javascript" src="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
         <script type="text/javascript">
             function updateClock() {
@@ -136,10 +114,6 @@
             }
             setInterval('updateClock()', 1000);
             $('#flashed_message').fadeOut(7000);
-            $('#menu').metisMenu();
-            $('#moreless').click(function() {
-                $(this).html($(this).html() == 'Less <i class="fa fa-caret-up fa-fw"></i>' ? 'More <i class="fa fa-caret-down fa-fw"></i>' : 'Less <i class="fa fa-caret-up fa-fw"></i>');
-            });
         </script>
         {% block extrafoot %}
         {% endblock %}
