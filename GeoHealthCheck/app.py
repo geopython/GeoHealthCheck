@@ -57,7 +57,8 @@ def load_user(identifier):
 @LOGIN_MANAGER.unauthorized_handler
 def unauthorized_callback():
     if request.query_string:
-        url = '%s%s?%s' % (request.script_root, request.path, request.query_string)
+        url = '%s%s?%s' % (request.script_root, request.path,
+                           request.query_string)
     else:
         url = '%s%s' % (request.script_root, request.path)
     return redirect(url_for('login', next=url))
