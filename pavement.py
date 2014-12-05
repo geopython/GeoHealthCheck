@@ -67,9 +67,9 @@ def setup():
     sh('pip install -r requirements.txt')
 
     # split URL to keep pep8 happy
-    skin = os.path.join('https://github.com',
-                        'IronSummitMedia/startbootstrap-sb-admin-2',
-                        'archive/gh-pages.zip')
+    skin = '/'.join(['https://github.com',
+                     'IronSummitMedia/startbootstrap-sb-admin-2',
+                    'archive/gh-pages.zip'])
 
     skin_dirs = ['css', 'font-awesome-4.1.0', 'fonts', 'js', 'less']
     need_to_fetch = False
