@@ -76,3 +76,11 @@ def get_resource_by_id(identifier):
     """return one resource by identifier"""
     return models.Resource.query.filter_by(
         identifier=identifier).first_or_404()
+
+
+def get_resource_types_counts():
+    """return frequency counts of registered resource types"""
+
+    #mrt = models.Resource.resource_type
+    #return models.DB.session.query(mrt, func.count(mrt)).group_by(mrt)
+    return models.get_resource_types_counts()

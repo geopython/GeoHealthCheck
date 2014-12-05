@@ -67,12 +67,12 @@
                         <li>
                             <i class="fa fa-filter fa-fw"></i><span>Resource Type <a href="{{ url_for('home') }}">Clear All</a></span>
                             <ul class="nav nav-second-level">
-                                {% for key, value in resource_types.iteritems() %}
-                                {% if key in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
-                                {% if request.args.get('resource_type') == key %}
-                                <li><a class="active" href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                {% for rt in resource_types_counts %}
+                                {% if rt[0] in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
+                                {% if request.args.get('resource_type') == rt[0] %}
+                                <li><a class="active" href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                 {% else%}
-                                <li><a href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                <li><a href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                 {% endif %}
                                 {% endif %}
                                 {% endfor %}
@@ -83,12 +83,12 @@
                                 <li>
                                     <a href="#" id="moreless">More <i class="fa fa-caret-down fa-fw"></i></a>
                                     <ul class="nav nav-second-level">
-                                    {% for key, value in resource_types.iteritems() %}
-                                    {% if key not in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
-                                    {% if request.args.get('resource_type') == key %}
-                                    <li><a class="active" href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                    {% for rt in resource_types_counts %}
+                                    {% if rt[0] not in ['OGC:CSW', 'OGC:WMS', 'OGC:WFS'] %}
+                                    {% if request.args.get('resource_type') == rt[0] %}
+                                    <li><a class="active" href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                     {% else%}
-                                    <li><a href="{{ url_for('home', resource_type=key) }}">{{ value['label'] }}</a></li>
+                                    <li><a href="{{ url_for('home', resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                     {% endif %}
                                     {% endif %}
                                     {% endfor %}

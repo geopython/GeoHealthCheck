@@ -183,6 +183,13 @@ class User(DB.Model):
         return '<User %r>' % (self.username)
 
 
+def get_resource_types_counts():
+    """return frequency counts of registered resource types"""
+
+    mrt = Resource.resource_type
+    return DB.session.query(mrt, func.count(mrt)).group_by(mrt)
+
+
 if __name__ == '__main__':
     import sys
     from flask import Flask

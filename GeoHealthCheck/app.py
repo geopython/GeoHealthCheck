@@ -117,6 +117,7 @@ def context_processors():
     return {
         'app_version': __version__,
         'resource_types': RESOURCE_TYPES,
+        'resource_types_counts': views.get_resource_types_counts(),
     }
 
 
