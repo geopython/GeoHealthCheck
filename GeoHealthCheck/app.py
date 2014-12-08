@@ -115,6 +115,7 @@ def round2(value):
 
 @APP.context_processor
 def context_processors():
+    """global context processors for templates"""
     return {
         'app_version': __version__,
         'resource_types': RESOURCE_TYPES,
@@ -171,6 +172,7 @@ def get_resource_by_id(identifier):
 
 @APP.route('/register', methods=['GET', 'POST'])
 def register():
+    """register a new user"""
     if not APP.config['GHC_SELF_REGISTER']:
         flash('This site is not configured for self-registration.  '
               'Please contact %s ' % APP.config['GHC_ADMIN_EMAIL'], 'warning')
@@ -194,6 +196,7 @@ def register():
 @APP.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
+    """add resource"""
     if not g.user.is_authenticated():
         return render_template('add.html')
     if request.method == 'GET':
@@ -234,9 +237,32 @@ def add():
     return redirect(url_for('home'))
 
 
+@APP.route('/resource/<int:resource_identifier>/update', methods=['POST'])
+@login_required
+def update(resource_identifier):
+    """update a resource"""
+
+    update_counter = 0
+
+    resource_identifier_dict = request.get_json()
+
+    resource = Resource.query.filter_by(identifier=resource_identifier).first()
+
+    for key, value in resource_identifier_dict.iteritems():
+        if getattr(resource, key) != resource_identifier_dict[key]:
+            setattr(resource, key, resource_identifier_dict[key])
+            update_counter += 1
+
+    if update_counter < 0:
+        DB.session.commit()
+
+    return str({'status': 'success'})
+
+
 @APP.route('/resource/<int:resource_identifier>/test')
 @login_required
 def test(resource_identifier):
+    """test a resource"""
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if resource is None:
         flash('resource not found', 'danger')
@@ -257,6 +283,7 @@ def test(resource_identifier):
 @APP.route('/resource/<int:resource_identifier>/delete')
 @login_required
 def delete(resource_identifier):
+    """delete a resource"""
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if g.user.role != 'admin' and g.user.username != resource.owner.username:
         flash('you do not have access to delete this resource', 'danger')
@@ -285,6 +312,7 @@ def delete(resource_identifier):
 
 @APP.route('/login', methods=['GET', 'POST'])
 def login():
+    """login"""
     if request.method == 'GET':
         return render_template('login.html')
     username = request.form['username']
@@ -303,6 +331,7 @@ def login():
 
 @APP.route('/logout')
 def logout():
+    """logout"""
     logout_user()
     flash('logged out', 'success')
     if request.referrer:

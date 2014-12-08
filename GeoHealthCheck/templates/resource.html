@@ -23,7 +23,7 @@
             <tr>
                 <th>
                     Name
-                    {% if g.user.is_authenticated() %} 
+                    {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
                     <button id="title_edit" type="button" class="btn btn-default btn-sm">Edit</button>
                     {% endif %}
                 </th>
@@ -114,15 +114,25 @@
         $('#resource_title').html(html_text);
 
         $('#title_cancel').click(function() {
-           $('#resource_title').html(title_value);
-           return false;
+            $('#resource_title').html(title_value);
+            return false;
         });
 
         $('#title_save').click(function() {
-           var new_title = $('input[name="resource_title_value"]').val();
-           $('#resource_title').html(new_title);
-           // TODO: save to Flask/SQLAlchemy
-           return false;
+            var new_title = $('input[name="resource_title_value"]').val();
+            $('#resource_title').html(new_title);
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
+                data: JSON.stringify({ title: new_title }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data){alert(data);},
+                failure: function(errMsg) {
+                    alert(errMsg);
+                }
+            });
+            return false;
         });
     });
 
