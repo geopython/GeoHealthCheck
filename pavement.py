@@ -69,13 +69,15 @@ def setup():
     # split URL to keep pep8 happy
     skin = '/'.join(['https://github.com',
                      'IronSummitMedia/startbootstrap-sb-admin-2',
-                    'archive/gh-pages.zip'])
+                     'archive/v1.0.3.zip'])
 
-    skin_dirs = ['css', 'font-awesome-4.1.0', 'fonts', 'js', 'less']
+    skin_dirs = ['dist', 'bower_components']
     need_to_fetch = False
 
     for skin_dir in skin_dirs:
-        if not os.path.exists(skin_dir):
+        skin_dir_path = os.sep.join(
+            ['startbootstrap-sb-admin-2-1.0.3', skin_dir])
+        if not os.path.exists(skin_dir_path):
             need_to_fetch = True
 
     if need_to_fetch:
@@ -85,7 +87,7 @@ def setup():
 
         for zf_mem in skin_dirs:
             src_loc = path(options.base.static_lib /
-                           'startbootstrap-sb-admin-2-gh-pages' / zf_mem)
+                           'startbootstrap-sb-admin-2-1.0.3' / zf_mem)
             dest_loc = path(options.base.static_lib / zf_mem)
             if not os.path.exists(dest_loc):
                 src_loc.move(dest_loc)
@@ -93,7 +95,7 @@ def setup():
                 info('directory already exists.  Skipping')
 
         shutil.rmtree(path(options.base.static_lib /
-                           'startbootstrap-sb-admin-2-gh-pages'))
+                           'startbootstrap-sb-admin-2-1.0.3'))
 
     # message user
     info('GeoHealthCheck is now built. Edit settings in %s' % config_file)

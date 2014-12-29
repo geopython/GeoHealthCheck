@@ -7,11 +7,11 @@
         <meta name="author" content="">
         <link rel="icon" href="../../favicon.ico">
         <title>{{ config['GHC_SITE_TITLE'] }}</title>
-        <link href="{{ url_for('static', filename='lib/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
-        <link href="{{ url_for('static', filename='lib/css/sb-admin-2.css') }}" rel="stylesheet" type="text/css">
-        <link href="{{ url_for('static', filename='lib/font-awesome-4.1.0/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
-        <link href="{{ url_for('static', filename='lib/css/plugins/dataTables.bootstrap.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='lib/css/plugins/morris.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='lib/bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='lib/dist/css/sb-admin-2.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='lib/bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='lib/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='lib/bower_components/morrisjs/morris.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
         <link href="{{ url_for('static', filename='site/css/dashboard.css') }}" rel="stylesheet" type="text/css">
 
@@ -101,12 +101,12 @@
             </div>
         </div>
         <footer><div class="footer text-center">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
-        <script src="{{ url_for('static', filename='lib/js/jquery.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/js/bootstrap.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/js/plugins/morris/raphael.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/js/plugins/morris/morris.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/bower_components/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/bower_components/raphael/raphael-min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/bower_components/morrisjs/morris.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/bower_components/datatables/media/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
         <script type="text/javascript">
             function updateClock() {
