@@ -29,8 +29,9 @@ vi instance/config.py
 # setup database and superuser account
 paver create
 
-# drop database
-python GeoHealthCheck/models.py drop
+# setup cronjobs
+vi jobs.cron
+# edit paths to scripts
 
 # start server (default is 0.0.0.0:8000)
 python GeoHealthCheck/app.py  
@@ -38,8 +39,12 @@ python GeoHealthCheck/app.py
 python GeoHealthCheck/app.py 0.0.0.0:8881
 # start server on another IP
 python GeoHealthCheck/app.py 192.168.0.105:8001
-```
 
+# other commands
+#
+# drop database
+python GeoHealthCheck/models.py drop
+```
 
 users
 - view all services
