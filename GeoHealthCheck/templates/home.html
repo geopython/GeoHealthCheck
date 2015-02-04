@@ -120,7 +120,7 @@
             {% for resource in response['resources'] %}
                 <tr>
                     <td>{{ resource_types[resource.resource_type]['label'] }}</td>
-                    <td><a href="{{ url_for('get_resource_by_id', identifier=resource.identifier) }}">{{ resource.title }}</a></td>
+                    <td><a href="{{ url_for('get_resource_by_id', identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a></td>
                     <td>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</td>
                     {% if resource.last_run.success %}
                     <td><span class="btn btn-success btn-circle btn"><i class="fa fa-check"></i></span></td>
