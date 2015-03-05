@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GeoHealthCheck &mdash; GeoHealthCheck 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="GeoHealthCheck 0.1.0 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="#">GeoHealthCheck 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="geohealthcheck">
+<h1>GeoHealthCheck<a class="headerlink" href="#geohealthcheck" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>GeoHealthCheck is a Python application to support monitoring OGC services uptime
+and availability.  It can be used to monitor overall health of networks
+of resources.</p>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>lightweight</li>
+<li>easy setup</li>
+<li>support for numerous OGC resources</li>
+<li>flexible and customizable: look and feel, scoring matrix</li>
+<li>user management</li>
+<li>database agnostic: any SQLAlchemy supported backend</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="quick-and-dirty">
+<h3>Quick and Dirty<a class="headerlink" href="#quick-and-dirty" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre>virtualenv ghc <span class="o">&amp;&amp;</span> <span class="nb">cd </span>ghc
+. scripts/activate
+git clone https://github.com/geopython/GeoHealthCheck.git
+<span class="nb">cd </span>GeoHealthCheck
+<span class="c"># install paver dependency for admin tool</span>
+pip install Paver
+<span class="c"># setup app</span>
+paver setup
+<span class="c"># create secret key to use for auth</span>
+paver create_secret_key
+<span class="c"># almost there!  Customize config</span>
+vi instance/config.py
+<span class="c"># edit:</span>
+<span class="c"># - SQLALCHEMY_DATABASE_URI</span>
+<span class="c"># - SECRET_KEY  # from paver create_secret_key</span>
+<span class="c"># - GHC_RETENTION_DAYS</span>
+<span class="c"># - GHC_RUN_FREQUENCY</span>
+<span class="c"># - GHC_SELF_REGISTER</span>
+<span class="c"># - GHC_NOTIFICATIONS</span>
+<span class="c"># - GHC_ADMIN_EMAIL</span>
+<span class="c"># - GHC_SITE_TITLE</span>
+<span class="c"># - GHC_SITE_URL</span>
+<span class="c"># - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled</span>
+
+<span class="c"># init database</span>
+python GeoHealthCheck/models.py create
+<span class="c"># start server</span>
+python GeoHealthCheck/app.py  <span class="c"># http://localhost:8000/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<p>GeoHealthCheck is built on the awesome Flask microframework and uses
+Flask-SQLAlchemy for database interaction and Flask-Login for authorization.</p>
+<p>OWSLib is used to interact with OGC Web Services.</p>
+</div>
+<div class="section" id="install">
+<h3>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">it is strongly recommended to install in a Python <tt class="docutils literal"><span class="pre">virtualenv</span></tt>.
+a <tt class="docutils literal"><span class="pre">virtualenv</span></tt> is self-contained and provides the flexibility to install /
+tear down / whatever packages without affecting system wide packages or
+settings.</p>
+</div>
+<ul class="simple">
+<li>Download GeoHealthCheck (releases can be found at
+<a class="reference external" href="https://github.com/geopython/GeoHealthCheck/releases">https://github.com/geopython/GeoHealthCheck/releases</a>)</li>
+</ul>
+</div>
+<div class="section" id="running">
+<h3>Running<a class="headerlink" href="#running" title="Permalink to this headline">¶</a></h3>
+<p>Start using the built-in <tt class="docutils literal"><span class="pre">mod_wsgi</span></tt> server:</p>
+<div class="highlight-bash"><div class="highlight"><pre>python GeoHealthCheck/app.py  <span class="c"># http://localhost:8000</span>
+python GeoHealthCheck/app.py 0.0.0.0:8881  <span class="c"># http://localhost:8881</span>
+python GeoHealthCheck/app.py 192.168.0.105:8957  <span class="c"># http://192.168.0.105:8957</span>
+</pre></div>
+</div>
+<p>To enable in Apache, use <tt class="docutils literal"><span class="pre">GeoHealthCheck.wsgi</span></tt> and configure in Apache
+as per the main Flask documentation.</p>
+</div>
+</div>
+<div class="section" id="core-concepts">
+<h2>Core Concepts<a class="headerlink" href="#core-concepts" title="Permalink to this headline">¶</a></h2>
+<p>GeoHealthCheck is built with the following concepts in mind:</p>
+<ul class="simple">
+<li><cite>Resource</cite>: a single, unique endpoint, like an OGC WMS, FTP URL, or plain old
+web link.  A GeoHealthCheck deployment typically monitors numerous resources</li>
+<li><cite>Run</cite>: the execution and scoring of a test against a <cite>Resource</cite>.  A
+<cite>Resource</cite> may have multiple <cite>Runs</cite></li>
+</ul>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>Core configuration is set by GeoHealthCheck in <tt class="docutils literal"><span class="pre">GeoHealthCheck/config.py</span></tt>.
+You can override these settings in <tt class="docutils literal"><span class="pre">instance/config.py</span></tt>:</p>
+<ul class="simple">
+<li><strong>SQLALCHEMY_DATABASE_URI</strong>: the database configuration.  See the
+SQLAlchemy documentation for more info</li>
+<li><strong>SECRET_KEY</strong>: secret key to set when enabling authentication.  Use
+the output of <tt class="docutils literal"><span class="pre">paver</span> <span class="pre">create_secret_key</span></tt> to set this value</li>
+<li><strong>GHC_RETENTION_DAYS</strong>: the number of days to keep run history</li>
+<li><strong>GHC_RUN_FREQUENCY</strong>: cron keyword used to indicate frequency of runs
+(i.e. <tt class="docutils literal"><span class="pre">hourly</span></tt>, <tt class="docutils literal"><span class="pre">daily</span></tt>, <tt class="docutils literal"><span class="pre">monthly</span></tt>)</li>
+<li><strong>GHC_SELF_REGISTER</strong>: allow registrations from users on the website</li>
+<li><strong>GHC_NOTIFICATIONS</strong>: turn on email notifications</li>
+<li><strong>GHC_ADMIN_EMAIL</strong>: email address of administrator / contact</li>
+<li><strong>GHC_SITE_TITLE</strong>: title used for installation / deployment</li>
+<li><strong>GHC_SITE_URL</strong>: url of the installation / deployment</li>
+<li><strong>GHC_SMTP</strong>:  configure SMTP settings if <strong>GHC_NOTIFICATIONS</strong> is enabled</li>
+<li><strong>GHC_RELIABILITY_MATRIX</strong>: classification scheme for grading resource
+reliability (see below)</li>
+</ul>
+<div class="section" id="customizing-the-score-matrix">
+<h3>Customizing the Score Matrix<a class="headerlink" href="#customizing-the-score-matrix" title="Permalink to this headline">¶</a></h3>
+<p>GeoHealthCheck uses a simple matrix to provide an indication of overall health
+and / or reliability of a resource.  This matrix drives the CSS which displays
+a given resource&#8217;s state with a colour.  The default matrix is defined as
+follows:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">low</th>
+<th class="head">high</th>
+<th class="head">score/colour</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>49</td>
+<td>red</td>
+</tr>
+<tr class="row-odd"><td>50</td>
+<td>79</td>
+<td>orange</td>
+</tr>
+<tr class="row-even"><td>80</td>
+<td>100</td>
+<td>green</td>
+</tr>
+</tbody>
+</table>
+<p>To adjust this matrix, edit <strong>GHC_RELIABILITY_MATRIX</strong> in
+<tt class="docutils literal"><span class="pre">instance/config.py</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="administration">
+<h2>Administration<a class="headerlink" href="#administration" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>create db</li>
+<li>drop db</li>
+</ul>
+</div>
+<div class="section" id="user-management">
+<h2>User Management<a class="headerlink" href="#user-management" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="adding-resources">
+<h2>Adding Resources<a class="headerlink" href="#adding-resources" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="deleting-resources">
+<h2>Deleting Resources<a class="headerlink" href="#deleting-resources" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="scheduling-runs">
+<h2>Scheduling Runs<a class="headerlink" href="#scheduling-runs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>cron</li>
+<li>interactive</li>
+</ul>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>The MIT License (MIT)</p>
+<p>Copyright (c) 2014 Tom Kralidis</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &#8220;Software&#8221;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &#8220;AS IS&#8221;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GeoHealthCheck</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#quick-and-dirty">Quick and Dirty</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#running">Running</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#core-concepts">Core Concepts</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li><a class="reference internal" href="#customizing-the-score-matrix">Customizing the Score Matrix</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#administration">Administration</a></li>
+<li><a class="reference internal" href="#user-management">User Management</a></li>
+<li><a class="reference internal" href="#adding-resources">Adding Resources</a></li>
+<li><a class="reference internal" href="#deleting-resources">Deleting Resources</a></li>
+<li><a class="reference internal" href="#scheduling-runs">Scheduling Runs</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="#">GeoHealthCheck 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Tom Kralidis.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
