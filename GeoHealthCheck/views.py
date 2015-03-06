@@ -81,4 +81,8 @@ def get_resource_by_id(identifier):
 def get_resource_types_counts():
     """return frequency counts of registered resource types"""
 
-    return models.get_resource_types_counts()
+    mrt = models.get_resource_types_counts()
+    return {
+        'counts': mrt[0],
+        'total': mrt[1]
+    }

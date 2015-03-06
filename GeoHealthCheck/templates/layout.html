@@ -64,7 +64,7 @@
                 <div class="col-sm-3 col-md-2 sidebar">
                     <ul class="nav nav-sidebar">
                         <li>
-                            <i class="fa fa-filter fa-fw"></i><span>Resource Type <a href="{{ url_for('home') }}">Clear All</a></span>
+                            <i class="fa fa-filter fa-fw"></i><span>Resource Types ({{ resources_total }}) <a href="{{ url_for('home') }}">Clear All</a></span>
                             <ul class="nav nav-second-level">
                                 {% for rt in resource_types_counts %}
                                 {% if request.args.get('resource_type') == rt[0] %}

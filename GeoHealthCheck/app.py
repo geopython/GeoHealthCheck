@@ -116,10 +116,13 @@ def round2(value):
 @APP.context_processor
 def context_processors():
     """global context processors for templates"""
+
+    rtc = views.get_resource_types_counts()
     return {
         'app_version': __version__,
         'resource_types': RESOURCE_TYPES,
-        'resource_types_counts': views.get_resource_types_counts(),
+        'resource_types_counts': rtc['counts'],
+        'resources_total': rtc['total']
     }
 
 
@@ -146,7 +149,7 @@ def export():
         resource_type = request.args['resource_type']
 
     response = views.list_resources(resource_type)
-    json_dict = {'resources': []}
+    json_dict = {'total': len(response['resources']), 'resources': []}
     for r in response['resources']:
         json_dict['resources'].append({
             'resource_type': r.resource_type,

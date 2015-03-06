@@ -184,10 +184,13 @@ class User(DB.Model):
 
 
 def get_resource_types_counts():
-    """return frequency counts of registered resource types"""
+    """return frequency counts and totals of registered resource types"""
 
     mrt = Resource.resource_type
-    return DB.session.query(mrt, func.count(mrt)).group_by(mrt)
+    return [
+        DB.session.query(mrt, func.count(mrt)).group_by(mrt),
+        DB.session.query(mrt).count()
+    ]
 
 
 if __name__ == '__main__':
