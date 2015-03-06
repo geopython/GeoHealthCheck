@@ -32,9 +32,9 @@ import json
 import unittest
 import sys
 
-sys.path.append('..')
-
 from GeoHealthCheck.models import DB, Resource, Run, User
+
+sys.path.append('..')
 
 
 class GeoHealthCheckTest(unittest.TestCase):
