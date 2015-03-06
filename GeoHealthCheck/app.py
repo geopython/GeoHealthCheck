@@ -149,7 +149,7 @@ def export():
         resource_type = request.args['resource_type']
 
     response = views.list_resources(resource_type)
-    json_dict = {'total': len(response['resources']), 'resources': []}
+    json_dict = {'total': response['total'], 'resources': []}
     for r in response['resources']:
         json_dict['resources'].append({
             'resource_type': r.resource_type,
