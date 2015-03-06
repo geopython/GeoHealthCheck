@@ -103,7 +103,7 @@
         </div>
 -->
     </div>
-    <h2 id="all-resources">Resources <a class="btn btn-primary btn-xs" href="{{ url_for('export', resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> Export</a></h2>
+    <h2 id="all-resources">Resources <a class="btn btn-default btn-xs" href="{{ url_for('json', resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv', resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> CSV</a></h2>
     <div>
         <table id="resources-table" class="table table-striped table-bordered table-hover">
             <thead>

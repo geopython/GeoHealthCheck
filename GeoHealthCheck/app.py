@@ -27,6 +27,9 @@
 #
 # =================================================================
 
+import csv
+from StringIO import StringIO
+
 from flask import (abort, flash, Flask, g, jsonify, redirect,
                    render_template, request, url_for)
 
@@ -139,24 +142,63 @@ def home():
     return render_template('home.html', response=response)
 
 
-@APP.route('/export')
+@APP.route('/csv', endpoint='csv')
+@APP.route('/json', endpoint='json')
 def export():
     """export resource list as JSON"""
 
     resource_type = None
+    url = APP.config['GHC_SITE_URL'].rstrip('/')
 
     if request.args.get('resource_type') in RESOURCE_TYPES.keys():
         resource_type = request.args['resource_type']
 
     response = views.list_resources(resource_type)
-    json_dict = {'total': response['total'], 'resources': []}
-    for r in response['resources']:
-        json_dict['resources'].append({
-            'resource_type': r.resource_type,
-            'title': r.title,
-            'url': r.url
-        })
-    return jsonify(json_dict)
+
+    if request.url_rule.rule == '/json':
+        json_dict = {'total': response['total'], 'resources': []}
+        for r in response['resources']:
+            ghg_url = '%s%s' % (url, url_for('get_resource_by_id',
+                                             identifier=r.identifier))
+            json_dict['resources'].append({
+                'resource_type': r.resource_type,
+                'title': r.title,
+                'url': r.url,
+                'ghg_url': ghg_url,
+                'ghg_json': '%s/json' % ghg_url,
+                'ghg_csv': '%s/csv' % ghg_url,
+                'last_check': r.last_run.checked_datetime.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ'),
+                'status': r.last_run.success,
+                'response_time': round(r.average_response_time, 2),
+                'reliability': round(r.reliability, 2)
+            })
+        return jsonify(json_dict)
+    elif request.url_rule.rule == '/csv':
+        output = StringIO()
+        writer = csv.writer(output)
+        header = [
+            'resource_type', 'title', 'url', 'ghg_url', 'ghg_json', 'ghg_csv',
+            'last_check', 'status', 'response_time', 'reliability'
+        ]
+        writer.writerow(header)
+        for r in response['resources']:
+            ghg_url = '%s%s' % (url, url_for('get_resource_by_id',
+                                             identifier=r.identifier))
+            writer.writerow([
+                r.resource_type,
+                r.title,
+                r.url,
+                ghg_url,
+                '%s/json' % ghg_url,
+                '%s/csv' % ghg_url,
+                r.last_run.checked_datetime.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ'),
+                r.last_run.success,
+                round(r.average_response_time, 2),
+                round(r.reliability, 2)
+            ])
+        return output.getvalue()
 
 
 @APP.route('/settings')
