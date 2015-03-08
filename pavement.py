@@ -29,19 +29,22 @@
 
 import os
 import shutil
+import tempfile
 from StringIO import StringIO
 from urllib2 import urlopen
 import zipfile
 
-from paver.easy import (Bunch, info, options, path, sh, task)
+from paver.easy import (Bunch, info, needs, options, path, pushd, sh, task)
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 options(
     base=Bunch(
         home=path(BASEDIR),
+        docs=path('%s/docs' % BASEDIR),
         instance=path('%s/instance' % BASEDIR),
         static_lib=path('%s/GeoHealthCheck/static/lib' % BASEDIR),
+        tmp=path(tempfile.mkdtemp())
     ),
 )
 
@@ -127,8 +130,43 @@ def create_wsgi():
 
 
 @task
+def refresh_docs():
+    """Build sphinx docs from scratch"""
+
+    make = sphinx_make()
+
+    with pushd(options.base.docs):
+        sh('%s clean' % make)
+        sh('%s html' % make)
+
+
+@task
+@needs('refresh_docs')
+def publish_docs():
+    """publish documentation to http://geopython.github.io/GeoHealthCheck"""
+
+    with pushd(options.base.tmp):
+        sh('git clone git@github.com:geopython/GeoHealthCheck.git')
+        with pushd('GeoHealthCheck'):
+            sh('git checkout gh-pages')
+            sh('cp -rp %s/docs/_build/html/* .' % options.base.home)
+            sh('git add .')
+            sh('git commit -am "update live docs [ci skip]"')
+            sh('git push origin gh-pages')
+    shutil.rmtree(options.base.tmp)
+
+
+@task
 def clean():
     """clean environment"""
 
     if os.path.exists(options.base.static_lib):
         shutil.rmtree(options.base.static_lib)
+
+
+def sphinx_make():
+    """return what command Sphinx is using for make"""
+
+    if os.name == 'nt':
+        return 'make.bat'
+    return 'make'
