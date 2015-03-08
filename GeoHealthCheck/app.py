@@ -184,8 +184,9 @@ def export():
         ]
         writer.writerow(header)
         for r in response['resources']:
-            ghg_url = '%s%s' % (url, url_for('get_resource_by_id',
-                                             identifier=r.identifier))
+            ghg_url = '%s%s' % (GHC_SITE_URL,
+                                url_for('get_resource_by_id',
+                                        identifier=r.identifier))
             writer.writerow([
                 r.resource_type,
                 r.title,
