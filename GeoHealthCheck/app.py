@@ -51,6 +51,8 @@ APP.secret_key = APP.config['SECRET_KEY']
 LOGIN_MANAGER = LoginManager()
 LOGIN_MANAGER.init_app(APP)
 
+GHC_SITE_URL = APP.config['GHC_SITE_URL'].rstrip('/')
+
 
 @LOGIN_MANAGER.user_loader
 def load_user(identifier):
@@ -148,7 +150,6 @@ def export():
     """export resource list as JSON"""
 
     resource_type = None
-    url = APP.config['GHC_SITE_URL'].rstrip('/')
 
     if request.args.get('resource_type') in RESOURCE_TYPES.keys():
         resource_type = request.args['resource_type']
@@ -158,8 +159,8 @@ def export():
     if request.url_rule.rule == '/json':
         json_dict = {'total': response['total'], 'resources': []}
         for r in response['resources']:
-            ghg_url = '%s%s' % (url, url_for('get_resource_by_id',
-                                             identifier=r.identifier))
+            ghg_url = '%s%s' % (GHC_SITE_URL, url_for('get_resource_by_id',
+                                                      identifier=r.identifier))
             json_dict['resources'].append({
                 'resource_type': r.resource_type,
                 'title': r.title,
@@ -197,6 +198,108 @@ def export():
                 r.last_run.success,
                 round(r.average_response_time, 2),
                 round(r.reliability, 2)
+            ])
+        return output.getvalue()
+
+
+@APP.route('/resource/<identifier>/csv', endpoint='csv-resource')
+@APP.route('/resource/<identifier>/json', endpoint='json-resource')
+def export_resource(identifier):
+    """export resource as JSON or CSV"""
+
+    resource = views.get_resource_by_id(identifier)
+
+    history_csv = '%s%s' % (GHC_SITE_URL,
+                            url_for('csv-resource-history',
+                                    identifier=resource.identifier))
+    history_json = '%s%s' % (GHC_SITE_URL,
+                             url_for('json-resource-history',
+                                     identifier=resource.identifier))
+
+    if 'json' in request.url_rule.rule:
+        json_dict = {
+            'identifier': resource.identifier,
+            'title': resource.title,
+            'url': resource.url,
+            'resource_type': resource.resource_type,
+            'owner': resource.owner.username,
+            'average_response_time': resource.average_response_time,
+            'reliability': resource.reliability,
+            'status': resource.last_run.success,
+            'last_check': resource.last_run.checked_datetime.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'),
+            'history_csv': history_csv,
+            'history_json': history_json
+        }
+        return jsonify(json_dict)
+    elif 'csv' in request.url_rule.rule:
+        output = StringIO()
+        writer = csv.writer(output)
+        header = [
+            'identifier', 'title', 'url', 'resource_type', 'owner',
+            'average_response_time', 'reliability', 'status', 'last_check',
+            'history_csv', 'history_json'
+        ]
+        writer.writerow(header)
+        writer.writerow([
+            resource.identifier,
+            resource.title,
+            resource.url,
+            resource.resource_type,
+            resource.owner.username,
+            resource.average_response_time,
+            resource.reliability,
+            resource.last_run.success,
+            resource.last_run.checked_datetime.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'),
+            history_csv,
+            history_json
+        ])
+        return output.getvalue()
+
+
+@APP.route('/resource/history/<identifier>/csv',
+           endpoint='csv-resource-history')
+@APP.route('/resource/history/<identifier>/json',
+           endpoint='json-resource-history')
+def export_resource_history(identifier):
+    """export resource history as JSON or CSV"""
+
+    resource = views.get_resource_by_id(identifier)
+
+    if 'json' in request.url_rule.rule:
+        json_dict = {'runs': []}
+
+        for run in resource.runs:
+            json_dict['runs'].append({
+                'owner': resource.owner.username,
+                'resource_type': resource.resource_type,
+                'checked_datetime': run.checked_datetime.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ'),
+                'title': resource.title,
+                'url': resource.url,
+                'response_time': round(run.response_time, 2),
+                'status': run.success
+            })
+        return jsonify(json_dict)
+    elif 'csv' in request.url_rule.rule:
+        output = StringIO()
+        writer = csv.writer(output)
+        header = [
+            'owner', 'resource_type', 'checked_datetime', 'title', 'url',
+            'response_time', 'status'
+        ]
+        writer.writerow(header)
+        for run in resource.runs:
+            writer.writerow([
+                resource.owner.username,
+                resource.resource_type,
+                run.checked_datetime.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ'),
+                resource.title,
+                resource.url,
+                run.response_time,
+                run.success,
             ])
         return output.getvalue()
 
