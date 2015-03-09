@@ -159,14 +159,14 @@ def export():
     if request.url_rule.rule == '/json':
         json_dict = {'total': response['total'], 'resources': []}
         for r in response['resources']:
-            ghg_url = '%s/resource/%s' % (GHC_SITE_URL, r.identifier)
+            ghc_url = '%s/resource/%s' % (GHC_SITE_URL, r.identifier)
             json_dict['resources'].append({
                 'resource_type': r.resource_type,
                 'title': r.title,
                 'url': r.url,
-                'ghg_url': ghg_url,
-                'ghg_json': '%s/json' % ghg_url,
-                'ghg_csv': '%s/csv' % ghg_url,
+                'ghc_url': ghc_url,
+                'ghc_json': '%s/json' % ghc_url,
+                'ghc_csv': '%s/csv' % ghc_url,
                 'last_check': r.last_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
                 'status': r.last_run.success,
@@ -178,21 +178,21 @@ def export():
         output = StringIO()
         writer = csv.writer(output)
         header = [
-            'resource_type', 'title', 'url', 'ghg_url', 'ghg_json', 'ghg_csv',
+            'resource_type', 'title', 'url', 'ghc_url', 'ghc_json', 'ghc_csv',
             'last_check', 'status', 'response_time', 'reliability'
         ]
         writer.writerow(header)
         for r in response['resources']:
-            ghg_url = '%s%s' % (GHC_SITE_URL,
+            ghc_url = '%s%s' % (GHC_SITE_URL,
                                 url_for('get_resource_by_id',
                                         identifier=r.identifier))
             writer.writerow([
                 r.resource_type,
                 r.title,
                 r.url,
-                ghg_url,
-                '%s/json' % ghg_url,
-                '%s/csv' % ghg_url,
+                ghc_url,
+                '%s/json' % ghc_url,
+                '%s/csv' % ghc_url,
                 r.last_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
                 r.last_run.success,
