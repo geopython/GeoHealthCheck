@@ -159,8 +159,7 @@ def export():
     if request.url_rule.rule == '/json':
         json_dict = {'total': response['total'], 'resources': []}
         for r in response['resources']:
-            ghg_url = '%s%s' % (GHC_SITE_URL, url_for('get_resource_by_id',
-                                                      identifier=r.identifier))
+            ghg_url = '%s/resource/%s' % (GHC_SITE_URL, r.identifier)
             json_dict['resources'].append({
                 'resource_type': r.resource_type,
                 'title': r.title,
@@ -210,13 +209,10 @@ def export_resource(identifier):
 
     resource = views.get_resource_by_id(identifier)
 
-    history_csv = '%s%s' % (GHC_SITE_URL,
-                            url_for('csv-resource-history',
-                                    identifier=resource.identifier))
-    history_json = '%s%s' % (GHC_SITE_URL,
-                             url_for('json-resource-history',
-                                     identifier=resource.identifier))
-
+    history_csv = '%s/resource/%s/history/csv' % (GHC_SITE_URL,
+                                                  resource.identifier)
+    history_json = '%s/resource/%s/history/json' % (GHC_SITE_URL,
+                                                    resource.identifier)
     if 'json' in request.url_rule.rule:
         json_dict = {
             'identifier': resource.identifier,
@@ -259,9 +255,9 @@ def export_resource(identifier):
         return output.getvalue()
 
 
-@APP.route('/resource/history/<identifier>/csv',
+@APP.route('/resource/<identifier>/history/csv',
            endpoint='csv-resource-history')
-@APP.route('/resource/history/<identifier>/json',
+@APP.route('/resource/<identifier>/history/json',
            endpoint='json-resource-history')
 def export_resource_history(identifier):
     """export resource history as JSON or CSV"""
