@@ -398,7 +398,7 @@ def update(resource_identifier):
             setattr(resource, key, resource_identifier_dict[key])
             update_counter += 1
 
-    if update_counter < 0:
+    if update_counter > 0:
         DB.session.commit()
 
     return str({'status': 'success'})
