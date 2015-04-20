@@ -54,7 +54,7 @@ def list_resources(resource_type=None):
             resource_type=resource_type).all()
     else:
         response['resources'] = models.Resource.query.all()
-
+    
     response['total'] = len(response['resources'])
     for resource in response['resources']:
         if resource.last_run.success:
@@ -64,7 +64,7 @@ def list_resources(resource_type=None):
         reliability_values.append(resource.reliability)
 
     response['success']['percentage'] = util.percentage(
-        response['success']['number'], response['total'])
+        response['success']['number'], response['total'])   
     response['fail']['percentage'] = util.percentage(
         response['fail']['number'], response['total'])
     response['reliability'] = util.average(reliability_values)
@@ -77,12 +77,10 @@ def get_resource_by_id(identifier):
     return models.Resource.query.filter_by(
         identifier=identifier).first_or_404()
 
+def get_contacts_by_id_resource(identifier):
+    return models.Contact.query.filter_by(resource_identifier=identifier).all()
 
 def get_resource_types_counts():
     """return frequency counts of registered resource types"""
 
-    mrt = models.get_resource_types_counts()
-    return {
-        'counts': mrt[0],
-        'total': mrt[1]
-    }
+    return models.get_resource_types_counts()

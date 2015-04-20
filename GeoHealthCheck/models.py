@@ -76,11 +76,11 @@ class Resource(DB.Model):
     resource_type = DB.Column(DB.Text, nullable=False)
     title = DB.Column(DB.Text, nullable=False)
     url = DB.Column(DB.Text, nullable=False)
+
     latitude = DB.Column(DB.Float)
     longitude = DB.Column(DB.Float)
-    owner_identifier = DB.Column(DB.Text, DB.ForeignKey('user.username'))
-    owner = DB.relationship('User',
-                            backref=DB.backref('username2', lazy='dynamic'))
+    user_id = DB.Column(DB.Integer, DB.ForeignKey('user.user_id'))
+    owner = DB.relationship('User', backref=DB.backref('resources', lazy='dynamic'))
 
     def __init__(self, owner, resource_type, title, url):
         self.resource_type = resource_type
@@ -109,13 +109,18 @@ class Resource(DB.Model):
         else:
             url = self.url
         return url
+    
+    @property
+    def get_contacts(self):
+        return Contact.query.filter_by(resource_identifier=self.identifier).all()
 
     @property
     def last_run(self):
-        return self.runs.having(func.max(Run.checked_datetime)).group_by(
-            Run.checked_datetime).order_by(
-                Run.checked_datetime.desc()).first()
-
+        #runss = Run.query.filter_by(resource_identifier=self.identifier).order_by(Run.checked_datetime.desc()).first()
+        runss = self.runs.group_by(Run.identifier).order_by(Run.checked_datetime.desc()).first()
+        DB.session.commit()
+        return runss; 
+                
     @property
     def average_response_time(self):
         query = [run.response_time for run in self.runs]
@@ -132,7 +137,7 @@ class Resource(DB.Model):
 
     def runs_to_json(self):
         runs = []
-        for run in self.runs.group_by(Run.checked_datetime).all():
+        for run in self.runs.group_by(Run.identifier).all():
             runs.append({'datetime': run.checked_datetime.isoformat(),
                          'value': run.response_time,
                          'success': 1 if run.success else 0})
@@ -140,7 +145,7 @@ class Resource(DB.Model):
 
     def success_to_colors(self):
         colors = []
-        for run in self.runs.group_by(Run.checked_datetime).all():
+        for run in self.runs.group_by(Run.identifier).all():
             if run.success == 1:
                 colors.append('#5CB85C')  # green
             else:
@@ -151,8 +156,7 @@ class Resource(DB.Model):
 class User(DB.Model):
     """user accounts"""
 
-    identifier = DB.Column('user_id', DB.Integer, primary_key=True,
-                           autoincrement=True)
+    identifier = DB.Column('user_id', DB.Integer, primary_key=True, autoincrement=True)
     username = DB.Column(DB.String(20), unique=True, index=True,
                          nullable=False)
     password = DB.Column(DB.String(10), nullable=False)
@@ -184,13 +188,33 @@ class User(DB.Model):
 
 
 def get_resource_types_counts():
-    """return frequency counts and totals of registered resource types"""
+    """return frequency counts of registered resource types"""
 
     mrt = Resource.resource_type
-    return [
-        DB.session.query(mrt, func.count(mrt)).group_by(mrt),
-        DB.session.query(mrt).count()
-    ]
+    return DB.session.query(mrt, func.count(mrt)).group_by(mrt)
+
+
+# adicionando tabla de contactos.
+class Contact(DB.Model):
+    """contact for resources"""
+    identifier = DB.Column('contact_id', DB.Integer, primary_key=True, autoincrement=True)
+    type = DB.Column(DB.String(20), nullable=False)
+    contact_value = DB.Column(DB.String(100), unique=False, nullable=False)
+    resource_identifier = DB.Column(DB.Integer, DB.ForeignKey('resource.identifier'))
+    resource = DB.relationship('Resource', backref=DB.backref('contacts', lazy='dynamic'))
+
+    def __init__(self, resource, type, contact_value):
+        self.resource = resource
+        self.type = type
+        self.contact_value = contact_value
+
+    def get_id(self):
+        return unicode(self.identifier)
+
+    def __repr__(self):
+        return '<Contact %r>' % (self.contact_value)
+
+
 
 
 if __name__ == '__main__':
@@ -227,13 +251,12 @@ if __name__ == '__main__':
                 print('Testing %s %s' % (res.resource_type, res.url))
                 last_run_success = res.last_run.success
                 run_to_add = run_test_resource(res.resource_type, res.url)
-
-                run1 = Run(res, run_to_add[1], run_to_add[2],
-                           run_to_add[3], run_to_add[4])
+                run1 = Run(res, run_to_add[1], run_to_add[2], run_to_add[3], run_to_add[4])
 
                 print('Adding run')
                 DB.session.add(run1)
 
+                # Adicionar el usuario configurado para el envio de las notificaciones de problemas.
                 if APP.config['GHC_NOTIFICATIONS']:
                     notify(APP.config, res, run1, last_run_success)
 

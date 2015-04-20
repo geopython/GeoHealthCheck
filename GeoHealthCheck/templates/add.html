@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-3 main">
+<div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 main">
   <form role="form" action="" method="post">
-    <h2>Add Resource <i class="fa fa-plus fa-fw"></i></h2>
+    <h2>Adicionar Recurso <i class="fa fa-plus fa-fw"></i></h2>
     <div class="form-group input-group col-sm-3">
-        <select class="form-control" name="resource_type">
+        <select id="slcResourceType" class="form-control" name="resource_type">
             <option value="none">Select Resource Type</option>
             {% for key, value in resource_types.iteritems() %}
               {% if 'resource_type' in request.args and request.args['resource_type'] == key %}
@@ -18,12 +18,149 @@
     </div>
 
     <div class="form-group input-group col-sm-5">
-        <input type="text" name="url" class="form-control" placeholder="url" required>
-        <p class="help-block">Enter the URL without any query parameters:<br/>good: <code>http://host/wms</code><br/>bad:<code>http://host/wms?service=WMS&version=1.1.1&request=GetCapabilities</code></p>
+        <input id="itxtResourceUrl" type="text" name="url" class="form-control" placeholder="url" required/>
+        <p class="help-block">Escriba la dirección URL sin parámetros de consulta:<br/>bueno: <code>http://host/wms</code><br/>malo:<code>http://host/wms?service=WMS&version=1.1.1&request=GetCapabilities</code></p>
+        <button id="btnGenerateName" type="button" class="btn btn-primary btn-sm">Probar y generar título</button>
+    <div id = "error_test_resource_message" class="alert alert-danger" style="display: none;">
+        <p id="message_error">
+		</p>
     </div>
+
+    </div>
+    
+    <div class="form-group input-group col-sm-5">
+		<p class="help-block">Título del recurso</p>
+		<div class="form-group input-group col-sm-12">
+			<input id="itxtResourceTitle" type="text" name="title" class="form-control" placeholder="Título" required />
+        </div>
+    </div>
+    
+    <div class="form-group input-group col-sm-5">
+        <p class="help-block">Adiciones los correos para la notificación de problemas</p>
+        <div class="form-group input-group col-sm-12">
+	        <input id="txtMail" type="text" class="col-sm-9" placeholder="Correo de notificación" />
+	        <input id="addMailBtn" type="button" value="Guardar" class="col-sm-3 btn btn-default btn-xs"/>
+	    </div>
+	    <div id="mailList" class="form-group input-group col-sm-12">
+		<input id="notification_mails" type="hidden" name="notification_mails" value=""/>
+		  
+    </div>
+    
     <div class="form-group">
-        <button type="submit" class="btn btn-success">Submit</button>
+        <button id="btnSubmit" type="submit" class="btn btn-success">Enviar</button>
     </div>
-  </form>
 </div>
 {% endblock %}
+{% block extrafoot %}
+<script type="text/javascript">
+	jQuery(function ($) {
+	$( "#message_error").html("NuevoError");
+	
+    var itemCount = 0;
+    var idEdit = null;
+
+    $("#addMailBtn").on('click', function (e) {
+        e.preventDefault();
+        var mailItem = $("#txtMail").val();
+        if(!isEmail(mailItem.trim()))
+		{
+			alert("El valor "+mailItem+", no es un correo válido");
+			return false;
+		}
+        
+        if (idEdit === null || idEdit === '')
+        {
+			$("#mailList").append('<div>' + '<span id="tb' + itemCount + '" class="emailinput" style="min-width: 200px;width: 200px; display: inline-block;">' + mailItem 
+			+ '</span> <a href="#txtMail" class="editar glyphicon glyphicon-pencil" title="Modificar"></a>'
+			+ '<a href="#txtMail" class="remove glyphicon glyphicon-trash" title="Eliminar"></a></div>');
+			itemCount = itemCount + 1;
+		}
+		else
+		{
+			$("#"+idEdit).html(mailItem);
+		}
+		$("#txtMail").val("");
+		idEdit = null;
+        return (false);
+        /*$("#count").text=("li").length;*/
+    });
+
+    $("#mailList").on('click', '.remove', function () {
+        $(this).closest('div').remove();
+        $("#txtMail").val("");
+		idEdit = null;
+        return false;
+    });
+    
+    $("#mailList").on('click', '.editar', function () {
+		$("#txtMail").val($(this).closest('div').find('span').html());
+		idEdit = $(this).closest('div').find('span').attr("id");
+		return false;
+    });
+    
+    $("#btnSubmit").on('click', function (e) {
+		var emails="";
+		$('.emailinput').each(function() {
+            emails=emails+$(this).html()+";";
+      });
+      if(emails.length != 0)
+			emails = emails.substring(0, emails.length -1);
+		$("#notification_mails").val(emails);
+		return true;
+	});
+	
+	$("#btnGenerateName").on('click', function (e) {
+		var selectResTyp = $( "#slcResourceType option:selected" ).val();
+		var urlResVal = $("#itxtResourceUrl").val();
+		if(selectResTyp === null || selectResTyp ==='')
+		{
+			msg = "El campo tipo de recurso es vacio.";
+			showErrorMessage(msg);
+			return false;
+		}
+		if(urlResVal === null || urlResVal ==='')
+		{
+			msg = "El campo url es vacio.";
+			showErrorMessage(msg);
+			return false;
+		}
+		$.ajax({
+			type: "GET",
+			url: "/add/"+selectResTyp+"/"+urlResVal+"/test",
+			data: '',
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function(data)
+			{
+				if(data.status==='success')
+				{
+					$( "#itxtResourceTitle" ).val(data.title); 
+				}
+				else
+				{
+					alert(data.message);
+				}
+			},
+		    failure: function(data) 
+		    {
+			   alert("Error interno, consulte con el administrador");
+		    }
+		});
+		return false;
+	});
+});
+
+function showErrorMessage(msg)
+{
+	$("#message_error").html(msg);
+	$('#error_test_resource_message').show();
+	$('#error_test_resource_message').fadeOut(7000);
+}
+
+function isEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
+</script>
+{% endblock %}
+

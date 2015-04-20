@@ -14,6 +14,7 @@
         <link href="{{ url_for('static', filename='lib/bower_components/morrisjs/morris.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
         <link href="{{ url_for('static', filename='site/css/dashboard.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='lib/bower_components/TableTools/css/dataTables.tableTools.min.css') }}" rel="stylesheet" type="text/css">
 
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -37,7 +38,7 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add <i class="fa fa-plus"></i></a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Adicionar <i class="fa fa-plus"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
                                 {% for key, value in resource_types.iteritems() %}
                                 <li><a href="{{ url_for('add', resource_type=key) }}">{{ value['label'] }}</a></li>
@@ -48,13 +49,12 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ g.user.username }} <i class="fa fa-caret-down"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
-                                <li><a href="{{ url_for('logout', next=request.script_root+request.path) }}">Logout <i class="fa fa-sign-out fa-fw"></i></a></li>
+                                <li><a href="{{ url_for('logout', next=request.script_root+request.path) }}">Cerrar Sesión <i class="fa fa-sign-out fa-fw"></i></a></li>
                             </ul>
                         </li>
                         {% else %}
-                        <li><a href="{{ url_for('login', next=request.script_root+request.path) }}">Login<i class="fa fa-sign-in fa-fw"></i></a></li>
+                        <li><a href="{{ url_for('login', next=request.script_root+request.path) }}">Iniciar Sesión <i class="fa fa-sign-in fa-fw"></i></a></li>
                         {% endif %}
-                        <li><a href="https://github.com/geopython/GeoHealthCheck">Help <i class="fa fa-question-circle fa-fw"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                 <div class="col-sm-3 col-md-2 sidebar">
                     <ul class="nav nav-sidebar">
                         <li>
-                            <i class="fa fa-filter fa-fw"></i><span>Resource Types ({{ resources_total }}) <a href="{{ url_for('home') }}">Clear All</a></span>
+                            <i class="fa fa-filter fa-fw"></i><span>Tipo de Recurso <a href="{{ url_for('home') }}">Todos</a></span>
                             <ul class="nav nav-second-level">
                                 {% for rt in resource_types_counts %}
                                 {% if request.args.get('resource_type') == rt[0] %}
@@ -78,10 +78,10 @@
                     </ul>
                     <ul class="nav nav-sidebar">
                         <li>
-                            <i class="fa fa-cog fa-fw"></i>Settings
+                            <i class="fa fa-cog fa-fw"></i>Ajustes
                             <ul class="nav nav-second-level">
-                                <li><a>History: {{ config['GHC_RETENTION_DAYS'] }} days</a></li>
-                                <li><a>Test Frequency: {{ config['GHC_RUN_FREQUENCY'] }}</a></li>
+                                <li><a>Historial en Ejecuci&#243;n: {{ config['GHC_RETENTION_DAYS'] }} días</a></li>
+                                <!--<li><a>Frecuencia de prueba: {{ config['GHC_RUN_FREQUENCY'] }}</a></li>-->
                                 <li><a id="clockbox"></a></li>
                             </ul>
                         </li>
@@ -100,7 +100,7 @@
                 {% endblock %}
             </div>
         </div>
-        <footer><div class="footer text-center">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
+        <!--<footer><div class="footer text-center">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>-->
         <script src="{{ url_for('static', filename='lib/bower_components/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/bower_components/raphael/raphael-min.js') }}"></script>
@@ -108,6 +108,7 @@
         <script src="{{ url_for('static', filename='lib/bower_components/datatables/media/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+        <script src="{{ url_for('static', filename='lib/bower_components/TableTools/js/dataTables.tableTools.min.js') }}"></script>
         <script type="text/javascript">
             function updateClock() {
                 $('#clockbox').html(new Date().toISOString().slice(0, 19)+'Z');

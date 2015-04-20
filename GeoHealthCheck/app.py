@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # =================================================================
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
@@ -40,7 +43,7 @@ from __init__ import __version__
 from healthcheck import run_test_resource
 from init import DB
 from enums import RESOURCE_TYPES
-from models import Resource, Run, User
+from models import Resource, Run, User, Contact
 import views
 
 APP = Flask(__name__)
@@ -121,13 +124,10 @@ def round2(value):
 @APP.context_processor
 def context_processors():
     """global context processors for templates"""
-
-    rtc = views.get_resource_types_counts()
     return {
         'app_version': __version__,
         'resource_types': RESOURCE_TYPES,
-        'resource_types_counts': rtc['counts'],
-        'resources_total': rtc['total']
+        'resource_types_counts': views.get_resource_types_counts(),
     }
 
 
@@ -144,10 +144,32 @@ def home():
     return render_template('home.html', response=response)
 
 
-@APP.route('/csv', endpoint='csv')
-@APP.route('/json', endpoint='json')
+@APP.route('/export')
 def export():
     """export resource list as JSON"""
+
+    resource_type = None
+
+    if request.args.get('resource_type') in RESOURCE_TYPES.keys():
+        resource_type = request.args['resource_type']
+
+    response = views.list_resources(resource_type)
+    json_dict = {'resources': []}
+    for r in response['resources']:
+        json_dict['resources'].append({
+            'resource_type': r.resource_type,
+            'title': r.title,
+            'url': r.url
+        })
+    return jsonify(json_dict)
+
+
+## Add for export csv and json
+@APP.route('/csv', endpoint='csv')
+@APP.route('/json', endpoint='json')
+@login_required
+def exportz():
+    """export resource list as JSON OR CSV"""
 
     resource_type = None
 
@@ -299,7 +321,7 @@ def export_resource_history(identifier):
                 run.success,
             ])
         return output.getvalue()
-
+    
 
 @APP.route('/settings')
 def settings():
@@ -310,17 +332,18 @@ def settings():
 @APP.route('/resource/<identifier>')
 def get_resource_by_id(identifier):
     """show resource"""
-
     response = views.get_resource_by_id(identifier)
-    return render_template('resource.html', resource=response)
+    respcontacts = views.get_contacts_by_id_resource(identifier)
+
+    return render_template('resource.html', resource=response, contacts = respcontacts)
 
 
 @APP.route('/register', methods=['GET', 'POST'])
 def register():
     """register a new user"""
     if not APP.config['GHC_SELF_REGISTER']:
-        flash('This site is not configured for self-registration.  '
-              'Please contact %s ' % APP.config['GHC_ADMIN_EMAIL'], 'warning')
+        flash(u'Este sitio no está configurado para auto-registro.  '
+              u'Póngase en contacto con %s ' % APP.config['GHC_ADMIN_EMAIL'], 'warning')
         return redirect(url_for('home'))
     if request.method == 'GET':
         return render_template('register.html')
@@ -333,11 +356,43 @@ def register():
         DB.session.rollback()
         bad_column = err.message.split()[2]
         bad_value = request.form[bad_column]
-        flash('%s %s already registered' % (bad_column, bad_value), 'danger')
+        flash('%s %s ya registrado' % (bad_column, bad_value), 'danger')
         return redirect(url_for('register'))
     return redirect(url_for('login'))
 
+@APP.route('/add/<string:resource_type>/<path:resource_url>/test')
+@login_required
+def testAndGetName(resource_type, resource_url):
+    """test a resource"""
 
+    if resource_url is None:
+        resp = jsonify(messageJson = {
+            'status': 'failure',
+            'message': 'El url del recurso es inválido'
+        })
+        return resp
+    if resource_type is None:
+        resp = jsonify({
+            'status': 'failure',
+            'message': 'El tipo de recurso es inválido'
+        })
+        return resp
+    try:
+        [title, success, response_time, message, start_time] = run_test_resource(resource_type, resource_url)
+        if message not in ['OK', None, 'None']:
+            messageJson = {
+                'status': 'failure',
+                'message': message
+            }
+            resp = jsonify(messageJson)
+            return resp
+        else:
+            #flash(u'Recurso probado con éxito', 'success')
+            return jsonify({'status': 'success','title': title})
+    except Exception, err:
+        return jsonify({'status': 'failure','message': err})
+    
+    
 @APP.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
@@ -349,10 +404,14 @@ def add():
 
     resource_type = request.form['resource_type']
     url = request.form['url'].strip()
-    resource = Resource.query.filter_by(resource_type=resource_type,
-                                        url=url).first()
+    
+    notification_mails = request.form['notification_mails'].strip()
+    resTitle = request.form['title'].strip()
+    
+    resource = Resource.query.filter_by(resource_type=resource_type, url=url).first()
+    
     if resource is not None:
-        flash('service already registered (%s, %s)' % (resource_type, url),
+        flash('Servicio ya registrado (%s, %s)' % (resource_type, url),
               'danger')
         if 'resource_type' in request.args:
             rtype = request.args.get('resource_type')
@@ -367,15 +426,22 @@ def add():
         flash(message, 'danger')
         return redirect(url_for('add', resource_type=resource_type))
 
-    resource_to_add = Resource(current_user, resource_type, title, url)
-    run_to_add = Run(resource_to_add, success, response_time, message,
-                     start_time)
-
+    resource_to_add = Resource(current_user, resource_type, resTitle, url)
+    
+    run_to_add = Run(resource_to_add, success, response_time, message, start_time)
     DB.session.add(resource_to_add)
     DB.session.add(run_to_add)
+    
+    #Adicionando los correos.
+    if not notification_mails == '':
+        f = notification_mails.split(";");
+        for mail in f:
+            contact_to_add = Contact(resource_to_add, "email", mail)
+            DB.session.add(contact_to_add)
+        
     try:
         DB.session.commit()
-        flash('service registered (%s, %s)' % (resource_type, url), 'success')
+        flash('Servicio registrado (%s, %s)' % (resource_type, url), 'success')
     except Exception, err:
         DB.session.rollback()
         flash(str(err), 'danger')
@@ -386,22 +452,36 @@ def add():
 @login_required
 def update(resource_identifier):
     """update a resource"""
-
     update_counter = 0
-
     resource_identifier_dict = request.get_json()
-
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
 
-    for key, value in resource_identifier_dict.iteritems():
-        if getattr(resource, key) != resource_identifier_dict[key]:
-            setattr(resource, key, resource_identifier_dict[key])
+    if resource_identifier_dict.get("emails") is not None:
+        #Eliminamos los anteriores correos, luego se eliminan.
+        contacts = Contact.query.filter_by(resource_identifier=resource_identifier).all()
+        for contact in contacts:
+            DB.session.delete(contact)
             update_counter += 1
-
-    if update_counter > 0:
-        DB.session.commit()
-
-    return str({'status': 'success'})
+        if update_counter > 0:
+            DB.session.commit()
+        for email in resource_identifier_dict.get("emails"):
+            contact_to_add = Contact(resource, "email", email)
+            DB.session.add(contact_to_add)
+            update_counter += 1
+        
+    else:
+        for key, value in resource_identifier_dict.iteritems():
+            if getattr(resource, key) != resource_identifier_dict[key]:
+                setattr(resource, key, resource_identifier_dict[key])
+                update_counter += 1
+    
+    try:
+        if update_counter > 0:
+            DB.session.commit()
+        return str({'status': 'success'})
+    except Exception, err:
+        DB.session.rollback()
+        return str({'failure': 'Error contacte con el administrador'})
 
 
 @APP.route('/resource/<int:resource_identifier>/test')
@@ -410,7 +490,7 @@ def test(resource_identifier):
     """test a resource"""
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if resource is None:
-        flash('resource not found', 'danger')
+        flash('Recurso no encontrado', 'danger')
         return redirect(request.referrer)
 
     [title, success, response_time, message, start_time] = run_test_resource(
@@ -419,10 +499,12 @@ def test(resource_identifier):
     if message not in ['OK', None, 'None']:
         flash('ERROR: %s' % message, 'danger')
     else:
-        flash('Resource tested successfully', 'success')
+        flash(u'Recurso probado con éxito', 'success')
 
     return redirect(url_for('get_resource_by_id',
                     identifier=resource_identifier))
+
+
 
 
 @APP.route('/resource/<int:resource_identifier>/delete')
@@ -431,23 +513,28 @@ def delete(resource_identifier):
     """delete a resource"""
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if g.user.role != 'admin' and g.user.username != resource.owner.username:
-        flash('you do not have access to delete this resource', 'danger')
+        flash('Usted no tiene acceso para eliminar este recurso', 'danger')
         return redirect('/resource/%s' % resource_identifier)
 
     if resource is None:
-        flash('resource not found', 'danger')
+        flash('Recurso no encontrado', 'danger')
         return redirect(url_for('home'))
 
     runs = Run.query.filter_by(resource_identifier=resource_identifier).all()
 
     for run in runs:
         DB.session.delete(run)
+        
+    contacts = Contact.query.filter_by(resource_identifier=resource_identifier).all()
+    
+    for contact in contacts:
+        DB.session.delete(contact)
 
     DB.session.delete(resource)
 
     try:
         DB.session.commit()
-        flash('Resource deleted', 'success')
+        flash('Recurso eliminado', 'success')
         return redirect(url_for('home'))
     except Exception, err:
         DB.session.rollback()
@@ -465,7 +552,7 @@ def login():
     registered_user = User.query.filter_by(username=username,
                                            password=password).first()
     if registered_user is None:
-        flash('invalid username and / or password', 'danger')
+        flash(u'Nombre de usuario y / o contraseña no válidos', 'danger')
         return redirect(url_for('login'))
     login_user(registered_user)
 
@@ -478,7 +565,7 @@ def login():
 def logout():
     """logout"""
     logout_user()
-    flash('logged out', 'success')
+    flash(u'Cerrado la sesión', 'success')
     if request.referrer:
         return redirect(request.referrer)
     else:
