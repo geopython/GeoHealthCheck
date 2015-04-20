@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # =================================================================
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
@@ -43,15 +46,15 @@ def notify(config, resource, run, last_run_success):
     this_run_success = run.success
 
     if last_run_success and not this_run_success:
-        result = 'Failing'
+        result = 'En Defecto'
     elif not last_run_success and this_run_success:
-        result = 'Fixed'
+        result = 'Reparado'
     elif not last_run_success and not this_run_success:
-        result = 'Still Failing'
+        result = u'Todavia con Defecto'
     elif last_run_success and this_run_success:
-        result = 'Passing'
+        result = 'Aprobado'
 
-    if result != 'Passing':
+    if result != 'Aprobado':
         status_changed = True
 
     if not status_changed:
@@ -78,6 +81,12 @@ def notify(config, resource, run, last_run_success):
         server.login(config['GHC_SMTP']['username'],
                      config['GHC_SMTP']['password'])
     server.sendmail(fromaddr, toaddrs, msg)
+    contacts = resource.get_contacts
+    for contact in contacts:
+        notification_mail_res = contact.contact_value
+        if notification_mail_res is not None:
+            server.sendmail(fromaddr, notification_mail_res, msg)
+    
     server.quit()
 
     return True

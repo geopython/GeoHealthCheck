@@ -86,8 +86,6 @@ def run_test_resource(resource_type, url):
         success = True
         if resource_type.startswith('OGC:'):
             title = ows.identification.title
-        if title is None:
-            title = '%s for %s' % (resource_type, url)
     except Exception, err:
         msg = str(err)
         LOGGER.exception(msg)

@@ -1,19 +1,20 @@
 Subject: [{{ config.GHC_SITE_TITLE }}] {{ result }}: {{ resource.title }}
 
 
-Hi: this is an automated message from the {{ config.GHC_SITE_TITLE }} service.
+Hola: Este es un mensaje del servicio de {{ config.GHC_SITE_TITLE }}
 
-Resource: {{ resource.title }}
-Resource type: {{ resource.resource_type }}
-Resource URL: {{ resource.url }}
+Recurso: {{ resource.title }}
+Tipo de Recurso: {{ resource.resource_type }}
+URL del Recurso: {{ resource.url }}
 
-Details:
+Detalles:
 
-Date: {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} 
+Fecha: {{ resource.last_run.checked_datetime.strftime('%d/%m/%Y %H:%M') }}
 
-Message: {{ resource.last_run.message }}
+Mensaje: {{ resource.last_run.message }}
 
-Details: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
+Detalles: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
 
 {{ config.GHC_SITE_TITLE }}
 {{ config.GHC_SITE_URL }}
+

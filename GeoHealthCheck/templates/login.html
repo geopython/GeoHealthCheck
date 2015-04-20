@@ -2,17 +2,17 @@
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-3 main">
   <form role="form" action="" method="post">
-    <h2>Login <i class="fa fa-sign-in fa-fw"></i></h2>
+    <h2>Iniciar Sesión <i class="fa fa-sign-in fa-fw"></i></h2>
     <div class="form-group input-group col-sm-2">
-        <input type="text" name="username" class="form-control" placeholder="Username" required>
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
+        <input type="text" name="username" class="form-control" placeholder="Nombre de usuario" required>
+        <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-success">Sign in</button>
+        <button type="submit" class="btn btn-success">Ingresar</button>
     </div>
-    <div>
-        <a href="{{ url_for('register') }}">Register</a>
-    </div>
+<!--    <div>-->
+        <!--<a href="{{ url_for('register') }}">Register</a>-->
+    <!--</div>-->
   </form>
 </div>
 {% endblock %}
