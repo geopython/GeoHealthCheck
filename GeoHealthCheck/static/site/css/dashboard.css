@@ -131,3 +131,7 @@ footer {
 .btn.nohover:hover {
     cursor:default !important;
 }
+
+.input-small {
+    width: 20%;
+}
