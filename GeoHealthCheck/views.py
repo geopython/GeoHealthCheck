@@ -35,6 +35,8 @@ def list_resources(resource_type=None):
     """return all resources"""
 
     reliability_values = []
+    first_run = None
+    last_run = None
 
     response = {
         'total': 0,
@@ -57,6 +59,12 @@ def list_resources(resource_type=None):
 
     response['total'] = len(response['resources'])
     for resource in response['resources']:
+        if resource.first_run < first_run or first_run is None:
+            first_run = resource.first_run
+        if resource.last_run < last_run or last_run is None:
+            last_run = resource.last_run
+        response['first_run'] = first_run
+        response['last_run'] = last_run
         if resource.last_run.success:
             response['success']['number'] += 1
         else:

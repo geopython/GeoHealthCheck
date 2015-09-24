@@ -15,6 +15,7 @@
         <a href="{{ url_for('delete', resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">Delete</button></a>
         {% endif %}
     </h1>
+    <h3 class="page-header">Monitoring Period: {{ resource.first_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
     <div class="table-responsive col-md-4">
         <table class="table">
             <tr>
@@ -39,13 +40,19 @@
                 <td><a href="{{ resource.get_capabilities_url }}">{{ resource.url }}</a></td>
             </tr>
             <tr>
-                <th>Average Response Time (seconds)</th>
-                <td>{{ resource.average_response_time|round(2) }}</td>
+                <th>Response Times (seconds)</th>
+                <td>
+                    <ul>
+                        <li>Min: {{ resource.min_response_time|round(2) }}</li>
+                        <li>Average: {{ resource.average_response_time|round(2) }}</li>
+                        <li>Max: {{ resource.max_response_time|round(2) }}</li>
+                    </ul>
+                </td>
             </tr>
             <tr>
                 <th>Reliability</th>
                 <td>
-                    <button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-sm">{{ resource.reliability|round2 }}%</button>
+                    <button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-sm nohover">{{ resource.reliability|round2 }}%</button>
                 </td>
             </tr>
         </table>
@@ -80,9 +87,9 @@
                     <td>{{ run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</td>
                     <td>{{ run.response_time|round(2) }}</td>
                     {% if run.success %}
-                    <td><button type="button" class="btn btn-success btn-circle"><i class="fa fa-check"></i></button></td>
+                    <td><button type="button" class="btn btn-success btn-circle nohover"><i class="fa fa-check"></i></button></td>
                     {% else %}
-                    <td><button title="{{ run.message }}" type="button" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></button></td>
+                    <td><button title="{{ run.message }}" type="button" class="btn btn-danger btn-circle btn nohover"><i class="fa fa-times"></i></button></td>
                     {% endif %}
                 </tr>
             {% endfor %}
@@ -172,7 +179,7 @@
         }
     });
 
-    var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 1);
+    var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
 
     map.addLayer(new L.TileLayer(
         'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {

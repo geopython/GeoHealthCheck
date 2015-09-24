@@ -127,3 +127,7 @@ footer {
 .run-chart {
     height: 250px;
 }
+
+.btn.nohover:hover {
+    cursor:default !important;
+}

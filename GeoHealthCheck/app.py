@@ -167,10 +167,14 @@ def export():
                 'ghc_url': ghc_url,
                 'ghc_json': '%s/json' % ghc_url,
                 'ghc_csv': '%s/csv' % ghc_url,
-                'last_check': r.last_run.checked_datetime.strftime(
+                'first_run': r.first_run.checked_datetime.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ'),
+                'last_run': r.last_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
                 'status': r.last_run.success,
-                'response_time': round(r.average_response_time, 2),
+                'min_response_time': round(r.min_response_time, 2),
+                'average_response_time': round(r.average_response_time, 2),
+                'max_response_time': round(r.max_response_time, 2),
                 'reliability': round(r.reliability, 2)
             })
         return jsonify(json_dict)
@@ -179,7 +183,8 @@ def export():
         writer = csv.writer(output)
         header = [
             'resource_type', 'title', 'url', 'ghc_url', 'ghc_json', 'ghc_csv',
-            'last_check', 'status', 'response_time', 'reliability'
+            'first_run', 'last_run', 'status', 'min_response_time',
+            'average_response_time', 'max_response_time', 'reliability'
         ]
         writer.writerow(header)
         for r in response['resources']:
@@ -193,6 +198,8 @@ def export():
                 ghc_url,
                 '%s/json' % ghc_url,
                 '%s/csv' % ghc_url,
+                r.first_run.checked_datetime.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ'),
                 r.last_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
                 r.last_run.success,
@@ -220,10 +227,14 @@ def export_resource(identifier):
             'url': resource.url,
             'resource_type': resource.resource_type,
             'owner': resource.owner.username,
+            'min_response_time': resource.min_response_time,
             'average_response_time': resource.average_response_time,
+            'max_response_time': resource.max_response_time,
             'reliability': resource.reliability,
             'status': resource.last_run.success,
-            'last_check': resource.last_run.checked_datetime.strftime(
+            'first_run': resource.first_run.checked_datetime.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'),
+            'last_run': resource.last_run.checked_datetime.strftime(
                 '%Y-%m-%dT%H:%M:%SZ'),
             'history_csv': history_csv,
             'history_json': history_json
@@ -234,8 +245,9 @@ def export_resource(identifier):
         writer = csv.writer(output)
         header = [
             'identifier', 'title', 'url', 'resource_type', 'owner',
-            'average_response_time', 'reliability', 'status', 'last_check',
-            'history_csv', 'history_json'
+            'min_response_time', 'average_response_time', 'max_response_tie',
+            'reliability', 'status', 'first_run', 'last_run', 'history_csv',
+            'history_json'
         ]
         writer.writerow(header)
         writer.writerow([
@@ -244,9 +256,13 @@ def export_resource(identifier):
             resource.url,
             resource.resource_type,
             resource.owner.username,
+            resource.min_response_time,
             resource.average_response_time,
+            resource.max_response_time,
             resource.reliability,
             resource.last_run.success,
+            resource.first_run.checked_datetime.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'),
             resource.last_run.checked_datetime.strftime(
                 '%Y-%m-%dT%H:%M:%SZ'),
             history_csv,

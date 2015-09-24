@@ -111,6 +111,12 @@ class Resource(DB.Model):
         return url
 
     @property
+    def first_run(self):
+        return self.runs.having(func.min(Run.checked_datetime)).group_by(
+            Run.checked_datetime).order_by(
+                Run.checked_datetime.asc()).first()
+
+    @property
     def last_run(self):
         return self.runs.having(func.max(Run.checked_datetime)).group_by(
             Run.checked_datetime).order_by(
@@ -120,6 +126,16 @@ class Resource(DB.Model):
     def average_response_time(self):
         query = [run.response_time for run in self.runs]
         return util.average(query)
+
+    @property
+    def min_response_time(self):
+        query = [run.response_time for run in self.runs]
+        return min(query)
+
+    @property
+    def max_response_time(self):
+        query = [run.response_time for run in self.runs]
+        return max(query)
 
     @property
     def reliability(self):
