@@ -57,8 +57,9 @@ def list_resources(resource_type=None, query=None):
         response['resources'] = models.Resource.query.filter_by(
             resource_type=resource_type).all()
     if query is not None:
+        field, term = get_query_field_term(query)
         response['resources'] = models.Resource.query.filter(
-            models.Resource.title.ilike('%%%s%%' % query)).all()
+            field.ilike(term)).all()
     else:
         response['resources'] = models.Resource.query.all()
 
@@ -99,3 +100,27 @@ def get_resource_types_counts():
         'counts': mrt[0],
         'total': mrt[1]
     }
+
+
+def get_query_field_term(query):
+    """determine query context from q="""
+
+    field = models.Resource.title  # default
+
+    try:
+        facet, term = query.split(':')
+        term2 = '%%%s%%' % term  # default like
+        if facet == 'url':
+            field = models.Resource.url
+        elif facet == 'title':
+            field = models.Resource.title
+        elif facet == 'site':
+            field = models.Resource.url
+            term2 = '%%%s/%%' % term
+        elif facet == 'owner':
+            field = models.Resource.owner_identifier
+        term = term2
+    except ValueError:  # default search
+        term = '%%%s%%' % query
+
+    return [field, term]
