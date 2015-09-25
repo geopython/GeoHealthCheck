@@ -31,7 +31,7 @@ import models
 import util
 
 
-def list_resources(resource_type=None):
+def list_resources(resource_type=None, query=None):
     """return all resources"""
 
     reliability_values = []
@@ -48,12 +48,17 @@ def list_resources(resource_type=None):
             'number': 0,
             'percentage': 0
         },
+        'first_run': None,
+        'last_run': None,
         'reliability': 0
     }
 
     if resource_type is not None:
         response['resources'] = models.Resource.query.filter_by(
             resource_type=resource_type).all()
+    if query is not None:
+        response['resources'] = models.Resource.query.filter(
+            models.Resource.title.ilike('%%%s%%' % query)).all()
     else:
         response['resources'] = models.Resource.query.all()
 

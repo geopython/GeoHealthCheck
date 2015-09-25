@@ -8,7 +8,9 @@
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">Dashboard</h1>
+    {% if response['first_run'].checked_datetime and response['last_run'].checked_datetime %}
     <h3 class="page-header">Monitoring Period: {{ response['first_run'].checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ response['last_run'].checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
+    {% endif %}
     <div class="row col-md-offset-0">
 <!--
         <div class="col-lg-3 col-md-6">
@@ -109,7 +111,7 @@
         </div>
 -->
     </div>
-    <h2 id="all-resources">Resources <a class="btn btn-default btn-xs" href="{{ url_for('json', resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv', resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> CSV</a></h2>
+    <h2 id="all-resources">Resources <a class="btn btn-default btn-xs" href="{{ url_for('json', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> CSV</a></h2>
 
     <input id="filter" type="text" class="form-control input-small" placeholder="Search...">
 

@@ -171,7 +171,9 @@ def home():
     if request.args.get('resource_type') in RESOURCE_TYPES.keys():
         resource_type = request.args['resource_type']
 
-    response = views.list_resources(resource_type)
+    query = request.args.get('q')
+
+    response = views.list_resources(resource_type, query)
     return render_template('home.html', response=response)
 
 
@@ -185,7 +187,9 @@ def export():
     if request.args.get('resource_type') in RESOURCE_TYPES.keys():
         resource_type = request.args['resource_type']
 
-    response = views.list_resources(resource_type)
+    query = request.args.get('q')
+
+    response = views.list_resources(resource_type, query)
 
     if request.url_rule.rule == '/json':
         json_dict = {'total': response['total'], 'resources': []}
@@ -237,7 +241,16 @@ def export():
                 round(r.average_response_time, 2),
                 round(r.reliability, 2)
             ])
-        return output.getvalue()
+        return output.getvalue(), 200, {'Content-type': 'text/csv'}
+
+
+@APP.route('/opensearch')
+def opensearch():
+    """generate OpenSearch description document"""
+
+    content = render_template('opensearch_description.xml')
+
+    return content, 200, {'Content-type': 'text/xml'}
 
 
 @APP.route('/resource/<identifier>/csv', endpoint='csv-resource')
@@ -299,7 +312,7 @@ def export_resource(identifier):
             history_csv,
             history_json
         ])
-        return output.getvalue()
+        return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
 
 @APP.route('/resource/<identifier>/history/csv',
@@ -345,7 +358,7 @@ def export_resource_history(identifier):
                 run.response_time,
                 run.success,
             ])
-        return output.getvalue()
+        return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
 
 @APP.route('/settings')

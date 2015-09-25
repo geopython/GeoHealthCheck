@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>{{ config['GHC_SITE_TITLE'] }}</ShortName>
+    <LongName>{{ config['GHC_SITE_TITLE'] }}</LongName>
+    <Description>{{ config['GHC_SITE_TITLE'] }}</Description>
+    <Tags>{{ config['GHC_SITE_TITLE'] }}</Tags>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Url type="text/html" template="{{ config['GHC_SITE_URL'] + url_for('home') }}?q={searchTerms}"/>
+    <Url type="application/json" template="{{ config['GHC_SITE_URL'] + url_for('json') }}?q={searchTerms}"/>
+    <Url type="text/csv" template="{{ config['GHC_SITE_URL'] + url_for('csv') }}?q={searchTerms}"/>
+    <Attribution>powered by GeoHealthCheck http://geopython.github.io/GeoHealthCheck</Attribution>
+</OpenSearchDescription>
