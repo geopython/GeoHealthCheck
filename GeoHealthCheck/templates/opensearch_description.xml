@@ -5,8 +5,8 @@
     <Description>{{ config['GHC_SITE_TITLE'] }}</Description>
     <Tags>{{ config['GHC_SITE_TITLE'] }}</Tags>
     <InputEncoding>UTF-8</InputEncoding>
-    <Url type="text/html" template="{{ config['GHC_SITE_URL'] + url_for('home') }}?q={searchTerms}"/>
-    <Url type="application/json" template="{{ config['GHC_SITE_URL'] + url_for('json') }}?q={searchTerms}"/>
-    <Url type="text/csv" template="{{ config['GHC_SITE_URL'] + url_for('csv') }}?q={searchTerms}"/>
+    <Url type="text/html" template="{{ url_for('home', _external=True) }}?q={searchTerms}"/>
+    <Url type="application/json" template="{{ url_for('json', _external=True) }}?q={searchTerms}"/>
+    <Url type="text/csv" template="{{ url_for('csv', _external=True) }}?q={searchTerms}"/>
     <Attribution>powered by GeoHealthCheck http://geopython.github.io/GeoHealthCheck</Attribution>
 </OpenSearchDescription>
