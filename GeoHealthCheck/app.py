@@ -28,6 +28,7 @@
 # =================================================================
 
 import csv
+from datetime import datetime, timedelta
 from StringIO import StringIO
 
 from flask import (abort, flash, Flask, g, jsonify, redirect,
@@ -72,6 +73,35 @@ def unauthorized_callback():
 @APP.before_request
 def before_request():
     g.user = current_user
+
+
+def next_page_refresh():
+    """determines when to refresh webapp based on GHC_RUN_FREQUENCY"""
+
+    now = datetime.now()
+
+    frequency = APP.config['GHC_RUN_FREQUENCY']
+
+    if frequency == 'hourly':  # get next hour
+        now2 = now.replace(minute=0, second=0, microsecond=0)
+        refresh = timedelta(hours=1)
+    elif frequency == 'daily':  # get next day
+        now2 = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        refresh = timedelta(days=1)
+    elif frequency == ['weekly']:  # get next day
+        now2 = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        refresh = timedelta(weeks=1)
+    elif frequency == ['monthly']:
+        now2 = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        refresh = timedelta(weeks=4)
+    elif frequency == ['yearly']:  # get next day
+        now2 = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        refresh = timedelta(weeks=52)
+
+    next_frequency = now2 + refresh
+    differ = next_frequency - now
+
+    return differ.seconds
 
 
 @APP.template_filter('cssize_reliability')
@@ -125,6 +155,7 @@ def context_processors():
     rtc = views.get_resource_types_counts()
     return {
         'app_version': __version__,
+        'next_page_refresh': next_page_refresh(),
         'resource_types': RESOURCE_TYPES,
         'resource_types_counts': rtc['counts'],
         'resources_total': rtc['total']
