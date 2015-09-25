@@ -111,6 +111,10 @@ class Resource(DB.Model):
         return url
 
     @property
+    def all_response_times(self):
+        return [run.response_time for run in self.runs]
+
+    @property
     def first_run(self):
         return self.runs.having(func.min(Run.checked_datetime)).group_by(
             Run.checked_datetime).order_by(

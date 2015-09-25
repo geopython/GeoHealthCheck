@@ -100,6 +100,12 @@ def setup():
         shutil.rmtree(path(options.base.static_lib /
                            'startbootstrap-sb-admin-2-1.0.3'))
 
+    # install sparklines to static/site/js
+    with open(path(options.base.static_lib / 'jspark.js', 'w')) as f:
+        content = urlopen('http://ejohn.org/files/jspark.js').read()
+        content.replace('red', 'green')
+        f.write(content)
+
     # message user
     info('GeoHealthCheck is now built. Edit settings in %s' % config_file)
     info('before deploying the application. Alternatively, you can start a')

@@ -147,6 +147,7 @@
                             <li>Average: {{ resource.average_response_time|round(2) }}</li>
                             <li>Max: {{ resource.max_response_time|round(2) }}</li>
                         </ul>
+                        <span style="display: none; color: green" class="sparkline col-md-10">{{ resource.all_response_times }}</span>
                     </td>
                     <td class="text-right"><button type="button" class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block nohover">{{ resource.reliability|round2 }}%</button></td>
                 </tr>
@@ -158,6 +159,7 @@
 {% endblock %}
 
 {% block extrafoot %}
+<script type="text/javascript" src="{{ url_for('static', filename='lib/jspark.js') }}"></script>
 <script type="text/javascript">
     $('#resources-table').dataTable({
         'paging': false,
