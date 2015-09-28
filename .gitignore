@@ -57,3 +57,4 @@ instance
 tmp/
 GeoHealthCheck/static/lib
 GeoHealthCheck.wsgi
+GeoHealthCheck.conf
