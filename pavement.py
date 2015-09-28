@@ -142,6 +142,7 @@ def create_wsgi():
         ff.write('Allow from all\n')
         ff.write('</Directory>')
 
+
 @task
 def refresh_docs():
     """Build sphinx docs from scratch"""
