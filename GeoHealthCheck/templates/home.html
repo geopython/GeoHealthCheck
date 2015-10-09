@@ -130,8 +130,8 @@
             <tbody class="searchable">
             {% for resource in response['resources'] %}
                 <tr>
-                    <td>{{ resource_types[resource.resource_type]['label'] }}</td>
-                    <td><a href="{{ url_for('get_resource_by_id', identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a></td>
+                    <td class="facet-type">{{ resource_types[resource.resource_type]['label'] }}</td>
+                    <td class="facet-name"><a class="facet-url" href="{{ url_for('get_resource_by_id', identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a></td>
                     <td>
                         <ul>
                             <li>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</li>
@@ -193,18 +193,46 @@
 
 
     // rudimentary table filter
-    $(document).ready(function () {
-        (function ($) {
-            $('#filter').keyup(function () {
-                var rex = new RegExp($(this).val(), 'i');
-                $('.searchable tr').hide();
-                $('.searchable tr').filter(function () {
-                    return rex.test($(this).text());
-                }).show();
-    
-            })
-    
-        }(jQuery));
+    $('#filter').keyup(function () {
+        //var selector = '.searchable tr';
+        var selector = 'td.facet-name';
+        var term = $(this).val();
+        var tokens = [];
+        var td_text = null;
+        var facet = null;
+
+        if (term.match('^site:|title:|type:|url:')) {
+            if (term.match('^title:')) {
+                selector = 'td.facet-name';
+            }
+            else if (term.match('^type:')) {
+                selector = 'td.facet-type';
+            }
+            else if (term.match('^url:|site:')) {
+                selector = 'a.facet-url';
+            }
+            tokens = term.split(':');
+            facet = tokens[0];
+            term = tokens[1];
+        }
+
+        var rex = new RegExp(term, 'i');
+        $('.searchable tr').hide(); // hide all rows
+
+        $(selector).each(function() {
+            if (facet === 'url') {
+                td_text = $(this).attr('title');
+            }
+            if (facet === 'site') {
+                td_text = $(this).attr('title').split('/')[2];
+            }
+            else {
+                td_text = $(this).text();
+            }
+            if (rex.test(td_text)) {
+                $(this).closest('tr').show();
+            }
+        });
     });
 </script>
 {% endblock %}
