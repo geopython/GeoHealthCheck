@@ -1,4 +1,5 @@
 Paver
 pep8
+pyflakes
 pylint
 Sphinx
