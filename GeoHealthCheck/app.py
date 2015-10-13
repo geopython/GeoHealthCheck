@@ -31,7 +31,7 @@ import csv
 from datetime import datetime, timedelta
 from StringIO import StringIO
 
-from flask import (abort, flash, Flask, g, jsonify, redirect,
+from flask import (flash, Flask, g, jsonify, redirect,
                    render_template, request, url_for)
 
 from flask.ext.login import (LoginManager, login_user, logout_user,
