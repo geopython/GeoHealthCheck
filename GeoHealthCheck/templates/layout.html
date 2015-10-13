@@ -12,7 +12,7 @@
         <link href="{{ url_for('static', filename='lib/bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', filename='lib/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='lib/bower_components/morrisjs/morris.css') }}" rel="stylesheet">
-        <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+        <link href="{{ url_for('static', filename='lib/leaflet/leaflet.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='site/css/dashboard.css') }}" rel="stylesheet" type="text/css">
         <link rel="search" type="application/opensearchdescription+xml" href="{{ url_for('opensearch') }}" title="{{ config['GHC_SITE_TITLE'] }}"/>
 
@@ -109,7 +109,7 @@
         <script src="{{ url_for('static', filename='lib/bower_components/morrisjs/morris.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/bower_components/datatables/media/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js') }}"></script>
-        <script type="text/javascript" src="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+        <script src="{{ url_for('static', filename='lib/leaflet/leaflet.js') }}"></script>
         <script type="text/javascript">
             function updateClock() {
                 $('#clockbox').html(new Date().toISOString().slice(0, 19)+'Z');

@@ -106,6 +106,12 @@ def setup():
         content.replace('red', 'green')
         f.write(content)
 
+    leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'
+
+    zipstr = StringIO(urlopen(leafletjs).read())
+    zipfile_obj = zipfile.ZipFile(zipstr)
+    zipfile_obj.extractall(options.base.static_lib / 'leaflet')
+
     # message user
     info('GeoHealthCheck is now built. Edit settings in %s' % config_file)
     info('before deploying the application. Alternatively, you can start a')
@@ -176,6 +182,8 @@ def clean():
 
     if os.path.exists(options.base.static_lib):
         shutil.rmtree(options.base.static_lib)
+    if os.path.exists(options.base.tmp):
+        shutil.rmtree(options.base.tmp)
 
 
 def sphinx_make():
