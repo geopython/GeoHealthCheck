@@ -181,12 +181,12 @@
 //    });
 
     var lat_long_points = [];
-    var map = L.map('all-resources-map').setView([42.3626, -71.0843], 1);
+    var map = L.map('all-resources-map').setView([{{ config['GHC_MAP']['centre_lat'] }}, {{ config['GHC_MAP']['centre_long']}}], 1);
 
     map.addLayer(new L.TileLayer(
-        'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            subdomains: '1234',
+        '{{ config['GHC_MAP']['url'] }}', {
+            maxZoom: {{ config['GHC_MAP']['maxzoom'] }},
+            subdomains: '{{ config['GHC_MAP']['subdomains'] }}',
         }
     ));
     {% for resource in response['resources'] %}

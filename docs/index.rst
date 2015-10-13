@@ -54,6 +54,7 @@ Quick and Dirty
   # - GHC_SITE_TITLE
   # - GHC_SITE_URL
   # - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled
+  # - GHC_MAP  # or use default settings
   
   # init database
   python GeoHealthCheck/models.py create
@@ -129,7 +130,12 @@ You can override these settings in ``instance/config.py``:
 - **GHC_SITE_URL**: url of the installation / deployment
 - **GHC_SMTP**:  configure SMTP settings if **GHC_NOTIFICATIONS** is enabled
 - **GHC_RELIABILITY_MATRIX**: classification scheme for grading resource
-  reliability (see below)
+- **GHC_MAP**: default map settings
+  - **url**: URL of TileLayer
+  - **centre_lat**: Centre latitude for homepage map
+  - **centre_long**: Centre longitude for homepage map
+  - **maxzoom**: maximum zoom level
+  - **subdomains**: available subdomains to help with parallel requests
 
 Customizing the Score Matrix
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

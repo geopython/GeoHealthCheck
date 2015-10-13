@@ -25,6 +25,7 @@ vi instance/config.py
 # - GHC_SELF_REGISTER
 # - GHC_ADMIN_EMAIL
 # - GHC_SITE_TITLE
+# - GHC_MAP (or use default settings)
 
 # setup database and superuser account
 paver create
