@@ -106,11 +106,24 @@ def setup():
         content.replace('red', 'green')
         f.write(content)
 
+    # install leafletjs to static/lib
     leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'
 
     zipstr = StringIO(urlopen(leafletjs).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(options.base.static_lib / 'leaflet')
+
+    # install html5shiv to static/lib
+    with open(path(options.base.static_lib / 'html5shiv.min.js'), 'w') as f:
+        url = 'https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
+        content = urlopen(url).read()
+        f.write(content)
+
+    # install respond to static/lib
+    with open(path(options.base.static_lib / 'respond.min.js'), 'w') as f:
+        url = 'https://oss.maxcdn.com/respond/1.4.2/respond.min.js'
+        content = urlopen(url).read()
+        f.write(content)
 
     # message user
     info('GeoHealthCheck is now built. Edit settings in %s' % config_file)
