@@ -33,6 +33,8 @@ paver create
 # setup cronjobs
 vi jobs.cron
 # edit paths to scripts
+# enable cron
+crontab jobs.cron
 
 # start server (default is 0.0.0.0:8000)
 python GeoHealthCheck/app.py  
