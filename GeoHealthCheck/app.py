@@ -33,7 +33,7 @@ from StringIO import StringIO
 
 from flask import (flash, Flask, g, jsonify, redirect,
                    render_template, request, url_for)
-
+from flask.ext.babel import Babel, gettext
 from flask.ext.login import (LoginManager, login_user, logout_user,
                              current_user, login_required)
 
@@ -45,6 +45,7 @@ from models import Resource, Run, User
 import views
 
 APP = Flask(__name__)
+BABEL = Babel(APP)
 APP.config.from_pyfile('config.py')
 APP.config.from_pyfile('../instance/config.py')
 APP.secret_key = APP.config['SECRET_KEY']
@@ -53,6 +54,17 @@ LOGIN_MANAGER = LoginManager()
 LOGIN_MANAGER.init_app(APP)
 
 GHC_SITE_URL = APP.config['GHC_SITE_URL'].rstrip('/')
+
+LANGUAGES = {
+    'en': 'English',
+    'fr': 'Francais'
+}
+
+
+@BABEL.localeselector
+def get_locale():
+    # return request.accept_languages.best_match(LANGUAGES.keys())
+    return 'fr'
 
 
 @LOGIN_MANAGER.user_loader
@@ -379,8 +391,11 @@ def get_resource_by_id(identifier):
 def register():
     """register a new user"""
     if not APP.config['GHC_SELF_REGISTER']:
-        flash('This site is not configured for self-registration.  '
-              'Please contact %s ' % APP.config['GHC_ADMIN_EMAIL'], 'warning')
+        msg1 = gettext('This site is not configured for self-registration')
+        msg2 = gettext('Please contact')
+        flash('%s.  ' % msg1,
+              '%s %s ' % (msg2, APP.config['GHC_ADMIN_EMAIL']),
+              'warning')
         return redirect(url_for('home'))
     if request.method == 'GET':
         return render_template('register.html')
@@ -393,7 +408,8 @@ def register():
         DB.session.rollback()
         bad_column = err.message.split()[2]
         bad_value = request.form[bad_column]
-        flash('%s %s already registered' % (bad_column, bad_value), 'danger')
+        msg = gettext('already registered')
+        flash('%s %s %s' % (bad_column, bad_value, msg), 'danger')
         return redirect(url_for('register'))
     return redirect(url_for('login'))
 
@@ -412,8 +428,8 @@ def add():
     resource = Resource.query.filter_by(resource_type=resource_type,
                                         url=url).first()
     if resource is not None:
-        flash('service already registered (%s, %s)' % (resource_type, url),
-              'danger')
+        msg = gettext('Service already registered')
+        flash('%s (%s, %s)' % (msg, resource_type, url), 'danger')
         if 'resource_type' in request.args:
             rtype = request.args.get('resource_type')
             return redirect(url_for('add',
@@ -435,7 +451,8 @@ def add():
     DB.session.add(run_to_add)
     try:
         DB.session.commit()
-        flash('service registered (%s, %s)' % (resource_type, url), 'success')
+        msg = gettext('Service registered')
+        flash('%s (%s, %s)' % (msg, resource_type, url), 'success')
     except Exception, err:
         DB.session.rollback()
         flash(str(err), 'danger')
@@ -470,16 +487,17 @@ def test(resource_identifier):
     """test a resource"""
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if resource is None:
-        flash('resource not found', 'danger')
+        flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
     [title, success, response_time, message, start_time] = run_test_resource(
         resource.resource_type, resource.url)
 
     if message not in ['OK', None, 'None']:
-        flash('ERROR: %s' % message, 'danger')
+        msg = gettext('ERROR')
+        flash('%s: %s' % (msg, message), 'danger')
     else:
-        flash('Resource tested successfully', 'success')
+        flash(gettext('Resource tested successfully'), 'success')
 
     return redirect(url_for('get_resource_by_id',
                     identifier=resource_identifier))
@@ -491,11 +509,12 @@ def delete(resource_identifier):
     """delete a resource"""
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if g.user.role != 'admin' and g.user.username != resource.owner.username:
-        flash('you do not have access to delete this resource', 'danger')
+        msg = gettext('You do not have access to delete this resource')
+        flash(msg, 'danger')
         return redirect('/resource/%s' % resource_identifier)
 
     if resource is None:
-        flash('resource not found', 'danger')
+        flash(gettext('Resource not found'), 'danger')
         return redirect(url_for('home'))
 
     runs = Run.query.filter_by(resource_identifier=resource_identifier).all()
@@ -507,7 +526,7 @@ def delete(resource_identifier):
 
     try:
         DB.session.commit()
-        flash('Resource deleted', 'success')
+        flash(gettext('Resource deleted'), 'success')
         return redirect(url_for('home'))
     except Exception, err:
         DB.session.rollback()
@@ -525,7 +544,7 @@ def login():
     registered_user = User.query.filter_by(username=username,
                                            password=password).first()
     if registered_user is None:
-        flash('invalid username and / or password', 'danger')
+        flash(gettext('Invalid username and / or password'), 'danger')
         return redirect(url_for('login'))
     login_user(registered_user)
 
@@ -538,7 +557,7 @@ def login():
 def logout():
     """logout"""
     logout_user()
-    flash('logged out', 'success')
+    flash(gettext('Logged out'), 'success')
     if request.referrer:
         return redirect(request.referrer)
     else:

@@ -34,7 +34,8 @@ from StringIO import StringIO
 from urllib2 import urlopen
 import zipfile
 
-from paver.easy import (Bunch, info, needs, options, path, pushd, sh, task)
+from paver.easy import (Bunch, call_task, cmdopts, info, needs, options,
+                        path, pushd, sh, task)
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -43,8 +44,10 @@ options(
         home=path(BASEDIR),
         docs=path('%s/docs' % BASEDIR),
         instance=path('%s/instance' % BASEDIR),
+        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.pot' % BASEDIR),
         static_lib=path('%s/GeoHealthCheck/static/lib' % BASEDIR),
-        tmp=path(tempfile.mkdtemp())
+        tmp=path(tempfile.mkdtemp()),
+        translations=path('%s/GeoHealthCheck/translations' % BASEDIR)
     ),
 )
 
@@ -125,6 +128,9 @@ def setup():
         content = urlopen(url).read()
         f.write(content)
 
+    # build i18n .mo files
+    call_task('compile_translations')
+
     # message user
     info('GeoHealthCheck is now built. Edit settings in %s' % config_file)
     info('before deploying the application. Alternatively, you can start a')
@@ -197,6 +203,49 @@ def clean():
         shutil.rmtree(options.base.static_lib)
     if os.path.exists(options.base.tmp):
         shutil.rmtree(options.base.tmp)
+
+
+@task
+def extract_translations():
+    """extrect translations wrapped in _() or gettext()"""
+
+    pot_dir = path('GeoHealthCheck/translations/en/LC_MESSAGES')
+    if not os.path.exists(pot_dir):
+        pot_dir.makedirs()
+
+    sh('pybabel extract -F babel.cfg -o %s GeoHealthCheck' % options.base.pot)
+
+
+@task
+@cmdopts([
+    ('lang=', 'l', '2-letter language code'),
+])
+def add_language_catalogue(options):
+    """adds new language profile"""
+
+    lang = options.get('lang', None)
+
+    if lang is None:
+        raise RuntimeError('missing lang argument')
+
+    sh('pybabel init -i %s -d %s -l %s' % (
+       options.base.pot, options.base.translations, lang))
+
+
+@task
+def compile_translations():
+    """build .mo files"""
+
+    sh('pybabel compile -d GeoHealthCheck')
+
+
+@task
+def update_translations():
+    """update language strings"""
+
+    call_task('extract_translations')
+    sh('pybabel update -i %s -d %s' % (
+        options.base.pot, options.base.translations))
 
 
 def sphinx_make():

@@ -38,7 +38,7 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add <i class="fa fa-plus"></i></a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ _('Add') }} <i class="fa fa-plus"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
                                 {% for key, value in resource_types.iteritems() %}
                                 <li><a href="{{ url_for('add', resource_type=key) }}">{{ value['label'] }}</a></li>
@@ -53,9 +53,9 @@
                             </ul>
                         </li>
                         {% else %}
-                        <li><a href="{{ url_for('login', next=request.script_root+request.path) }}">Login<i class="fa fa-sign-in fa-fw"></i></a></li>
+                        <li><a href="{{ url_for('login', next=request.script_root+request.path) }}">{{ _('Login') }}<i class="fa fa-sign-in fa-fw"></i></a></li>
                         {% endif %}
-                        <li><a href="https://github.com/geopython/GeoHealthCheck">Help <i class="fa fa-question-circle fa-fw"></i></a></li>
+                        <li><a href="https://github.com/geopython/GeoHealthCheck">{{ _('Help') }} <i class="fa fa-question-circle fa-fw"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                 <div class="col-sm-3 col-md-2 sidebar">
                     <ul class="nav nav-sidebar">
                         <li>
-                            <i class="fa fa-filter fa-fw"></i><span>Resource Types ({{ resources_total }})</span>
+                            <i class="fa fa-filter fa-fw"></i><span>{{ _('Resource Types') }} ({{ resources_total }})</span>
                             <ul class="nav nav-second-level">
                                 {% for rt in resource_types_counts %}
                                 {% if request.args.get('resource_type') == rt[0] %}
@@ -80,10 +80,10 @@
                     </ul>
                     <ul class="nav nav-sidebar">
                         <li>
-                            <i class="fa fa-cog fa-fw"></i>Settings
+                            <i class="fa fa-cog fa-fw"></i>{{ _('Settings') }}
                             <ul class="nav nav-second-level">
-                                <li><a>History: {{ config['GHC_RETENTION_DAYS'] }} days</a></li>
-                                <li><a>Test Frequency: {{ config['GHC_RUN_FREQUENCY'] }}</a></li>
+                                <li><a>{{ _('History') }}: {{ config['GHC_RETENTION_DAYS'] }} {{ _('days') }}</a></li>
+                                <li><a>{{ _('Test Frequency') }}: {{ config['GHC_RUN_FREQUENCY'] }}</a></li>
                                 <li><a id="clockbox"></a></li>
                             </ul>
                         </li>
@@ -102,7 +102,7 @@
                 {% endblock %}
             </div>
         </div>
-        <footer><div class="footer text-center">Powered by <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
+        <footer><div class="footer text-center">{{ _('Powered by') }} <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
         <script src="{{ url_for('static', filename='lib/bower_components/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/bower_components/raphael/raphael-min.js') }}"></script>

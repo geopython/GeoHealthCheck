@@ -2,10 +2,10 @@
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-3 main">
   <form role="form" action="" method="post">
-    <h2>Add Resource <i class="fa fa-plus fa-fw"></i></h2>
+    <h2>{{ _('Add Resource') }} <i class="fa fa-plus fa-fw"></i></h2>
     <div class="form-group input-group col-sm-3">
         <select class="form-control" name="resource_type">
-            <option value="none">Select Resource Type</option>
+            <option value="none">{{ _('Select Resource Type') }}</option>
             {% for key, value in resource_types.iteritems() %}
               {% if 'resource_type' in request.args and request.args['resource_type'] == key %}
                 {% set selected = 'selected' %}
@@ -19,10 +19,10 @@
 
     <div class="form-group input-group col-sm-5">
         <input type="text" name="url" class="form-control" placeholder="url" required>
-        <p class="help-block">Enter the URL without any query parameters:<br/>good: <code>http://host/wms</code><br/>bad:<code>http://host/wms?service=WMS&version=1.1.1&request=GetCapabilities</code></p>
+        <p class="help-block">{{ _('Enter the URL without any query parameters') }}:<br/>{{ _('good') }}: <code>http://host/wms</code><br/>{{ _('bad') }}:<code>http://host/wms?service=WMS&version=1.1.1&request=GetCapabilities</code></p>
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="submit" class="btn btn-success">{{ _('Submit') }}</button>
     </div>
   </form>
 </div>

@@ -1,3 +1,4 @@
+Flask-Babel
 Flask-Login==0.2.11
 Flask-SQLAlchemy
 OWSLib

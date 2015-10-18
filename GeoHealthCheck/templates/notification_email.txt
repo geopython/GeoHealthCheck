@@ -1,19 +1,19 @@
-Subject: [{{ config.GHC_SITE_TITLE }}] {{ result }}: {{ resource.title }}
+{{ _('Subject') }}: [{{ config.GHC_SITE_TITLE }}] {{ result }}: {{ resource.title }}
 
 
-Hi: this is an automated message from the {{ config.GHC_SITE_TITLE }} service.
+{{ _('Hi: this is an automated message from the') }} {{ config.GHC_SITE_TITLE }} {{ _('service') }}.
 
-Resource: {{ resource.title }}
-Resource type: {{ resource.resource_type }}
-Resource URL: {{ resource.url }}
+{{ _('Resource') }}: {{ resource.title }}
+{{ _('Resource type') }}: {{ resource.resource_type }}
+{{ _('Resource URL') }}: {{ resource.url }}
 
-Details:
+{{ _('Details') }}:
 
-Date: {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} 
+{{ _('Date') }}: {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} 
 
-Message: {{ resource.last_run.message }}
+{{ _('Message') }}: {{ resource.last_run.message }}
 
-Details: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
+{{ _('Details') }}: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
 
 {{ config.GHC_SITE_TITLE }}
 {{ config.GHC_SITE_URL }}

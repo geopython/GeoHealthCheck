@@ -39,6 +39,7 @@ from owslib.wps import WebProcessingService
 from owslib.csw import CatalogueServiceWeb
 from owslib.sos import SensorObservationService
 
+from flask.ext.babel import gettext
 from enums import RESOURCE_TYPES
 
 LOGGER = logging.getLogger(__name__)
@@ -48,9 +49,10 @@ def run_test_resource(resource_type, url):
     """tests a CSW service and provides run metrics"""
 
     if resource_type not in RESOURCE_TYPES.keys():
-        msg = 'Invalid resource type: %s' % resource_type
-        LOGGER.error(msg)
-        raise RuntimeError(msg)
+        msg = gettext('Invalid resource type')
+        msg2 = '%s: %s' % (msg, resource_type)
+        LOGGER.error(msg2)
+        raise RuntimeError(msg2)
 
     title = None
     start_time = datetime.datetime.utcnow()
@@ -79,7 +81,7 @@ def run_test_resource(resource_type, url):
                 except:
                     title = url
             elif resource_type == 'urn:geoss:waf':
-                title = 'WAF for %s' % urlparse(url).hostname
+                title = 'WAF %s %s' % (gettext('for'), urlparse(url).hostname)
         elif resource_type == 'FTP':
             ows = urlopen(url)
             title = urlparse(url).hostname
@@ -87,7 +89,7 @@ def run_test_resource(resource_type, url):
         if resource_type.startswith('OGC:'):
             title = ows.identification.title
         if title is None:
-            title = '%s for %s' % (resource_type, url)
+            title = '%s %s %s' % (resource_type, gettext('for'), url)
     except Exception, err:
         msg = str(err)
         LOGGER.exception(msg)

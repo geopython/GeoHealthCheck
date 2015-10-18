@@ -30,6 +30,7 @@
 import logging
 import smtplib
 
+from flask.ext.babel import gettext
 from util import render_template2
 
 LOGGER = logging.getLogger(__name__)
@@ -43,15 +44,15 @@ def notify(config, resource, run, last_run_success):
     this_run_success = run.success
 
     if last_run_success and not this_run_success:
-        result = 'Failing'
+        result = gettext('Failing')
     elif not last_run_success and this_run_success:
-        result = 'Fixed'
+        result = gettext('Fixed')
     elif not last_run_success and not this_run_success:
-        result = 'Still Failing'
+        result = gettext('Still Failing')
     elif last_run_success and this_run_success:
-        result = 'Passing'
+        result = gettext('Passing')
 
-    if result != 'Passing':
+    if result != gettext('Passing'):
         status_changed = True
 
     if not status_changed:
