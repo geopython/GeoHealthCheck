@@ -44,7 +44,7 @@ options(
         home=path(BASEDIR),
         docs=path('%s/docs' % BASEDIR),
         instance=path('%s/instance' % BASEDIR),
-        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.pot' % BASEDIR),
+        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' % BASEDIR),
         static_lib=path('%s/GeoHealthCheck/static/lib' % BASEDIR),
         tmp=path(tempfile.mkdtemp()),
         translations=path('%s/GeoHealthCheck/translations' % BASEDIR)
@@ -213,7 +213,7 @@ def extract_translations():
     if not os.path.exists(pot_dir):
         pot_dir.makedirs()
 
-    sh('pybabel extract -F babel.cfg -o %s GeoHealthCheck' % options.base.pot)
+    sh('pybabel extract -F babel.cfg -o %st GeoHealthCheck' % options.base.pot)
 
 
 @task
@@ -236,7 +236,7 @@ def add_language_catalogue(options):
 def compile_translations():
     """build .mo files"""
 
-    sh('pybabel compile -d GeoHealthCheck')
+    sh('pybabel compile -d %s' % options.base.translations)
 
 
 @task
