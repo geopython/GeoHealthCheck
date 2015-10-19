@@ -63,8 +63,7 @@ LANGUAGES = {
 
 @BABEL.localeselector
 def get_locale():
-    # return request.accept_languages.best_match(LANGUAGES.keys())
-    return 'fr'
+    return request.accept_languages.best_match(LANGUAGES.keys())
 
 
 @LOGIN_MANAGER.user_loader
