@@ -44,7 +44,8 @@ options(
         home=path(BASEDIR),
         docs=path('%s/docs' % BASEDIR),
         instance=path('%s/instance' % BASEDIR),
-        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' % BASEDIR),
+        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' %
+                 BASEDIR),
         static_lib=path('%s/GeoHealthCheck/static/lib' % BASEDIR),
         tmp=path(tempfile.mkdtemp()),
         translations=path('%s/GeoHealthCheck/translations' % BASEDIR)
