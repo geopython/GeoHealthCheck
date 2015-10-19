@@ -57,7 +57,7 @@ GHC_SITE_URL = APP.config['GHC_SITE_URL'].rstrip('/')
 
 LANGUAGES = {
     'en': 'English',
-    'fr': 'Francais'
+    'fr': 'Français'
 }
 
 
