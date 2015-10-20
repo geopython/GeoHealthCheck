@@ -1,3 +1,4 @@
+# coding=utf-8
 # =================================================================
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
