@@ -74,7 +74,7 @@ def setup():
     sh('pip install -r requirements.txt')
 
     # split URL to keep pep8 happy
-    skin = '/'.join(['https://github.com',
+    skin = '/'.join(['http://github.com',
                      'IronSummitMedia/startbootstrap-sb-admin-2',
                      'archive/v1.0.3.zip'])
 
@@ -119,13 +119,13 @@ def setup():
 
     # install html5shiv to static/lib
     with open(path(options.base.static_lib / 'html5shiv.min.js'), 'w') as f:
-        url = 'https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
+        url = 'http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
         content = urlopen(url).read()
         f.write(content)
 
     # install respond to static/lib
     with open(path(options.base.static_lib / 'respond.min.js'), 'w') as f:
-        url = 'https://oss.maxcdn.com/respond/1.4.2/respond.min.js'
+        url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
         content = urlopen(url).read()
         f.write(content)
 
