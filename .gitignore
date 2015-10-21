@@ -58,3 +58,6 @@ tmp/
 GeoHealthCheck/static/lib
 GeoHealthCheck.wsgi
 GeoHealthCheck.conf
+
+GeoHealthCheck/translations
+!GeoHealthCheck/translations/en/LC_MESSAGES/messages.po

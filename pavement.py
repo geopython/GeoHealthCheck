@@ -130,6 +130,7 @@ def setup():
         f.write(content)
 
     # build i18n .mo files
+    call_task('pull_translations')
     call_task('compile_translations')
 
     # message user
@@ -247,6 +248,20 @@ def update_translations():
     call_task('extract_translations')
     sh('pybabel update -i %s -d %s' % (
         options.base.pot, options.base.translations))
+
+
+@task
+def push_translation_sources():
+    """push translations to Transifex"""
+
+    sh('tx push -s')
+
+
+@task
+def pull_translations():
+    """get Transifex translations"""
+
+    sh('tx pull -a')
 
 
 def sphinx_make():
