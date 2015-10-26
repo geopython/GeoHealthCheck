@@ -130,7 +130,6 @@ def setup():
         f.write(content)
 
     # build i18n .mo files
-    call_task('pull_translations')
     call_task('compile_translations')
 
     # message user

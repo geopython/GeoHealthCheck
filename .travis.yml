@@ -3,10 +3,18 @@ language: python
 python:
   - "2.7"
 
+sudo: false
+
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
   - paver setup
+
+  - echo "[https://www.transifex.com]\n" > ~/.transifexrc
+  - echo "hostname = https://www.transifex.com\n" >> ~/.transifexrc
+  - echo "username = ${TRANSIFEX_USERNAME}\n" >> ~/.transifexrc
+  - echo "password = ${TRANSIFEX_PASSWORD}\n" >> ~/.transifexrc
+  - tx pull -a
 
 script:
   - echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
