@@ -15,6 +15,7 @@ install:
   - echo "username = ${TRANSIFEX_USERNAME}\n" >> ~/.transifexrc
   - echo "password = ${TRANSIFEX_PASSWORD}\n" >> ~/.transifexrc
   - echo "token = \n" >> ~/.transifexrc
+  - cat ~/.transifexrc
   - tx pull -a
 
 script:
