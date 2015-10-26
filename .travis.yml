@@ -10,11 +10,11 @@ install:
   - pip install -r requirements-dev.txt
   - paver setup
 
-  - echo "[https://www.transifex.com]\n" > ~/.transifexrc
-  - echo "hostname = https://www.transifex.com\n" >> ~/.transifexrc
-  - echo "username = ${TRANSIFEX_USERNAME}\n" >> ~/.transifexrc
-  - echo "password = ${TRANSIFEX_PASSWORD}\n" >> ~/.transifexrc
-  - echo "token = \n" >> ~/.transifexrc
+  - echo "[https://www.transifex.com]" > ~/.transifexrc
+  - echo "hostname = https://www.transifex.com" >> ~/.transifexrc
+  - echo "username = ${TRANSIFEX_USERNAME}" >> ~/.transifexrc
+  - echo "password = ${TRANSIFEX_PASSWORD}" >> ~/.transifexrc
+  - echo "token = " >> ~/.transifexrc
   - cat ~/.transifexrc
   - tx pull -a
 
