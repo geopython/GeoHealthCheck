@@ -55,6 +55,15 @@
                         {% else %}
                         <li><a href="{{ url_for('login', next=request.script_root+request.path) }}">{{ _('Login') }}<i class="fa fa-sign-in fa-fw"></i></a></li>
                         {% endif %}
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ _('Language') }} <i class="fa fa-plus"></i></a>
+                            <ul class="dropdown-menu dropdown-messages">
+                                {% for key, value in languages.items() %}
+                                <!--<li><a href="{{ url_for('add', resource_type=key) }}">{{ value['label'] }}</a></li>-->
+                                <li><a href=""></a>{{ key, value }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
                         <li><a href="https://github.com/geopython/GeoHealthCheck">{{ _('Help') }} <i class="fa fa-question-circle fa-fw"></i></a></li>
                     </ul>
                 </div>

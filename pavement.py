@@ -57,7 +57,7 @@ options(
 def setup():
     """setup plugin dependencies"""
 
-    config_file = options.base.home / 'GeoHealthCheck/config.py'
+    config_file = options.base.home / 'GeoHealthCheck/config_main.py'
 
     # setup dirs
     if not os.path.exists(options.base.static_lib):
@@ -140,10 +140,10 @@ def setup():
 
 @task
 def create_secret_key():
-    """create secret key for SECRET_KEY in instance/config.py"""
+    """create secret key for SECRET_KEY in instance/config_site.py"""
     info('Secret key: \'%s\'' % os.urandom(24))
     info('Copy/paste this key to set the SECRET_KEY')
-    info('value in instance/config.py')
+    info('value in instance/config_site.py')
 
 
 @task

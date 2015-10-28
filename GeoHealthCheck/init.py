@@ -32,7 +32,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 APP = Flask(__name__)
-APP.config.from_pyfile('config.py')
-APP.config.from_pyfile('../instance/config.py')
+APP.config.from_pyfile('config_main.py')
+APP.config.from_pyfile('../instance/config_site.py')
 
 DB = SQLAlchemy(APP)

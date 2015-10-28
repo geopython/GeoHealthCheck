@@ -47,8 +47,8 @@ import views
 
 APP = Flask(__name__)
 BABEL = Babel(APP)
-APP.config.from_pyfile('config.py')
-APP.config.from_pyfile('../instance/config.py')
+APP.config.from_pyfile('config_main.py')
+APP.config.from_pyfile('../instance/config_site.py')
 APP.secret_key = APP.config['SECRET_KEY']
 
 LOGIN_MANAGER = LoginManager()

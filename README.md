@@ -16,7 +16,7 @@ paver setup
 # generate secret key
 paver create_secret_key
 # setup local configuration
-vi instance/config.py
+vi instance/config_site.py
 # edit:
 # - SQLALCHEMY_DATABASE_URI
 # - SECRET_KEY  # from paver create_secret_key

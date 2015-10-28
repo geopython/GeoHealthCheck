@@ -217,8 +217,8 @@ if __name__ == '__main__':
     import sys
     from flask import Flask
     APP = Flask(__name__)
-    APP.config.from_pyfile('config.py')
-    APP.config.from_pyfile('../instance/config.py')
+    APP.config.from_pyfile('config_main.py')
+    APP.config.from_pyfile('../instance/config_site.py')
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
             print('Creating database objects')

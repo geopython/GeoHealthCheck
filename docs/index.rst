@@ -42,7 +42,7 @@ Quick and Dirty
   # create secret key to use for auth
   paver create_secret_key
   # almost there!  Customize config
-  vi instance/config.py
+  vi instance/config_site.py
   # edit:
   # - SQLALCHEMY_DATABASE_URI
   # - SECRET_KEY  # from paver create_secret_key
@@ -113,8 +113,8 @@ GeoHealthCheck is built with the following concepts in mind:
 Configuration
 -------------
 
-Core configuration is set by GeoHealthCheck in ``GeoHealthCheck/config.py``.
-You can override these settings in ``instance/config.py``:
+Core configuration is set by GeoHealthCheck in ``GeoHealthCheck/config_main.py``.
+You can override these settings in ``instance/config_site.py``:
 
 - **SQLALCHEMY_DATABASE_URI**: the database configuration.  See the
   SQLAlchemy documentation for more info
@@ -153,7 +153,7 @@ follows:
   80,100,green
 
 To adjust this matrix, edit **GHC_RELIABILITY_MATRIX** in
-``instance/config.py``.
+``instance/config_site.py``.
 
 Administration
 --------------
