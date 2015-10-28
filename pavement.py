@@ -68,7 +68,7 @@ def setup():
         data_dir.mkdir()
         data_dir.chmod(0777)
         # setup config
-        config_file.copy(options.base.instance)
+        config_file.copy(options.base.instance / 'config_site.py')
 
     # setup deps
     sh('pip install -r requirements.txt')
