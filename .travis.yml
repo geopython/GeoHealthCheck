@@ -10,13 +10,6 @@ install:
   - pip install -r requirements-dev.txt
   - paver setup
 
-  - echo "[https://www.transifex.com]" > ~/.transifexrc
-  - echo "hostname = https://www.transifex.com" >> ~/.transifexrc
-  - echo "username = ${TRANSIFEX_USERNAME}" >> ~/.transifexrc
-  - echo "password = ${TRANSIFEX_PASSWORD}" >> ~/.transifexrc
-  - echo "token = " >> ~/.transifexrc
-  - tx pull -a
-
 script:
   - echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
   - find . -name "*.py" | grep -v docs | xargs pep8
