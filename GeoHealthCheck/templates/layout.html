@@ -40,7 +40,7 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ _('Add') }} <i class="fa fa-plus"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
-                                {% for key, value in resource_types.iteritems() %}
+                                {% for key, value in resource_types.items() %}
                                 <li><a href="{{ url_for('add', resource_type=key) }}">{{ value['label'] }}</a></li>
                                 {% endfor %}
                             </ul>

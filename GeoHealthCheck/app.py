@@ -60,7 +60,7 @@ LANGUAGES = {
     'en': 'English',
     'fr': 'Français',
     'de': 'German',
-    'de_DE': 'German (Germany)',
+    'de_DE': 'German (Germany)'
 }
 
 
@@ -472,7 +472,7 @@ def update(resource_identifier):
 
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
 
-    for key, value in resource_identifier_dict.iteritems():
+    for key, value in resource_identifier_dict.items():
         if getattr(resource, key) != resource_identifier_dict[key]:
             setattr(resource, key, resource_identifier_dict[key])
             update_counter += 1

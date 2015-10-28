@@ -41,7 +41,8 @@ class GeoHealthCheckTest(unittest.TestCase):
     def setUp(self):
         self.db = DB
         self.db.create_all()
-        fixtures = json.load(open('fixtures.json'))
+        with open('fixtures.json') as ff:
+            fixtures = json.load(ff)
         # add users
         for user in fixtures['users']:
             account = User(user['user']['username'],

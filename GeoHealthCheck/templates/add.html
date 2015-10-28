@@ -6,7 +6,7 @@
     <div class="form-group input-group col-sm-3">
         <select class="form-control" name="resource_type">
             <option value="none">{{ _('Select Resource Type') }}</option>
-            {% for key, value in resource_types.iteritems() %}
+            {% for key, value in resource_types.items() %}
               {% if 'resource_type' in request.args and request.args['resource_type'] == key %}
                 {% set selected = 'selected' %}
               {% else %}
