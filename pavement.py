@@ -249,20 +249,6 @@ def update_translations():
         options.base.pot, options.base.translations))
 
 
-@task
-def push_translation_sources():
-    """push translations to Transifex"""
-
-    sh('tx push -s')
-
-
-@task
-def pull_translations():
-    """get Transifex translations"""
-
-    sh('tx pull -a')
-
-
 def sphinx_make():
     """return what command Sphinx is using for make"""
 

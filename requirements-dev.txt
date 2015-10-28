@@ -3,4 +3,3 @@ pep8
 pyflakes
 pylint
 Sphinx
-transifex-client
