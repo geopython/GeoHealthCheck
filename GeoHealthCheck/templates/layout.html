@@ -59,8 +59,7 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ _('Language') }} <i class="fa fa-plus"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
                                 {% for key, value in languages.items() %}
-                                <!--<li><a href="{{ url_for('add', resource_type=key) }}">{{ value['label'] }}</a></li>-->
-                                <li><a href=""></a>{{ key, value }}</li>
+                                <li><a href="{{ request.script_root+request.path }}?lang=de">{{ value.decode('utf-8') }}</a></li>
                                 {% endfor %}
                             </ul>
                         </li>

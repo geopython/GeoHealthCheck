@@ -28,13 +28,14 @@
 #
 # =================================================================
 
+from collections import OrderedDict
 import csv
 from datetime import datetime, timedelta
 from StringIO import StringIO
 
 from flask import (flash, Flask, g, jsonify, redirect,
                    render_template, request, url_for)
-from flask.ext.babel import Babel, gettext
+from flask.ext.babel import Babel, gettext, refresh
 from flask.ext.login import (LoginManager, login_user, logout_user,
                              current_user, login_required)
 
@@ -56,12 +57,12 @@ LOGIN_MANAGER.init_app(APP)
 
 GHC_SITE_URL = APP.config['GHC_SITE_URL'].rstrip('/')
 
-LANGUAGES = {
+LANGUAGES = OrderedDict({
     'en': 'English',
     'fr': 'Français',
     'de': 'German',
     'de_DE': 'German (Germany)'
-}
+})
 
 
 @BABEL.localeselector
@@ -172,7 +173,8 @@ def context_processors():
         'next_page_refresh': next_page_refresh(),
         'resource_types': RESOURCE_TYPES,
         'resource_types_counts': rtc['counts'],
-        'resources_total': rtc['total']
+        'resources_total': rtc['total'],
+        'languages': LANGUAGES
     }
 
 
@@ -565,6 +567,16 @@ def logout():
     else:
         return redirect(url_for('home'))
 
+
+@APP.before_request
+def switch_language():
+    """helper function to switch locale"""
+
+    lang = request.args.get('lang')
+    print(request.args)
+    if lang is not None:
+        g.user.locale = lang
+        refresh()
 
 if __name__ == '__main__':  # run locally, for fun
     import sys
