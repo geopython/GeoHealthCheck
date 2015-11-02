@@ -28,14 +28,13 @@
 #
 # =================================================================
 
-from collections import OrderedDict
 import csv
 from datetime import datetime, timedelta
 from StringIO import StringIO
 
 from flask import (flash, Flask, g, jsonify, redirect,
                    render_template, request, url_for)
-from flask.ext.babel import Babel, gettext, refresh
+from flask.ext.babel import Babel, gettext
 from flask.ext.login import (LoginManager, login_user, logout_user,
                              current_user, login_required)
 
@@ -75,7 +74,7 @@ def before_request():
 @BABEL.localeselector
 def get_locale():
     return g.get('current_lang', 'en')
-    #return request.accept_languages.best_match(LANGUAGES.keys())
+    # return request.accept_languages.best_match(LANGUAGES.keys())
 
 
 @LOGIN_MANAGER.user_loader
