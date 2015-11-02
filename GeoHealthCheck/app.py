@@ -69,6 +69,8 @@ def before_request():
     g.user = current_user
     if request.args and 'lang' in request.args and request.args['lang'] != '':
         g.current_lang = request.args['lang']
+    if not hasattr(g, 'current_lang'):
+        g.current_lang = 'en'
 
 
 @BABEL.localeselector
