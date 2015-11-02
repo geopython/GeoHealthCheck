@@ -91,7 +91,7 @@ def unauthorized_callback():
                            request.query_string)
     else:
         url = '%s%s' % (request.script_root, request.path)
-    return redirect(url_for('login', next=url))
+    return redirect(url_for('login', lang=g.current_lang, next=url))
 
 
 def next_page_refresh():
@@ -404,7 +404,7 @@ def register():
         flash('%s.  %s %s' % (msg1, msg2,
                               APP.config['GHC_ADMIN_EMAIL']),
               'warning')
-        return redirect(url_for('home'))
+        return redirect(url_for('home', lang=g.current_lang))
     if request.method == 'GET':
         return render_template('register.html')
     user = User(request.form['username'],
@@ -418,8 +418,8 @@ def register():
         bad_value = request.form[bad_column]
         msg = gettext('already registered')
         flash('%s %s %s' % (bad_column, bad_value, msg), 'danger')
-        return redirect(url_for('register'))
-    return redirect(url_for('login'))
+        return redirect(url_for('register', lang=g.current_lang))
+    return redirect(url_for('login', lang=g.current_lang))
 
 
 @APP.route('/add', methods=['GET', 'POST'])
@@ -440,16 +440,17 @@ def add():
         flash('%s (%s, %s)' % (msg, resource_type, url), 'danger')
         if 'resource_type' in request.args:
             rtype = request.args.get('resource_type')
-            return redirect(url_for('add',
+            return redirect(url_for('add', lang=g.current_lang,
                                     resource_type=rtype))
-        return redirect(url_for('add'))
+        return redirect(url_for('add', lang=g.current_lang))
 
     [title, success, response_time, message, start_time] = run_test_resource(
         resource_type, url)
 
     if not success:
         flash(message, 'danger')
-        return redirect(url_for('add', resource_type=resource_type))
+        return redirect(url_for('add', lang=g.current_lang,
+                                resource_type=resource_type))
 
     resource_to_add = Resource(current_user, resource_type, title, url)
     run_to_add = Run(resource_to_add, success, response_time, message,
@@ -464,7 +465,7 @@ def add():
     except Exception, err:
         DB.session.rollback()
         flash(str(err), 'danger')
-    return redirect(url_for('home'))
+    return redirect(url_for('home', lang=g.current_lang))
 
 
 @APP.route('/resource/<int:resource_identifier>/update', methods=['POST'])
@@ -507,7 +508,7 @@ def test(resource_identifier):
     else:
         flash(gettext('Resource tested successfully'), 'success')
 
-    return redirect(url_for('get_resource_by_id',
+    return redirect(url_for('get_resource_by_id', lang=g.current_lang,
                     identifier=resource_identifier))
 
 
@@ -519,11 +520,12 @@ def delete(resource_identifier):
     if g.user.role != 'admin' and g.user.username != resource.owner.username:
         msg = gettext('You do not have access to delete this resource')
         flash(msg, 'danger')
-        return redirect('/resource/%s' % resource_identifier)
+        return redirect(url_for('get_resource_by_id', lang=g.current_lang,
+                                identifier=resource_identifier))
 
     if resource is None:
         flash(gettext('Resource not found'), 'danger')
-        return redirect(url_for('home'))
+        return redirect(url_for('home', lang=g.current_lang))
 
     runs = Run.query.filter_by(resource_identifier=resource_identifier).all()
 
@@ -535,7 +537,7 @@ def delete(resource_identifier):
     try:
         DB.session.commit()
         flash(gettext('Resource deleted'), 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('home', lang=g.current_lang))
     except Exception, err:
         DB.session.rollback()
         flash(str(err), 'danger')
@@ -553,12 +555,12 @@ def login():
                                            password=password).first()
     if registered_user is None:
         flash(gettext('Invalid username and / or password'), 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('login', lang=g.current_lang))
     login_user(registered_user)
 
     if 'next' in request.args:
         return redirect(request.args.get('next'))
-    return redirect(url_for('home'))
+    return redirect(url_for('home', lang=g.current_lang))
 
 
 @APP.route('/logout')
@@ -569,7 +571,7 @@ def logout():
     if request.referrer:
         return redirect(request.referrer)
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('home', lang=g.current_lang))
 
 
 if __name__ == '__main__':  # run locally, for fun
