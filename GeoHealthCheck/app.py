@@ -67,7 +67,7 @@ LANGUAGES = (
 @APP.before_request
 def before_request():
     g.user = current_user
-    if request.args and 'lang' in request.args:
+    if request.args and 'lang' in request.args and request.args['lang'] != '':
         g.current_lang = request.args['lang']
 
 
@@ -399,8 +399,8 @@ def register():
     if not APP.config['GHC_SELF_REGISTER']:
         msg1 = gettext('This site is not configured for self-registration')
         msg2 = gettext('Please contact')
-        flash('%s.  ' % msg1,
-              '%s %s ' % (msg2, APP.config['GHC_ADMIN_EMAIL']),
+        flash('%s.  %s %s' % (msg1, msg2,
+                              APP.config['GHC_ADMIN_EMAIL']),
               'warning')
         return redirect(url_for('home'))
     if request.method == 'GET':
