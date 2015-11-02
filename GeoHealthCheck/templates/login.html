@@ -11,7 +11,7 @@
         <button type="submit" class="btn btn-success">{{ _('Sign in') }}</button>
     </div>
     <div>
-        <a href="{{ url_for('register') }}">{{ _('Register') }}</a>
+        <a href="{{ url_for('register', lang=g.current_lang) }}">{{ _('Register') }}</a>
     </div>
   </form>
 </div>

@@ -9,10 +9,10 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">{{ resource.title }}
         {% if g.user.is_authenticated() %} 
-        <a href="{{ url_for('test', resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
+        <a href="{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
         {% endif %}
         {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
-        <a href="{{ url_for('delete', resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
+        <a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
         {% endif %}
     </h1>
     <h3 class="page-header">{{ _('Monitoring Period') }}: {{ resource.first_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>

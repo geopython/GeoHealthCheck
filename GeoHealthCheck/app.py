@@ -57,17 +57,25 @@ LOGIN_MANAGER.init_app(APP)
 
 GHC_SITE_URL = APP.config['GHC_SITE_URL'].rstrip('/')
 
-LANGUAGES = OrderedDict({
-    'en': 'English',
-    'fr': 'Français',
-    'de': 'German',
-    'de_DE': 'German (Germany)'
-})
+LANGUAGES = (
+    ('en', 'English'),
+    ('fr', 'Français'),
+    ('de', 'German'),
+    ('de_DE', 'German (Germany)')
+)
+
+
+@APP.before_request
+def before_request():
+    g.user = current_user
+    if request.args and 'lang' in request.args:
+        g.current_lang = request.args['lang']
 
 
 @BABEL.localeselector
 def get_locale():
-    return request.accept_languages.best_match(LANGUAGES.keys())
+    return g.get('current_lang', 'en')
+    #return request.accept_languages.best_match(LANGUAGES.keys())
 
 
 @LOGIN_MANAGER.user_loader
@@ -83,11 +91,6 @@ def unauthorized_callback():
     else:
         url = '%s%s' % (request.script_root, request.path)
     return redirect(url_for('login', next=url))
-
-
-@APP.before_request
-def before_request():
-    g.user = current_user
 
 
 def next_page_refresh():
@@ -567,16 +570,6 @@ def logout():
     else:
         return redirect(url_for('home'))
 
-
-@APP.before_request
-def switch_language():
-    """helper function to switch locale"""
-
-    lang = request.args.get('lang')
-    print(request.args)
-    if lang is not None:
-        g.user.locale = lang
-        refresh()
 
 if __name__ == '__main__':  # run locally, for fun
     import sys
