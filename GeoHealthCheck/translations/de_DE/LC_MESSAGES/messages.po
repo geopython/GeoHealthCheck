@@ -335,3 +335,8 @@ msgstr "Abbruch"
 #: GeoHealthCheck/templates/resource.html:160
 msgid "Response Time"
 msgstr "Reaktionszeit"
+
+#: GeoHealthCheck/templates/layout.html:85
+msgid "Show All"
+msgstr ""
+

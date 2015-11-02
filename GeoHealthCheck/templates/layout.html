@@ -82,7 +82,7 @@
                                 <li><a href="{{ url_for('home', lang=g.current_lang, resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                 {% endif %}
                                 {% endfor %}
-                                <li><i><a href="{{ url_for('home', lang=g.current_lang) }}">Show All</a></i></li>
+                                <li><i><a href="{{ url_for('home', lang=g.current_lang) }}">{{ _('Show All') }}</a></i></li>
                             </ul>
                         </li>
                     </ul>

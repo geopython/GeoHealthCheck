@@ -330,3 +330,6 @@ msgstr ""
 msgid "Response Time"
 msgstr ""
 
+#: GeoHealthCheck/templates/layout.html:85
+msgid "Show All"
+msgstr ""
