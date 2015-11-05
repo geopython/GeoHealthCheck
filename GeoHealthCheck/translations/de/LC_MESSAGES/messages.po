@@ -119,7 +119,7 @@ msgstr "Dashboard"
 #: GeoHealthCheck/templates/home.html:12
 #: GeoHealthCheck/templates/resource.html:18
 msgid "Monitoring Period"
-msgstr "Ueberwachungs-Zeitraum"
+msgstr "Überwachungs-Zeitraum"
 
 #: GeoHealthCheck/templates/home.html:25
 #: GeoHealthCheck/templates/home.html:114
