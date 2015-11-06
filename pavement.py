@@ -58,6 +58,7 @@ def setup():
     """setup plugin dependencies"""
 
     config_file = options.base.home / 'GeoHealthCheck/config_main.py'
+    config_site = options.base.instance / 'config_site.py'
 
     # setup dirs
     if not os.path.exists(options.base.static_lib):
@@ -68,7 +69,7 @@ def setup():
         data_dir.mkdir()
         data_dir.chmod(0777)
         # setup config
-        config_file.copy(options.base.instance / 'config_site.py')
+        config_file.copy(config_site)
 
     # setup deps
     sh('pip install -r requirements.txt')
@@ -133,7 +134,7 @@ def setup():
     call_task('compile_translations')
 
     # message user
-    info('GeoHealthCheck is now built. Edit settings in %s' % config_file)
+    info('GeoHealthCheck is now built. Edit settings in %s' % config_site)
     info('before deploying the application. Alternatively, you can start a')
     info('development instance with "python GeoHealthCheck/app.py"')
 
