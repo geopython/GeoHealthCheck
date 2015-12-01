@@ -110,7 +110,8 @@ def render_template2(template, template_vars):
     loader = FileSystemLoader(loader_dir)
 
     env = Environment(loader=loader, extensions=['jinja2.ext.i18n'])
-    env.install_gettext_translations(translation('messages', 'GeoHealthCheck/translations'))
+    translations = translation('messages', 'GeoHealthCheck/translations')
+    env.install_gettext_translations(translations)
     template_obj = env.get_template(template)
 
     return template_obj.render(template_vars)
