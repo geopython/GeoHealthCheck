@@ -105,10 +105,12 @@ def get_python_snippet(resource):
 def render_template2(template, template_vars):
     """convenience function to render template in a non-Flask context"""
 
+    from gettext import translation
     loader_dir = os.path.join(os.path.dirname(__file__), 'templates')
     loader = FileSystemLoader(loader_dir)
 
-    env = Environment(loader=loader)
+    env = Environment(loader=loader, extensions=['jinja2.ext.i18n'])
+    env.install_gettext_translations(translation('messages', 'GeoHealthCheck/translations'))
     template_obj = env.get_template(template)
 
     return template_obj.render(template_vars)
