@@ -156,14 +156,16 @@ def create():
 @task
 def create_wsgi():
     """create WSGI wrapper and Apache2 configuration"""
-    with open('%s%sGeoHealthCheck.wsgi' % (BASEDIR, os.sep), 'w') as ff:
+    wsgi_script = '%s%sGeoHealthCheck.wsgi' % (options.base.instance, os.sep)
+    with open(wsgi_script, 'w') as ff:
         ff.write('import sys\n')
         ff.write('sys.path.insert(0, \'%s\')\n' % BASEDIR)
         ff.write('from GeoHealthCheck.app import APP as application')
 
-    with open('%s%sGeoHealthCheck.conf' % (BASEDIR, os.sep), 'w') as ff:
+    wsgi_conf = '%s%sGeoHealthCheck.conf' % (options.base.instance, os.sep)
+    with open(wsgi_conf, 'w') as ff:
         ff.write('WSGIScriptAlias / %s%sGeoHealthCheck.wsgi\n' %
-                 (BASEDIR, os.sep))
+                 (options.base.instance, os.sep))
         ff.write('<Directory %s%s>\n' % (BASEDIR, os.sep))
         ff.write('Order deny,allow\n')
         ff.write('Allow from all\n')
