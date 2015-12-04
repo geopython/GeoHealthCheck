@@ -101,7 +101,7 @@ def run_test_resource(resource_type, url):
     delta = end_time - start_time
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
 
-    return [title.decode('utf8'), success, response_time, message, start_time]
+    return [title, success, response_time, message, start_time]
 
 
 if __name__ == '__main__':
