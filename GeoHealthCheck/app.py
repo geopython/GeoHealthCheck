@@ -401,10 +401,9 @@ def register():
     if not APP.config['GHC_SELF_REGISTER']:
         msg1 = gettext('This site is not configured for self-registration')
         msg2 = gettext('Please contact')
-        flash('%s.  %s %s' % (msg1, msg2,
-                              APP.config['GHC_ADMIN_EMAIL']),
-              'warning')
-        return redirect(url_for('home', lang=g.current_lang))
+        msg = '%s.  %s %s' % (msg1, msg2,
+                              APP.config['GHC_ADMIN_EMAIL'])
+        return render_template('register.html', errmsg=msg)
     if request.method == 'GET':
         return render_template('register.html')
     user = User(request.form['username'],

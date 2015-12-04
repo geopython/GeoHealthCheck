@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-3 main">
+    {% if config['GHC_SELF_REGISTER'] %}
     <form role="form" action="" method="post">
         <h2>{{ _('Register') }}</h2>
         <div class="form-group input-group col-sm-2">
@@ -12,5 +13,8 @@
             <button type="submit" class="btn btn-success">{{ _('Signup') }}</button>
         </div>
     </form>
+    {% else %}
+    <h3 class="hero">{{ errmsg }}</h3>
+    {% endif %}
 </div>
 {% endblock %}
