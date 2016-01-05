@@ -12,8 +12,7 @@ install:
 
 script:
   - echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
-  - find . -name "*.py" | grep -v docs | xargs pep8
-  - find . -name "*.py" | grep -v docs | xargs pyflakes
+  - find . -name "*.py" | grep -v docs | xargs flake8
   - cd docs && make html
 
 after-script:
