@@ -135,3 +135,7 @@ footer {
 .input-small {
     width: 20%;
 }
+
+.col-md-2.sidebar {
+    width: 16.6667% !important;
+}
