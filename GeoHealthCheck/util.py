@@ -28,6 +28,8 @@
 # =================================================================
 
 import os
+import smtplib
+
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -115,3 +117,21 @@ def render_template2(template, template_vars):
     template_obj = env.get_template(template)
 
     return template_obj.render(template_vars)
+
+
+def send_email(mail_config, fromaddr, toaddr, msg):
+    """convenience function to send an email"""
+
+    print(mail_config)
+    print(msg)
+    server = smtplib.SMTP('%s:%s' % (mail_config['server'],
+                                     mail_config['port']))
+
+    if mail_config['tls']:
+        server.starttls()
+        server.login(mail_config['username'],
+                     mail_config['password'])
+    server.sendmail(fromaddr, toaddr, msg)
+    server.quit()
+
+    return True

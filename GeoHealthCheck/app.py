@@ -43,6 +43,7 @@ from healthcheck import run_test_resource
 from init import DB
 from enums import RESOURCE_TYPES
 from models import Resource, Run, User
+from util import render_template2, send_email
 import views
 
 APP = Flask(__name__)
@@ -571,6 +572,36 @@ def logout():
         return redirect(request.referrer)
     else:
         return redirect(url_for('home', lang=g.current_lang))
+
+
+@APP.route('/recover', methods=['GET', 'POST'])
+def recover():
+    """recover"""
+    if request.method == 'GET':
+        return render_template('recover_password.html')
+    username = request.form['username']
+    registered_user = User.query.filter_by(username=username,).first()
+    if registered_user is None:
+        flash(gettext('Invalid username'), 'danger')
+        return redirect(url_for('recover', lang=g.current_lang))
+
+    fromaddr = '%s <%s>' % (APP.config['GHC_SITE_TITLE'],
+                            APP.config['GHC_ADMIN_EMAIL'])
+    toaddr = registered_user.email
+
+    template_vars = {
+        'config': APP.config,
+        'password': registered_user.password
+    }
+    msg = render_template2('recover_password_email.txt', template_vars)
+
+    send_email(APP.config['GHC_SMTP'], fromaddr, toaddr, msg)
+
+    flash(gettext('Password sent via email'), 'success')
+
+    if 'next' in request.args:
+        return redirect(request.args.get('next'))
+    return redirect(url_for('home', lang=g.current_lang))
 
 
 if __name__ == '__main__':  # run locally, for fun
