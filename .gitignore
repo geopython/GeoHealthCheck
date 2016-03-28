@@ -55,6 +55,7 @@ docs/_build/
 # Flask
 instance
 tmp/
+GeoHealthCheck/static/docs
 GeoHealthCheck/static/lib
 GeoHealthCheck.wsgi
 GeoHealthCheck.conf

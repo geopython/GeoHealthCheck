@@ -46,6 +46,7 @@ options(
         instance=path('%s/instance' % BASEDIR),
         pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' %
                  BASEDIR),
+        static_docs=path('%s/GeoHealthCheck/static/docs' % BASEDIR),
         static_lib=path('%s/GeoHealthCheck/static/lib' % BASEDIR),
         tmp=path(tempfile.mkdtemp()),
         translations=path('%s/GeoHealthCheck/translations' % BASEDIR)
@@ -133,6 +134,9 @@ def setup():
     # build i18n .mo files
     call_task('compile_translations')
 
+    # build local docs
+    call_task('refresh_docs')
+
     # message user
     info('GeoHealthCheck is now built. Edit settings in %s' % config_site)
     info('before deploying the application. Alternatively, you can start a')
@@ -178,9 +182,15 @@ def refresh_docs():
 
     make = sphinx_make()
 
+    if os.path.exists(options.base.static_docs):
+        shutil.rmtree(options.base.static_docs)
+
     with pushd(options.base.docs):
         sh('%s clean' % make)
         sh('%s html' % make)
+        sh('mkdir %s' % options.base.static_docs)
+        sh('cp -rp %s/docs/_build/html/* %s' % (BASEDIR,
+                                                options.base.static_docs))
 
 
 @task
@@ -207,6 +217,8 @@ def clean():
         shutil.rmtree(options.base.static_lib)
     if os.path.exists(options.base.tmp):
         shutil.rmtree(options.base.tmp)
+    if os.path.exists(options.base.static_docs):
+        shutil.rmtree(options.base.static_docs)
 
 
 @task
