@@ -95,7 +95,7 @@ class Resource(DB.Model):
             content = json.loads(urlopen(freegeoip_url).read())
             self.latitude = content['latitude']
             self.longitude = content['longitude']
-        except Exception, err:  # skip storage
+        except Exception as err:  # skip storage
             LOGGER.exception('Could not derive coordinates: %s', err)
 
     def __repr__(self):
@@ -269,7 +269,7 @@ if __name__ == '__main__':
         # commit or rollback
         try:
             DB.session.commit()
-        except Exception, err:
+        except Exception as err:
             DB.session.rollback()
             msg = str(err)
             print(msg)

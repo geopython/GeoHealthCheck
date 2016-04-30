@@ -90,7 +90,7 @@ def run_test_resource(resource_type, url):
             title = ows.identification.title
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
-    except Exception, err:
+    except Exception as err:
         msg = str(err)
         LOGGER.exception(msg)
         message = msg

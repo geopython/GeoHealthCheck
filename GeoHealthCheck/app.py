@@ -412,7 +412,7 @@ def register():
     DB.session.add(user)
     try:
         DB.session.commit()
-    except Exception, err:
+    except Exception as err:
         DB.session.rollback()
         bad_column = err.message.split()[2]
         bad_value = request.form[bad_column]
@@ -462,7 +462,7 @@ def add():
         DB.session.commit()
         msg = gettext('Service registered')
         flash('%s (%s, %s)' % (msg, resource_type, url), 'success')
-    except Exception, err:
+    except Exception as err:
         DB.session.rollback()
         flash(str(err), 'danger')
     return redirect(url_for('home', lang=g.current_lang))
@@ -538,7 +538,7 @@ def delete(resource_identifier):
         DB.session.commit()
         flash(gettext('Resource deleted'), 'success')
         return redirect(url_for('home', lang=g.current_lang))
-    except Exception, err:
+    except Exception as err:
         DB.session.rollback()
         flash(str(err), 'danger')
         return redirect(url_for(request.referrer))

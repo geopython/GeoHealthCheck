@@ -51,7 +51,8 @@ copyright = u'2014, Tom Kralidis'
 # built documents.
 #
 # The short X.Y version.
-version = open('../VERSION').read().strip()
+with open('../VERSION') as ff:
+    version = ff.read().strip()
 # The full version, including alpha/beta/rc tags.
 release = version
 
