@@ -28,11 +28,7 @@
 # =================================================================
 
 from datetime import datetime
-import json
 import logging
-import socket
-from urllib2 import urlopen
-from urlparse import urlparse
 
 from sqlalchemy import func
 
@@ -88,13 +84,9 @@ class Resource(DB.Model):
         self.url = url
         self.owner = owner
 
-        # get latitude/longitude from IP
-        addr = socket.gethostbyname(urlparse(url).hostname)
-        freegeoip_url = 'http://telize.com/geoip/%s' % addr
+        # get latitude/longitude from hostname
         try:
-            content = json.loads(urlopen(freegeoip_url).read())
-            self.latitude = content['latitude']
-            self.longitude = content['longitude']
+            self.latitude, self.longitude = util.geocode(url)
         except Exception as err:  # skip storage
             LOGGER.exception('Could not derive coordinates: %s', err)
 

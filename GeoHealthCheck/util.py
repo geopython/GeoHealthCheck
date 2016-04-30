@@ -27,10 +27,16 @@
 #
 # =================================================================
 
+import json
+import logging
 import os
 import smtplib
+from urllib2 import urlopen
+from urlparse import urlparse
 
 from jinja2 import Environment, FileSystemLoader
+
+LOGGER = logging.getLogger(__name__)
 
 
 def average(values):
@@ -135,3 +141,20 @@ def send_email(mail_config, fromaddr, toaddr, msg):
     server.quit()
 
     return True
+
+
+def geocode(value, spatial_keyword_type='hostname'):
+    """convenience function to geocode a value"""
+
+    if spatial_keyword_type == 'hostname':
+        try:
+            hostname = urlparse(value).hostname
+            url = 'https://freegeoip.net/json/%s' % hostname
+            LOGGER.info('Geocoding %s with %s', hostname, url)
+            content = json.loads(urlopen(url).read())
+            return content['latitude'], content['longitude']
+        except Exception, err:  # skip storage
+            msg = 'Could not derive coordinates: %s' % err
+            LOGGER.exception(msg)
+            raise ValueError(msg)
+    return []
