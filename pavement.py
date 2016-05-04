@@ -152,9 +152,20 @@ def create_secret_key():
 
 
 @task
-def create():
+@cmdopts([
+    ('username=', 'u', 'username'),
+    ('password=', 'p', 'password')
+])
+def create(options):
     """create database objects and superuser account"""
-    sh('python GeoHealthCheck/models.py create')
+
+    args = ''
+    username = options.get('username', None)
+    password = options.get('password', None)
+
+    if username is not None and password is not None:
+        args = '%s %s' % (username, password)
+    sh('python GeoHealthCheck/models.py create %s' % args)
 
 
 @task

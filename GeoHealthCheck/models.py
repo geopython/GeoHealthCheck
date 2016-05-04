@@ -217,15 +217,19 @@ if __name__ == '__main__':
             DB.create_all()
 
             print('Creating superuser account')
-            username = raw_input('Enter your username: ').strip()
-            password1 = raw_input('Enter your password: ').strip()
-            password2 = raw_input('Enter your password again: ').strip()
-            if password1 != password2:
-                raise ValueError('Passwords must match')
-            email1 = raw_input('Enter your email: ').strip()
-            email2 = raw_input('Enter your email again: ').strip()
-            if email1 != email2:
-                raise ValueError('Emails must match')
+            if len(sys.argv) == 4:  # username/password sent
+                username = sys.argv[2]
+                password1 = sys.argv[3]
+            else:
+                username = raw_input('Enter your username: ').strip()
+                password1 = raw_input('Enter your password: ').strip()
+                password2 = raw_input('Enter your password again: ').strip()
+                if password1 != password2:
+                    raise ValueError('Passwords must match')
+                email1 = raw_input('Enter your email: ').strip()
+                email2 = raw_input('Enter your email again: ').strip()
+                if email1 != email2:
+                    raise ValueError('Emails must match')
 
             user_to_add = User(username, password1, email1, role='admin')
             DB.session.add(user_to_add)
