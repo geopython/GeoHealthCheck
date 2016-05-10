@@ -217,9 +217,10 @@ if __name__ == '__main__':
             DB.create_all()
 
             print('Creating superuser account')
-            if len(sys.argv) == 4:  # username/password sent
+            if len(sys.argv) == 5:  # username/password/email sent
                 username = sys.argv[2]
                 password1 = sys.argv[3]
+                email1 = sys.argv[4]
             else:
                 username = raw_input('Enter your username: ').strip()
                 password1 = raw_input('Enter your password: ').strip()

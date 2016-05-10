@@ -153,6 +153,7 @@ def create_secret_key():
 
 @task
 @cmdopts([
+    ('email=', 'e', 'email'),
     ('username=', 'u', 'username'),
     ('password=', 'p', 'password')
 ])
@@ -162,9 +163,10 @@ def create(options):
     args = ''
     username = options.get('username', None)
     password = options.get('password', None)
+    email = options.get('email', None)
 
-    if username is not None and password is not None:
-        args = '%s %s' % (username, password)
+    if all([username, password, email]):
+        args = '%s %s %s' % (username, password, email)
     sh('python GeoHealthCheck/models.py create %s' % args)
 
 
