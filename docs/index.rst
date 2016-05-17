@@ -55,7 +55,7 @@ Quick and Dirty
   # - GHC_SITE_URL
   # - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled
   # - GHC_MAP  # or use default settings
-  
+
   # init database
   python GeoHealthCheck/models.py create
   # start server
@@ -77,7 +77,7 @@ Install
 .. note::
 
   it is strongly recommended to install in a Python ``virtualenv``.
-  a ``virtualenv`` is self-contained and provides the flexibility to install / 
+  a ``virtualenv`` is self-contained and provides the flexibility to install /
   tear down / whatever packages without affecting system wide packages or
   settings.
 
@@ -138,20 +138,20 @@ You can override these settings in ``instance/config_site.py``:
   - **subdomains**: available subdomains to help with parallel requests
 
 Enabling or disabling languages
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Open the file ``GeoHealthCheck/app.py`` and look for the language switcher (e.g. 'en','fr') and remove or add the desired languages. 
-In case a new language (e.g. this needs a new translation file called *.po)  is to be added, 
+Open the file ``GeoHealthCheck/app.py`` and look for the language switcher (e.g. 'en','fr') and remove or add the desired languages.
+In case a new language (e.g. this needs a new translation file called \*.po)  is to be added,
 make a copy of  one of the folders in ``GeoHealthCheck/translations/``; rename the folder to the desired language (e.g. 'de' for german);
-start editing the file in LC_MESSAGES/messages.po and add your translations to the ''msgstr''.  
-Don't forget the change the specified language in the messages.po file as well. 
+start editing the file in LC_MESSAGES/messages.po and add your translations to the ''msgstr''.
+Don't forget the change the specified language in the messages.po file as well.
 For example the messages.po file for the german case has an english  ''msgid''  string, which needs to be translated in ''msgstr'' as seen below.
 
 -#: GeoHealthCheck/app.py:394
 -msgid "This site is not configured for self-registration"
 -msgstr "Diese Webseite unterstützt keine Selbstregistrierung"
 
- 
+
 
 
 Customizing the Score Matrix
@@ -179,11 +179,11 @@ Administration
 
 To create the database execute the following:
 
-Open a command line, (if needed activate your virtualenv), and 
+Open a command line, (if needed activate your virtualenv), and
 
 python GeoHealthCheck/models.py create
 
- 
+
 
 - drop db
 
@@ -193,39 +193,39 @@ Open a command line, (if needed activate your virtualenv), and
 
 python GeoHealthCheck/models.py drop
 
-Note: you need to create a Database again before you can start GHC again. 
- 
+Note: you need to create a Database again before you can start GHC again.
+
 
 
 User Management
-------------------------------
+----------------
 
 Adding Resources
--------------------------------
+-----------------
 
 Deleting Resources
----------------------------------
+-------------------
 
 Scheduling Runs
-------------------------------
+----------------
 
 - Permanent Jobs
 
-Edit the file jobs.cron that the paths reflect the path to the virtualenv. Set the first argument to the desired monitoring time step. If finished editing, 
+Edit the file jobs.cron that the paths reflect the path to the virtualenv. Set the first argument to the desired monitoring time step. If finished editing,
 copy the command line calls e.g. ''/YOURvirtualenv/bin_or_SCRIPTSonwindows/python /path/to/GeoHealthCheck/GeoHealthCheck/models.py run'' to the commandline to test if they work sucessfully.
 On Windows - do not forget to include the ''.exe.'' file extension to the python executable.
-For documentation how to create cron jobs see your operating system: on *NIX systems e.g.  crontab -e and on windows e.g. the nssm. 
+For documentation how to create cron jobs see your operating system: on \*NIX systems e.g.  crontab -e and on windows e.g. the nssm.
 
 - interactive
- TBF
+  TBF
 
 Build Documentation
----------------------------------------------
+--------------------
 
-Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``. In there, type ''make html'' plus ENTER and the documentation should be build locally. 
- 
+Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``. In there, type ''make html'' plus ENTER and the documentation should be build locally.
+
 
 License
----------------
+--------
 
 .. include:: ../LICENSE
