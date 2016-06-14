@@ -61,7 +61,8 @@ LANGUAGES = (
     ('en', 'English'),
     ('fr', 'Français'),
     ('de', 'German'),
-    ('de_DE', 'German (Germany)')
+    ('de_DE', 'German (Germany)'),
+    ('es_BO', 'Español (Bolivia)')
 )
 
 
