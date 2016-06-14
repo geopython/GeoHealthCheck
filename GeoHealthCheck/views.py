@@ -67,11 +67,11 @@ def list_resources(resource_type=None, query=None):
     for resource in response['resources']:
         if resource.first_run < first_run or first_run is None:
             first_run = resource.first_run
-        if resource.last_run < last_run or last_run is None:
-            last_run = resource.last_run
+        if resource.f_last_run < last_run or last_run is None:
+            last_run = resource.f_last_run
         response['first_run'] = first_run
         response['last_run'] = last_run
-        if resource.last_run.success:
+        if resource.last_run_success:
             response['success']['number'] += 1
         else:
             response['fail']['number'] += 1
