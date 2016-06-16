@@ -511,7 +511,12 @@ def update(resource_identifier):
             update_counter += 1
 
     if update_counter > 0:
-        DB.session.commit()
+        try:
+            DB.session.commit()
+        except Exception as err:
+            DB.session.rollback()
+            msg = str(err)
+            print(msg)
 
     return str({'status': 'success'})
 

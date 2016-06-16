@@ -276,7 +276,12 @@ if __name__ == '__main__':
 
                 print('Adding run')
                 DB.session.add(last_run)
-                DB.session.commit()
+                try:
+                    DB.session.commit()
+                except Exception as err:
+                    DB.session.rollback()
+                    msg = str(err)
+                    print(msg)
                 # Precalculate
                 values = res.f_min_average_max() # Need optimize this
                 setattr(res, 'min_response_time', values[0])
@@ -287,7 +292,12 @@ if __name__ == '__main__':
                 setattr(res, 'last_run_response_time', last_run.response_time)
                 setattr(res, 'last_run_success', last_run.success)
                 setattr(res, 'last_run_message', last_run.message)
-                DB.session.commit()
+                try:
+                    DB.session.commit()
+                except Exception as err:
+                    DB.session.rollback()
+                    msg = str(err)
+                    print(msg)
 
                 if APP.config['GHC_NOTIFICATIONS']:
                     notify(APP.config, res, run1, last_run.success)

@@ -61,7 +61,13 @@ class GeoHealthCheckTest(unittest.TestCase):
                 dt = datetime.datetime.strptime(run[0], '%Y-%m-%dT%H:%M:%SZ')
                 run2 = Run(resource, run[1], run[2], run[3], dt)
                 self.db.session.add(run2)
-        self.db.session.commit()
+        #self.db.session.commit()
+        try:
+            self.db.session.commit()
+        except Exception as err:
+            self.db.session.rollback()
+            msg = str(err)
+            print(msg)
 
     def tearDown(self):
         # self.db.drop_all()
