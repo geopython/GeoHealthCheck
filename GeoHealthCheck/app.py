@@ -226,9 +226,9 @@ def export():
                 'ghc_csv': '%s/csv' % ghc_url,
                 'first_run': r.first_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                'last_run': r.last_run.checked_datetime.strftime(
+                'last_run': r.last_run_checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                'status': r.last_run.success,
+                'status': r.last_run_success,
                 'min_response_time': round(r.min_response_time, 2),
                 'average_response_time': round(r.average_response_time, 2),
                 'max_response_time': round(r.max_response_time, 2),
@@ -257,9 +257,9 @@ def export():
                 '%s/csv' % ghc_url,
                 r.first_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                r.last_run.checked_datetime.strftime(
+                r.last_run_checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                r.last_run.success,
+                r.last_run_success,
                 round(r.average_response_time, 2),
                 round(r.reliability, 2)
             ])
