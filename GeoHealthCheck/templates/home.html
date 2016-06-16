@@ -190,8 +190,10 @@
         }
     ));
     {% for resource in response['resources'] %}
-    L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map).bindPopup('{{ resource.title }}');
-    lat_long_points.push([{{ resource.latitude }}, {{ resource.longitude }}]);
+      {% if resource.latitude and resource.longitude %}
+        L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map).bindPopup('{{ resource.title }}');
+        lat_long_points.push([{{ resource.latitude }}, {{ resource.longitude }}]);
+      {% endif %}
     {% endfor %}
 
 

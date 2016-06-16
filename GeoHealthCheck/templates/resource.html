@@ -179,7 +179,12 @@
         }
     });
 
-    var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
+    {% if resource.latitude %}
+      var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
+      L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
+    {% else %}
+      var map = L.map('resource-map').setView([{{ config['GHC_MAP']['centre_lat'] }}, {{ config['GHC_MAP']['centre_long'] }}], 5);
+    {% endif %}
 
     map.addLayer(new L.TileLayer(
         '{{ config['GHC_MAP']['url']}}', {
@@ -187,6 +192,5 @@
             subdomains: '{{ config['GHC_MAP']['subdomains']}}',
         }
     ));
-    L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
 </script>
 {% endblock %}
