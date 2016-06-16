@@ -383,6 +383,31 @@ def export_resource_history(identifier):
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
 
+@APP.route('/resource/<identifier>/history/ajax-dataTable', methods=['GET', 'POST'])
+def get_resource_history_data(identifier):
+    ndraw = request.args.get('draw')
+    start = request.args.get('start')
+    length = request.args.get('length')
+    data = []
+    total = Run.query.filter_by(resource_identifier=identifier).count()
+    query = Run.query.filter_by(resource_identifier=identifier).order_by(Run.checked_datetime.desc()).offset(start).limit(length)
+    for run in query:
+        if run.success:
+            success = '<button type="button" class="btn btn-success btn-circle nohover"><i class="fa fa-check"></i></button>'
+        else:
+            success = '<button title="'+run.message+'" type="button" class="btn btn-danger btn-circle btn nohover"><i class="fa fa-times"></i></button>'
+
+        data.append(
+            [run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            float(int(run.response_time*100))/100,
+            success])
+    json_dict = {'draw': ndraw,
+                 'recordsTotal': total,
+                 'recordsFiltered': total,
+                 'data': data
+                 }
+    return jsonify(json_dict)
+
 @APP.route('/settings')
 def settings():
     """settings"""

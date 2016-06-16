@@ -81,19 +81,6 @@
                     <th>{{ _('Status') }}</th>
                 </tr>
             </thead>
-            <tbody>
-            {% for run in resource.runs|sort(reverse=True, attribute='checked_datetime') %}
-                <tr>
-                    <td>{{ run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</td>
-                    <td>{{ run.response_time|round(2) }}</td>
-                    {% if run.success %}
-                    <td><button type="button" class="btn btn-success btn-circle nohover"><i class="fa fa-check"></i></button></td>
-                    {% else %}
-                    <td><button title="{{ run.message }}" type="button" class="btn btn-danger btn-circle btn nohover"><i class="fa fa-times"></i></button></td>
-                    {% endif %}
-                </tr>
-            {% endfor %}
-            </tbody>
         </table>
     </div>
 </div>
@@ -112,7 +99,10 @@
         'paging': true,
         'ordering': false,
         'searching': false,
-        'lengthChange': false
+        'lengthChange': false,
+        'processing': true,
+        'serverSide': true,
+        'ajax': '{{ resource.identifier }}/history/ajax-dataTable'
     });
 
     $('#title_edit').click(function() {
