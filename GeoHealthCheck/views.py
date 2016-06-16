@@ -64,13 +64,20 @@ def list_resources(resource_type=None, query=None):
         response['resources'] = models.Resource.query.all()
 
     response['total'] = len(response['resources'])
+
+    response['first_run'] = models.Run.query.order_by(models.Run.checked_datetime.asc()).first();
+    response['last_run'] = models.Run.query.order_by(models.Run.checked_datetime.desc()).first();
+
     for resource in response['resources']:
+        """
         if resource.first_run < first_run or first_run is None:
             first_run = resource.first_run
-        if resource.f_last_run < last_run or last_run is None:
-            last_run = resource.f_last_run
+        if resource.last_run < last_run or last_run is None:
+            last_run = resource.last_run
         response['first_run'] = first_run
         response['last_run'] = last_run
+        """
+
         if resource.last_run_success:
             response['success']['number'] += 1
         else:

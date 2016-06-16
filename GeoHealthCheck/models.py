@@ -115,6 +115,11 @@ class Resource(DB.Model):
         return [run.response_time for run in self.runs]
 
     @property
+    def nruns_response_times(self):
+        lines = [run.response_time for run in self.runs.order_by(Run.checked_datetime.desc()).limit(100)]
+        return lines[::-1]
+
+    @property
     def first_run(self):
         return self.runs.having(func.min(Run.checked_datetime)).group_by(
             Run.checked_datetime).order_by(
@@ -158,6 +163,14 @@ class Resource(DB.Model):
     def runs_to_json(self):
         runs = []
         for run in self.runs.group_by(Run.checked_datetime).all():
+            runs.append({'datetime': run.checked_datetime.isoformat(),
+                         'value': run.response_time,
+                         'success': 1 if run.success else 0})
+        return runs
+
+    def limit_runs_to_json(self):
+        runs = []
+        for run in self.runs.group_by(Run.checked_datetime.desc()).limit(100):
             runs.append({'datetime': run.checked_datetime.isoformat(),
                          'value': run.response_time,
                          'success': 1 if run.success else 0})

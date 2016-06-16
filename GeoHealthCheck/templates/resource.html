@@ -140,7 +140,8 @@
         });
     });
 
-    var run_data = {{ resource.runs_to_json()|safe }};
+
+    var run_data = {{ resource.limit_runs_to_json()|safe }};
     Morris.Area({
         element: 'run-chart',
         lineWidth: 1,
