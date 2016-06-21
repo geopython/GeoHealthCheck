@@ -157,6 +157,14 @@ class Resource(DB.Model):
         success_runs = self.runs.filter_by(success=True).count()
         return [min(query), util.average(query), max(query), util.percentage(success_runs, len(query)) ]
 
+    def f_min_average_max_percentage(self):
+        sql = 'SELECT MIN(response_time) as min_time, AVG(response_time) as average, MAX(response_time) as max_time '
+        sql += ', COUNT(if(success=1,success,NULL)) as success, COUNT(*) as total '
+        sql += 'FROM run WHERE resource_identifier = ' + str(self.identifier)
+        result = DB.engine.execute(sql)
+        value = result.cursor._rows[0]
+        return [value[0], value[1], value[2], util.percentage(value[3], value[4]) ]
+
     def snippet(self):
         return util.get_python_snippet(self)
 
@@ -283,7 +291,7 @@ if __name__ == '__main__':
                     msg = str(err)
                     print(msg)
                 # Precalculate
-                values = res.f_min_average_max() # Need optimize this
+                values = res.f_min_average_max_percentage() # Need optimize this
                 setattr(res, 'min_response_time', values[0])
                 setattr(res, 'average_response_time', values[1])
                 setattr(res, 'max_response_time', values[2])
