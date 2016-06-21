@@ -274,9 +274,12 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'run':
             print('Running health check tests')
             from healthcheck import run_test_resource
+            start_time = datetime.utcnow()
+            cc = 0
             for res in Resource.query.all():  # run all tests
+                cc = cc + 1
                 print('Testing %s %s' % (res.resource_type, res.url))
-                # last_run_success = res.f_last_run.success
+                last_run_success = res.last_run_success
                 run_to_add = run_test_resource(res.resource_type, res.url)
 
                 last_run = Run(res, run_to_add[1], run_to_add[2],
@@ -308,7 +311,10 @@ if __name__ == '__main__':
                     print(msg)
 
                 if APP.config['GHC_NOTIFICATIONS']:
-                    notify(APP.config, res, run1, last_run.success)
+                    notify(APP.config, res, last_run, last_run_success)
+            end_time = datetime.utcnow()
+            delta = end_time - start_time
+            print('Time testing %d resources: %s' % (cc, delta) )
 
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
