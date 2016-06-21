@@ -56,7 +56,7 @@ def list_resources(resource_type=None, query=None):
     if resource_type is not None:
         response['resources'] = models.Resource.query.filter_by(
             resource_type=resource_type).all()
-    if query is not None:
+    elif query is not None:
         field, term = get_query_field_term(query)
         response['resources'] = models.Resource.query.filter(
             field.ilike(term)).all()
@@ -64,14 +64,21 @@ def list_resources(resource_type=None, query=None):
         response['resources'] = models.Resource.query.all()
 
     response['total'] = len(response['resources'])
+
+    response['first_run'] = models.Run.query.order_by(models.Run.checked_datetime.asc()).first();
+    response['last_run'] = models.Run.query.order_by(models.Run.checked_datetime.desc()).first();
+
     for resource in response['resources']:
+        """
         if resource.first_run < first_run or first_run is None:
             first_run = resource.first_run
         if resource.last_run < last_run or last_run is None:
             last_run = resource.last_run
         response['first_run'] = first_run
         response['last_run'] = last_run
-        if resource.last_run.success:
+        """
+
+        if resource.last_run_success:
             response['success']['number'] += 1
         else:
             response['fail']['number'] += 1

@@ -226,9 +226,9 @@ def export():
                 'ghc_csv': '%s/csv' % ghc_url,
                 'first_run': r.first_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                'last_run': r.last_run.checked_datetime.strftime(
+                'last_run': r.last_run_checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                'status': r.last_run.success,
+                'status': r.last_run_success,
                 'min_response_time': round(r.min_response_time, 2),
                 'average_response_time': round(r.average_response_time, 2),
                 'max_response_time': round(r.max_response_time, 2),
@@ -257,9 +257,9 @@ def export():
                 '%s/csv' % ghc_url,
                 r.first_run.checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                r.last_run.checked_datetime.strftime(
+                r.last_run_checked_datetime.strftime(
                     '%Y-%m-%dT%H:%M:%SZ'),
-                r.last_run.success,
+                r.last_run_success,
                 round(r.average_response_time, 2),
                 round(r.reliability, 2)
             ])
@@ -383,6 +383,31 @@ def export_resource_history(identifier):
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
 
+@APP.route('/resource/<identifier>/history/ajax-dataTable', methods=['GET', 'POST'])
+def get_resource_history_data(identifier):
+    ndraw = request.args.get('draw')
+    start = request.args.get('start')
+    length = request.args.get('length')
+    data = []
+    total = Run.query.filter_by(resource_identifier=identifier).count()
+    query = Run.query.filter_by(resource_identifier=identifier).order_by(Run.checked_datetime.desc()).offset(start).limit(length)
+    for run in query:
+        if run.success:
+            success = '<button type="button" class="btn btn-success btn-circle nohover"><i class="fa fa-check"></i></button>'
+        else:
+            success = '<button title="'+run.message+'" type="button" class="btn btn-danger btn-circle btn nohover"><i class="fa fa-times"></i></button>'
+
+        data.append(
+            [run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            float(int(run.response_time*100))/100,
+            success])
+    json_dict = {'draw': ndraw,
+                 'recordsTotal': total,
+                 'recordsFiltered': total,
+                 'data': data
+                 }
+    return jsonify(json_dict)
+
 @APP.route('/settings')
 def settings():
     """settings"""
@@ -486,7 +511,12 @@ def update(resource_identifier):
             update_counter += 1
 
     if update_counter > 0:
-        DB.session.commit()
+        try:
+            DB.session.commit()
+        except Exception as err:
+            DB.session.rollback()
+            msg = str(err)
+            print(msg)
 
     return str({'status': 'success'})
 

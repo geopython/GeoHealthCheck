@@ -8,14 +8,14 @@
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">{{ resource.title }}
-        {% if g.user.is_authenticated() %} 
+        {% if g.user.is_authenticated() %}
         <a href="{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
         {% endif %}
         {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
         <a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
         {% endif %}
     </h1>
-    <h3 class="page-header">{{ _('Monitoring Period') }}: {{ resource.first_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
+    <h3 class="page-header">{{ _('Monitoring Period') }}: {{ resource.first_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ resource.last_run_checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
     <div class="table-responsive col-md-4">
         <table class="table">
             <tr>
@@ -81,19 +81,6 @@
                     <th>{{ _('Status') }}</th>
                 </tr>
             </thead>
-            <tbody>
-            {% for run in resource.runs|sort(reverse=True, attribute='checked_datetime') %}
-                <tr>
-                    <td>{{ run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</td>
-                    <td>{{ run.response_time|round(2) }}</td>
-                    {% if run.success %}
-                    <td><button type="button" class="btn btn-success btn-circle nohover"><i class="fa fa-check"></i></button></td>
-                    {% else %}
-                    <td><button title="{{ run.message }}" type="button" class="btn btn-danger btn-circle btn nohover"><i class="fa fa-times"></i></button></td>
-                    {% endif %}
-                </tr>
-            {% endfor %}
-            </tbody>
         </table>
     </div>
 </div>
@@ -112,7 +99,10 @@
         'paging': true,
         'ordering': false,
         'searching': false,
-        'lengthChange': false
+        'lengthChange': false,
+        'processing': true,
+        'serverSide': true,
+        'ajax': '{{ resource.identifier }}/history/ajax-dataTable'
     });
 
     $('#title_edit').click(function() {
@@ -150,7 +140,8 @@
         });
     });
 
-    var run_data = {{ resource.runs_to_json()|safe }};
+
+    var run_data = {{ resource.limit_runs_to_json()|safe }};
     Morris.Area({
         element: 'run-chart',
         lineWidth: 1,
@@ -179,7 +170,12 @@
         }
     });
 
-    var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
+    {% if resource.latitude %}
+      var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
+      L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
+    {% else %}
+      var map = L.map('resource-map').setView([{{ config['GHC_MAP']['centre_lat'] }}, {{ config['GHC_MAP']['centre_long'] }}], 5);
+    {% endif %}
 
     map.addLayer(new L.TileLayer(
         '{{ config['GHC_MAP']['url']}}', {
@@ -187,6 +183,5 @@
             subdomains: '{{ config['GHC_MAP']['subdomains']}}',
         }
     ));
-    L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
 </script>
 {% endblock %}
