@@ -1,4 +1,4 @@
-{{ _('Subject') }}: [{{ config.GHC_SITE_TITLE }}] {{ result }}: {{ resource.title }}
+{{ _('Subject') }}: [{{ config.GHC_SITE_TITLE }}] {{ _(result) }}: {{ resource.title }}
 
 
 {{ _('Hi: this is an automated message from the') }} {{ config.GHC_SITE_TITLE }} {{ _('service') }}.
@@ -9,9 +9,9 @@
 
 {{ _('Details') }}:
 
-{{ _('Date') }}: {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} 
+{{ _('Date') }}: {{ resource.last_run_checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}
 
-{{ _('Message') }}: {{ resource.last_run.message }}
+{{ _('Message') }}: {{ resource.last_run_message }}
 
 {{ _('Details') }}: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
 

@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: GeoHealthCheck\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
 "POT-Creation-Date: 2016-06-10 19:00-0400\n"
-"PO-Revision-Date: 2016-06-13 19:01-0400\n"
+"PO-Revision-Date: 2016-06-21 13:07-0400\n"
 "Last-Translator: Alejo C. Marcelo\n"
 "Language-Team: Español (Bolivia) <https://github.com/geopython/"
 "GeoHealthCheck>\n"
@@ -270,7 +270,7 @@ msgstr "Registrar"
 
 #: GeoHealthCheck/templates/notification_email.txt:1
 msgid "Subject"
-msgstr "Asunto"
+msgstr ""
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 msgid "Hi: this is an automated message from the"
