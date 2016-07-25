@@ -5,14 +5,14 @@ GeoHealthCheck
    :maxdepth: 3
 
 Overview
------------------------
+--------
 
 GeoHealthCheck is a Python application to support monitoring OGC services uptime
 and availability.  It can be used to monitor overall health of networks
 of resources.
 
 Features
-------------------------
+--------
 
 - lightweight
 - easy setup
@@ -23,7 +23,7 @@ Features
 
 
 Installation
-----------------------------
+------------
 
 Quick and Dirty
 ^^^^^^^^^^^^^^^
@@ -32,7 +32,7 @@ Quick and Dirty
 
 
   virtualenv ghc && cd ghc
-  . scripts/activate
+  . bin/activate
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
   # install paver dependency for admin tool
@@ -100,7 +100,7 @@ To enable in Apache, use ``GeoHealthCheck.wsgi`` and configure in Apache
 as per the main Flask documentation.
 
 Core Concepts
-----------------------------
+-------------
 
 GeoHealthCheck is built with the following concepts in mind:
 
@@ -111,7 +111,7 @@ GeoHealthCheck is built with the following concepts in mind:
 
 
 Configuration
-----------------------------
+-------------
 
 Core configuration is set by GeoHealthCheck in ``GeoHealthCheck/config_main.py``.
 You can override these settings in ``instance/config_site.py``:
@@ -138,7 +138,7 @@ You can override these settings in ``instance/config_site.py``:
   - **subdomains**: available subdomains to help with parallel requests
 
 Enabling or disabling languages
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Open the file ``GeoHealthCheck/app.py`` and look for the language switcher (e.g. 'en','fr') and remove or add the desired languages.
 In case a new language (e.g. this needs a new translation file called \*.po)  is to be added,
@@ -173,7 +173,7 @@ To adjust this matrix, edit **GHC_RELIABILITY_MATRIX** in
 ``instance/config_site.py``.
 
 Administration
------------------------------
+--------------
 
 - create db
 
@@ -198,16 +198,16 @@ Note: you need to create a Database again before you can start GHC again.
 
 
 User Management
-----------------
+---------------
 
 Adding Resources
------------------
+----------------
 
 Deleting Resources
--------------------
+------------------
 
 Scheduling Runs
-----------------
+---------------
 
 - Permanent Jobs
 
@@ -220,12 +220,12 @@ For documentation how to create cron jobs see your operating system: on \*NIX sy
   TBF
 
 Build Documentation
---------------------
+-------------------
 
 Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``. In there, type ''make html'' plus ENTER and the documentation should be build locally.
 
 
 License
---------
+-------
 
 .. include:: ../LICENSE
