@@ -146,7 +146,7 @@ def setup():
 @task
 def create_secret_key():
     """create secret key for SECRET_KEY in instance/config_site.py"""
-    info('Secret key: \'%s\'' % os.urandom(24))
+    info('Secret key: \'%s\'' % os.urandom(24).encode('hex'))
     info('Copy/paste this key to set the SECRET_KEY')
     info('value in instance/config_site.py')
 
