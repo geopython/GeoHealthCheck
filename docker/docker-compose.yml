@@ -1,0 +1,38 @@
+geohealthcheck:
+  image: yjacolin/geohealthcheck:latest
+  ports:
+    - 8083:80
+  volumes: 
+    - ghc_db:/GeoHealthCheck/DB
+    
+geohealthcheck-cron-daily:
+  image: yjacolin/geohealthcheck:latest
+  entrypoint: 
+    - bash
+    - /cron-jobs-daily.sh
+  volumes_from: 
+    - geohealthcheck
+  labels:
+    io.ghc-cron-daily: 'true'
+
+geohealthcheck-cron-hourly:
+  image: yjacolin/geohealthcheck:latest
+  entrypoint: 
+    - bash
+    - /cron-jobs-hourly.sh
+  volumes_from: 
+    - geohealthcheck
+  labels:
+    io.ghc-cron-hourly: 'true'
+    
+jobber:
+  image: blacklabelops/cron-cloud
+  environment:
+    JOB_NAME1: ghc-cron-hourly
+    JOB_COMMAND1: docker start $$(docker ps -a -f label=io.ghc-cron-hourly=true --format="{{.ID}}")
+    JOB_TIME1: 0 * */1 * * *
+    JOB_NAME2: ghc-cron-daily
+    JOB_COMMAND2: docker start $$(docker ps -a -f label=io.ghc-cron-daily=true --format="{{.ID}}")
+    JOB_TIME2: 0 * * */1 * *
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock

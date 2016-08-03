@@ -23,7 +23,7 @@ ENV GHC_SMTP_USERNAME None
 ENV GHC_SMTP_PASSWORD None
 
 RUN apt-get update && \
-    apt-get install -qqy virtualenv git python-pip python-dev && \
+    apt-get install -qqy virtualenv git python-pip python-dev vim && \
     apt-get autoremove -y ; apt-get clean ; \
     rm -rf /var/lib/apt/lists/partial/* /tmp/* /var/tmp/*
 
@@ -32,8 +32,10 @@ ADD entrypoint.sh /entrypoint.sh
 ADD config_site.py /config_site.py
 RUN bash install.sh
 
-#ADD jobs.cron /GeoHealthCheck/jobs.cron
-#RUN crontab /GeoHealthCheck/jobs.cron
+ADD cron-jobs-daily.sh /cron-jobs-daily.sh
+ADD cron-jobs-hourly.sh /cron-jobs-hourly.sh
+RUN chmod a+x /cron-jobs-daily.sh
+RUN chmod a+x /cron-jobs-hourly.sh
 
 VOLUME ["/GeoHealthCheck/DB/"]
 
