@@ -256,7 +256,7 @@ if __name__ == '__main__':
 
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
-                  APP.config['GHC_RETENTION_DAYS'])
+                  int(APP.config['GHC_RETENTION_DAYS']))
             for run1 in Run.query.all():
                 here_and_now = datetime.utcnow()
                 days_old = (here_and_now - run1.checked_datetime).days
