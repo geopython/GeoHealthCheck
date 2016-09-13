@@ -75,17 +75,14 @@ def setup():
     # setup deps
     sh('pip install -r requirements.txt')
 
-    # split URL to keep pep8 happy
-    skin = '/'.join(['http://github.com',
-                     'IronSummitMedia/startbootstrap-sb-admin-2',
-                     'archive/v1.0.3.zip'])
+    skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
 
-    skin_dirs = ['dist', 'bower_components']
+    skin_dirs = ['dist', 'vendor']
     need_to_fetch = False
 
     for skin_dir in skin_dirs:
         skin_dir_path = os.sep.join(
-            ['startbootstrap-sb-admin-2-1.0.3', skin_dir])
+            ['startbootstrap-sb-admin-2-3.3.7-1', skin_dir])
         if not os.path.exists(skin_dir_path):
             need_to_fetch = True
 
@@ -96,7 +93,7 @@ def setup():
 
         for zf_mem in skin_dirs:
             src_loc = path(options.base.static_lib /
-                           'startbootstrap-sb-admin-2-1.0.3' / zf_mem)
+                           'startbootstrap-sb-admin-2-3.3.7-1' / zf_mem)
             dest_loc = path(options.base.static_lib / zf_mem)
             if not os.path.exists(dest_loc):
                 src_loc.move(dest_loc)
@@ -104,7 +101,7 @@ def setup():
                 info('directory already exists.  Skipping')
 
         shutil.rmtree(path(options.base.static_lib /
-                           'startbootstrap-sb-admin-2-1.0.3'))
+                           'startbootstrap-sb-admin-2-3.3.7-1'))
 
     # install sparklines to static/site/js
     with open(path(options.base.static_lib / 'jspark.js'), 'w') as f:
