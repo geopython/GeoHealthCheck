@@ -1,4 +1,3 @@
-Paver
 flake8
+Paver
 pylint
-Sphinx
