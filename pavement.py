@@ -68,7 +68,8 @@ def setup():
         options.base.instance.mkdir()
         data_dir = options.base.instance / 'data'
         data_dir.mkdir()
-        data_dir.chmod(0777)
+        # data_dir.chmod(0777) gives failure on Python 2.7 Paver 1.2.1
+        os.chmod(path(data_dir), 0777)
         # setup config
         config_file.copy(config_site)
 
