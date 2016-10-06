@@ -242,6 +242,14 @@ if __name__ == '__main__':
             from healthcheck import run_test_resource
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
+
+                # Get the status of the last run, assume success if there is none
+                last_run_success = True
+                last_run = res.last_run
+                if last_run:
+                    last_run_success = last_run.success
+
+                # Run test
                 run_to_add = run_test_resource(res.resource_type, res.url)
 
                 run1 = Run(res, run_to_add[1], run_to_add[2],
@@ -250,8 +258,14 @@ if __name__ == '__main__':
                 print('Adding run')
                 DB.session.add(run1)
 
-                if APP.config['GHC_NOTIFICATIONS'] and res.last_run:
-                    notify(APP.config, res, run1, res.last_run.success)
+                if APP.config['GHC_NOTIFICATIONS']:
+                    # Attempt notification
+                    try:
+                        notify(APP.config, res, run1, last_run_success)
+                    except Exception as err:
+                        # Don't bail out on failure in order to commit the Run
+                        msg = str(err)
+                        print('error notifying: %s' % msg)
 
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
@@ -262,6 +276,7 @@ if __name__ == '__main__':
                 if days_old > APP.config['GHC_RETENTION_DAYS']:
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run1)
+
         # commit or rollback
         try:
             DB.session.commit()
