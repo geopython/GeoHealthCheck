@@ -243,7 +243,8 @@ if __name__ == '__main__':
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
 
-                # Get the status of the last run, assume success if there is none
+                # Get the status of the last run,
+                # assume success if there is none
                 last_run_success = True
                 last_run = res.last_run
                 if last_run:
