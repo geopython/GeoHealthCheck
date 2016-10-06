@@ -217,15 +217,20 @@ if __name__ == '__main__':
             DB.create_all()
 
             print('Creating superuser account')
-            username = raw_input('Enter your username: ').strip()
-            password1 = raw_input('Enter your password: ').strip()
-            password2 = raw_input('Enter your password again: ').strip()
-            if password1 != password2:
-                raise ValueError('Passwords must match')
-            email1 = raw_input('Enter your email: ').strip()
-            email2 = raw_input('Enter your email again: ').strip()
-            if email1 != email2:
-                raise ValueError('Emails must match')
+            if len(sys.argv) == 5:  # username/password/email sent
+                username = sys.argv[2]
+                password1 = sys.argv[3]
+                email1 = sys.argv[4]
+            else:
+                username = raw_input('Enter your username: ').strip()
+                password1 = raw_input('Enter your password: ').strip()
+                password2 = raw_input('Enter your password again: ').strip()
+                if password1 != password2:
+                    raise ValueError('Passwords must match')
+                email1 = raw_input('Enter your email: ').strip()
+                email2 = raw_input('Enter your email again: ').strip()
+                if email1 != email2:
+                    raise ValueError('Emails must match')
 
             user_to_add = User(username, password1, email1, role='admin')
             DB.session.add(user_to_add)
@@ -237,7 +242,6 @@ if __name__ == '__main__':
             from healthcheck import run_test_resource
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
-                last_run_success = res.last_run.success
                 run_to_add = run_test_resource(res.resource_type, res.url)
 
                 run1 = Run(res, run_to_add[1], run_to_add[2],
@@ -246,12 +250,12 @@ if __name__ == '__main__':
                 print('Adding run')
                 DB.session.add(run1)
 
-                if APP.config['GHC_NOTIFICATIONS']:
-                    notify(APP.config, res, run1, last_run_success)
+                if APP.config['GHC_NOTIFICATIONS'] and res.last_run:
+                    notify(APP.config, res, run1, res.last_run.success)
 
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
-                  APP.config['GHC_RETENTION_DAYS'])
+                  int(APP.config['GHC_RETENTION_DAYS']))
             for run1 in Run.query.all():
                 here_and_now = datetime.utcnow()
                 days_old = (here_and_now - run1.checked_datetime).days

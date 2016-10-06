@@ -26,29 +26,31 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
+import os
 
 DEBUG = False
 SQLALCHEMY_ECHO = False
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
 
 # Replace None with 'your secret key string' in quotes
-SECRET_KEY = None
+SECRET_KEY = os.environ['SECRET_KEY']
 
-GHC_RETENTION_DAYS = 30
-GHC_RUN_FREQUENCY = 'hourly'
-GHC_SELF_REGISTER = False
-GHC_NOTIFICATIONS = False
-GHC_ADMIN_EMAIL = 'you@example.com'
-GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
-GHC_SITE_URL = 'http://host'
+
+GHC_RETENTION_DAYS = os.environ['GHC_RETENTION_DAYS']
+GHC_RUN_FREQUENCY = os.environ['GHC_RUN_FREQUENCY']
+GHC_SELF_REGISTER = os.environ['GHC_SELF_REGISTER']
+GHC_NOTIFICATIONS = os.environ['GHC_NOTIFICATIONS']
+GHC_ADMIN_EMAIL = os.environ['GHC_ADMIN_EMAIL']
+GHC_SITE_TITLE = os.environ['GHC_SITE_TITLE']
+GHC_SITE_URL = os.environ['GHC_SITE_URL']
 
 GHC_SMTP = {
-    'server': None,
-    'port': None,
-    'tls': False,
-    'ssl': False,
-    'username': None,
-    'password': None
+    'server': os.environ['GHC_SMTP_SERVER'],
+    'port': os.environ['GHC_SMTP_PORT'],
+    'tls': os.environ['GHC_SMTP_TLS'],
+    'ssl': os.environ['GHC_SMTP_SSL'],
+    'username': os.environ['GHC_SMTP_USERNAME'],
+    'password': os.environ['GHC_SMTP_PASSWORD']
 }
 
 GHC_RELIABILITY_MATRIX = {

@@ -56,11 +56,14 @@ def list_resources(resource_type=None, query=None):
     if resource_type is not None:
         response['resources'] = models.Resource.query.filter_by(
             resource_type=resource_type).all()
+
     if query is not None:
         field, term = get_query_field_term(query)
         response['resources'] = models.Resource.query.filter(
             field.ilike(term)).all()
-    else:
+
+    if 'resources' not in response:
+        # No query nor resource_type provided: fetch all resources
         response['resources'] = models.Resource.query.all()
 
     response['total'] = len(response['resources'])
