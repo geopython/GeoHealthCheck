@@ -58,7 +58,7 @@ def notify(config, resource, run, last_run_success):
     if not status_changed:
         return
 
-    print 'Notifying: status changed: result=%s' % result
+    print('Notifying: status changed: result=%s' % result)
 
     template_vars = {
         'result': result,
