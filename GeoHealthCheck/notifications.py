@@ -56,7 +56,8 @@ def notify(config, resource, run, last_run_success):
         status_changed = True
 
     # Check if still 'Still Failing' result should be notified
-    if result == gettext('Still Failing') and not config['GHC_NOTIFICATIONS_VERBOSITY']:
+    if result == gettext('Still Failing') \
+            and not config['GHC_NOTIFICATIONS_VERBOSITY']:
         # Receive just 'Failing' and 'Fixed' notifications
         status_changed = False
 
