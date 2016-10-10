@@ -50,6 +50,7 @@ Quick and Dirty
   # - GHC_RUN_FREQUENCY
   # - GHC_SELF_REGISTER
   # - GHC_NOTIFICATIONS
+  # - GHC_NOTIFICATIONS_VERBOSITY
   # - GHC_ADMIN_EMAIL
   # - GHC_SITE_TITLE
   # - GHC_SITE_URL
@@ -125,6 +126,7 @@ You can override these settings in ``instance/config_site.py``:
   (i.e. ``hourly``, ``daily``, ``monthly``)
 - **GHC_SELF_REGISTER**: allow registrations from users on the website
 - **GHC_NOTIFICATIONS**: turn on email notifications
+- **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default True)
 - **GHC_ADMIN_EMAIL**: email address of administrator / contact
 - **GHC_SITE_TITLE**: title used for installation / deployment
 - **GHC_SITE_URL**: url of the installation / deployment
