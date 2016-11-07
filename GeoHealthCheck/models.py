@@ -250,7 +250,8 @@ if __name__ == '__main__':
             DB.drop_all()
             db_commit()
         elif sys.argv[1] == 'run':
-            print('START - Running health check tests on %s' % datetime.utcnow().isoformat())
+            print('START - Running health check tests on %s'
+                  % datetime.utcnow().isoformat())
             from healthcheck import run_test_resource
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
@@ -268,7 +269,8 @@ if __name__ == '__main__':
                 run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
 
-                print('Adding Run: success=%s, response_time=%ss\n' % (str(run1.success), run1.response_time))
+                print('Adding Run: success=%s, response_time=%ss\n'
+                      % (str(run1.success), run1.response_time))
                 DB.session.add(run1)
                 # commit or rollback each run to avoid long-lived transactions
                 # see https://github.com/geopython/GeoHealthCheck/issues/14
@@ -282,7 +284,8 @@ if __name__ == '__main__':
                         # Don't bail out on failure in order to commit the Run
                         msg = str(err)
                         print('error notifying: %s' % msg)
-            print('END - Running health check tests on %s' % datetime.utcnow().isoformat())
+            print('END - Running health check tests on %s'
+                  % datetime.utcnow().isoformat())
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
                   int(APP.config['GHC_RETENTION_DAYS']))
@@ -293,4 +296,3 @@ if __name__ == '__main__':
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run1)
             db_commit()
-
