@@ -211,6 +211,16 @@ if __name__ == '__main__':
     APP = Flask(__name__)
     APP.config.from_pyfile('config_main.py')
     APP.config.from_pyfile('../instance/config_site.py')
+
+    # commit or rollback shorthand
+    def db_commit():
+        try:
+            DB.session.commit()
+        except Exception as err:
+            DB.session.rollback()
+            msg = str(err)
+            print(msg)
+
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
             print('Creating database objects')
@@ -234,11 +244,13 @@ if __name__ == '__main__':
 
             user_to_add = User(username, password1, email1, role='admin')
             DB.session.add(user_to_add)
+            db_commit()
         elif sys.argv[1] == 'drop':
             print('Dropping database objects')
             DB.drop_all()
+            db_commit()
         elif sys.argv[1] == 'run':
-            print('Running health check tests')
+            print('START - Running health check tests on %s' % datetime.utcnow().isoformat())
             from healthcheck import run_test_resource
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
@@ -256,8 +268,11 @@ if __name__ == '__main__':
                 run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
 
-                print('Adding run')
+                print('Adding Run: success=%s, response_time=%ss\n' % (str(run1.success), run1.response_time))
                 DB.session.add(run1)
+                # commit or rollback each run to avoid long-lived transactions
+                # see https://github.com/geopython/GeoHealthCheck/issues/14
+                db_commit()
 
                 if APP.config['GHC_NOTIFICATIONS']:
                     # Attempt notification
@@ -267,7 +282,7 @@ if __name__ == '__main__':
                         # Don't bail out on failure in order to commit the Run
                         msg = str(err)
                         print('error notifying: %s' % msg)
-
+            print('END - Running health check tests on %s' % datetime.utcnow().isoformat())
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
                   int(APP.config['GHC_RETENTION_DAYS']))
@@ -277,11 +292,5 @@ if __name__ == '__main__':
                 if days_old > APP.config['GHC_RETENTION_DAYS']:
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run1)
+            db_commit()
 
-        # commit or rollback
-        try:
-            DB.session.commit()
-        except Exception as err:
-            DB.session.rollback()
-            msg = str(err)
-            print(msg)
