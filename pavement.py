@@ -211,7 +211,7 @@ def publish_docs():
 
     with pushd(options.base.tmp):
         sh('git clone git@github.com:geopython/GeoHealthCheck.git')
-        with pushd('GeoHealthCheck'):
+        with pushd('GeoHealthCheck/docs'):
             sh('git checkout gh-pages')
             sh('cp -rp %s/docs/_build/html/* .' % options.base.home)
             sh('git add .')
