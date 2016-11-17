@@ -207,14 +207,14 @@ def refresh_docs():
 @task
 @needs('refresh_docs')
 def publish_docs():
-    """publish documentation to http://geopython.github.io/GeoHealthCheck"""
+    """publish docs to http://www.geohealthcheck.org/docs via gh-pages"""
 
     with pushd(options.base.tmp):
         sh('git clone git@github.com:geopython/GeoHealthCheck.git')
         with pushd('GeoHealthCheck'):
             sh('git checkout gh-pages')
             sh('cp -rp %s/docs/_build/html/* docs' % options.base.home)
-            sh('git add .')
+            sh('git add docs')
             sh('git commit -am "update live docs [ci skip]"')
             sh('git push origin gh-pages')
     shutil.rmtree(options.base.tmp)
