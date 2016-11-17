@@ -1,0 +1,89 @@
+"Meet de Gezondheid van je Geo-services met GeoHealthCheck"
+
+"Measure the health of your geospatial web-services with GHC"
+
+Presentation outline.
+
+4 Parts
+
+1. Challenges in QoS monitoring of OGC Services
+2. GHC Walk-through
+3. GHC Setup
+4. GHC Project
+
+------------------- 
+1. Challenges in QoS monitoring of OGC Services
+
+Quality of Service (QoS) attributes, such as reliability, maintainability and performance, 
+measure the overall properties of web services. [1] 
+
+Monitoring the QoS, "health", of OGC Service-endpoints creates extra challenges: a
+generic HTTP request checker would not detect many failure cases specific to OGC OWSs.
+
+Examples:
+
+- WMS: GetMap may return HTTP 200 with an Exception written "InImage"
+So we may request an explicit XML response for Exceptions, but
+- WMS: GetMap also may return HTTP 200 with an XML response exception
+-  WMS: GetMap images may be blank when somehow data is missing or other errors
+
+- a Capabilities document may be broken (seen for example after GeoServer config error) or
+simply invalid XML (e.g. ad-hoc coded WM/FSs)
+- GetCapabilities response (metadata) can be generated in advance
+Accessibility to this metadata in general cannot guarantee accessibility to specific 
+services like WMS map layers or WFS GetFeature requests. [1]
+
+- OGC services built on dynamic/temporal data like SOS and STA: a broken sensor may cause
+missing data or gaps (when temporarily broken) in history. [3]
+
+- individual Layers (WMS), Features (WFS), Offerings (SOS) may be stale/invalid.
+
+Conclusion: we need OGC-service-aware, thus semantic, QoS checking with history.
+
+- public "UpTime" monitors are available, even for OGC services: BUT many, and most of the
+critical OGC services are run on an intranet, inaccessible to  external monitors. Hence
+in most cases we need an OGC-monitor within our datacenter.
+
+GHC attempts to fill this gap. Let's see how.
+
+2. GHC Walk-through
+
+Walk through from the user perspective. 
+E.g. using http://geohealthcheck.osgeo.org/
+
+GHC GUI
+- Dashboard: resources, status pages
+- Registration (optional)
+- Admin: adding and editing Resources
+
+GHC Runners
+- cronjobs for run and cleaning
+- notification by email
+
+3. GHC Setup
+
+- installation concepts, Paver
+- configuration concepts
+- database agnostic: any SQLAlchemy supported backend
+- installation: basic: in Python venv
+- installation: using Apache WSGI
+- installation: using Docker
+- setup cronjobs
+
+4. GHC Project
+
+- GeoPython GitHub organization
+- issue/wish list, status
+- plugin architecture for checks planned
+- "you can help!" : testing, user stories, coding
+
+Refs
+[1] Ref: "Global-Scale Resource Survey and Performance Monitoring of Public OGC Web Map Services"
+Zhipeng Gui 1,*, Jun Cao 2,3, Xiaojing Liu 2,3, Xiaoqiang Cheng 2,3 and Huayi Wu 2,3,*
+ISPRS Int. J. Geo-Inf. 2016, 5(6), 88; doi:10.3390/ijgi5060088
+http://www.mdpi.com/2220-9964/5/6/88
+
+[2] "OGC Quality of Service and Experience Domain Working Group (QoSE DWG) Charter" 
+https://portal.opengeospatial.org/files/71360
+
+[3] https://github.com/Geonovum/smartemission/issues/25
