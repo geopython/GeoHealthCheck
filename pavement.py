@@ -34,7 +34,7 @@ from StringIO import StringIO
 from urllib2 import urlopen
 import zipfile
 
-from paver.easy import (Bunch, call_task, cmdopts, info, needs, options,
+from paver.easy import (Bunch, call_task, cmdopts, info, options,
                         path, pushd, sh, task)
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -202,22 +202,6 @@ def refresh_docs():
         sh('mkdir %s' % options.base.static_docs)
         sh('cp -rp %s/docs/_build/html/* %s' % (BASEDIR,
                                                 options.base.static_docs))
-
-
-@task
-@needs('refresh_docs')
-def publish_docs():
-    """publish docs to http://www.geohealthcheck.org/docs via gh-pages"""
-
-    with pushd(options.base.tmp):
-        sh('git clone git@github.com:geopython/GeoHealthCheck.git')
-        with pushd('GeoHealthCheck'):
-            sh('git checkout gh-pages')
-            sh('cp -rp %s/docs/_build/html/* docs' % options.base.home)
-            sh('git add docs')
-            sh('git commit -am "update live docs [ci skip]"')
-            sh('git push origin gh-pages')
-    shutil.rmtree(options.base.tmp)
 
 
 @task
