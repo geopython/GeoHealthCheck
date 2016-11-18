@@ -46,9 +46,10 @@
             <h1>GeoHealthCheck</h1>
             <h3>QoS Monitor for (OGC OWS)</h3>
                 <h3>Geospatial Web Services</h3>
-            <p>Just van den Broecke</p>
+            <p><a href="http://justobjects.nl" target="_new">Just van den Broecke</a></p>
             <!--<p>Tom Kralidis</p>-->
             <!--<p>Put your name here if you edited these slides</p>-->
+            <p><a href="http://geohealthcheck.org" target="_new">geohealthcheck.org</a></p>
         </section>
 
         <section>
@@ -165,9 +166,17 @@
 
         <!-- Challenges -->
         <section>
+            <h2>Public "UpTime" services</h2>
+            <h3>Some OGC-service-aware...</h3>
+            <h3>But most critical OGC-services</h3>
+            <h3>run internally in/on datacenters/intranets</h3>
+        </section>
+
+        <!-- Challenges -->
+        <section>
             <h2>Conclusion</h2>
             <h3>Need OGC-service-aware QoS checking</h3>
-            <h3> with history capture</h3>
+            <h3>with history capture</h3>
         </section>
 
         <!-- Part 2 - Walkthrough -->
@@ -226,20 +235,90 @@
         </section>
 
         <!-- Setup -->
-        <section>
-            <h2>TBS</h2>
+        <section style="text-align: left;">
+            <h2>GHC Parts</h2>
+            <h3>- Python webapp (Dashboard)</h3>
+            <h3>- Check runner</h3>
+            <h3>- Database</h3>
+        </section>
+
+        <!-- Setup -->
+        <section style="text-align: left;">
+            <h2>Python webapp</h2>
+            <h3>- WSGI - standard Python</h3>
+            <h3>- Flask - web framework</h3>
+            <h3>- Run Standalone</h3>
+            <h3>- In http-server e.g Nginx or Apache2 (rec)</h3>
+        </section>
+
+        <!-- Setup -->
+        <section style="text-align: left;">
+            <h2>Check runner</h2>
+            <h3>- Via cron-job</h3>
+            <h3>- Frequency and history retain configured</h3>
+            <h3>- Email Notification trigger (optional)</h3>
+        </section>
+
+        <!-- Setup -->
+        <section style="text-align: left;">
+            <h2>Database</h2>
+            <h3>- Entities: Users, Resources, Runs</h3>
+            <h3>- Maintains history (Runs)</h3>
+            <h3>- Multiple backends</h3>
+            <h3>&nbsp;&nbsp;&nbsp; via SQLAlchemy: default SQLite</h3>
+        </section>
+
+        <!-- Setup -->
+        <section style="text-align: left;">
+            <h2>Installation</h2>
+            <h3>- Standard Python setup - <a href="http://docs.geohealthcheck.org">Instructions</a></h3>
+            <h3>- Paver for setup and management tasks</h3>
+        </section>
+
+        <!-- Setup -->
+        <section style="text-align: left;">
+            <h2>Settings</h2>
+            <pre>
+ <code class="hljs" data-trim contenteditable>
+
+GHC_RETENTION_DAYS = 30
+GHC_RUN_FREQUENCY = 'hourly'
+GHC_SELF_REGISTER = False
+GHC_NOTIFICATIONS = False
+GHC_NOTIFICATIONS_VERBOSITY = True
+GHC_ADMIN_EMAIL = 'you@example.com'
+GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
+GHC_SITE_URL = 'http://host'
+GHC_SMTP = (email settings)
+GHC_RELIABILITY_MATRIX = (when to show green/orange/red)
+GHC_MAP = (map setup)
+            </code>
+            </pre>
+
         </section>
 
         <!-- Part 4 - Project -->
         <section id="project">
             <h1>GeoHealthCheck</h1>
             <h1>Project</h1>
-            <h3><a href="http://code.geohealthcheck.org">code.geohealthcheck.org (GitHub)</a></h3>
+            <h3><a href="http://code.geohealthcheck.org">Open Source (MIT) on GitHub</a></h3>
         </section>
 
         <!-- Project -->
         <section>
-            <h2>TBS</h2>
+            <h2>Started by <a href="https://en.wikipedia.org/wiki/User:Tomkralidis">Tom Kralidis</a></h2>
+            <h3><a href="http://pycsw.org">pycsw.org</a></h3>
+            <h3><a href="http://pywps.org">pywps.org</a></h3>
+            <h3><a href="http://geopython.github.com/OWSLib">OWSLib</a></h3>
+            <h3><a href="https://en.wikipedia.org/wiki/MapServer">MapServer</a></h3>
+            <h3><a href="http://geonode.org">GeoNode</a></h3>
+            <h3><a href="http://qgis.org">QGIS</a></h3>
+        </section>
+
+        <!-- Project -->
+        <section style="text-align: left;">
+            <h2>A <a href="http://geopython.github.io/">GeoPython</a> Project</h2>
+            <a href="http://geopython.github.io/"><img src="media/geopython.jpg" alt="geopython"/></a>
         </section>
 
         <section style="text-align: left;">
@@ -248,7 +327,8 @@
                 - Website: <a href="http://geohealthcheck.org">geohealthcheck.org</a> <br>
                 - Demo: <a href="http://demo.geohealthcheck.org">demo.geohealthcheck.org</a> <br>
                 - Sources: <a href="http://code.geohealthcheck.org">code.geohealthcheck.org</a>  <br>
-                - Docs: <a href="http://docs.geohealthcheck.org">docs.geohealthcheck.org</a>
+                - Docs: <a href="http://docs.geohealthcheck.org">docs.geohealthcheck.org</a>  <br>
+                - Presentation: <a href="http://www.geohealthcheck.org/presentation">www.geohealthcheck.org/presentation</a> <br>
             </p>
         </section>
 
