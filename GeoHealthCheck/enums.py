@@ -33,6 +33,11 @@ RESOURCE_TYPES = {
         'versions': ['1.1.1'],
         'capabilities': '?service=WMS&version=1.1.1&request=GetCapabilities'
     },
+    'OGC:WMTS': {
+        'label': 'Web Map Tile Service (WMTS)',
+        'versions': ['1.0.0'],
+        'capabilities': '?service=WMTS&version=1.0.0&request=GetCapabilities'
+    },
     'OGC:WFS': {
         'label': 'Web Feature Service (WFS)',
         'versions': ['1.1.0'],
