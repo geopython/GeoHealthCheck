@@ -78,6 +78,17 @@
             ["2014-09-10T05:22:22Z", 1, 1.395, "OK"],
             ["2014-09-10T06:22:22Z", 0, 0.9, "Server error"],
             ["2014-09-10T07:22:22Z", 1, 22.2, "OK"]
+        ]},
+        "resource": {
+           "owner": "admin",
+           "resource_type": "OSGeo:TMS",
+           "title": "Tile Map Service",
+           "url": "http://demo.opengeo.org/geoserver/gwc/service/tms/1.0.0"
+        },
+        "runs": [
+            ["2014-09-09T01:11:11Z", 1, 0.28, "OK"],
+            ["2014-09-09T04:11:11Z", 1, 1.395, "OK"],
+            ["2014-09-10T07:22:22Z", 1, 22.2, "OK"]
         ]}
     ]
 }
