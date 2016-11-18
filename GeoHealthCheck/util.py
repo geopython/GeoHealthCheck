@@ -76,6 +76,9 @@ def get_python_snippet(resource):
     elif resource.resource_type == 'OGC:WMTS':
         lines.append('from owslib.wmts import WebMapTileService')
         lines.append('myows = WebMapTileService(\'%s\')' % resource.url)
+    elif resource.resource_type == 'OSGeo:TMS':
+        lines.append('from owslib.tms import TileMapService')
+        lines.append('myows = WebMapTileService(\'%s\')' % resource.url)
     elif resource.resource_type == 'OGC:CSW':
         lines.append('from owslib.csw import CatalogueServiceWeb')
         lines.append('myows = CatalogueServiceWeb(\'%s\')' % resource.url)
