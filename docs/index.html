@@ -69,7 +69,7 @@ of resources.</p>
 <div class="section" id="quick-and-dirty">
 <h3>Quick and Dirty<a class="headerlink" href="#quick-and-dirty" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash"><div class="highlight"><pre>virtualenv ghc <span class="o">&amp;&amp;</span> <span class="nb">cd </span>ghc
-. scripts/activate
+. bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 <span class="nb">cd </span>GeoHealthCheck
 <span class="c"># install paver dependency for admin tool</span>
@@ -79,7 +79,7 @@ paver setup
 <span class="c"># create secret key to use for auth</span>
 paver create_secret_key
 <span class="c"># almost there!  Customize config</span>
-vi instance/config.py
+vi instance/config_site.py
 <span class="c"># edit:</span>
 <span class="c"># - SQLALCHEMY_DATABASE_URI</span>
 <span class="c"># - SECRET_KEY  # from paver create_secret_key</span>
@@ -87,10 +87,12 @@ vi instance/config.py
 <span class="c"># - GHC_RUN_FREQUENCY</span>
 <span class="c"># - GHC_SELF_REGISTER</span>
 <span class="c"># - GHC_NOTIFICATIONS</span>
+<span class="c"># - GHC_NOTIFICATIONS_VERBOSITY</span>
 <span class="c"># - GHC_ADMIN_EMAIL</span>
 <span class="c"># - GHC_SITE_TITLE</span>
 <span class="c"># - GHC_SITE_URL</span>
 <span class="c"># - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled</span>
+<span class="c"># - GHC_MAP  # or use default settings</span>
 
 <span class="c"># init database</span>
 python GeoHealthCheck/models.py create
@@ -143,8 +145,8 @@ web link.  A GeoHealthCheck deployment typically monitors numerous resources</li
 </div>
 <div class="section" id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
-<p>Core configuration is set by GeoHealthCheck in <tt class="docutils literal"><span class="pre">GeoHealthCheck/config.py</span></tt>.
-You can override these settings in <tt class="docutils literal"><span class="pre">instance/config.py</span></tt>:</p>
+<p>Core configuration is set by GeoHealthCheck in <tt class="docutils literal"><span class="pre">GeoHealthCheck/config_main.py</span></tt>.
+You can override these settings in <tt class="docutils literal"><span class="pre">instance/config_site.py</span></tt>:</p>
 <ul class="simple">
 <li><strong>SQLALCHEMY_DATABASE_URI</strong>: the database configuration.  See the
 SQLAlchemy documentation for more info</li>
@@ -155,13 +157,31 @@ the output of <tt class="docutils literal"><span class="pre">paver</span> <span 
 (i.e. <tt class="docutils literal"><span class="pre">hourly</span></tt>, <tt class="docutils literal"><span class="pre">daily</span></tt>, <tt class="docutils literal"><span class="pre">monthly</span></tt>)</li>
 <li><strong>GHC_SELF_REGISTER</strong>: allow registrations from users on the website</li>
 <li><strong>GHC_NOTIFICATIONS</strong>: turn on email notifications</li>
+<li><strong>GHC_NOTIFICATIONS_VERBOSITY</strong>: receive additional email notifications than just <tt class="docutils literal"><span class="pre">Failing</span></tt> and <tt class="docutils literal"><span class="pre">Fixed</span></tt> (default True)</li>
 <li><strong>GHC_ADMIN_EMAIL</strong>: email address of administrator / contact</li>
 <li><strong>GHC_SITE_TITLE</strong>: title used for installation / deployment</li>
 <li><strong>GHC_SITE_URL</strong>: url of the installation / deployment</li>
 <li><strong>GHC_SMTP</strong>:  configure SMTP settings if <strong>GHC_NOTIFICATIONS</strong> is enabled</li>
-<li><strong>GHC_RELIABILITY_MATRIX</strong>: classification scheme for grading resource
-reliability (see below)</li>
+<li><strong>GHC_RELIABILITY_MATRIX</strong>: classification scheme for grading resource</li>
+<li><strong>GHC_MAP</strong>: default map settings
+- <strong>url</strong>: URL of TileLayer
+- <strong>centre_lat</strong>: Centre latitude for homepage map
+- <strong>centre_long</strong>: Centre longitude for homepage map
+- <strong>maxzoom</strong>: maximum zoom level
+- <strong>subdomains</strong>: available subdomains to help with parallel requests</li>
 </ul>
+<div class="section" id="enabling-or-disabling-languages">
+<h3>Enabling or disabling languages<a class="headerlink" href="#enabling-or-disabling-languages" title="Permalink to this headline">¶</a></h3>
+<p>Open the file <tt class="docutils literal"><span class="pre">GeoHealthCheck/app.py</span></tt> and look for the language switcher (e.g. &#8216;en&#8217;,&#8217;fr&#8217;) and remove or add the desired languages.
+In case a new language (e.g. this needs a new translation file called *.po)  is to be added,
+make a copy of  one of the folders in <tt class="docutils literal"><span class="pre">GeoHealthCheck/translations/</span></tt>; rename the folder to the desired language (e.g. &#8216;de&#8217; for german);
+start editing the file in LC_MESSAGES/messages.po and add your translations to the &#8216;&#8217;msgstr&#8217;&#8216;.
+Don&#8217;t forget the change the specified language in the messages.po file as well.
+For example the messages.po file for the german case has an english  &#8216;&#8217;msgid&#8217;&#8217;  string, which needs to be translated in &#8216;&#8217;msgstr&#8217;&#8217; as seen below.</p>
+<p>-#: GeoHealthCheck/app.py:394
+-msgid &#8220;This site is not configured for self-registration&#8221;
+-msgstr &#8220;Diese Webseite unterstützt keine Selbstregistrierung&#8221;</p>
+</div>
 <div class="section" id="customizing-the-score-matrix">
 <h3>Customizing the Score Matrix<a class="headerlink" href="#customizing-the-score-matrix" title="Permalink to this headline">¶</a></h3>
 <p>GeoHealthCheck uses a simple matrix to provide an indication of overall health
@@ -196,15 +216,24 @@ follows:</p>
 </tbody>
 </table>
 <p>To adjust this matrix, edit <strong>GHC_RELIABILITY_MATRIX</strong> in
-<tt class="docutils literal"><span class="pre">instance/config.py</span></tt>.</p>
+<tt class="docutils literal"><span class="pre">instance/config_site.py</span></tt>.</p>
 </div>
 </div>
 <div class="section" id="administration">
 <h2>Administration<a class="headerlink" href="#administration" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>create db</li>
+</ul>
+<p>To create the database execute the following:</p>
+<p>Open a command line, (if needed activate your virtualenv), and</p>
+<p>python GeoHealthCheck/models.py create</p>
+<ul class="simple">
 <li>drop db</li>
 </ul>
+<p>To delete the database execute the following, however you will loose all your information. So please ensure backup if needed:</p>
+<p>Open a command line, (if needed activate your virtualenv), and</p>
+<p>python GeoHealthCheck/models.py drop</p>
+<p>Note: you need to create a Database again before you can start GHC again.</p>
 </div>
 <div class="section" id="user-management">
 <h2>User Management<a class="headerlink" href="#user-management" title="Permalink to this headline">¶</a></h2>
@@ -218,14 +247,25 @@ follows:</p>
 <div class="section" id="scheduling-runs">
 <h2>Scheduling Runs<a class="headerlink" href="#scheduling-runs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>cron</li>
-<li>interactive</li>
+<li>Permanent Jobs</li>
 </ul>
+<p>Edit the file jobs.cron that the paths reflect the path to the virtualenv. Set the first argument to the desired monitoring time step. If finished editing,
+copy the command line calls e.g. &#8216;&#8217;/YOURvirtualenv/bin_or_SCRIPTSonwindows/python /path/to/GeoHealthCheck/GeoHealthCheck/models.py run&#8217;&#8217; to the commandline to test if they work sucessfully.
+On Windows - do not forget to include the &#8216;&#8217;.exe.&#8217;&#8217; file extension to the python executable.
+For documentation how to create cron jobs see your operating system: on *NIX systems e.g.  crontab -e and on windows e.g. the nssm.</p>
+<ul class="simple">
+<li>interactive
+TBF</li>
+</ul>
+</div>
+<div class="section" id="build-documentation">
+<h2>Build Documentation<a class="headerlink" href="#build-documentation" title="Permalink to this headline">¶</a></h2>
+<p>Open a command line, (if needed activate your virtualenv) and move into the directory  <tt class="docutils literal"><span class="pre">GeoHealthCheck/doc/</span></tt>. In there, type &#8216;&#8217;make html&#8217;&#8217; plus ENTER and the documentation should be build locally.</p>
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
 <p>The MIT License (MIT)</p>
-<p>Copyright (c) 2014 Tom Kralidis</p>
+<p>Copyright (c) 2014-2015 Tom Kralidis</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the &#8220;Software&#8221;), to deal
 in the Software without restriction, including without limitation the rights
@@ -264,6 +304,7 @@ SOFTWARE.</p>
 </li>
 <li><a class="reference internal" href="#core-concepts">Core Concepts</a></li>
 <li><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li><a class="reference internal" href="#enabling-or-disabling-languages">Enabling or disabling languages</a></li>
 <li><a class="reference internal" href="#customizing-the-score-matrix">Customizing the Score Matrix</a></li>
 </ul>
 </li>
@@ -272,6 +313,7 @@ SOFTWARE.</p>
 <li><a class="reference internal" href="#adding-resources">Adding Resources</a></li>
 <li><a class="reference internal" href="#deleting-resources">Deleting Resources</a></li>
 <li><a class="reference internal" href="#scheduling-runs">Scheduling Runs</a></li>
+<li><a class="reference internal" href="#build-documentation">Build Documentation</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 </ul>
 </li>
