@@ -72,7 +72,7 @@ GHC Runners
 
 4. GHC Project
 
-- GeoPython GitHub organization
+- geopython GitHub organization
 - issue/wish list, status
 - plugin architecture for checks planned
 - "you can help!" : testing, user stories, coding
