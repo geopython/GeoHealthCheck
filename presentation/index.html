@@ -43,6 +43,7 @@
 
     <!-- Any section element inside of this container is displayed as a slide -->
     <div class="slides">
+        <!-- Front Page -->
         <section>
             <h1>GeoHealthCheck</h1>
             <h3>QoS Monitor for (OGC OWS)</h3>
@@ -51,8 +52,10 @@
             <p><a href="http://kralidis.ca" target="_new">Tom Kralidis</a></p>
             <!--<p>Put your name here if you edited these slides</p>-->
             <p><a href="http://geohealthcheck.org" target="_new">geohealthcheck.org</a></p>
+            <p><a href="http://geohealthcheck.org/LICENSE.txt" target="_new"><img src="media/cc.png"/><img src="media/by.png"/></a></p>
         </section>
 
+        <!-- Intro: Credits -->
         <section>
             <h2>Credits</h2>
             <p>
@@ -71,8 +74,9 @@
             </p>
         </section>
 
+        <!-- Intro: About OGC OWS -->
         <section style="text-align: left;">
-            <h2>OGC ? OWS?</h2>
+            <h2>OGC ? &nbsp;&nbsp;OWS?</h2>
             <h3>- OGC: <a target="_new" href="http://www.opengeospatial.org">Open Geospatial Consortium</a></h3>
             <h3>- OGC defines OWS standards</h3>
             <h3>- OWS: <a target="_new" href="http://www.opengeospatial.org">OGC Web Services</a></h3>
@@ -80,11 +84,12 @@
             <h3>&nbsp;&nbsp;&nbsp;WMS, WFS, WCS, CSW, SOS, WPS, WMTS</h3>
          </section>
 
-        <!-- About OGC OWS -->
+        <!-- Intro: About OGC OWS -->
         <section data-background="media/ogc-ows.jpg">
             &nbsp;
         </section>
 
+        <!-- Contents -->
         <section style="text-align: left;">
             <h1>Contents</h1>
                 <h2>- <a href="?transition=slide#challenges">OWS Monitoring Challenges</a></h2>
@@ -92,19 +97,13 @@
                 <h2>- <a href="?transition=slide#setup">GHC Setup</a></h2>
                 <h2>- <a href="?transition=slide#project">GHC Project</a></h2>
             <p>
-
                 GHC=<a target="_new" href="https://github.com/geopython/GeoHealthCheck">GeoHealthCheck</a>
-
             </p>
         </section>
 
         <!-- Part 1 - Challenges -->
         <section id="challenges">
             <h1>OWS Monitoring Challenges</h1>
-            <p>
-                OWS=<a target="_new" href="http://www.opengeospatial.org">OGC Web Services</a><br/>
-                OGC=<a target="_new" href="http://www.opengeospatial.org">Open Geospatial Consortium</a>
-            </p>
         </section>
 
         <!-- Challenges -->
@@ -144,13 +143,15 @@
             <h1 style="color: green">But our HTTP Monitor said: 200 OK...</h1>
         </section>
 
+        <!-- Challenges -->
         <section style="text-align: left;">
             <h2>Broken GetCapabilities response</h2>
                 <h3>- truncated file</h3>
                 <h3>- ad-hoc coded WMS/WFS</h3>
          </section>
 
-        <section style="text-align: left;">
+        <!-- Challenges -->
+       <section style="text-align: left;">
             <h2>GetCapabilities response OK,</h2>
             <h2>but</h2>
                 <h3>- GetCapabilities doc may be static file</h3>
@@ -158,6 +159,7 @@
                 <h3>&nbsp;&nbsp; WMS GetMap, WFS GetFeature, ...</h3>
          </section>
 
+        <!-- Challenges -->
         <section style="text-align: left;">
              <h2>Time-based OGC Services</h2>
                  <h3>- SensorWeb Enablement (SWE)</h3>
@@ -184,7 +186,7 @@
             <h3>run internally in/on datacenters/intranets</h3>
         </section>
 
-        <!-- Challenges -->
+        <!-- Challenges - Conclusion -->
         <section>
             <h2>Conclusion</h2>
             <h3>Need OGC-service-aware QoS checking</h3>
@@ -372,7 +374,9 @@ GHC_MAP = (map setup)
             </p>
         </section>
 
-        <!-- Example of nested vertical slides
+        <!-- Below Examples from Original Pres from reveal.js website, for inspiration...
+
+        Example of nested vertical slides
         <section>
             <section>
                 <h2>Vertical Slides</h2>
