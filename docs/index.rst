@@ -133,6 +133,7 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_SMTP**:  configure SMTP settings if **GHC_NOTIFICATIONS** is enabled
 - **GHC_RELIABILITY_MATRIX**: classification scheme for grading resource
 - **GHC_MAP**: default map settings
+
   - **url**: URL of TileLayer
   - **centre_lat**: Centre latitude for homepage map
   - **centre_long**: Centre longitude for homepage map
@@ -143,11 +144,11 @@ Enabling or disabling languages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Open the file ``GeoHealthCheck/app.py`` and look for the language switcher (e.g. 'en','fr') and remove or add the desired languages.
-In case a new language (e.g. this needs a new translation file called \*.po)  is to be added,
+In case a new language (e.g. this needs a new translation file called ``*.po``)  is to be added,
 make a copy of  one of the folders in ``GeoHealthCheck/translations/``; rename the folder to the desired language (e.g. 'de' for german);
-start editing the file in LC_MESSAGES/messages.po and add your translations to the ''msgstr''.
+start editing the file in ``LC_MESSAGES/messages.po`` and add your translations to the ''msgstr''.
 Don't forget the change the specified language in the messages.po file as well.
-For example the messages.po file for the german case has an english  ''msgid''  string,
+For example the ``messages.po`` file for the german case has an english  ''msgid''  string,
 which needs to be translated in ''msgstr'' as seen below.  ::
 
     -#: GeoHealthCheck/app.py:394
@@ -215,7 +216,7 @@ copy the command line calls e.g. ``/YOURvirtualenv/bin_or_SCRIPTSonwindows/pytho
 to the commandline to test if they work sucessfully.
 On Windows - do not forget to include the ''.exe.'' file extension to the python executable.
 For documentation how to create cron jobs see your operating system: on \*NIX systems e.g.  ``crontab -e`` and on
-windows e.g. the `nssm<https://nssm.cc/>`_.
+windows e.g. the `nssm <https://nssm.cc/>`_.
 
 - interactive
   TBF
