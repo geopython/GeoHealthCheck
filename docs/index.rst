@@ -202,8 +202,27 @@ User Management
 Adding Resources
 ----------------
 
+When being logged in, click the Add+ button for adding new resources.
+
+The folowing resource types are available:
+
+- File Transfer Protocol (FTP)
+- Web Map Service (WMS)
+- Web Address (URL)
+- Catalogue Service (CSW)
+- Web Map Tile Service (WMTS)
+- Web Processing Service (WPS)
+- Web Coverage Service (WCS)
+- Web Feature Service (WFS)
+- Tile Map Service (TMS)
+- Web Accessible Folder (WAF)
+- Sensor Observation Service (SOS)
+
+
 Deleting Resources
 ------------------
+
+Open the resource details by clicking its name in the resources list at the Dashboard page. Next to the resource title is a red Delete button.
 
 Scheduling Runs
 ---------------
