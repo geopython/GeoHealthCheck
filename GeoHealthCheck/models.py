@@ -167,7 +167,7 @@ class User(DB.Model):
                            autoincrement=True)
     username = DB.Column(DB.String(20), unique=True, index=True,
                          nullable=False)
-    password = DB.Column(DB.String(10), nullable=False)
+    password = DB.Column(DB.String(255), nullable=False)
     email = DB.Column(DB.String(50), unique=True, index=True, nullable=False)
     role = DB.Column(DB.Text, nullable=False, default='user')
     registered_on = DB.Column(DB.DateTime)
