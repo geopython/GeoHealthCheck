@@ -108,14 +108,12 @@ class Resource(DB.Model):
 
     @property
     def first_run(self):
-        return self.runs.having(func.min(Run.checked_datetime)).group_by(
-            Run.checked_datetime).order_by(
+        return self.runs.order_by(
                 Run.checked_datetime.asc()).first()
 
     @property
     def last_run(self):
-        return self.runs.having(func.max(Run.checked_datetime)).group_by(
-            Run.checked_datetime).order_by(
+        return self.runs.order_by(
                 Run.checked_datetime.desc()).first()
 
     @property
@@ -144,7 +142,7 @@ class Resource(DB.Model):
 
     def runs_to_json(self):
         runs = []
-        for run in self.runs.group_by(Run.checked_datetime).all():
+        for run in self.runs.order_by(Run.checked_datetime).all():
             runs.append({'datetime': run.checked_datetime.isoformat(),
                          'value': run.response_time,
                          'success': 1 if run.success else 0})
@@ -152,7 +150,7 @@ class Resource(DB.Model):
 
     def success_to_colors(self):
         colors = []
-        for run in self.runs.group_by(Run.checked_datetime).all():
+        for run in self.runs.order_by(Run.checked_datetime).all():
             if run.success == 1:
                 colors.append('#5CB85C')  # green
             else:
