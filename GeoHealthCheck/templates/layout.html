@@ -8,7 +8,7 @@
         <link rel="icon" href="../../favicon.ico">
         <title>{{ config['GHC_SITE_TITLE'] }}</title>
         <link href="{{ url_for('static', filename='lib/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
-        <link href="{{ url_for('static', filename='lib/dist/css/sb-admin-2.min.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='lib/dist/css/sb-admin-2.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', filename='lib/vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', filename='lib/vendor/datatables-plugins/dataTables.bootstrap.min.js') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='lib/vendor/morrisjs/morris.css') }}" rel="stylesheet">
@@ -110,7 +110,7 @@
                 {% endblock %}
             </div>
         </div>
-        <footer><div class="footer text-center">{{ _('Powered by') }} <a href="http://geopython.github.io/GeoHealthCheck">GeoHealthCheck</a> {{ app_version }}</div></footer>
+        <footer><div class="footer text-center">{{ _('Powered by') }} <a href="http://geohealthcheck.org">GeoHealthCheck</a> {{ app_version }}</div></footer>
         <script src="{{ url_for('static', filename='lib/vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/vendor/raphael/raphael.min.js') }}"></script>

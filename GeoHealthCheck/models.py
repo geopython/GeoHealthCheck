@@ -108,14 +108,12 @@ class Resource(DB.Model):
 
     @property
     def first_run(self):
-        return self.runs.having(func.min(Run.checked_datetime)).group_by(
-            Run.checked_datetime).order_by(
+        return self.runs.order_by(
                 Run.checked_datetime.asc()).first()
 
     @property
     def last_run(self):
-        return self.runs.having(func.max(Run.checked_datetime)).group_by(
-            Run.checked_datetime).order_by(
+        return self.runs.order_by(
                 Run.checked_datetime.desc()).first()
 
     @property
@@ -144,7 +142,7 @@ class Resource(DB.Model):
 
     def runs_to_json(self):
         runs = []
-        for run in self.runs.group_by(Run.checked_datetime).all():
+        for run in self.runs.order_by(Run.checked_datetime).all():
             runs.append({'datetime': run.checked_datetime.isoformat(),
                          'value': run.response_time,
                          'success': 1 if run.success else 0})
@@ -152,7 +150,7 @@ class Resource(DB.Model):
 
     def success_to_colors(self):
         colors = []
-        for run in self.runs.group_by(Run.checked_datetime).all():
+        for run in self.runs.order_by(Run.checked_datetime).all():
             if run.success == 1:
                 colors.append('#5CB85C')  # green
             else:
@@ -167,7 +165,7 @@ class User(DB.Model):
                            autoincrement=True)
     username = DB.Column(DB.String(20), unique=True, index=True,
                          nullable=False)
-    password = DB.Column(DB.String(10), nullable=False)
+    password = DB.Column(DB.String(255), nullable=False)
     email = DB.Column(DB.String(50), unique=True, index=True, nullable=False)
     role = DB.Column(DB.Text, nullable=False, default='user')
     registered_on = DB.Column(DB.DateTime)
@@ -211,6 +209,16 @@ if __name__ == '__main__':
     APP = Flask(__name__)
     APP.config.from_pyfile('config_main.py')
     APP.config.from_pyfile('../instance/config_site.py')
+
+    # commit or rollback shorthand
+    def db_commit():
+        try:
+            DB.session.commit()
+        except Exception as err:
+            DB.session.rollback()
+            msg = str(err)
+            print(msg)
+
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
             print('Creating database objects')
@@ -234,25 +242,48 @@ if __name__ == '__main__':
 
             user_to_add = User(username, password1, email1, role='admin')
             DB.session.add(user_to_add)
+            db_commit()
         elif sys.argv[1] == 'drop':
             print('Dropping database objects')
             DB.drop_all()
+            db_commit()
         elif sys.argv[1] == 'run':
-            print('Running health check tests')
+            print('START - Running health check tests on %s'
+                  % datetime.utcnow().isoformat())
             from healthcheck import run_test_resource
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
+
+                # Get the status of the last run,
+                # assume success if there is none
+                last_run_success = True
+                last_run = res.last_run
+                if last_run:
+                    last_run_success = last_run.success
+
+                # Run test
                 run_to_add = run_test_resource(res.resource_type, res.url)
 
                 run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
 
-                print('Adding run')
+                print('Adding Run: success=%s, response_time=%ss\n'
+                      % (str(run1.success), run1.response_time))
                 DB.session.add(run1)
+                # commit or rollback each run to avoid long-lived transactions
+                # see https://github.com/geopython/GeoHealthCheck/issues/14
+                db_commit()
 
-                if APP.config['GHC_NOTIFICATIONS'] and res.last_run:
-                    notify(APP.config, res, run1, res.last_run.success)
-
+                if APP.config['GHC_NOTIFICATIONS']:
+                    # Attempt notification
+                    try:
+                        notify(APP.config, res, run1, last_run_success)
+                    except Exception as err:
+                        # Don't bail out on failure in order to commit the Run
+                        msg = str(err)
+                        print('error notifying: %s' % msg)
+            print('END - Running health check tests on %s'
+                  % datetime.utcnow().isoformat())
         elif sys.argv[1] == 'flush':
             print('Flushing runs older than %d days' %
                   int(APP.config['GHC_RETENTION_DAYS']))
@@ -262,10 +293,4 @@ if __name__ == '__main__':
                 if days_old > APP.config['GHC_RETENTION_DAYS']:
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run1)
-        # commit or rollback
-        try:
-            DB.session.commit()
-        except Exception as err:
-            DB.session.rollback()
-            msg = str(err)
-            print(msg)
+            db_commit()

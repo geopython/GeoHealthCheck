@@ -33,6 +33,8 @@ from urllib2 import urlopen
 from urlparse import urlparse
 
 from owslib.wms import WebMapService
+from owslib.wmts import WebMapTileService
+from owslib.tms import TileMapService
 from owslib.wfs import WebFeatureService
 from owslib.wcs import WebCoverageService
 from owslib.wps import WebProcessingService
@@ -61,6 +63,10 @@ def run_test_resource(resource_type, url):
     try:
         if resource_type == 'OGC:WMS':
             ows = WebMapService(url)
+        elif resource_type == 'OGC:WMTS':
+            ows = WebMapTileService(url)
+        elif resource_type == 'OSGeo:TMS':
+            ows = TileMapService(url)
         elif resource_type == 'OGC:WFS':
             ows = WebFeatureService(url)
         elif resource_type == 'OGC:WCS':
@@ -86,7 +92,7 @@ def run_test_resource(resource_type, url):
             ows = urlopen(url)
             title = urlparse(url).hostname
         success = True
-        if resource_type.startswith('OGC:'):
+        if resource_type.startswith(('OGC:', 'OSGeo')):
             title = ows.identification.title
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
