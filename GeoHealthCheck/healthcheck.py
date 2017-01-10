@@ -47,7 +47,7 @@ from enums import RESOURCE_TYPES
 LOGGER = logging.getLogger(__name__)
 
 
-def run_test_resource(resource_type, url):
+def run_test_resource(config, resource_type, url):
     """tests a CSW service and provides run metrics"""
 
     if resource_type not in RESOURCE_TYPES.keys():
@@ -70,7 +70,7 @@ def run_test_resource(resource_type, url):
         elif resource_type == 'OGC:WFS':
             ows = WebFeatureService(url)
         elif resource_type == 'OGC:WCS':
-            ows = WebCoverageService(url)
+            ows = WebCoverageService(url, version='1.0.0')
         elif resource_type == 'OGC:WPS':
             ows = WebProcessingService(url)
         elif resource_type == 'OGC:CSW':
@@ -80,12 +80,36 @@ def run_test_resource(resource_type, url):
         elif resource_type in ['WWW:LINK', 'urn:geoss:waf']:
             ows = urlopen(url)
             if resource_type == 'WWW:LINK':
-                import re
-                try:
-                    title_re = re.compile("<title>(.+?)</title>")
-                    title = title_re.search(ows.read()).group(1)
-                except:
-                    title = url
+                content_type = ows.info().getheader('Content-Type')
+
+                # Check content if the response is not an image
+                if 'image/' not in content_type:
+                    content = ows.read()
+                    import re
+                    try:
+                        title_re = re.compile("<title>(.+?)</title>")
+                        title = title_re.search(content).group(1)
+                    except:
+                        title = url
+
+                    # Optional check for any OGC-Exceptions in Response
+                    if config and config['GHC_WWW_LINK_EXCEPTION_CHECK']:
+                        exception_text = None
+                        try:
+                            except_re = re.compile(
+                                "ServiceException>|ExceptionReport>")
+                            exception_text = except_re.search(content).group(0)
+                        except:
+                            # No Exception in Response text
+                            pass
+
+                        if exception_text:
+                            # Found OGC-Exception in Response text
+                            raise Exception(
+                                "Exception in response: %s" % exception_text)
+
+                    del content
+
             elif resource_type == 'urn:geoss:waf':
                 title = 'WAF %s %s' % (gettext('for'), urlparse(url).hostname)
         elif resource_type == 'FTP':
@@ -116,4 +140,5 @@ if __name__ == '__main__':
         print('Usage: %s <resource_type> <url>' % sys.argv[0])
         sys.exit(1)
 
-    print(run_test_resource(sys.argv[1], sys.argv[2]))
+    # TODO: need APP.config here, None for now
+    print(run_test_resource(None, sys.argv[1], sys.argv[2]))
