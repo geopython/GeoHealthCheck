@@ -447,7 +447,7 @@ def add():
         return redirect(url_for('add', lang=g.current_lang))
 
     [title, success, response_time, message, start_time] = run_test_resource(
-        resource_type, url)
+        APP.config, resource_type, url)
 
     if not success:
         flash(message, 'danger')
@@ -502,7 +502,7 @@ def test(resource_identifier):
         return redirect(request.referrer)
 
     [title, success, response_time, message, start_time] = run_test_resource(
-        resource.resource_type, resource.url)
+        APP.config, resource.resource_type, resource.url)
 
     if message not in ['OK', None, 'None']:
         msg = gettext('ERROR')

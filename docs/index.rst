@@ -126,7 +126,8 @@ You can override these settings in ``instance/config_site.py``:
   (i.e. ``hourly``, ``daily``, ``monthly``)
 - **GHC_SELF_REGISTER**: allow registrations from users on the website
 - **GHC_NOTIFICATIONS**: turn on email notifications
-- **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default True)
+- **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)
+- **GHC_WWW_LINK_EXCEPTION_CHECK**: turn on checking for OGC Exceptions in ``WWW:LINK`` Resource responses (default ``False``)
 - **GHC_ADMIN_EMAIL**: email address of administrator / contact
 - **GHC_SITE_TITLE**: title used for installation / deployment
 - **GHC_SITE_URL**: url of the installation / deployment
