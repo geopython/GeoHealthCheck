@@ -1,4 +1,4 @@
-{{ _('Subject') }}: [{{ config.GHC_SITE_TITLE }}] {{ result }}: {{ resource.title }}
+{{ result }}: {{ resource.title }}
 
 
 {{ _('Hi: this is an automated message from the') }} {{ config.GHC_SITE_TITLE }} {{ _('service') }}.
