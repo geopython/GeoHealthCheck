@@ -79,7 +79,8 @@ def notify(config, resource, run, last_run_success):
                             config['GHC_ADMIN_EMAIL'])
     toaddrs = config['GHC_NOTIFICATIONS_EMAIL']
 
-    msg = ("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n" % (config['GHC_ADMIN_EMAIL'], toaddrs, config['GHC_SITE_TITLE']))
+    msg = ("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n" %
+           (config['GHC_ADMIN_EMAIL'], toaddrs, config['GHC_SITE_TITLE']))
 
     msg = msg + msgbody
     print msg
