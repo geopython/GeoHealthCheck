@@ -73,12 +73,17 @@ def notify(config, resource, run, last_run_success):
         'run': run
     }
 
-    msg = render_template2('notification_email.txt', template_vars)
+    msgbody = render_template2('notification_email.txt', template_vars)
 
     fromaddr = '%s <%s>' % (config['GHC_SITE_TITLE'],
                             config['GHC_ADMIN_EMAIL'])
-    toaddrs = config['GHC_ADMIN_EMAIL']
+    toaddrs = config['GHC_NOTIFICATIONS_EMAIL']
 
+    msg = ("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n" %
+           (config['GHC_ADMIN_EMAIL'], toaddrs, config['GHC_SITE_TITLE']))
+
+    msg = msg + msgbody
+    print msg
     server = smtplib.SMTP('%s:%s' % (config['GHC_SMTP']['server'],
                                      config['GHC_SMTP']['port']))
 
