@@ -17,99 +17,99 @@ msgstr ""
 
 #: GeoHealthCheck/app.py:394
 msgid "This site is not configured for self-registration"
-msgstr ""
+msgstr "Ce site n'est pas configuré pour l'auto-inscription"
 
 #: GeoHealthCheck/app.py:395
 msgid "Please contact"
-msgstr ""
+msgstr "s'il-vous-plaît contactez"
 
 #: GeoHealthCheck/app.py:411
 msgid "already registered"
-msgstr ""
+msgstr "déjà inscrit"
 
 #: GeoHealthCheck/app.py:431
 msgid "Service already registered"
-msgstr ""
+msgstr "Service déjà enregistré"
 
 #: GeoHealthCheck/app.py:454
 msgid "Service registered"
-msgstr ""
+msgstr "Service enregistré"
 
 #: GeoHealthCheck/app.py:490 GeoHealthCheck/app.py:517
 msgid "Resource not found"
-msgstr ""
+msgstr "Introuvable"
 
 #: GeoHealthCheck/app.py:497
 msgid "ERROR"
-msgstr ""
+msgstr "ERREUR"
 
 #: GeoHealthCheck/app.py:500
 msgid "Resource tested successfully"
-msgstr ""
+msgstr "Ressources testées avec succès"
 
 #: GeoHealthCheck/app.py:512
 msgid "You do not have access to delete this resource"
-msgstr ""
+msgstr "Vous ne pouvez pas supprimer cette ressource"
 
 #: GeoHealthCheck/app.py:529
 msgid "Resource deleted"
-msgstr ""
+msgstr "Ressource supprimée"
 
 #: GeoHealthCheck/app.py:547
 msgid "Invalid username and / or password"
-msgstr ""
+msgstr "Nom d'utilisateur et / ou mot de passe incorrect"
 
 #: GeoHealthCheck/app.py:560
 msgid "Logged out"
-msgstr ""
+msgstr "Déconnecté"
 
 #: GeoHealthCheck/healthcheck.py:52
 msgid "Invalid resource type"
-msgstr ""
+msgstr "Type de ressource non valide"
 
 #: GeoHealthCheck/healthcheck.py:84 GeoHealthCheck/healthcheck.py:92
 msgid "for"
-msgstr ""
+msgstr "pour"
 
 #: GeoHealthCheck/notifications.py:47
 msgid "Failing"
-msgstr ""
+msgstr "Échec"
 
 #: GeoHealthCheck/notifications.py:49
 msgid "Fixed"
-msgstr ""
+msgstr "fixé"
 
 #: GeoHealthCheck/notifications.py:51
 msgid "Still Failing"
-msgstr ""
+msgstr "Échec répété"
 
 #: GeoHealthCheck/notifications.py:53 GeoHealthCheck/notifications.py:55
 msgid "Passing"
-msgstr ""
+msgstr "Passe"
 
 #: GeoHealthCheck/templates/add.html:5
 msgid "Add Resource"
-msgstr ""
+msgstr "Ajouter une Ressource"
 
 #: GeoHealthCheck/templates/add.html:8
 msgid "Select Resource Type"
-msgstr ""
+msgstr "Sélectionner le type de ressource"
 
 #: GeoHealthCheck/templates/add.html:22
 msgid "Enter the URL without any query parameters"
-msgstr ""
+msgstr "Entrez l'URL sans aucun paramètre de requête"
 
 #: GeoHealthCheck/templates/add.html:22
 msgid "good"
-msgstr ""
+msgstr "bien"
 
 #: GeoHealthCheck/templates/add.html:22
 msgid "bad"
-msgstr ""
+msgstr "mauvais"
 
 #: GeoHealthCheck/templates/add.html:25
 msgid "Submit"
-msgstr ""
+msgstr "Soumettre"
 
 #: GeoHealthCheck/templates/home.html:10
 msgid "Dashboard"
@@ -118,223 +118,224 @@ msgstr ""
 #: GeoHealthCheck/templates/home.html:12
 #: GeoHealthCheck/templates/resource.html:18
 msgid "Monitoring Period"
-msgstr ""
+msgstr "Période de suivi"
 
 #: GeoHealthCheck/templates/home.html:25
 #: GeoHealthCheck/templates/home.html:114
 msgid "Resources"
-msgstr ""
+msgstr "Ressources"
 
 #: GeoHealthCheck/templates/home.html:31
 msgid "View Details"
-msgstr ""
+msgstr "Voir les détails"
 
 #: GeoHealthCheck/templates/home.html:53
 msgid "Operational"
-msgstr ""
+msgstr "Opérationnel"
 
 #: GeoHealthCheck/templates/home.html:73
 msgid "Reliable"
-msgstr ""
+msgstr "Fiable"
 
 #: GeoHealthCheck/templates/home.html:94
 msgid "Broken"
-msgstr ""
+msgstr "Défectueux"
 
 #: GeoHealthCheck/templates/home.html:117
 msgid "Search..."
-msgstr ""
+msgstr "Chercher"
 
 #: GeoHealthCheck/templates/home.html:119
 msgid "results"
-msgstr ""
+msgstr "résultats"
 
 #: GeoHealthCheck/templates/home.html:125
 #: GeoHealthCheck/templates/resource.html:22
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: GeoHealthCheck/templates/home.html:126
 #: GeoHealthCheck/templates/resource.html:31
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: GeoHealthCheck/templates/home.html:127
 msgid "Last Check"
-msgstr ""
+msgstr "Dernière vérification"
 
 #: GeoHealthCheck/templates/home.html:128
 #: GeoHealthCheck/templates/resource.html:81
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: GeoHealthCheck/templates/home.html:129
 #: GeoHealthCheck/templates/resource.html:43
 msgid "Response Times (seconds)"
-msgstr ""
+msgstr "Temps de réponse (secondes)"
 
 #: GeoHealthCheck/templates/home.html:130
 #: GeoHealthCheck/templates/resource.html:53
 msgid "Reliability"
-msgstr ""
+msgstr "Fiabilité"
 
 #: GeoHealthCheck/templates/home.html:141
 #: GeoHealthCheck/templates/resource.html:166
 msgid "seconds"
-msgstr ""
+msgstr "secondes"
 
 #: GeoHealthCheck/templates/layout.html:41
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 #: GeoHealthCheck/templates/layout.html:56
 #: GeoHealthCheck/templates/login.html:5
 msgid "Login"
-msgstr ""
+msgstr "S'identifier"
 
 #: GeoHealthCheck/templates/layout.html:58
 msgid "Help"
-msgstr ""
+msgstr "Aide"
 
 #: GeoHealthCheck/templates/layout.html:68
 msgid "Resource Types"
-msgstr ""
+msgstr "Types de ressources"
 
 #: GeoHealthCheck/templates/layout.html:83
 msgid "Settings"
-msgstr ""
+msgstr "paramètres"
 
 #: GeoHealthCheck/templates/layout.html:85
 #: GeoHealthCheck/templates/resource.html:74
 msgid "History"
-msgstr ""
+msgstr "Historique"
 
 #: GeoHealthCheck/templates/layout.html:85
 msgid "days"
-msgstr ""
+msgstr "jours"
 
 #: GeoHealthCheck/templates/layout.html:86
 msgid "Test Frequency"
-msgstr ""
+msgstr "Fréquence d'essai"
 
 #: GeoHealthCheck/templates/layout.html:105
 #: GeoHealthCheck/templates/opensearch_description.xml:11
 msgid "Powered by"
-msgstr ""
+msgstr "mot de passe"
 
 #: GeoHealthCheck/templates/login.html:7
 #: GeoHealthCheck/templates/register.html:7
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: GeoHealthCheck/templates/login.html:8
 #: GeoHealthCheck/templates/register.html:8
 msgid "Password"
-msgstr ""
+msgstr "mot de passe"
 
 #: GeoHealthCheck/templates/login.html:11
 msgid "Sign in"
-msgstr ""
+msgstr "S'identifier"
 
 #: GeoHealthCheck/templates/login.html:14
 #: GeoHealthCheck/templates/register.html:5
 msgid "Register"
-msgstr ""
+msgstr "S'inscrire"
 
 #: GeoHealthCheck/templates/notification_email.txt:1
 msgid "Subject"
-msgstr ""
+msgstr "Sujet"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 msgid "Hi: this is an automated message from the"
-msgstr ""
+msgstr "Bonjour: il s'agit d'un message automatisé"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 msgid "service"
-msgstr ""
+msgstr "Service"
 
 #: GeoHealthCheck/templates/notification_email.txt:6
 msgid "Resource"
-msgstr ""
+msgstr "Ressource"
 
 #: GeoHealthCheck/templates/notification_email.txt:7
 msgid "Resource type"
-msgstr ""
+msgstr "Type de ressources"
 
 #: GeoHealthCheck/templates/notification_email.txt:8
 msgid "Resource URL"
-msgstr ""
+msgstr "URL de la ressource"
 
 #: GeoHealthCheck/templates/notification_email.txt:10
 #: GeoHealthCheck/templates/notification_email.txt:16
 msgid "Details"
-msgstr ""
+msgstr "Détails"
 
 #: GeoHealthCheck/templates/notification_email.txt:12
 #: GeoHealthCheck/templates/resource.html:79
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: GeoHealthCheck/templates/notification_email.txt:14
 msgid "Message"
-msgstr ""
+msgstr "Message"
 
 #: GeoHealthCheck/templates/register.html:9
 msgid "Email"
-msgstr ""
+msgstr "Courriel"
 
 #: GeoHealthCheck/templates/register.html:12
 msgid "Signup"
-msgstr ""
+msgstr "Inscription"
 
 #: GeoHealthCheck/templates/resource.html:12
 msgid "Test Now"
-msgstr ""
+msgstr "Testez maintenant"
 
 #: GeoHealthCheck/templates/resource.html:15
 msgid "Delete"
-msgstr ""
+msgstr "Supprimer"
 
 #: GeoHealthCheck/templates/resource.html:26
 msgid "Owner"
-msgstr ""
+msgstr "Responsable"
 
 #: GeoHealthCheck/templates/resource.html:33
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 #: GeoHealthCheck/templates/resource.html:46
 msgid "Min"
-msgstr ""
+msgstr "Min"
 
 #: GeoHealthCheck/templates/resource.html:47
 msgid "Average"
-msgstr ""
+msgstr "Moyenne"
 
 #: GeoHealthCheck/templates/resource.html:48
 msgid "Max"
-msgstr ""
+msgstr "Max"
 
 #: GeoHealthCheck/templates/resource.html:80
 msgid "Response Time (seconds)"
-msgstr ""
+msgstr "Temps de réponse (secondes)"
 
 #: GeoHealthCheck/templates/resource.html:105
 msgid "Delete resource"
-msgstr ""
+msgstr "Supprimer la ressource"
 
 #: GeoHealthCheck/templates/resource.html:125
 msgid "Save"
-msgstr ""
+msgstr "Enregistrer"
 
 #: GeoHealthCheck/templates/resource.html:126
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: GeoHealthCheck/templates/resource.html:160
 msgid "Response Time"
-msgstr ""
+msgstr "Temps de réponse"
 
 #: GeoHealthCheck/templates/layout.html:85
 msgid "Show All"
-msgstr ""
+msgstr "Montrer tout"
+
