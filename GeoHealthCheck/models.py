@@ -65,6 +65,18 @@ class Run(DB.Model):
         return '<Run %r>' % (self.identifier)
 
 
+class Tag(DB.Model):
+    id = DB.Column(DB.Integer, primary_key=True)
+    name = DB.Column(DB.String(100))
+
+
+resource_tags = DB.Table('resource_tags',
+                         DB.Column('tag_id', DB.Integer,
+                                   DB.ForeignKey('tag.id')),
+                         DB.Column('resource_identifier', DB.Integer,
+                                   DB.ForeignKey('resource.identifier')))
+
+
 class Resource(DB.Model):
     """HTTP accessible resource"""
 
@@ -77,12 +89,14 @@ class Resource(DB.Model):
     owner_identifier = DB.Column(DB.Text, DB.ForeignKey('user.username'))
     owner = DB.relationship('User',
                             backref=DB.backref('username2', lazy='dynamic'))
+    tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
 
-    def __init__(self, owner, resource_type, title, url):
+    def __init__(self, owner, resource_type, title, url, tags):
         self.resource_type = resource_type
         self.title = title
         self.url = url
         self.owner = owner
+        self.tags = tags
 
         # get latitude/longitude from hostname
         try:
@@ -136,6 +150,10 @@ class Resource(DB.Model):
         total_runs = self.runs.count()
         success_runs = self.runs.filter_by(success=True).count()
         return util.percentage(success_runs, total_runs)
+
+    @property
+    def tags2csv(self):
+        return ','.join([t.name for t in self.tags])
 
     def snippet(self):
         return util.get_python_snippet(self)
@@ -201,6 +219,15 @@ def get_resource_types_counts():
         DB.session.query(mrt, func.count(mrt)).group_by(mrt),
         DB.session.query(mrt).count()
     ]
+
+
+def get_tag_counts():
+    """return counts of all tags"""
+
+    query = DB.session.query(Tag.name,
+                             DB.func.count(Resource.identifier)).join(
+                             Resource.tags).group_by(Tag.id)
+    return dict(query)
 
 
 if __name__ == '__main__':

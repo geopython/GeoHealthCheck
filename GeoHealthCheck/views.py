@@ -31,7 +31,7 @@ import models
 import util
 
 
-def list_resources(resource_type=None, query=None):
+def list_resources(resource_type=None, query=None, tag=None):
     """return all resources"""
 
     reliability_values = []
@@ -61,6 +61,10 @@ def list_resources(resource_type=None, query=None):
         field, term = get_query_field_term(query)
         response['resources'] = models.Resource.query.filter(
             field.ilike(term)).all()
+
+    if tag is not None:
+        response['resources'] = models.Resource.query.filter(
+            models.Tag.name.in_([tag])).all()
 
     if 'resources' not in response:
         # No query nor resource_type provided: fetch all resources
@@ -103,6 +107,18 @@ def get_resource_types_counts():
         'counts': mrt[0],
         'total': mrt[1]
     }
+
+
+def get_tag_counts():
+    """return all tag counts"""
+
+    return models.get_tag_counts()
+
+
+def get_all_tags():
+    """return all tags"""
+
+    return models.get_tag_counts()
 
 
 def get_query_field_term(query):

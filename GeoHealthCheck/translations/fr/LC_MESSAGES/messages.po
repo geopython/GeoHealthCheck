@@ -339,3 +339,8 @@ msgstr "Temps de réponse"
 msgid "Show All"
 msgstr "Montrer tout"
 
+msgid "Tags"
+msgstr ""
+
+msgid "Enter tags"
+msgstr ""

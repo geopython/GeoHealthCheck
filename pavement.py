@@ -27,6 +27,7 @@
 #
 # =================================================================
 
+import glob
 import os
 import shutil
 import tempfile
@@ -109,6 +110,15 @@ def setup():
         content = urlopen('http://ejohn.org/files/jspark.js').read()
         content.replace('red', 'green')
         f.write(content)
+
+    # install bootstrap-tagsinput to static/lib
+    bs_tags = 'https://github.com/bootstrap-tagsinput/bootstrap-tagsinput/archive/0.8.0.zip'  # noqa
+
+    zipstr = StringIO(urlopen(bs_tags).read())
+    zipfile_obj = zipfile.ZipFile(zipstr)
+    zipfile_obj.extractall(options.base.static_lib)
+    dirname = glob.glob(options.base.static_lib / 'bootstrap-tagsinput*')[0]
+    os.rename(dirname, ''.join(dirname.rsplit('-', 1)[:-1]))
 
     # install leafletjs to static/lib
     leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'

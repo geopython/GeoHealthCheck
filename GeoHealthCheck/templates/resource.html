@@ -40,6 +40,10 @@
                 <td><a href="{{ resource.get_capabilities_url }}">{{ resource.url }}</a></td>
             </tr>
             <tr>
+                <th>Tags</th>
+                <td><input type="text" value="{{ resource.tags2csv }}" data-role="tagsinput" disabled/></td>
+            </tr>
+            <tr>
                 <th>{{ _('Response Times (seconds)') }}</th>
                 <td>
                     <ul>
