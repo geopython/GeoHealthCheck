@@ -21,6 +21,9 @@
         <input type="text" name="url" class="form-control" placeholder="url" required>
         <p class="help-block">{{ _('Enter the URL without any query parameters') }}:<br/>{{ _('good') }}: <code>http://host/wms</code><br/>{{ _('bad') }}:<code>http://host/wms?service=WMS&version=1.1.1&request=GetCapabilities</code></p>
     </div>
+    <div class="form-group input-group col-sm-5">
+        <input type="text" name="tags" class="form-control" data-role="tagsinput" placeholder="{{ _('Enter tags') }}">
+    </div>
     <div class="form-group">
         <button type="submit" class="btn btn-success">{{ _('Submit') }}</button>
     </div>

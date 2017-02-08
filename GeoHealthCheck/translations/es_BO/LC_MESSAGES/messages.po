@@ -365,3 +365,9 @@ msgstr "Tiempo de respuesta"
 #: GeoHealthCheck/templates/layout.html:85
 msgid "Show All"
 msgstr "Mostrar todo"
+
+msgid "Tags"
+msgstr ""
+
+msgid "Enter tags"
+msgstr ""

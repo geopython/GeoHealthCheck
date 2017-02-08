@@ -333,3 +333,9 @@ msgstr ""
 #: GeoHealthCheck/templates/layout.html:85
 msgid "Show All"
 msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+msgid "Enter tags"
+msgstr ""
