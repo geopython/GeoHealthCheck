@@ -114,7 +114,7 @@
     <h2 id="all-resources">{{ _('Resources') }} <a class="btn btn-default btn-xs" href="{{ url_for('json', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> CSV</a></h2>
 
     <div class="form-inline">
-        <input id="filter" type="text" class="form-control input-small placeholder="{{ _('Search...') }}"> (foo, site:.org, title:foo, type:wms, url:example.org)
+        <input id="filter" type="text" class="form-control input-small" placeholder="{{ _('Search...') }}"> (foo, site:.org, title:foo, type:wms, url:example.org)
     </div>
         <span id="resources-table-num-results">{{ response['total'] }} {{ _('results') }}</span>
 
@@ -134,7 +134,7 @@
             {% for resource in response['resources'] %}
                 <tr>
                     <td class="facet-type">{{ resource_types[resource.resource_type]['label'] }}</td>
-                    <td class="facet-name"><a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a></td>
+                    <td class="facet-name"><a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a><br><input class="transparent_tags" id="resource_tags" type="text" value="{{ resource.tags2csv }}" data-role="tagsinput" disabled/></td>
                     <td>
                         <ul>
                             <li>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</li>
