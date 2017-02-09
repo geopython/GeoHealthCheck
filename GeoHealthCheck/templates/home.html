@@ -134,7 +134,13 @@
             {% for resource in response['resources'] %}
                 <tr>
                     <td class="facet-type">{{ resource_types[resource.resource_type]['label'] }}</td>
-                    <td class="facet-name"><a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a><br><input class="transparent_tags" id="resource_tags" type="text" value="{{ resource.tags2csv }}" data-role="tagsinput" disabled/></td>
+                    <td class="facet-name">
+                        <a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a>
+                        <br>
+                        {% for tag in resource.tags %}
+                            <button type="button" class="btn btn-small">{{ tag.name }}</button>
+                        {% endfor %}
+                    </td>
                     <td>
                         <ul>
                             <li>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</li>
