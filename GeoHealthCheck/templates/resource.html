@@ -143,7 +143,6 @@
             var new_title = $('input[name="resource_title_value"]').val();
             var new_tags = $('#resource_tags').val();
             $('#resource_title').html(new_title);
-            alert(JSON.stringify({ title: new_title, tags: new_tags }));
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('update', resource_identifier=resource.identifier) }}",

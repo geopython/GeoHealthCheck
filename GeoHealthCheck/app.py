@@ -462,7 +462,7 @@ def add():
         return redirect(url_for('add', lang=g.current_lang,
                                 resource_type=resource_type))
 
-    if tags is not None:
+    if tags is not None and tags.strip():
         for tag in tags.split(','):
             tag_list.append(Tag(name=tag))
 
