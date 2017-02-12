@@ -138,7 +138,9 @@
                         <a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a>
                         <br>
                         {% for tag in resource.tags %}
+                        {% if tag.name != '' %}
                             <button type="button" class="btn btn-small">{{ tag.name }}</button>
+                        {% endif %}
                         {% endfor %}
                     </td>
                     <td>
