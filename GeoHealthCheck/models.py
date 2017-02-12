@@ -65,6 +65,50 @@ class Run(DB.Model):
         return '<Run %r>' % (self.identifier)
 
 
+class Request(DB.Model):
+    """Request identification (Probe class) and parameters, for single Resource"""
+
+    identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
+    resource_identifier = DB.Column(DB.Integer,
+                                    DB.ForeignKey('resource.identifier'))
+    resource = DB.relationship('Resource',
+                               backref=DB.backref('requests', lazy='dynamic'))
+    request_identifier = DB.Column(DB.Text, nullable=False)
+
+    # JSON string object specifying actual parameters for the Request
+    parameters = DB.Column(DB.Text, default='{}')
+
+    def __init__(self, resource, request_identifier, parameters):
+        self.resource = resource
+        self.request_identifier = request_identifier
+        self.parameters = parameters
+
+    def __repr__(self):
+        return '<Request %r>' % self.identifier
+
+
+class Check(DB.Model):
+    """Check identification (Check function) and parameters, for single Request"""
+
+    identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
+    request_identifier = DB.Column(DB.Integer,
+                                    DB.ForeignKey('request.identifier'))
+    request = DB.relationship('Request',
+                               backref=DB.backref('checks', lazy='dynamic'))
+    check_identifier = DB.Column(DB.Text, nullable=False)
+
+    # JSON string object specifying actual parameters for the Check
+    parameters = DB.Column(DB.Text, default='{}')
+
+    def __init__(self, request, check_identifier, parameters):
+        self.resource = request
+        self.request_identifier = check_identifier
+        self.parameters = parameters
+
+    def __repr__(self):
+        return '<Check %r>' % self.identifier
+
+
 class Tag(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     name = DB.Column(DB.String(100))

@@ -78,3 +78,10 @@ GHC_MAP = {
     'maxzoom': 18,
     'subdomains': 1234,
 }
+
+# Each GHC Plugin is a Probe class, should be findable in PYTHONPATH
+GHC_PLUGINS = [
+    'GeoHealthCheck.plugins.owsgetcaps.WmsGetCaps',
+    'GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps',
+    'GeoHealthCheck.plugins.wfsgetfeature.WfsGetFeatBbox'
+]
