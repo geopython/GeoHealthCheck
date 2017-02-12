@@ -156,7 +156,7 @@ def geocode(value, spatial_keyword_type='hostname'):
     if spatial_keyword_type == 'hostname':
         try:
             hostname = urlparse(value).hostname
-            url = 'https://freegeoip.net/json/%s' % hostname
+            url = 'http://freegeoip.net/json/%s' % hostname
             LOGGER.info('Geocoding %s with %s', hostname, url)
             content = json.loads(urlopen(url).read())
             return content['latitude'], content['longitude']

@@ -64,7 +64,7 @@ def list_resources(resource_type=None, query=None, tag=None):
 
     if tag is not None:
         response['resources'] = models.Resource.query.filter(
-            models.Tag.name.in_([tag])).all()
+            models.Resource.tags.any(models.Tag.name.in_([tag]))).all()
 
     if 'resources' not in response:
         # No query nor resource_type provided: fetch all resources

@@ -462,7 +462,7 @@ def add():
         return redirect(url_for('add', lang=g.current_lang,
                                 resource_type=resource_type))
 
-    if tags is not None:
+    if tags is not None and tags.strip():
         for tag in tags.split(','):
             tag_list.append(Tag(name=tag))
 
@@ -488,6 +488,7 @@ def add():
 def update(resource_identifier):
     """update a resource"""
 
+    tag_list = []
     update_counter = 0
 
     resource_identifier_dict = request.get_json()
@@ -495,7 +496,12 @@ def update(resource_identifier):
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
 
     for key, value in resource_identifier_dict.items():
-        if getattr(resource, key) != resource_identifier_dict[key]:
+        if key == 'tags':
+            if getattr(resource, key) != resource.tags2csv:
+                for tag in value.split(','):
+                    tag_list.append(Tag(name=tag))
+                    setattr(resource, key, tag_list)
+        elif getattr(resource, key) != resource_identifier_dict[key]:
             setattr(resource, key, resource_identifier_dict[key])
             update_counter += 1
 

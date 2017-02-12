@@ -115,6 +115,8 @@ class Tag(DB.Model):
 
 
 resource_tags = DB.Table('resource_tags',
+                         DB.Column('identifier', DB.Integer, primary_key=True,
+                                   autoincrement=True),
                          DB.Column('tag_id', DB.Integer,
                                    DB.ForeignKey('tag.id')),
                          DB.Column('resource_identifier', DB.Integer,
