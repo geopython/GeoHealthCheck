@@ -7,7 +7,7 @@
 
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <h1 class="page-header">{{ resource.title }}
+    <h1 class="page-header"><span id="resource_title_h1">{{ resource.title }}</span>
         {% if g.user.is_authenticated() %} 
         <a href="{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
         {% endif %}
@@ -29,9 +29,6 @@
             <tr>
                 <th>
                     {{ _('Name') }}
-                    {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
-                    <button id="title_edit" type="button" class="btn btn-default btn-sm">{{ _('Edit') }}</button>
-                    {% endif %}
                 </th>
                 <td id="resource_title">{{ resource.title }}</td>
             </tr>
@@ -53,6 +50,15 @@
                     </ul>
                 </td>
             </tr>
+            {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
+            <tr>
+                <th>
+                    <button id="title_edit" type="button" class="btn btn-default btn-sm">{{ _('Edit') }}</button>
+                </th>
+                <td id="actions">
+                </td>
+            </tr>
+            {% endif %}
             <tr>
                 <th>{{ _('Reliability') }}</th>
                 <td>
@@ -126,16 +132,18 @@
             return false;
         }
         var html_text = '<input type="text" id="input_resource_title" name="resource_title_value" value="' + title_value + '"/>';
-        html_text += '<button id="title_save" type="button" class="btn btn-default btn-xs">{{ _('Save') }}</button>';
-        html_text += '<button id="title_cancel" type="button" class="btn btn-default btn-xs">{{ _('Cancel') }}</button>';
+        var html_text2 = '<button id="title_save" type="button" class="btn btn-default btn-sm">{{ _('Save') }}</button>';
+        html_text2 += '<button id="title_cancel" type="button" class="btn btn-default btn-sm">{{ _('Cancel') }}</button>';
 
         $('#resource_tags').removeAttr('disabled');
 
         $('#resource_title').html(html_text);
+        $('#actions').html(html_text2);
 
         $('#title_cancel').click(function() {
             $('#resource_title').html(title_value);
             $('#resource_tags').attr('disabled', true);
+            $('#actions').empty();
             return false;
         });
 
@@ -143,6 +151,7 @@
             var new_title = $('input[name="resource_title_value"]').val();
             var new_tags = $('#resource_tags').val();
             $('#resource_title').html(new_title);
+            $('#resource_title_h1').html(new_title);
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
@@ -155,6 +164,7 @@
                 }
             });
             $('#resource_tags').attr('disabled', true);
+            $('#actions').empty();
             return false;
         });
     });
