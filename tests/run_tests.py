@@ -1,6 +1,7 @@
 # =================================================================
 #
-# Authors: Tom Kralidis <tomkralidis@gmail.com>
+# Authors: Tom Kralidis <tomkralidis@gmail.com>,
+# Just van den Broecke <justb4@gmail.com>
 #
 # Copyright (c) 2014 Tom Kralidis
 #
@@ -32,7 +33,7 @@ import json
 import unittest
 import sys
 
-from GeoHealthCheck.models import DB, Resource, Run, User
+from GeoHealthCheck.models import DB, Resource, Run, User, Tag
 
 sys.path.append('..')
 
@@ -40,9 +41,11 @@ sys.path.append('..')
 class GeoHealthCheckTest(unittest.TestCase):
     def setUp(self):
         self.db = DB
+        self.db.drop_all()
         self.db.create_all()
-        with open('fixtures.json') as ff:
+        with open('tests/fixtures.json') as ff:
             fixtures = json.load(ff)
+
         # add users
         for user in fixtures['users']:
             account = User(user['user']['username'],
@@ -50,17 +53,24 @@ class GeoHealthCheckTest(unittest.TestCase):
                            user['user']['email'],
                            user['user']['role'])
             self.db.session.add(account)
-        # add data
+
+        # add tags
+        for tag_str in fixtures['tags']:
+            tag = Tag(tag_str)
+            self.db.session.add(tag)
+
+        # # add data
         for record in fixtures['data']:
             resource = Resource(account,
                                 record['resource']['resource_type'],
                                 record['resource']['title'],
-                                record['resource']['url'])
+                                record['resource']['url'], [tag])
             self.db.session.add(resource)
-            for run in record['runs']:
-                dt = datetime.datetime.strptime(run[0], '%Y-%m-%dT%H:%M:%SZ')
-                run2 = Run(resource, run[1], run[2], run[3], dt)
-                self.db.session.add(run2)
+        #
+        #     for run in record['runs']:
+        #         dt = datetime.datetime.strptime(run[0], '%Y-%m-%dT%H:%M:%SZ')
+        #         run2 = Run(resource, run[1], run[2], run[3], dt)
+        #         self.db.session.add(run2)
         self.db.session.commit()
 
     def tearDown(self):

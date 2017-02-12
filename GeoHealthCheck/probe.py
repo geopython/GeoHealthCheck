@@ -46,10 +46,10 @@ class Probe(object):
         # Actualize request query string or POST body
         # by substitution in template.
         request_template = self.REQUEST_TEMPLATE
-        request_parms = self.config['parameters']
+        request_parms = self.config.parameters
         request_string = request_template.format(**request_parms)
 
-        url_base = self.config['resource']['url']
+        url_base = self.config.resource.url
         self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
         self.result.start_time = datetime.datetime.utcnow()
         if self.REQUEST_METHOD == 'GET':
@@ -75,12 +75,12 @@ class Probe(object):
 
         # Config also determines which actual checks are performed from possible
         # Checks in Probe
-        checks = self.config['checks']
+        checks = self.config.checks
         for check in checks:
-            fun_str = check['function']
+            fun_str = check.check_identifier
             fun = Factory.create_function(fun_str)
             try:
-                result = fun(self, check['parameters'])
+                result = fun(self, check.parameters)
             except:
                 msg = "Exception: %s" % str(sys.exc_info())
                 self.log(msg)
@@ -107,7 +107,7 @@ class Probe(object):
         """ Class method to create and run a single Probe"""
 
         # Create Probe instance from module.class string
-        probe = Factory.create_obj(config['request_identifier'])
+        probe = Factory.create_obj(config.request_identifier)
 
         # Initialize with actual parameters
         probe.init(config)

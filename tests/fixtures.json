@@ -4,22 +4,28 @@
             "username": "admin",
             "password": "admin",
             "email": "foo@example.com",
-            "role": 'admin'
+            "role": "admin"
         }
     }],
-    "data": [{
-        "resource": {
-            "owner": "admin",
-            "resource_type": "OGC:CSW",
-            "title": "WOUDC Catalogue Service",
-            "url": "http://geo.woudc.org/csw"
+
+    "tags": ["gis", "rdf"],
+
+    "data": [
+        {
+          "resource": {
+              "owner": "admin",
+              "resource_type": "OGC:CSW",
+              "title": "WOUDC Catalogue Service",
+              "url": "http://geo.woudc.org/csw"
+          },
+          "runs": [
+              ["2014-09-09T01:11:11Z", 1, 0.28, "OK"],
+              ["2014-09-09T02:11:11Z", 1, 0.922, "OK"],
+              ["2014-09-09T03:11:11Z", 1, 2.23, "OK"],
+              ["2014-09-09T04:11:11Z", 1, 1.395, "OK"]
+          ]
         },
-        "runs": [
-            ["2014-09-09T01:11:11Z", 1, 0.28, "OK"],
-            ["2014-09-09T02:11:11Z", 1, 0.922, "OK"],
-            ["2014-09-09T03:11:11Z", 1, 2.23, "OK"],
-            ["2014-09-09T04:11:11Z", 1, 1.395, "OK"]
-        ]}, {
+        {
         "resource": {
             "owner": "admin",
             "resource_type": "OGC:WMS",
@@ -31,7 +37,8 @@
             ["2014-09-10T06:22:22Z", 0, 0.9, "Server error"],
             ["2014-09-11T07:22:22Z", 1, 22.2, "OK"],
             ["2014-09-11T08:22:22Z", 0, 22.2, "HTTP error"]
-        ]}, {
+        ]},
+        {
         "resource": {
             "owner": "admin",
             "resource_type": "OGC:WFS",
@@ -48,7 +55,8 @@
             ["2014-09-01T07:22:22Z", 1, 22.2, "OK"],
             ["2014-09-01T08:22:22Z", 0, 22.2, "HTTP error"],
             ["2014-09-01T09:22:22Z", 0, 22.2, "HTTP error"]
-        ]}, {
+        ]},
+        {
         "resource": {
            "owner": "admin",
            "resource_type": "WWW:LINK",
@@ -65,7 +73,8 @@
             ["2014-09-10T07:22:22Z", 1, 22.2, "OK"],
             ["2014-09-10T08:22:22Z", 0, 22.2, "Server error"],
             ["2014-09-10T10:22:22Z", 0, 22.2, "Server error"]
-        ]}, {
+        ]},
+        {
         "resource": {
            "owner": "admin",
            "resource_type": "OGC:WMTS",
@@ -79,6 +88,7 @@
             ["2014-09-10T06:22:22Z", 0, 0.9, "Server error"],
             ["2014-09-10T07:22:22Z", 1, 22.2, "OK"]
         ]},
+        {
         "resource": {
            "owner": "admin",
            "resource_type": "OSGeo:TMS",

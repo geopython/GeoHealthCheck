@@ -1,4 +1,7 @@
 from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.models import *
+
+## NB this test doesn't work anymore, see HOME/tests for "real" unit tests!
 
 """Test for Probe plugins
 Run python GeoHealthCheck/plugins/test.py from root GitHub dir.

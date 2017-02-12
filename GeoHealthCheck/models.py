@@ -1,6 +1,7 @@
 # =================================================================
 #
-# Authors: Tom Kralidis <tomkralidis@gmail.com>
+# Authors: Tom Kralidis <tomkralidis@gmail.com>,
+# Just van den Broecke <justb4@gmail.com>
 #
 # Copyright (c) 2014 Tom Kralidis
 #
@@ -29,6 +30,7 @@
 
 from datetime import datetime
 import logging
+import json
 
 from sqlalchemy import func
 
@@ -76,12 +78,21 @@ class Request(DB.Model):
     request_identifier = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Request
-    parameters = DB.Column(DB.Text, default='{}')
+    # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
+    _parameters = DB.Column("parameters", DB.Text, default='{}')
 
     def __init__(self, resource, request_identifier, parameters):
         self.resource = resource
         self.request_identifier = request_identifier
         self.parameters = parameters
+
+    @property
+    def parameters(self):
+        return json.loads(self._parameters)
+
+    @parameters.setter
+    def parameters(self, parameters):
+        self._parameters = json.dumps(parameters)
 
     def __repr__(self):
         return '<Request %r>' % self.identifier
@@ -97,13 +108,23 @@ class Check(DB.Model):
                                backref=DB.backref('checks', lazy='dynamic'))
     check_identifier = DB.Column(DB.Text, nullable=False)
 
-    # JSON string object specifying actual parameters for the Check
-    parameters = DB.Column(DB.Text, default='{}')
+    # JSON string object specifying actual parameters for the Request
+    # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
+    _parameters = DB.Column("parameters", DB.Text, default='{}')
 
     def __init__(self, request, check_identifier, parameters):
         self.resource = request
         self.request_identifier = check_identifier
         self.parameters = parameters
+
+    @property
+    def parameters(self):
+        return json.loads(self._parameters)
+
+    @parameters.setter
+    def parameters(self, parameters):
+        self._parameters = json.dumps(parameters)
+
 
     def __repr__(self):
         return '<Check %r>' % self.identifier
@@ -111,8 +132,10 @@ class Check(DB.Model):
 
 class Tag(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
-    name = DB.Column(DB.String(100))
+    name = DB.Column(DB.String(100), unique=True, nullable=False)
 
+    def __init__(self, name):
+        self.name = name
 
 resource_tags = DB.Table('resource_tags',
                          DB.Column('identifier', DB.Integer, primary_key=True,
@@ -323,7 +346,7 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'run':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
-            from healthcheck import run_test_resource
+            from healthcheck import run_test_resource2
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
 
@@ -335,8 +358,7 @@ if __name__ == '__main__':
                     last_run_success = last_run.success
 
                 # Run test
-                run_to_add = run_test_resource(
-                        APP.config, res.resource_type, res.url)
+                run_to_add = run_test_resource2(APP.config, res)
 
                 run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
