@@ -1,5 +1,4 @@
 import sys
-import datetime
 import requests
 from factory import Factory
 from result import Result
@@ -29,9 +28,8 @@ class Probe(object):
     def init(self, config=None):
         # Config contains the actual parameters (from Models/DB) for Request and Checks
         self.config = config
-
         self.response = None
-        self.result = Result()
+        self.result = None
 
     # Lifecycle
     def exit(self):
@@ -40,7 +38,24 @@ class Probe(object):
     def log(self, text):
         print('%s: %s' % (self.__class__.__name__, text))
 
-    def do_request(self):
+    def create_result(self):
+        """ Create Result object that gathers all results"""
+
+        self.result = Result()
+
+    def before_request(self):
+        """ Before running actual request to service"""
+
+        self.create_result()
+
+        self.result.start()
+
+    def after_request(self):
+        """ After running actual request to service"""
+
+        self.result.stop()
+
+    def perform_request(self):
         """ Perform actual request to service"""
 
         # Actualize request query string or POST body
@@ -51,9 +66,9 @@ class Probe(object):
 
         url_base = self.config.resource.url
         self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
-        self.result.start_time = datetime.datetime.utcnow()
+
         if self.REQUEST_METHOD == 'GET':
-            url = url_base + request_string
+            url = "%s?%s" % (url_base, request_string)
             self.response = requests.get(url,
                                          headers=self.REQUEST_HEADERS)
         elif self.REQUEST_METHOD == 'POST':
@@ -65,12 +80,14 @@ class Probe(object):
         if self.response.status_code != 200:
             self.log('response: %s' % (str(self.response.text)))
 
-        end_time = datetime.datetime.utcnow()
 
-        delta = end_time - self.result.start_time
-        self.result.response_time = '%s.%s' % (delta.seconds, delta.microseconds)
+    def run_request(self):
+        """ Run actual request to service"""
+        self.before_request()
+        self.perform_request()
+        self.after_request()
 
-    def do_checks(self):
+    def run_checks(self):
         """ Do the checks on the response from request"""
 
         # Config also determines which actual checks are performed from possible
@@ -113,10 +130,10 @@ class Probe(object):
         probe.init(config)
 
         # Perform request
-        probe.do_request()
+        probe.run_request()
 
         # Perform the Probe's checks
-        probe.do_checks()
+        probe.run_checks()
 
         # Determine result
         probe.calc_result()

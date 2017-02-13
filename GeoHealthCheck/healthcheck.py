@@ -51,20 +51,22 @@ LOGGER = logging.getLogger(__name__)
 def run_test_resource2(config, resource):
     """tests a service and provides run metrics"""
 
-    if not 'OGC:' in resource.resource_type == 0:
+    if not 'OGC:' in resource.resource_type:
+        # Old way
         return run_test_resource(config, resource.resource_type, resource.url)
 
     requests = resource.requests
     results = []
     for request in requests:
         results.append(Probe.run(request))
+    return results
 
-    final_result = results[0]
-    for result in results:
-        if not result['success']:
-            final_result = result
-
-    return [resource.title, final_result.success, final_result.response_time, final_result.message, final_result.start_time]
+    # final_result = results[0]
+    # for result in results:
+    #     if not result['success']:
+    #         final_result = result
+    #
+    # return [resource.title, final_result.success, final_result.response_time, final_result.message, final_result.start_time]
 
 def run_test_resource(config, resource_type, url):
     """tests a service and provides run metrics"""

@@ -1,104 +1,99 @@
 {
-    "users": [{
-        "user": {
-            "username": "admin",
-            "password": "admin",
-            "email": "foo@example.com",
-            "role": "admin"
-        }
-    }],
-
-    "tags": ["gis", "rdf"],
-
-    "data": [
-        {
-          "resource": {
-              "owner": "admin",
-              "resource_type": "OGC:CSW",
-              "title": "WOUDC Catalogue Service",
-              "url": "http://geo.woudc.org/csw"
-          },
-          "runs": [
-              ["2014-09-09T01:11:11Z", 1, 0.28, "OK"],
-              ["2014-09-09T02:11:11Z", 1, 0.922, "OK"],
-              ["2014-09-09T03:11:11Z", 1, 2.23, "OK"],
-              ["2014-09-09T04:11:11Z", 1, 1.395, "OK"]
-          ]
-        },
-        {
-        "resource": {
-            "owner": "admin",
-            "resource_type": "OGC:WMS",
-            "title": "WOUDC Web Map Service",
-            "url": "http://geo.woudc.org/ows"
-        },
-        "runs": [
-            ["2014-09-10T05:22:22Z", 1, 1.395, "OK"],
-            ["2014-09-10T06:22:22Z", 0, 0.9, "Server error"],
-            ["2014-09-11T07:22:22Z", 1, 22.2, "OK"],
-            ["2014-09-11T08:22:22Z", 0, 22.2, "HTTP error"]
-        ]},
-        {
-        "resource": {
-            "owner": "admin",
-            "resource_type": "OGC:WFS",
-            "title": "WOUDC Web Feature Service",
-            "url": "http://geo.woudc.org/ows"
-        },
-        "runs": [
-            ["2014-09-01T01:11:11Z", 1, 0.28, "OK"],
-            ["2014-09-01T02:11:11Z", 1, 0.922, "OK"],
-            ["2014-09-01T03:11:11Z", 1, 2.23, "OK"],
-            ["2014-09-01T04:11:11Z", 1, 1.395, "OK"],
-            ["2014-09-01T05:22:22Z", 1, 1.395, "OK"],
-            ["2014-09-01T06:22:22Z", 0, 0.9, "HTTP error"],
-            ["2014-09-01T07:22:22Z", 1, 22.2, "OK"],
-            ["2014-09-01T08:22:22Z", 0, 22.2, "HTTP error"],
-            ["2014-09-01T09:22:22Z", 0, 22.2, "HTTP error"]
-        ]},
-        {
-        "resource": {
-           "owner": "admin",
-           "resource_type": "WWW:LINK",
-           "title": "WOUDC Definitions Service",
-           "url": "http://geo.woudc.org/def"
-        },
-        "runs": [
-            ["2014-09-09T01:11:11Z", 1, 0.28, "OK"],
-            ["2014-09-09T02:11:11Z", 1, 0.922, "OK"],
-            ["2014-09-09T03:11:11Z", 1, 2.23, "OK"],
-            ["2014-09-09T04:11:11Z", 1, 1.395, "OK"],
-            ["2014-09-10T05:22:22Z", 1, 1.395, "OK"],
-            ["2014-09-10T06:22:22Z", 0, 0.9, "Server error"],
-            ["2014-09-10T07:22:22Z", 1, 22.2, "OK"],
-            ["2014-09-10T08:22:22Z", 0, 22.2, "Server error"],
-            ["2014-09-10T10:22:22Z", 0, 22.2, "Server error"]
-        ]},
-        {
-        "resource": {
-           "owner": "admin",
-           "resource_type": "OGC:WMTS",
-           "title": "NASA Global Imagery Browse Services for EOSDIS",
-           "url": "http://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi"
-        },
-        "runs": [
-            ["2014-09-09T01:11:11Z", 1, 0.28, "OK"],
-            ["2014-09-09T04:11:11Z", 1, 1.395, "OK"],
-            ["2014-09-10T05:22:22Z", 1, 1.395, "OK"],
-            ["2014-09-10T06:22:22Z", 0, 0.9, "Server error"],
-            ["2014-09-10T07:22:22Z", 1, 22.2, "OK"]
-        ]},
-        {
-        "resource": {
-           "owner": "admin",
-           "resource_type": "OSGeo:TMS",
-           "title": "Tile Map Service",
-           "url": "http://demo.opengeo.org/geoserver/gwc/service/tms/1.0.0"
-        },
-        "runs": [
-            ["2014-09-09T01:11:11Z", 1, 0.28, "OK"],
-            ["2014-09-09T04:11:11Z", 1, 1.395, "OK"],
-            ["2014-09-10T07:22:22Z", 1, 22.2, "OK"]
-        ]}
-    ]
+  "users": {
+    "admin": {
+      "username": "admin",
+      "password": "admin",
+      "email": "foo@example.com",
+      "role": "admin"
+    }
+  },
+  "tags": {
+    "ows": "ows",
+    "tiling": "tiling"
+  },
+  "resources": {
+    "WOUDC WMS": {
+      "owner": "admin",
+      "resource_type": "OGC:WMS",
+      "title": "WOUDC Web Map Service",
+      "url": "http://geo.woudc.org/ows",
+      "tags": [
+        "ows"
+      ]
+    },
+    "WOUDC WFS": {
+      "owner": "admin",
+      "resource_type": "OGC:WFS",
+      "title": "WOUDC Web Feature Service",
+      "url": "http://geo.woudc.org/ows",
+      "tags": [
+        "ows"
+      ]
+    },
+    "WOUDC CSW": {
+      "owner": "admin",
+      "resource_type": "OGC:CSW",
+      "title": "WOUDC Catalogue Service",
+      "url": "http://geo.woudc.org/csw",
+      "tags": [
+        "ows"
+      ]
+    },
+    "WOUDC DEF": {
+      "owner": "admin",
+      "resource_type": "WWW:LINK",
+      "title": "WOUDC Definitions Service",
+      "url": "http://geo.woudc.org/def",
+      "tags": []
+    },
+    "WOUDC WMTS": {
+      "owner": "admin",
+      "resource_type": "OGC:WMTS",
+      "title": "NASA Global Imagery Browse Services for EOSDIS",
+      "url": "http://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
+      "tags": [
+        "ows",
+        "tiling"
+      ]
+    },
+    "OpenGeo TMS": {
+      "owner": "admin",
+      "resource_type": "OSGeo:TMS",
+      "title": "Tile Map Service",
+      "url": "http://demo.opengeo.org/geoserver/gwc/service/tms/1.0.0",
+      "tags": [
+        "tiling"
+      ]
+    }
+  },
+  "requests": {
+    "WOUDC WMS - GetCaps": {
+      "resource": "WOUDC WMS",
+      "request_identifier": "GeoHealthCheck.plugins.owsgetcaps.WmsGetCaps",
+      "parameters": {
+        "service": "WMS",
+        "version": "1.0.0"
+      }
+    },
+    "WOUDC WFS - GetCaps": {
+      "resource": "WOUDC WFS",
+      "request_identifier": "GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps",
+      "parameters": {
+        "service": "WFS",
+        "version": "1.1.0"
+      }
+    }
+  },
+  "checks": {
+    "WOUDC WMS - GetCaps - XML Parse": {
+      "request": "WOUDC WMS - GetCaps",
+      "check_identifier": "GeoHealthCheck.checks.xml_parse",
+      "parameters": {}
+    },
+    "WOUDC WFS - GetCaps - XML Parse": {
+      "request": "WOUDC WFS - GetCaps",
+      "check_identifier": "GeoHealthCheck.checks.xml_parse",
+      "parameters": {}
+    }
+  }
 }

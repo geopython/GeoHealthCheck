@@ -113,8 +113,8 @@ class Check(DB.Model):
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
     def __init__(self, request, check_identifier, parameters):
-        self.resource = request
-        self.request_identifier = check_identifier
+        self.request = request
+        self.check_identifier = check_identifier
         self.parameters = parameters
 
     @property

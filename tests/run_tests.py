@@ -28,57 +28,108 @@
 #
 # =================================================================
 
-import datetime
 import json
 import unittest
 import sys
 
-from GeoHealthCheck.models import DB, Resource, Run, User, Tag
+from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Request, Check
+from GeoHealthCheck.healthcheck import run_test_resource2
 
 sys.path.append('..')
 
 
 class GeoHealthCheckTest(unittest.TestCase):
     def setUp(self):
+        # Beware!
         self.db = DB
         self.db.drop_all()
         self.db.create_all()
+
         with open('tests/fixtures.json') as ff:
             fixtures = json.load(ff)
 
-        # add users
-        for user in fixtures['users']:
-            account = User(user['user']['username'],
-                           user['user']['password'],
-                           user['user']['email'],
-                           user['user']['role'])
-            self.db.session.add(account)
+        # add users, keeping track of DB objects
+        users = {}
+        for user_name in fixtures['users']:
+            user = fixtures['users'][user_name]
+            user = User(user['username'],
+                           user['password'],
+                           user['email'],
+                           user['role'])
+            users[user_name] = user
+            self.db.session.add(user)
 
-        # add tags
+        # add tags, keeping track of DB objects
+        tags = {}
         for tag_str in fixtures['tags']:
-            tag = Tag(tag_str)
+            tag = fixtures['tags'][tag_str]
+
+            tag = Tag(tag)
+            tags[tag_str] = tag
             self.db.session.add(tag)
 
-        # # add data
-        for record in fixtures['data']:
-            resource = Resource(account,
-                                record['resource']['resource_type'],
-                                record['resource']['title'],
-                                record['resource']['url'], [tag])
+        # add Resources, keeping track of DB objects
+        resources = {}
+        for resource_name in fixtures['resources']:
+            resource = fixtures['resources'][resource_name]
+
+            resource_tags = []
+            for tag_str in resource['tags']:
+                resource_tags.append(tags[tag_str])
+                
+            resource = Resource(users[resource['owner']],
+                                resource['resource_type'],
+                                resource['title'],
+                                resource['url'],
+                                resource_tags)
+
+            resources[resource_name] = resource
             self.db.session.add(resource)
-        #
-        #     for run in record['runs']:
-        #         dt = datetime.datetime.strptime(run[0], '%Y-%m-%dT%H:%M:%SZ')
-        #         run2 = Run(resource, run[1], run[2], run[3], dt)
-        #         self.db.session.add(run2)
+
+
+        # add Requests, keeping track of DB objects
+        requests = {}
+        for request_name in fixtures['requests']:
+            request = fixtures['requests'][request_name]
+
+            request = Request(resources[request['resource']],
+                              request['request_identifier'],
+                              request['parameters'],
+                              )
+
+            requests[request_name] = request
+            self.db.session.add(request)
+
+        # add Checks, keeping track of DB objects
+        checks = {}
+        for check_name in fixtures['checks']:
+            check = fixtures['checks'][check_name]
+
+            check = Check(requests[check['request']],
+                              check['check_identifier'],
+                              check['parameters'],
+                              )
+
+            checks[check_name] = check
+            self.db.session.add(check)
+
         self.db.session.commit()
 
     def tearDown(self):
         # self.db.drop_all()
         pass
 
-    def testFoo(self):
-        self.assertEqual(1, 1)
+    def testResourcesPresent(self):
+        resources = Resource.query.all()
+
+        self.assertEqual(len(resources), 6)
+
+    def testRunResoures(self):
+        resources = Resource.query.all()
+        for resource in resources:
+            result = run_test_resource2(DB.app.config, resource)
+            print(str(result))
+
 
 
 if __name__ == '__main__':
