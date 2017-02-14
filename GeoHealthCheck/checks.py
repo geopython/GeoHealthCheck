@@ -3,6 +3,18 @@ from owslib.etree import etree
 
 """ Contains basic check functions for a Probe object."""
 
+def http_status_no_error(probe, args_dict):
+    """Default check: Resource should at least give no error"""
+    result = True
+    msg = 'OK'
+    status = probe.response.status_code
+    overall_status = status/100
+    if overall_status in [4, 5]:
+        result = False
+        msg = 'HTTP Error status=%d' % status
+
+    return result, msg
+
 def xml_parse(probe, args_dict):
     result = True
     msg = 'OK'

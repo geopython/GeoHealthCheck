@@ -39,13 +39,6 @@
         "ows"
       ]
     },
-    "WOUDC DEF": {
-      "owner": "admin",
-      "resource_type": "WWW:LINK",
-      "title": "WOUDC Definitions Service",
-      "url": "http://geo.woudc.org/def",
-      "tags": []
-    },
     "WOUDC WMTS": {
       "owner": "admin",
       "resource_type": "OGC:WMTS",
@@ -55,6 +48,13 @@
         "ows",
         "tiling"
       ]
+    },
+    "WOUDC DEF": {
+      "owner": "admin",
+      "resource_type": "WWW:LINK",
+      "title": "WOUDC Definitions Service",
+      "url": "http://geo.woudc.org/def",
+      "tags": []
     },
     "OpenGeo TMS": {
       "owner": "admin",
@@ -82,7 +82,25 @@
         "service": "WFS",
         "version": "1.1.0"
       }
+    },
+    "WOUDC CSW - GetCaps": {
+      "resource": "WOUDC CSW",
+      "request_identifier": "GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps",
+      "parameters": {
+        "service": "CSW",
+        "version": "2.0.2"
+      }
+    },
+    "WOUDC WMTS - GetCaps": {
+      "resource": "WOUDC WMTS",
+      "request_identifier": "GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps",
+      "parameters": {
+        "service": "WMTS",
+        "version": "1.0.0"
+      }
     }
+    
+    
   },
   "checks": {
     "WOUDC WMS - GetCaps - XML Parse": {
@@ -92,6 +110,16 @@
     },
     "WOUDC WFS - GetCaps - XML Parse": {
       "request": "WOUDC WFS - GetCaps",
+      "check_identifier": "GeoHealthCheck.checks.xml_parse",
+      "parameters": {}
+    },
+    "WOUDC CSW - GetCaps - XML Parse": {
+      "request": "WOUDC CSW - GetCaps",
+      "check_identifier": "GeoHealthCheck.checks.xml_parse",
+      "parameters": {}
+    },
+    "WOUDC WMTS - GetCaps - XML Parse": {
+      "request": "WOUDC WMTS - GetCaps",
       "check_identifier": "GeoHealthCheck.checks.xml_parse",
       "parameters": {}
     }

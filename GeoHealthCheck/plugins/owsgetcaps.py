@@ -83,3 +83,61 @@ class WfsGetCaps(OwsGetCaps):
             'range': ['1.0.0', '1.1.0', '2.0.2']
         }
     ]
+
+class WcsGetCaps(OwsGetCaps):
+    """WCS GetCapabilities Probe"""
+
+    NAME = 'WCS GetCapabilities'
+    RESOURCE_TYPE = 'OGC:WCS'
+
+    REQUEST_PARAMETERS = [
+        {
+            'name': 'service',
+            'type': 'string',
+            'value': 'WCS'
+        },
+        {
+            'name': 'version',
+            'type': 'string',
+            'range': ['1.1.0', '1.1.1', '2.0.1']
+        }
+    ]
+
+class CswGetCaps(OwsGetCaps):
+    """CSW GetCapabilities Probe"""
+
+    NAME = 'WCS GetCapabilities'
+    RESOURCE_TYPE = 'OGC:CSW'
+
+    REQUEST_PARAMETERS = [
+        {
+            'name': 'service',
+            'type': 'string',
+            'value': 'CSW'
+        },
+        {
+            'name': 'version',
+            'type': 'string',
+            'range': ['2.0.2']      # only 2.0.2?
+        }
+    ]
+
+class WmtsGetCaps(OwsGetCaps):
+    """WMTS GetCapabilities Probe"""
+
+    NAME = 'WMTS GetCapabilities'
+    RESOURCE_TYPE = 'OGC:WMTS'
+
+    REQUEST_PARAMETERS = [
+        {
+            'name': 'service',
+            'type': 'string',
+            'value': 'WMTS'
+        },
+        {
+            'name': 'version',
+            'type': 'string',
+            'range': ['1.0.0']
+        }
+    ]
+

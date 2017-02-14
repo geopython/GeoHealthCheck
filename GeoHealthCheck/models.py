@@ -37,6 +37,7 @@ from sqlalchemy import func
 from enums import RESOURCE_TYPES
 from init import DB
 from notifications import notify
+from factory import Factory
 import util
 
 LOGGER = logging.getLogger(__name__)
@@ -76,14 +77,16 @@ class Request(DB.Model):
     resource = DB.relationship('Resource',
                                backref=DB.backref('requests', lazy='dynamic'))
     request_identifier = DB.Column(DB.Text, nullable=False)
+    name = DB.Column(DB.String(100), nullable=False)
 
     # JSON string object specifying actual parameters for the Request
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
-    def __init__(self, resource, request_identifier, parameters):
+    def __init__(self, resource, request_identifier, parameters='{}'):
         self.resource = resource
         self.request_identifier = request_identifier
+        self.name = Factory.create_obj(request_identifier).NAME
         self.parameters = parameters
 
     @property
@@ -112,7 +115,7 @@ class Check(DB.Model):
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
-    def __init__(self, request, check_identifier, parameters):
+    def __init__(self, request, check_identifier, parameters='{}'):
         self.request = request
         self.check_identifier = check_identifier
         self.parameters = parameters
@@ -346,7 +349,7 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'run':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
-            from healthcheck import run_test_resource2
+            from healthcheck import run_test_resource
             for res in Resource.query.all():  # run all tests
                 print('Testing %s %s' % (res.resource_type, res.url))
 
@@ -358,7 +361,7 @@ if __name__ == '__main__':
                     last_run_success = last_run.success
 
                 # Run test
-                run_to_add = run_test_resource2(APP.config, res)
+                run_to_add = run_test_resource(APP.config, res)
 
                 run1 = Run(res, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])

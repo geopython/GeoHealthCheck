@@ -44,31 +44,24 @@ from owslib.sos import SensorObservationService
 from flask.ext.babel import gettext
 from enums import RESOURCE_TYPES
 from probe import Probe
-from result import Result
+from result import ResourceResult
 
 LOGGER = logging.getLogger(__name__)
 
-def run_test_resource2(config, resource):
+def run_test_resource(config, resource):
     """tests a service and provides run metrics"""
 
-    if not 'OGC:' in resource.resource_type:
-        # Old way
-        return run_test_resource(config, resource.resource_type, resource.url)
-
+    result = ResourceResult(resource)
+    result.start()
     requests = resource.requests
-    results = []
     for request in requests:
-        results.append(Probe.run(request))
-    return results
+        result.add_result(Probe.run(request))
 
-    # final_result = results[0]
-    # for result in results:
-    #     if not result['success']:
-    #         final_result = result
-    #
-    # return [resource.title, final_result.success, final_result.response_time, final_result.message, final_result.start_time]
+    result.stop()
 
-def run_test_resource(config, resource_type, url):
+    return result.get_run_data()
+
+def sniff_test_resource(config, resource_type, url):
     """tests a service and provides run metrics"""
 
     if resource_type not in RESOURCE_TYPES.keys():
@@ -162,4 +155,4 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # TODO: need APP.config here, None for now
-    print(run_test_resource(None, sys.argv[1], sys.argv[2]))
+    print(sniff_test_resource(None, sys.argv[1], sys.argv[2]))

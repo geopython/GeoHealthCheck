@@ -1,7 +1,7 @@
 import sys
 import requests
 from factory import Factory
-from result import Result
+from result import ProbeResult, CheckResult
 
 class Probe(object):
     """
@@ -13,7 +13,7 @@ class Probe(object):
     AUTHOR = 'GHC Team'
     NAME = 'Fill in Name'
     DESCRIPTION = 'Fill in Description'
-    RESOURCE_TYPE = 'OGC:*'
+    RESOURCE_TYPE = '*'
 
     # Request attributes
     REQUEST_METHOD = 'GET'
@@ -39,9 +39,14 @@ class Probe(object):
         print('%s: %s' % (self.__class__.__name__, text))
 
     def create_result(self):
-        """ Create Result object that gathers all results"""
+        """ Create ProbeResult object that gathers all results for single Probe"""
 
-        self.result = Result()
+        self.result = ProbeResult(self)
+
+    def create_check_result(self, check, parameters, success, message):
+        """ Create CheckResult object that gathers all results for single Check"""
+
+        return CheckResult(check, parameters, success, message)
 
     def before_request(self):
         """ Before running actual request to service"""
@@ -60,15 +65,22 @@ class Probe(object):
 
         # Actualize request query string or POST body
         # by substitution in template.
-        request_template = self.REQUEST_TEMPLATE
-        request_parms = self.config.parameters
-        request_string = request_template.format(**request_parms)
-
         url_base = self.config.resource.url
+
+        request_string = None
+        if self.REQUEST_TEMPLATE:
+            request_parms = self.config.parameters
+            request_string = self.REQUEST_TEMPLATE.format(**request_parms)
+
         self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
 
         if self.REQUEST_METHOD == 'GET':
-            url = "%s?%s" % (url_base, request_string)
+            # Default is plain URL, e.g. for WWW:LINK
+            url = url_base
+            if request_string:
+                # Query String: mainly OWS:* resources
+                url = "%s?%s" % (url, request_string)
+                
             self.response = requests.get(url,
                                          headers=self.REQUEST_HEADERS)
         elif self.REQUEST_METHOD == 'POST':
@@ -77,8 +89,8 @@ class Probe(object):
                                           headers=self.REQUEST_HEADERS)
 
         self.log('response: status=%d' % (self.response.status_code))
-        if self.response.status_code != 200:
-            self.log('response: %s' % (str(self.response.text)))
+        if self.response.status_code /100 in [4,5]:
+            self.log('Errro response: %s' % (str(self.response.text)))
 
 
     def run_request(self):
@@ -104,19 +116,11 @@ class Probe(object):
                 result = False, msg
             self.log('Check: fun=%s result=%s' % (fun_str, result[0]))
 
-            self.result.checks.append({'check': fun_str, 'success' : result[0], 'message' : result[1]})
-
-    # Lifecycle
+            self.result.add_result(self.create_check_result(
+                check, check.parameters, result[0], result[1]))
+     # Lifecycle
     def calc_result(self):
         """ Calculate overall result from the Result object"""
-
-        check_results = self.result.checks
-        for check_result in check_results:
-            if check_result['success'] is False:
-                self.result.success = False
-                self.result.message = check_result['message']
-                break
-
         self.log("Result: %s" % str(self.result))
 
     @staticmethod

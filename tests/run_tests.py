@@ -33,7 +33,7 @@ import unittest
 import sys
 
 from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Request, Check
-from GeoHealthCheck.healthcheck import run_test_resource2
+from GeoHealthCheck.healthcheck import run_test_resource
 
 sys.path.append('..')
 
@@ -42,7 +42,7 @@ class GeoHealthCheckTest(unittest.TestCase):
     def setUp(self):
         # Beware!
         self.db = DB
-        self.db.drop_all()
+        # self.db.drop_all()
         self.db.create_all()
 
         with open('tests/fixtures.json') as ff:
@@ -127,7 +127,7 @@ class GeoHealthCheckTest(unittest.TestCase):
     def testRunResoures(self):
         resources = Resource.query.all()
         for resource in resources:
-            result = run_test_resource2(DB.app.config, resource)
+            result = run_test_resource(DB.app.config, resource)
             print(str(result))
 
 

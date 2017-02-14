@@ -39,10 +39,10 @@ from flask.ext.login import (LoginManager, login_user, logout_user,
                              current_user, login_required)
 
 from __init__ import __version__
-from healthcheck import run_test_resource
+from healthcheck import sniff_test_resource, run_test_resource
 from init import DB
 from enums import RESOURCE_TYPES
-from models import Resource, Run, Tag, User
+from models import Resource, Run, Request, Check, Tag, User
 from util import render_template2, send_email
 import views
 
@@ -454,7 +454,7 @@ def add():
                                     resource_type=rtype))
         return redirect(url_for('add', lang=g.current_lang))
 
-    [title, success, response_time, message, start_time] = run_test_resource(
+    [title, success, response_time, message, start_time] = sniff_test_resource(
         APP.config, resource_type, url)
 
     if not success:
@@ -468,10 +468,19 @@ def add():
 
     resource_to_add = Resource(current_user, resource_type, title, url,
                                tags=tag_list)
-    run_to_add = Run(resource_to_add, success, response_time, message,
-                     start_time)
+    
+    # Always add a default Request & Check
+    request_to_add = Request(resource_to_add, 'GeoHealthCheck.plugins.ping.HttpPing')
+    check_to_add = Check(request_to_add, 'GeoHealthCheck.checks.http_status_no_error')
+
+    run_data = run_test_resource(APP.config, resource_to_add)
+
+    run_to_add = Run(resource_to_add, run_data[1], run_data[2],
+                     run_data[3], run_data[4])
 
     DB.session.add(resource_to_add)
+    DB.session.add(request_to_add)
+    DB.session.add(check_to_add)
     DB.session.add(run_to_add)
     try:
         DB.session.commit()
@@ -521,7 +530,7 @@ def test(resource_identifier):
         return redirect(request.referrer)
 
     [title, success, response_time, message, start_time] = run_test_resource(
-        APP.config, resource.resource_type, resource.url)
+        APP.config, resource)
 
     if message not in ['OK', None, 'None']:
         msg = gettext('ERROR')
