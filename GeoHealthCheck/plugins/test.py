@@ -3,7 +3,7 @@ from GeoHealthCheck.models import *
 
 ## NB this test doesn't work anymore, see HOME/tests for "real" unit tests!
 
-"""Test for Probe plugins
+"""Test for ProbeRunner plugins
 Run python GeoHealthCheck/plugins/test.py from root GitHub dir.
 """
 

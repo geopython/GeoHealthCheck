@@ -68,25 +68,23 @@ class Run(DB.Model):
         return '<Run %r>' % (self.identifier)
 
 
-class Request(DB.Model):
-    """Request identification (Probe class) and parameters, for single Resource"""
+class Probe(DB.Model):
+    """Identifies and parameterizes ProbeRunner, applies to single Resource"""
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_identifier = DB.Column(DB.Integer,
                                     DB.ForeignKey('resource.identifier'))
     resource = DB.relationship('Resource',
-                               backref=DB.backref('requests', lazy='dynamic'))
-    request_identifier = DB.Column(DB.Text, nullable=False)
-    name = DB.Column(DB.String(100), nullable=False)
+                               backref=DB.backref('probes', lazy='dynamic'))
+    proberunner = DB.Column(DB.Text, nullable=False)
 
-    # JSON string object specifying actual parameters for the Request
+    # JSON string object specifying actual parameters for the Probe
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
-    def __init__(self, resource, request_identifier, parameters='{}'):
+    def __init__(self, resource, proberunner, parameters='{}'):
         self.resource = resource
-        self.request_identifier = request_identifier
-        self.name = Factory.create_obj(request_identifier).NAME
+        self.proberunner = proberunner
         self.parameters = parameters
 
     @property
@@ -97,27 +95,30 @@ class Request(DB.Model):
     def parameters(self, parameters):
         self._parameters = json.dumps(parameters)
 
+    @property
+    def proberunner_name(self):
+        return Factory.create_obj(self.proberunner).NAME
+
     def __repr__(self):
-        return '<Request %r>' % self.identifier
+        return '<Probe %r>' % self.identifier
 
 
 class Check(DB.Model):
-    """Check identification (Check function) and parameters, for single Request"""
+    """Identifies and parameterizes check function, applies to single Probe"""
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
-    request_identifier = DB.Column(DB.Integer,
-                                    DB.ForeignKey('request.identifier'))
-    request = DB.relationship('Request',
+    probe_identifier = DB.Column(DB.Integer, DB.ForeignKey('probe.identifier'))
+    probe = DB.relationship('Probe',
                                backref=DB.backref('checks', lazy='dynamic'))
-    check_identifier = DB.Column(DB.Text, nullable=False)
+    check_function = DB.Column(DB.Text, nullable=False)
 
-    # JSON string object specifying actual parameters for the Request
+    # JSON string object specifying actual parameters for the Check
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
-    def __init__(self, request, check_identifier, parameters='{}'):
-        self.request = request
-        self.check_identifier = check_identifier
+    def __init__(self, probe, check_function, parameters='{}'):
+        self.probe = probe
+        self.check_function = check_function
         self.parameters = parameters
 
     @property
@@ -350,20 +351,20 @@ if __name__ == '__main__':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
             from healthcheck import run_test_resource
-            for res in Resource.query.all():  # run all tests
-                print('Testing %s %s' % (res.resource_type, res.url))
+            for resource in Resource.query.all():  # run all tests
+                print('Testing %s %s' % (resource.resource_type, resource.url))
 
                 # Get the status of the last run,
                 # assume success if there is none
                 last_run_success = True
-                last_run = res.last_run
+                last_run = resource.last_run
                 if last_run:
                     last_run_success = last_run.success
 
                 # Run test
-                run_to_add = run_test_resource(APP.config, res)
+                run_to_add = run_test_resource(resource)
 
-                run1 = Run(res, run_to_add[1], run_to_add[2],
+                run1 = Run(resource, run_to_add[1], run_to_add[2],
                            run_to_add[3], run_to_add[4])
 
                 print('Adding Run: success=%s, response_time=%ss\n'
@@ -376,7 +377,7 @@ if __name__ == '__main__':
                 if APP.config['GHC_NOTIFICATIONS']:
                     # Attempt notification
                     try:
-                        notify(APP.config, res, run1, last_run_success)
+                        notify(APP.config, resource, run1, last_run_success)
                     except Exception as err:
                         # Don't bail out on failure in order to commit the Run
                         msg = str(err)

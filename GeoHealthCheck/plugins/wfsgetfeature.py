@@ -1,6 +1,6 @@
-from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.proberunner import ProbeRunner
 
-class WfsGetFeatBbox(Probe):
+class WfsGetFeatBbox(ProbeRunner):
     DESCRIPTION = 'do WFS GetFeature in BBOX'
     RESOURCE_TYPE = 'OGC:WFS'
 

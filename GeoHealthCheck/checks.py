@@ -1,7 +1,7 @@
 import sys
 from owslib.etree import etree
 
-""" Contains basic check functions for a Probe object."""
+""" Contains basic check functions for a ProbeRunner object."""
 
 def http_status_no_error(probe, args_dict):
     """Default check: Resource should at least give no error"""

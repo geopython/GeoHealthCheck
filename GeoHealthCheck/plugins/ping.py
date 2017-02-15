@@ -1,6 +1,6 @@
-from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.proberunner import ProbeRunner
 
-class HttpPing(Probe):
+class HttpPing(ProbeRunner):
     """Ping"""
 
     NAME = 'HTTP Ping'

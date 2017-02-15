@@ -2,7 +2,7 @@ import datetime
 
 class Result(object):
     """
-     Base class for results for Resource or Probe.
+     Base class for results for Resource or ProbeRunner.
     """
     def __init__(self, success=True, message='OK'):
         self.success = success
@@ -36,7 +36,7 @@ class Result(object):
 
 class ResourceResult(Result):
     """
-     Holds result data from a single Resource: one Resource, N Probe(Results).
+     Holds result data from a single Resource: one Resource, N ProbeRunner(Results).
      Provides Run data.
 
     """
@@ -51,7 +51,7 @@ class ResourceResult(Result):
 
 class ProbeResult(Result):
     """
-     Holds result data from a single Probe: one Request, N Checks.
+     Holds result data from a single ProbeRunner: one Probe, N Checks.
 
     """
 

@@ -79,9 +79,11 @@ GHC_MAP = {
     'subdomains': 1234,
 }
 
-# Each GHC Plugin is a Probe class, should be findable in PYTHONPATH
-GHC_PLUGINS = [
+# Each GHC Plugin is a ProbeRunner class, should be findable in PYTHONPATH
+GHC_PROBE_PLUGINS = [
     'GeoHealthCheck.plugins.owsgetcaps.WmsGetCaps',
     'GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps',
-    'GeoHealthCheck.plugins.wfsgetfeature.WfsGetFeatBbox'
+    'GeoHealthCheck.plugins.wfsgetfeature.WfsGetFeatBbox',
+    'GeoHealthCheck.plugins.ping.HttpPing'
+
 ]

@@ -3,9 +3,9 @@ import requests
 from factory import Factory
 from result import ProbeResult, CheckResult
 
-class Probe(object):
+class ProbeRunner(object):
     """
-     Base class for specific Request&Check implementations.
+     Base class for specific implementations to run a Probe with Checks.
 
     """
 
@@ -25,9 +25,10 @@ class Probe(object):
     RESPONSE_CHECKS = None
 
     # Lifecycle
-    def init(self, config=None):
-        # Config contains the actual parameters (from Models/DB) for Request and Checks
-        self.config = config
+    def init(self, probe=None):
+        # Probe contains the actual parameters (from Models/DB) for
+        # requests and Checks
+        self.probe = probe
         self.response = None
         self.result = None
 
@@ -39,7 +40,7 @@ class Probe(object):
         print('%s: %s' % (self.__class__.__name__, text))
 
     def create_result(self):
-        """ Create ProbeResult object that gathers all results for single Probe"""
+        """ Create ProbeResult object that gathers all results for single ProbeRunner"""
 
         self.result = ProbeResult(self)
 
@@ -65,11 +66,11 @@ class Probe(object):
 
         # Actualize request query string or POST body
         # by substitution in template.
-        url_base = self.config.resource.url
+        url_base = self.probe.resource.url
 
         request_string = None
         if self.REQUEST_TEMPLATE:
-            request_parms = self.config.parameters
+            request_parms = self.probe.parameters
             request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
         self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
@@ -103,10 +104,10 @@ class Probe(object):
         """ Do the checks on the response from request"""
 
         # Config also determines which actual checks are performed from possible
-        # Checks in Probe
-        checks = self.config.checks
+        # Checks in ProbeRunner
+        checks = self.probe.checks
         for check in checks:
-            fun_str = check.check_identifier
+            fun_str = check.check_function
             fun = Factory.create_function(fun_str)
             try:
                 result = fun(self, check.parameters)
@@ -124,29 +125,29 @@ class Probe(object):
         self.log("Result: %s" % str(self.result))
 
     @staticmethod
-    def run(config):
-        """ Class method to create and run a single Probe"""
+    def run(probe):
+        """ Class method to create and run a single ProbeRunner"""
 
-        # Create Probe instance from module.class string
-        probe = Factory.create_obj(config.request_identifier)
+        # Create ProbeRunner instance from module.class string
+        proberunner = Factory.create_obj(probe.proberunner)
 
         # Initialize with actual parameters
-        probe.init(config)
+        proberunner.init(probe)
 
         # Perform request
-        probe.run_request()
+        proberunner.run_request()
 
-        # Perform the Probe's checks
-        probe.run_checks()
+        # Perform the ProbeRunner's checks
+        proberunner.run_checks()
 
         # Determine result
-        probe.calc_result()
+        proberunner.calc_result()
 
         # Lifecycle
-        probe.exit()
+        proberunner.exit()
 
         # Return result
-        return probe.result
+        return proberunner.result
 
     def __str__(self):
         return "%s" % str(self.__class__)

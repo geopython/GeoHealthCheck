@@ -1,6 +1,6 @@
-from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.proberunner import ProbeRunner
 
-class OwsGetCaps(Probe):
+class OwsGetCaps(ProbeRunner):
     """Abstract Base Class for OWS GetCapabilities Probes"""
 
     NAME = 'OWS GetCapabilities'
@@ -47,7 +47,7 @@ class OwsGetCaps(Probe):
 
 
 class WmsGetCaps(OwsGetCaps):
-    """WMS GetCapabilities Probe"""
+    """WMS GetCapabilities ProbeRunner"""
     
     NAME = 'WMS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WMS'
@@ -66,7 +66,7 @@ class WmsGetCaps(OwsGetCaps):
     ]
 
 class WfsGetCaps(OwsGetCaps):
-    """WFS GetCapabilities Probe"""
+    """WFS GetCapabilities ProbeRunner"""
 
     NAME = 'WFS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WFS'
@@ -85,7 +85,7 @@ class WfsGetCaps(OwsGetCaps):
     ]
 
 class WcsGetCaps(OwsGetCaps):
-    """WCS GetCapabilities Probe"""
+    """WCS GetCapabilities ProbeRunner"""
 
     NAME = 'WCS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WCS'
@@ -104,7 +104,7 @@ class WcsGetCaps(OwsGetCaps):
     ]
 
 class CswGetCaps(OwsGetCaps):
-    """CSW GetCapabilities Probe"""
+    """CSW GetCapabilities ProbeRunner"""
 
     NAME = 'WCS GetCapabilities'
     RESOURCE_TYPE = 'OGC:CSW'
@@ -123,7 +123,7 @@ class CswGetCaps(OwsGetCaps):
     ]
 
 class WmtsGetCaps(OwsGetCaps):
-    """WMTS GetCapabilities Probe"""
+    """WMTS GetCapabilities ProbeRunner"""
 
     NAME = 'WMTS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WMTS'

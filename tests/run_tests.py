@@ -32,14 +32,15 @@ import json
 import unittest
 import sys
 
-from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Request, Check
-from GeoHealthCheck.healthcheck import run_test_resource
-
 sys.path.append('..')
+
+from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check
+from GeoHealthCheck.healthcheck import run_test_resource
 
 
 class GeoHealthCheckTest(unittest.TestCase):
-    def setUp(self):
+
+    def load_data(self):
         # Beware!
         self.db = DB
         # self.db.drop_all()
@@ -76,7 +77,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             resource_tags = []
             for tag_str in resource['tags']:
                 resource_tags.append(tags[tag_str])
-                
+
             resource = Resource(users[resource['owner']],
                                 resource['resource_type'],
                                 resource['title'],
@@ -87,26 +88,26 @@ class GeoHealthCheckTest(unittest.TestCase):
             self.db.session.add(resource)
 
 
-        # add Requests, keeping track of DB objects
-        requests = {}
-        for request_name in fixtures['requests']:
-            request = fixtures['requests'][request_name]
+        # add Probes, keeping track of DB objects
+        probes = {}
+        for probe_name in fixtures['probes']:
+            probe = fixtures['probes'][probe_name]
 
-            request = Request(resources[request['resource']],
-                              request['request_identifier'],
-                              request['parameters'],
+            probe = Probe(resources[probe['resource']],
+                              probe['proberunner'],
+                              probe['parameters'],
                               )
 
-            requests[request_name] = request
-            self.db.session.add(request)
+            probes[probe_name] = probe
+            self.db.session.add(probe)
 
         # add Checks, keeping track of DB objects
         checks = {}
         for check_name in fixtures['checks']:
             check = fixtures['checks'][check_name]
 
-            check = Check(requests[check['request']],
-                              check['check_identifier'],
+            check = Check(probes[check['probe']],
+                              check['check_function'],
                               check['parameters'],
                               )
 
@@ -114,6 +115,11 @@ class GeoHealthCheckTest(unittest.TestCase):
             self.db.session.add(check)
 
         self.db.session.commit()
+
+    def setUp(self):
+        # do once
+        self.load_data()
+        pass
 
     def tearDown(self):
         # self.db.drop_all()
@@ -127,9 +133,8 @@ class GeoHealthCheckTest(unittest.TestCase):
     def testRunResoures(self):
         resources = Resource.query.all()
         for resource in resources:
-            result = run_test_resource(DB.app.config, resource)
+            result = run_test_resource(resource)
             print(str(result))
-
 
 
 if __name__ == '__main__':

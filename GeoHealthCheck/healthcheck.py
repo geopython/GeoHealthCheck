@@ -43,19 +43,19 @@ from owslib.sos import SensorObservationService
 
 from flask.ext.babel import gettext
 from enums import RESOURCE_TYPES
-from probe import Probe
+from proberunner import ProbeRunner
 from result import ResourceResult
 
 LOGGER = logging.getLogger(__name__)
 
-def run_test_resource(config, resource):
+def run_test_resource(resource):
     """tests a service and provides run metrics"""
 
     result = ResourceResult(resource)
     result.start()
-    requests = resource.requests
-    for request in requests:
-        result.add_result(Probe.run(request))
+    probes = resource.probes
+    for probe in probes:
+        result.add_result(ProbeRunner.run(probe))
 
     result.stop()
 
