@@ -31,8 +31,12 @@
 import json
 import unittest
 import sys
+import os
 
-sys.path.append('..')
+TEST_DIR=os.path.dirname(os.path.abspath(__file__))
+
+# Needed to find classes and plugins
+sys.path.append('%s/..' % TEST_DIR)
 
 from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check
 from GeoHealthCheck.healthcheck import run_test_resource
@@ -43,10 +47,9 @@ class GeoHealthCheckTest(unittest.TestCase):
     def load_data(self):
         # Beware!
         self.db = DB
-        # self.db.drop_all()
         self.db.create_all()
 
-        with open('tests/fixtures.json') as ff:
+        with open('%s/fixtures.json' % TEST_DIR) as ff:
             fixtures = json.load(ff)
 
         # add users, keeping track of DB objects
@@ -115,27 +118,45 @@ class GeoHealthCheckTest(unittest.TestCase):
             self.db.session.add(check)
 
         self.db.session.commit()
+        self.db.session.close()
 
     def setUp(self):
-        # do once
+        # do once per test
         self.load_data()
-        pass
 
     def tearDown(self):
-        # self.db.drop_all()
-        pass
+        self.db = DB
+        # Needed for Postgres, otherwise hangs by aggressive locking
+        self.db.session.close()
+        self.db.drop_all()
+        self.db.session.commit()
+        self.db.session.close()
 
-    # def testResourcesPresent(self):
-    #     resources = Resource.query.all()
-    #
-    #     self.assertEqual(len(resources), 7)
+    def testResourcesPresent(self):
+        resources = Resource.query.all()
+
+        self.assertEqual(len(resources), 7)
 
     def testRunResoures(self):
+        # Do the whole healthcheck for all Resources for now
         resources = Resource.query.all()
         for resource in resources:
             result = run_test_resource(resource)
-            print(str(result))
+            run = Run(resource, result[1], result[2],
+                      result[3], result[4])
 
+            print('Adding Run: success=%s, response_time=%ss\n'
+                  % (str(run.success), run.response_time))
+            self.db.session.add(run)
+            self.db.session.commit()
+
+        self.db.session.close()
+
+        # Verify
+        resources = Resource.query.all()
+        for resource in resources:
+            # Each Resource should have one Run
+            self.assertEquals(resource.runs.count(), 1)
 
 if __name__ == '__main__':
     unittest.main()

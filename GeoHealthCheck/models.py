@@ -115,7 +115,7 @@ class Probe(DB.Model):
         return Factory.create_obj(self.proberunner)
 
     @property
-    def proberunner_name(self):
+    def name(self):
         return self.proberunner_instance.NAME
 
     @property
@@ -214,7 +214,10 @@ class Resource(DB.Model):
 
     @property
     def all_response_times(self):
-        return [run.response_time for run in self.runs]
+        result = 0
+        if self.runs.count() > 0:
+            result = [run.response_time for run in self.runs]
+        return result
 
     @property
     def first_run(self):
@@ -228,24 +231,36 @@ class Resource(DB.Model):
 
     @property
     def average_response_time(self):
-        query = [run.response_time for run in self.runs]
-        return util.average(query)
+        result = 0
+        if self.runs.count() > 0:
+            query = [run.response_time for run in self.runs]
+            result = util.average(query)
+        return result
 
     @property
     def min_response_time(self):
-        query = [run.response_time for run in self.runs]
-        return min(query)
+        result = 0
+        if self.runs.count() > 0:
+            query = [run.response_time for run in self.runs]
+            result = min(query)
+        return result
 
     @property
     def max_response_time(self):
-        query = [run.response_time for run in self.runs]
-        return max(query)
+        result = 0
+        if self.runs.count() > 0:
+            query = [run.response_time for run in self.runs]
+            result = max(query)
+        return result
 
     @property
     def reliability(self):
-        total_runs = self.runs.count()
-        success_runs = self.runs.filter_by(success=True).count()
-        return util.percentage(success_runs, total_runs)
+        result = 0
+        if self.runs.count() > 0:
+            total_runs = self.runs.count()
+            success_runs = self.runs.filter_by(success=True).count()
+            result = util.percentage(success_runs, total_runs)
+        return result
 
     @property
     def tags2csv(self):

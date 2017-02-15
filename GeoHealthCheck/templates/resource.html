@@ -15,7 +15,9 @@
         <a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
         {% endif %}
     </h1>
+    {% if resource.first_run %}
     <h3 class="page-header">{{ _('Monitoring Period') }}: {{ resource.first_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
+    {% endif %}
     <div class="table-responsive col-md-4">
         <table class="table">
             <tr>
@@ -42,10 +44,13 @@
             </tr>
             <tr>
                 <th>Probes</th>
-                {% for probe in resource.probes %}
-                <td>{{ probe.name }}</td>
-                {% endfor %}
-                
+
+                <td>
+                    {% for probe in resource.probes %}
+                    {{ probe.name }}  <br/>
+                    {% endfor %}
+                </td>
+
             </tr>
             <tr>
                 <th>
