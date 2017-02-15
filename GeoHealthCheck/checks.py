@@ -15,6 +15,29 @@ def http_status_no_error(probe, args_dict):
 
     return result, msg
 
+def http_has_header_value(probe, args_dict):
+    """
+    Checks if header exists and has given header value.
+    See http://docs.python-requests.org/en/master/user/quickstart
+    """
+    result = True
+    msg = 'OK'
+    name = args_dict['name']
+    value = args_dict['value']
+    headers = probe.response.headers
+    if name not in headers:
+        result = False
+        msg = 'HTTP response has no header %s' % name
+    elif headers[name] != value:
+        result = False
+        msg = 'HTTP response header %s has no value %s' % (name, value)
+
+    return result, msg
+
+def http_has_content_type(probe, args_dict):
+    """Check if HTTP response has given ContentType header value"""
+    return http_has_header_value(probe, {'name': 'content-type', 'value': args_dict['value']})
+
 def xml_parse(probe, args_dict):
     result = True
     msg = 'OK'

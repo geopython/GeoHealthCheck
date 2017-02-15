@@ -8,7 +8,7 @@ class OwsGetCaps(ProbeRunner):
     RESOURCE_TYPE = 'OGC:*'
 
     REQUEST_METHOD = 'GET'
-    REQUEST_TEMPLATE = 'SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
+    REQUEST_TEMPLATE = '?SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
     REQUEST_PARAMETERS = [
         {
             'name': 'service',
@@ -34,7 +34,7 @@ class OwsGetCaps(ProbeRunner):
         {
             'name': 'capabilities_title',
             'description': 'find title element in capabilities response doc',
-            'function': 'GeoHealthCheck.checks.contains_string',  # python method to call, from GHC or in checks.py
+            'function': 'GeoHealthCheck.checks.contains_string',
             'parameters': [
                 {
                     'name': 'text',
@@ -133,6 +133,25 @@ class WmtsGetCaps(OwsGetCaps):
             'name': 'service',
             'type': 'string',
             'value': 'WMTS'
+        },
+        {
+            'name': 'version',
+            'type': 'string',
+            'range': ['1.0.0']
+        }
+    ]
+
+class SosGetCaps(OwsGetCaps):
+    """SOS GetCapabilities ProbeRunner"""
+
+    NAME = 'SOS GetCapabilities'
+    RESOURCE_TYPE = 'OGC:SOS'
+
+    REQUEST_PARAMETERS = [
+        {
+            'name': 'service',
+            'type': 'string',
+            'value': 'SOS'
         },
         {
             'name': 'version',

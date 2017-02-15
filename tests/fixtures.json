@@ -9,7 +9,8 @@
   },
   "tags": {
     "ows": "ows",
-    "tiling": "tiling"
+    "tiling": "tiling",
+    "pdok": "pdok"
   },
   "resources": {
     "WOUDC WMS": {
@@ -28,6 +29,16 @@
       "url": "http://geo.woudc.org/ows",
       "tags": [
         "ows"
+      ]
+    },
+    "PDOK BAG WFS": {
+      "owner": "admin",
+      "resource_type": "OGC:WFS",
+      "title": "PDOK BAG Web Feature Service",
+      "url": "https://geodata.nationaalgeoregister.nl/bag/wfs",
+      "tags": [
+        "ows",
+        "pdok"
       ]
     },
     "WOUDC CSW": {
@@ -49,20 +60,21 @@
         "tiling"
       ]
     },
-    "WOUDC DEF": {
+    "WOUDC LINK": {
       "owner": "admin",
       "resource_type": "WWW:LINK",
       "title": "WOUDC Definitions Service",
       "url": "http://geo.woudc.org/def",
       "tags": []
     },
-    "OpenGeo TMS": {
+    "PDOK TMS": {
       "owner": "admin",
       "resource_type": "OSGeo:TMS",
       "title": "Tile Map Service",
-      "url": "http://demo.opengeo.org/geoserver/gwc/service/tms/1.0.0",
+      "url": "http://geodata.nationaalgeoregister.nl/tms/1.0.0",
       "tags": [
-        "tiling"
+        "tiling",
+        "pdok"
       ]
     }
   },
@@ -83,9 +95,24 @@
         "version": "1.1.0"
       }
     },
+    "PDOK BAG WFS - GetFeature": {
+      "resource": "PDOK BAG WFS",
+      "proberunner": "GeoHealthCheck.plugins.wfsgetfeature.WfsGetFeatureBbox",
+      "parameters": {
+        "typename": "verblijfsobject:verblijfsobject",
+        "typename_ns": "verblijfsobject",
+        "typename_ns_url": "http://bag.geonovum.nl",
+        "geom_property_name": "geometrie",
+        "srs": "EPSG:28992",
+        "lower_x": "180635",
+        "lower_y": "455870",
+        "upper_x": "180961",
+        "upper_y": "456050"
+      }
+    },
     "WOUDC CSW - GetCaps": {
       "resource": "WOUDC CSW",
-      "proberunner": "GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps",
+      "proberunner": "GeoHealthCheck.plugins.owsgetcaps.CswGetCaps",
       "parameters": {
         "service": "CSW",
         "version": "2.0.2"
@@ -93,14 +120,38 @@
     },
     "WOUDC WMTS - GetCaps": {
       "resource": "WOUDC WMTS",
-      "proberunner": "GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps",
+      "proberunner": "GeoHealthCheck.plugins.owsgetcaps.WmtsGetCaps",
       "parameters": {
         "service": "WMTS",
         "version": "1.0.0"
       }
+    },
+    "WOUDC LINK - PING": {
+      "resource": "WOUDC LINK",
+      "proberunner": "GeoHealthCheck.plugins.ping.HttpPing",
+      "parameters": {}
+    },
+    "PDOK TMS - PING": {
+      "resource": "PDOK TMS",
+      "proberunner": "GeoHealthCheck.plugins.ping.HttpPing",
+      "parameters": {}
+    },
+    "PDOK TMS - Caps": {
+      "resource": "PDOK TMS",
+      "proberunner": "GeoHealthCheck.plugins.tms.TmsCaps",
+      "parameters": {}
+    },
+    "PDOK TMS - TopTile": {
+      "resource": "PDOK TMS",
+      "proberunner": "GeoHealthCheck.plugins.tms.TmsGetTileTop",
+      "parameters": {
+        "layer": "brtachtergrondkaart",
+        "zoom": "0",
+        "x": "0",
+        "y": "0",
+        "extension" : "png"
+      }
     }
-    
-    
   },
   "checks": {
     "WOUDC WMS - GetCaps - XML Parse": {
@@ -113,6 +164,23 @@
       "check_function": "GeoHealthCheck.checks.xml_parse",
       "parameters": {}
     },
+    "PDOK BAG WFS - GetFeature - XML Parse": {
+      "probe": "PDOK BAG WFS - GetFeature",
+      "check_function": "GeoHealthCheck.checks.xml_parse",
+      "parameters": {}
+    },
+    "PDOK BAG WFS - GetFeature - No Exception": {
+      "probe": "PDOK BAG WFS - GetFeature",
+      "check_function": "GeoHealthCheck.checks.not_contains_exception",
+      "parameters": {}
+    },
+    "PDOK BAG WFS - GetFeature - FeatureCollection": {
+      "probe": "PDOK BAG WFS - GetFeature",
+      "check_function": "GeoHealthCheck.checks.contains_string",
+      "parameters": {
+        "text": "FeatureCollection>"
+      }
+    },
     "WOUDC CSW - GetCaps - XML Parse": {
       "probe": "WOUDC CSW - GetCaps",
       "check_function": "GeoHealthCheck.checks.xml_parse",
@@ -122,6 +190,35 @@
       "probe": "WOUDC WMTS - GetCaps",
       "check_function": "GeoHealthCheck.checks.xml_parse",
       "parameters": {}
+    },
+    "WOUDC LINK - Ping - NoError": {
+      "probe": "WOUDC LINK - PING",
+      "check_function": "GeoHealthCheck.checks.http_status_no_error",
+      "parameters": {}
+    },
+    "PDOK TMS - Ping - NoError": {
+      "probe": "PDOK TMS - PING",
+      "check_function": "GeoHealthCheck.checks.http_status_no_error",
+      "parameters": {}
+    },
+    "PDOK TMS - Caps - XML Parse": {
+      "probe": "PDOK TMS - Caps",
+      "check_function": "GeoHealthCheck.checks.xml_parse",
+      "parameters": {}
+    },
+    "PDOK TMS - Caps - TileMap": {
+      "probe": "PDOK TMS - Caps",
+      "check_function": "GeoHealthCheck.checks.contains_string",
+      "parameters": {
+        "text": "<TileMap"
+      }
+    },
+    "PDOK TMS - TopTile - Content Type": {
+      "probe": "PDOK TMS - TopTile",
+      "check_function": "GeoHealthCheck.checks.http_has_content_type",
+      "parameters": {
+        "value": "image/png"
+      }
     }
   }
 }

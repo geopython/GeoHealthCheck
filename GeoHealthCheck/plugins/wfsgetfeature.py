@@ -1,6 +1,7 @@
 from GeoHealthCheck.proberunner import ProbeRunner
 
-class WfsGetFeatBbox(ProbeRunner):
+class WfsGetFeatureBbox(ProbeRunner):
+    NAME = 'WFS GetFeature in BBOX'
     DESCRIPTION = 'do WFS GetFeature in BBOX'
     RESOURCE_TYPE = 'OGC:WFS'
 

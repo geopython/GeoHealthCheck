@@ -15,19 +15,20 @@ class ProbeRunner(object):
     DESCRIPTION = 'Fill in Description'
     RESOURCE_TYPE = '*'
 
-    # Request attributes
+    # Request attributes, defaults, subclassses override
     REQUEST_METHOD = 'GET'
     REQUEST_HEADERS = None
-    REQUEST_TEMPLATE = ''
+    REQUEST_TEMPLATE = None
     REQUEST_PARAMETERS = None
 
-    # Possible response checks attributes
+    # Possible response checks attributes, instance determines which
+    # checks are selected and their parameters
     RESPONSE_CHECKS = None
 
     # Lifecycle
     def init(self, probe=None):
-        # Probe contains the actual parameters (from Models/DB) for
-        # requests and Checks
+        # Probe contains the actual ProbeRunner parameters (from Models/DB) for
+        # requests and a list of response Checks with their functions+parameters
         self.probe = probe
         self.response = None
         self.result = None
@@ -70,8 +71,11 @@ class ProbeRunner(object):
 
         request_string = None
         if self.REQUEST_TEMPLATE:
-            request_parms = self.probe.parameters
-            request_string = self.REQUEST_TEMPLATE.format(**request_parms)
+            request_string = self.REQUEST_TEMPLATE
+
+            if self.probe.parameters:
+                request_parms = self.probe.parameters
+                request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
         self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
 
@@ -80,7 +84,7 @@ class ProbeRunner(object):
             url = url_base
             if request_string:
                 # Query String: mainly OWS:* resources
-                url = "%s?%s" % (url, request_string)
+                url = "%s%s" % (url, request_string)
                 
             self.response = requests.get(url,
                                          headers=self.REQUEST_HEADERS)

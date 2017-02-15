@@ -90,14 +90,37 @@ class Probe(DB.Model):
     @property
     def parameters(self):
         return json.loads(self._parameters)
+        # First get parameters already valued from ProbeRunner
+
+        # TODO not here but in GUI (adding values and defaults)
+        # parms = {}
+        # runner_parms = self.proberunner_parameters
+        # for parm in runner_parms:
+        #     parms[parm['name']] = None
+        #     if 'value' in parm:
+        #         parms[parm['name']] = parm['value']
+        #
+        # for key in parms:
+        #     if key in probe_parms:
+        #         parms[key] = probe_parms[key]
+        #
+        # return parms
 
     @parameters.setter
     def parameters(self, parameters):
         self._parameters = json.dumps(parameters)
 
     @property
+    def proberunner_instance(self):
+        return Factory.create_obj(self.proberunner)
+
+    @property
     def proberunner_name(self):
-        return Factory.create_obj(self.proberunner).NAME
+        return self.proberunner_instance.NAME
+
+    @property
+    def proberunner_parameters(self):
+        return self.proberunner_instance.REQUEST_PARAMETERS
 
     def __repr__(self):
         return '<Probe %r>' % self.identifier
