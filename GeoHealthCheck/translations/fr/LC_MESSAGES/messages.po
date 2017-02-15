@@ -65,7 +65,7 @@ msgstr "Déconnecté"
 
 #: GeoHealthCheck/healthcheck.py:52
 msgid "Invalid resource type"
-msgstr "Type de ressource non valide"
+msgstr "ressource non valide"
 
 #: GeoHealthCheck/healthcheck.py:84 GeoHealthCheck/healthcheck.py:92
 msgid "for"
