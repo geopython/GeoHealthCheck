@@ -494,7 +494,6 @@ def add():
 def update(resource_identifier):
     """update a resource"""
 
-    tag_list = []
     update_counter = 0
 
     resource_identifier_dict = request.get_json()
