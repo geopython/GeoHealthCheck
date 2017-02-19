@@ -115,12 +115,6 @@ def get_tag_counts():
     return models.get_tag_counts()
 
 
-def get_all_tags():
-    """return all tags"""
-
-    return models.get_tag_counts()
-
-
 def get_query_field_term(query):
     """determine query context from q="""
 

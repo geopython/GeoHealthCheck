@@ -137,11 +137,15 @@
                     <td class="facet-name">
                         <a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a>
                         <br>
+                        {% if resource.tags %}
+                        <select id="resource_tags" multiple="multiple" style="width: 100%;">
                         {% for tag in resource.tags %}
                         {% if tag.name != '' %}
-                            <button type="button" class="btn btn-small">{{ tag.name }}</button>
+                            <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
                         {% endif %}
                         {% endfor %}
+                        </select>
+                        {% endif %}
                     </td>
                     <td>
                         <ul>
@@ -248,5 +252,6 @@
         });
         $('#resources-table-num-results').html(num_results + ' result' + (num_results === 1 ? '' : 's'));
     });
+    $('select').select2({disabled: true, tags: true});
 </script>
 {% endblock %}

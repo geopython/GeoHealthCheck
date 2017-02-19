@@ -112,13 +112,18 @@ def setup():
         f.write(content)
 
     # install bootstrap-tagsinput to static/lib
-    bs_tags = 'https://github.com/bootstrap-tagsinput/bootstrap-tagsinput/archive/0.8.0.zip'  # noqa
+    select2 = 'https://github.com/select2/select2/archive/4.0.3.zip'
 
-    zipstr = StringIO(urlopen(bs_tags).read())
+    zipstr = StringIO(urlopen(select2).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(options.base.static_lib)
-    dirname = glob.glob(options.base.static_lib / 'bootstrap-tagsinput*')[0]
-    os.rename(dirname, ''.join(dirname.rsplit('-', 1)[:-1]))
+    dirname = glob.glob(options.base.static_lib / 'select2-*')[0]
+    dstdir = ''.join(dirname.rsplit('-', 1)[:-1])
+    try:
+        os.rename(dirname, dstdir)
+    except OSError:
+        shutil.rmtree(dstdir)
+        os.rename(dirname, dstdir)
 
     # install leafletjs to static/lib
     leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'

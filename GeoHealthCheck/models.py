@@ -67,7 +67,13 @@ class Run(DB.Model):
 
 class Tag(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
-    name = DB.Column(DB.String(100))
+    name = DB.Column(DB.String(100), unique=True, nullable=False)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return '<Tag %r>' % (self.name)
 
 
 resource_tags = DB.Table('resource_tags',
