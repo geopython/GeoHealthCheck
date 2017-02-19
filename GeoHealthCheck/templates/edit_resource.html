@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">[{{ _('Edit') }}] <span id="resource_title_h1">{{ resource.title }}</span></h1>
+
+    <div class="table-responsive col-md-4">
+        <table class="table">
+            <tr>
+                <th>{{ _('Type') }}</th>
+                <td>{{ resource_types[resource.resource_type]['label'] }}</td>
+            </tr>
+            <tr>
+                <th>{{ _('Owner') }}</th>
+                <td>{{ resource.owner.username }}</td>
+            </tr>
+            <tr>
+                <th>
+                    {{ _('Name') }}
+                </th>
+                <td>
+                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}"/>
+                </td>
+            </tr>
+            <tr>
+                <th>URL</th>
+                <td><a href="{{ resource.get_capabilities_url }}">{{ resource.url }}</a></td>
+            </tr>
+            <tr>
+                <th>Tags</th>
+                <td><input id="resource_tags" type="text" value="{{ resource.tags2csv }}" data-role="tagsinput"/></td>
+            </tr>
+            <tr>
+                <th>Probes</th>
+
+                <td>
+                    {% for probe in resource.probes %}
+                    {{ probe.name }}  <br/>
+                    {% endfor %}
+                </td>
+
+            </tr>
+            {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
+            <tr>
+                <th>{{ _('Test') }}</th>
+
+                <td>
+                    <button id="test" type="button" class="btn btn-primary btn-sm">{{ _('Test') }}</button>
+                    &nbsp;&nbsp;<span id="test_result"></span>
+                </td>
+
+            </tr>
+            <tr>
+                <th>Action</th>
+
+                <td>
+                    <button id="save" type="button" class="btn btn-primary btn-sm">{{ _('Save') }}</button>
+                    &nbsp;&nbsp;&nbsp;<a href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}"><button id="title_cancel" type="button" class="btn btn-primary btn-sm">{{ _('Cancel') }}</button></a>
+                    &nbsp;&nbsp;&nbsp;<a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
+                </td>
+            </tr>
+            {% endif %}
+
+         </table>
+    </div>
+
+    <div class="clearfix"></div>
+
+
+</div>
+{% endblock %}
+{% block extrafoot %}
+<script type="text/javascript">
+    {% if g.user.is_authenticated() %}
+        
+    $('#test').click(function() {
+         $('#test_result').text("{{ _('Test') }}...");
+         $.ajax({
+             type: "POST",
+             url: "{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}",
+             data: JSON.stringify({}),
+             contentType: "application/json; charset=utf-8",
+             dataType: "json",
+             success: function(data){
+                 $('#test_result').text(data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
+                 $('#test').blur();
+             },
+             error: function(errMsg) {
+                 $('#test_result').text(data.message);
+                 $('#test').blur();
+             }
+         });
+         return false;
+     });
+
+    $('#save').click(function() {
+        var new_title = $('input[name="resource_title_value"]').val();
+
+        // Need to fix dupkey error for tags submit
+        var new_tags = $('#resource_tags').val();
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
+            data: JSON.stringify({
+                title: new_title
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data){
+                $('#resource_title_h1').html(new_title);
+                $('#save').blur();
+            },
+            error: function(data, msg, details) {
+                alert(msg);
+                $('#save').blur();
+            }
+        });
+        return false;
+    });
+
+    $('#confirm-delete').click(function() {
+        if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
+            $('#confirm-delete').blur();
+            return false;
+        }
+    });
+
+
+    {% endif %}
+
+
+</script>
+{% endblock %}

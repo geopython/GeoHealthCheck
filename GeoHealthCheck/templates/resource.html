@@ -12,7 +12,9 @@
         <a href="{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
         {% endif %}
         {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
+        <a href="{{ url_for('edit_resource', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Edit') }}</button></a>
         <a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
+
         {% endif %}
     </h1>
     {% if resource.first_run %}
@@ -53,13 +55,6 @@
 
             </tr>
             <tr>
-                <th>
-                    <button id="title_edit" type="button" class="btn btn-default btn-sm">{{ _('Edit') }}</button>
-                </th>
-                <td id="actions">
-                </td>
-            </tr>
-            <tr>
                 <th>{{ _('Response Times (seconds)') }}</th>
                 <td>
                     <ul>
@@ -69,8 +64,6 @@
                     </ul>
                 </td>
             </tr>
-            {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
-            {% endif %}
             <tr>
                 <th>{{ _('Reliability') }}</th>
                 <td>

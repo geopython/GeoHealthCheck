@@ -69,7 +69,7 @@ class WmsGetCaps(OwsGetCaps):
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, range=['1.1.1', '1.3.0'])
+    @Parameter(ptype=str, default=None, required=True, value_range=['1.1.1', '1.3.0'])
     def version(self):
         """
         The OWS service version within resource endpoint.
@@ -94,7 +94,7 @@ class WfsGetCaps(OwsGetCaps):
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, range=['1.0.0', '1.1.0', '2.0.2'])
+    @Parameter(ptype=str, default=None, required=True, value_range=['1.0.0', '1.1.0', '2.0.2'])
     def version(self):
         """
         The OWS service version within resource endpoint.
@@ -118,7 +118,7 @@ class WcsGetCaps(OwsGetCaps):
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, range=['1.1.0', '1.1.1', '2.0.1'])
+    @Parameter(ptype=str, default=None, required=True, value_range=['1.1.0', '1.1.1', '2.0.1'])
     def version(self):
         """
         The OWS service version within resource endpoint.
@@ -142,7 +142,7 @@ class CswGetCaps(OwsGetCaps):
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, range=['2.0.2'])
+    @Parameter(ptype=str, default=None, required=True, value_range=['2.0.2'])
     def version(self):
         """
         The OWS service version within resource endpoint.
@@ -167,7 +167,7 @@ class WmtsGetCaps(OwsGetCaps):
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, range=['1.0.0'])
+    @Parameter(ptype=str, default=None, required=True, value_range=['1.0.0'])
     def version(self):
         """
         The OWS service version within resource endpoint.
@@ -191,7 +191,7 @@ class SosGetCaps(OwsGetCaps):
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, range=['1.0.0'])
+    @Parameter(ptype=str, default=None, required=True, value_range=['1.0.0'])
     def version(self):
         """
         The OWS service version within resource endpoint.

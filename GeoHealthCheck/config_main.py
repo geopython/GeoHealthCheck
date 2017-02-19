@@ -79,11 +79,19 @@ GHC_MAP = {
     'subdomains': 1234,
 }
 
-# Each GHC Plugin is a ProbeRunner class, should be findable in PYTHONPATH
-GHC_PROBE_PLUGINS = [
-    'GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps',
-    'GeoHealthCheck.plugins.probe.owsgetcaps.WfsGetCaps',
-    'GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatBbox',
-    'GeoHealthCheck.plugins.probe.ping.HttpPing'
 
-]
+# Each GHC Plugin should derive from GeoHealthCheck.plugin.Plugin,
+# and should be findable in sys/PYTHONPATH.
+# An entry may be a Python classname or module.
+# The latter will include all classes derived from GeoHealthCheck.plugin.Plugin
+# in the module file.
+GHC_PLUGINS = {
+    # ProbeRunners
+    'GeoHealthCheck.plugins.probe.owsgetcaps',
+    'GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatureBbox',
+    'GeoHealthCheck.plugins.probe.tms',
+    'GeoHealthCheck.plugins.probe.ping',
+
+    # Checkers
+    'GeoHealthCheck.plugins.check.checkers',
+}

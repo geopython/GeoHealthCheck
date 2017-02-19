@@ -33,17 +33,17 @@ import unittest
 import sys
 import os
 
-TEST_DIR=os.path.dirname(os.path.abspath(__file__))
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Needed to find classes and plugins
 sys.path.append('%s/..' % TEST_DIR)
 
 from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check
 from GeoHealthCheck.healthcheck import run_test_resource
+from GeoHealthCheck.factory import Factory
 
 
 class GeoHealthCheckTest(unittest.TestCase):
-
     def load_data(self):
         # Beware!
         self.db = DB
@@ -57,9 +57,9 @@ class GeoHealthCheckTest(unittest.TestCase):
         for user_name in fixtures['users']:
             user = fixtures['users'][user_name]
             user = User(user['username'],
-                           user['password'],
-                           user['email'],
-                           user['role'])
+                        user['password'],
+                        user['email'],
+                        user['role'])
             users[user_name] = user
             self.db.session.add(user)
 
@@ -90,16 +90,15 @@ class GeoHealthCheckTest(unittest.TestCase):
             resources[resource_name] = resource
             self.db.session.add(resource)
 
-
         # add Probes, keeping track of DB objects
         probes = {}
         for probe_name in fixtures['probes']:
             probe = fixtures['probes'][probe_name]
 
             probe = Probe(resources[probe['resource']],
-                              probe['proberunner'],
-                              probe['parameters'],
-                              )
+                          probe['proberunner'],
+                          probe['parameters'],
+                          )
 
             probes[probe_name] = probe
             self.db.session.add(probe)
@@ -110,9 +109,9 @@ class GeoHealthCheckTest(unittest.TestCase):
             check = fixtures['checks'][check_name]
 
             check = Check(probes[check['probe']],
-                              check['checker'],
-                              check['parameters'],
-                              )
+                          check['checker'],
+                          check['parameters'],
+                          )
 
             checks[check_name] = check
             self.db.session.add(check)
@@ -128,15 +127,34 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.db = DB
         # Needed for Postgres, otherwise hangs by aggressive locking
         self.db.session.close()
-        # self.db.drop_all()
+        self.db.drop_all()
         self.db.session.commit()
         self.db.session.close()
 
-    # def testResourcesPresent(self):
-    #     resources = Resource.query.all()
-    #
-    #     self.assertEqual(len(resources), 7)
-    #
+    def testResourcesPresent(self):
+        resources = Resource.query.all()
+
+        self.assertEqual(len(resources), 7)
+
+    def testPluginsPresent(self):
+        from GeoHealthCheck.plugin import Plugin
+        from GeoHealthCheck.factory import Factory
+
+        plugins = Plugin.get_plugins('GeoHealthCheck.proberunner.ProbeRunner')
+        for plugin in plugins:
+            plugin = Factory.create_obj(plugin)
+            self.assertIsNotNone(plugin)
+
+            # Must have run_request method
+            self.assertIsNotNone(plugin.run_request)
+
+        plugins = Plugin.get_plugins('GeoHealthCheck.checker.Checker')
+        for plugin in plugins:
+            plugin = Factory.create_obj(plugin)
+            self.assertIsNotNone(plugin)
+            # Must have perform method
+            self.assertIsNotNone(plugin.perform)
+
     def testRunResoures(self):
         # Do the whole healthcheck for all Resources for now
         resources = Resource.query.all()

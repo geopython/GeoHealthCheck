@@ -79,7 +79,7 @@ class TmsGetTile(ProbeRunner):
         """
         pass
 
-    @Parameter(ptype=str, default='png', required=True, range=['png', 'png8', 'png24', 'jpg', 'jpeg', 'tif', 'tiff'])
+    @Parameter(ptype=str, default='png', required=True, value_range=['png', 'png8', 'png24', 'jpg', 'jpeg', 'tif', 'tiff'])
     def extension(self):
         """
         The tile image extension.

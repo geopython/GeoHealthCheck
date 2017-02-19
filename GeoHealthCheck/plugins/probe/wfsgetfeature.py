@@ -68,7 +68,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         """
         pass
 
-    @Parameter(ptype=str, default='EPSG:4326', required=True, range='fromCapabilities')
+    @Parameter(ptype=str, default='EPSG:4326', required=True, value_range='fromCapabilities')
     def srs(self):
         """
         The SRS as EPSG: code.

@@ -517,10 +517,10 @@ def update(resource_identifier):
     if update_counter > 0:
         DB.session.commit()
 
-    return str({'status': 'success'})
+    return jsonify({'status': 'success'})
 
 
-@APP.route('/resource/<int:resource_identifier>/test')
+@APP.route('/resource/<int:resource_identifier>/test', methods=['GET', 'POST'])
 @login_required
 def test(resource_identifier):
     """test a resource"""
@@ -532,14 +532,30 @@ def test(resource_identifier):
     [title, success, response_time, message, start_time] = run_test_resource(
         resource)
 
-    if message not in ['OK', None, 'None']:
-        msg = gettext('ERROR')
-        flash('%s: %s' % (msg, message), 'danger')
-    else:
-        flash(gettext('Resource tested successfully'), 'success')
+    if request.method == 'GET':
+        if message not in ['OK', None, 'None']:
+            msg = gettext('ERROR')
+            flash('%s: %s' % (msg, message), 'danger')
+        else:
+            flash(gettext('Resource tested successfully'), 'success')
 
-    return redirect(url_for('get_resource_by_id', lang=g.current_lang,
+        return redirect(url_for('get_resource_by_id', lang=g.current_lang,
                     identifier=resource_identifier))
+    elif request.method == 'POST':
+        return jsonify({'success': success, 'message': message, 'response_time' : response_time})
+
+
+@APP.route('/resource/<int:resource_identifier>/edit')
+@login_required
+def edit_resource(resource_identifier):
+    """test a resource"""
+    resource = Resource.query.filter_by(identifier=resource_identifier).first()
+    if resource is None:
+        flash(gettext('Resource not found'), 'danger')
+        return redirect(request.referrer)
+
+    return render_template('edit_resource.html', lang=g.current_lang,
+                           resource=resource)
 
 
 @APP.route('/resource/<int:resource_identifier>/delete')

@@ -45,6 +45,25 @@ class Factory:
         return class_obj
 
     @staticmethod
+    def create_module(module_string):
+        """Returns module instance specified by a string.
+
+        Args:
+            module_string: The string representing a module.
+
+        Raises:
+            ValueError if module can not be imported from string.
+        """
+        module_obj = None
+        try:
+            module_obj = __import__(module_string, globals(), locals(), fromlist=[''])
+        except Exception, e:
+            print("cannot create module from '%s'" % module_string)
+            raise e
+
+        return module_obj
+
+    @staticmethod
     def create_function(function_string):
         # Creating a global function instance is the same as a class instance
         return Factory.create_class(function_string)
