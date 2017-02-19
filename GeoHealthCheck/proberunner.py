@@ -1,25 +1,22 @@
 import sys
 import requests
+from plugin import Plugin
 from factory import Factory
 from result import ProbeResult, CheckResult
 
-class ProbeRunner(object):
+class ProbeRunner(Plugin):
     """
      Base class for specific implementations to run a Probe with Checks.
 
     """
 
     # Generic attributes, subclassses override
-    AUTHOR = 'GHC Team'
-    NAME = 'Fill in Name'
-    DESCRIPTION = 'Fill in Description'
     RESOURCE_TYPE = '*'
 
     # Request attributes, defaults, subclassses override
     REQUEST_METHOD = 'GET'
     REQUEST_HEADERS = None
     REQUEST_TEMPLATE = None
-    REQUEST_PARAMETERS = None
 
     # Possible response checks attributes, instance determines which
     # checks are selected and their parameters
@@ -108,18 +105,19 @@ class ProbeRunner(object):
         """ Do the checks on the response from request"""
 
         # Config also determines which actual checks are performed from possible
-        # Checks in ProbeRunner
+        # Checks in ProbeRunner. Checks are performed by Checker instances.
         checks = self.probe.checks
         for check in checks:
-            fun_str = check.check_function
-            fun = Factory.create_function(fun_str)
+            checker_class = check.checker
+            checker = Factory.create_obj(checker_class)
             try:
-                result = fun(self, check.parameters)
+                checker.init(self, check.parameters)
+                result = checker.perform()
             except:
                 msg = "Exception: %s" % str(sys.exc_info())
                 self.log(msg)
                 result = False, msg
-            self.log('Check: fun=%s result=%s' % (fun_str, result[0]))
+            self.log('Check: fun=%s result=%s' % (checker_class, result[0]))
 
             self.result.add_result(self.create_check_result(
                 check, check.parameters, result[0], result[1]))
@@ -153,5 +151,3 @@ class ProbeRunner(object):
         # Return result
         return proberunner.result
 
-    def __str__(self):
-        return "%s" % str(self.__class__)

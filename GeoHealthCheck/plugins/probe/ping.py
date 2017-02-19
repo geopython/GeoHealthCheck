@@ -15,7 +15,7 @@ class HttpPing(ProbeRunner):
         {
             'name': 'http_error_status',
             'description': 'response not in error range: i.e. 400 or 500-range',
-            'function': 'GeoHealthCheck.checks.http_status_no_error'
+            'class': 'GeoHealthCheck.plugins.check.checkers.HttpStatusNoError'
         }
     ]
 

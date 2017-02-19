@@ -471,7 +471,7 @@ def add():
     
     # Always add a default Probe & Check
     probe_to_add = Probe(resource_to_add, 'GeoHealthCheck.plugins.ping.HttpPing')
-    check_to_add = Check(probe_to_add, 'GeoHealthCheck.checks.http_status_no_error')
+    check_to_add = Check(probe_to_add, 'GeoHealthCheck.plugins.check.checkers.HttpStatusNoError')
 
     run_data = run_test_resource(resource_to_add)
 

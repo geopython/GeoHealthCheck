@@ -110,7 +110,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             check = fixtures['checks'][check_name]
 
             check = Check(probes[check['probe']],
-                              check['check_function'],
+                              check['checker'],
                               check['parameters'],
                               )
 
@@ -128,20 +128,21 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.db = DB
         # Needed for Postgres, otherwise hangs by aggressive locking
         self.db.session.close()
-        self.db.drop_all()
+        # self.db.drop_all()
         self.db.session.commit()
         self.db.session.close()
 
-    def testResourcesPresent(self):
-        resources = Resource.query.all()
-
-        self.assertEqual(len(resources), 7)
-
+    # def testResourcesPresent(self):
+    #     resources = Resource.query.all()
+    #
+    #     self.assertEqual(len(resources), 7)
+    #
     def testRunResoures(self):
         # Do the whole healthcheck for all Resources for now
         resources = Resource.query.all()
         for resource in resources:
             result = run_test_resource(resource)
+
             run = Run(resource, result[1], result[2],
                       result[3], result[4])
 
@@ -157,6 +158,8 @@ class GeoHealthCheckTest(unittest.TestCase):
         for resource in resources:
             # Each Resource should have one Run
             self.assertEquals(resource.runs.count(), 1)
+            self.assertEquals(resource.runs[0].success, True)
+
 
 if __name__ == '__main__':
     unittest.main()

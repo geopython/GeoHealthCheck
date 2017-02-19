@@ -133,15 +133,15 @@ class Check(DB.Model):
     probe_identifier = DB.Column(DB.Integer, DB.ForeignKey('probe.identifier'))
     probe = DB.relationship('Probe',
                                backref=DB.backref('checks', lazy='dynamic'))
-    check_function = DB.Column(DB.Text, nullable=False)
+    checker = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Check
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
-    def __init__(self, probe, check_function, parameters='{}'):
+    def __init__(self, probe, checker, parameters='{}'):
         self.probe = probe
-        self.check_function = check_function
+        self.checker = checker
         self.parameters = parameters
 
     @property

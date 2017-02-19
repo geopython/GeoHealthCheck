@@ -81,9 +81,9 @@ GHC_MAP = {
 
 # Each GHC Plugin is a ProbeRunner class, should be findable in PYTHONPATH
 GHC_PROBE_PLUGINS = [
-    'GeoHealthCheck.plugins.owsgetcaps.WmsGetCaps',
-    'GeoHealthCheck.plugins.owsgetcaps.WfsGetCaps',
-    'GeoHealthCheck.plugins.wfsgetfeature.WfsGetFeatBbox',
-    'GeoHealthCheck.plugins.ping.HttpPing'
+    'GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps',
+    'GeoHealthCheck.plugins.probe.owsgetcaps.WfsGetCaps',
+    'GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatBbox',
+    'GeoHealthCheck.plugins.probe.ping.HttpPing'
 
 ]
