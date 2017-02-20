@@ -4,7 +4,7 @@
   <form role="form" action="" method="post">
     <h2>{{ _('Add Resource') }} <i class="fa fa-plus fa-fw"></i></h2>
     <div class="form-group input-group col-sm-3">
-        <select class="form-control" name="resource_type">
+        <select id="resource_type" class="form-control" name="resource_type">
             <option value="none">{{ _('Select Resource Type') }}</option>
             {% for key, value in resource_types.items() %}
               {% if 'resource_type' in request.args and request.args['resource_type'] == key %}
@@ -18,15 +18,26 @@
     </div>
 
     <div class="form-group input-group col-sm-5">
-        <input type="text" name="url" class="form-control" placeholder="url" required>
+        <input type="text" name="url" class="form-control" placeholder="url" autofocus required>
         <p class="help-block">{{ _('Enter the URL without any query parameters') }}:<br/>{{ _('good') }}: <code>http://host/wms</code><br/>{{ _('bad') }}:<code>http://host/wms?service=WMS&version=1.1.1&request=GetCapabilities</code></p>
     </div>
     <div class="form-group input-group col-sm-5">
-        <input type="text" name="tags" class="form-control" data-role="tagsinput" placeholder="{{ _('Enter tags') }}">
+        <select id="tags" name="tags" class="form-control" multiple="multiple"></select>
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-success">{{ _('Submit') }}</button>
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block extrafoot %}
+<script type="text/javascript">
+$('#tags').select2({
+    data: {{ tags.keys()|tojson }},
+    tags: true,
+    placeholder: '{{ _('Enter tags') }}'
+});
+
+</script>
 {% endblock %}

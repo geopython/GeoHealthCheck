@@ -164,6 +164,9 @@ class Tag(DB.Model):
     def __init__(self, name):
         self.name = name
 
+    def __repr__(self):
+        return '<Tag %r>' % (self.name)
+
 resource_tags = DB.Table('resource_tags',
                          DB.Column('identifier', DB.Integer, primary_key=True,
                                    autoincrement=True),

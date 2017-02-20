@@ -441,7 +441,7 @@ def add():
     tag_list = []
 
     resource_type = request.form['resource_type']
-    tags = request.form['tags']
+    tags = request.form.getlist('tags')
     url = request.form['url'].strip()
     resource = Resource.query.filter_by(resource_type=resource_type,
                                         url=url).first()
@@ -462,9 +462,15 @@ def add():
         return redirect(url_for('add', lang=g.current_lang,
                                 resource_type=resource_type))
 
-    if tags is not None and tags.strip():
-        for tag in tags.split(','):
-            tag_list.append(Tag(name=tag))
+    if tags:
+        tag_found = False
+        for tag in tags:
+            for tag_obj in Tag.query.all():
+                if tag == tag_obj.name:  # use existing
+                    tag_found = True
+                    tag_list.append(tag_obj)
+            if not tag_found:  # add new
+                tag_list.append(Tag(name=tag))
 
     resource_to_add = Resource(current_user, resource_type, title, url,
                                tags=tag_list)
@@ -497,7 +503,6 @@ def add():
 def update(resource_identifier):
     """update a resource"""
 
-    tag_list = []
     update_counter = 0
 
     resource_identifier_dict = request.get_json()
@@ -506,10 +511,18 @@ def update(resource_identifier):
 
     for key, value in resource_identifier_dict.items():
         if key == 'tags':
-            if getattr(resource, key) != resource.tags2csv:
-                for tag in value.split(','):
-                    tag_list.append(Tag(name=tag))
-                    setattr(resource, key, tag_list)
+            resource_tags = [t.name for t in resource.tags]
+
+            tags_to_add = set(value) - set(resource_tags)
+            tags_to_delete = set(resource_tags) - set(value)
+
+            for tag in tags_to_add:
+                resource.tags.append(Tag(name=tag))
+            for tag in tags_to_delete:
+                tag_to_delete = Tag.query.filter_by(name=tag).first()
+                resource.tags.remove(tag_to_delete)
+
+            update_counter += 1
         elif getattr(resource, key) != resource_identifier_dict[key]:
             setattr(resource, key, resource_identifier_dict[key])
             update_counter += 1

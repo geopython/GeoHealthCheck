@@ -42,7 +42,13 @@
             </tr>
             <tr>
                 <th>Tags</th>
-                <td><input id="resource_tags" type="text" value="{{ resource.tags2csv }}" data-role="tagsinput" disabled/></td>
+                <td>
+                    <select id="resource_tags" multiple="multiple" style="width: 100%;">
+                    {% for tag in resource.tags %}
+                        <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
+                    {% endfor %}
+                    </select>
+                </td>
             </tr>
             <tr>
                 <th>Probes</th>
@@ -115,6 +121,9 @@
 {% endblock %}
 {% block extrafoot %}
 <script type="text/javascript">
+
+    var all_tags = {{ tags.keys()|tojson }};
+
     {% if g.user.is_authenticated() %}
     $('#confirm-delete').click(function() {
         if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
@@ -140,7 +149,7 @@
         var html_text2 = '<button id="title_save" type="button" class="btn btn-default btn-sm">{{ _('Save') }}</button>';
         html_text2 += '<button id="title_cancel" type="button" class="btn btn-default btn-sm">{{ _('Cancel') }}</button>';
 
-        $('#resource_tags').removeAttr('disabled');
+        $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
 
         $('#resource_title').html(html_text);
         $('#actions').html(html_text2);
@@ -212,5 +221,10 @@
         }
     ));
     L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
+
+    $('#resource_tags').select2({
+        tags: true,
+        disabled: true
+    });
 </script>
 {% endblock %}
