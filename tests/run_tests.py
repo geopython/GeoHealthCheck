@@ -28,7 +28,6 @@
 #
 # =================================================================
 
-import json
 import unittest
 import sys
 import os
@@ -38,90 +37,17 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 # Needed to find classes and plugins
 sys.path.append('%s/..' % TEST_DIR)
 
-from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check
+from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check, load_data
 from GeoHealthCheck.healthcheck import run_test_resource
-from GeoHealthCheck.factory import Factory
+from GeoHealthCheck.views import *
 
 
 class GeoHealthCheckTest(unittest.TestCase):
-    def load_data(self):
-        # Beware!
-        self.db = DB
-        self.db.create_all()
-
-        with open('%s/fixtures.json' % TEST_DIR) as ff:
-            fixtures = json.load(ff)
-
-        # add users, keeping track of DB objects
-        users = {}
-        for user_name in fixtures['users']:
-            user = fixtures['users'][user_name]
-            user = User(user['username'],
-                        user['password'],
-                        user['email'],
-                        user['role'])
-            users[user_name] = user
-            self.db.session.add(user)
-
-        # add tags, keeping track of DB objects
-        tags = {}
-        for tag_str in fixtures['tags']:
-            tag = fixtures['tags'][tag_str]
-
-            tag = Tag(tag)
-            tags[tag_str] = tag
-            self.db.session.add(tag)
-
-        # add Resources, keeping track of DB objects
-        resources = {}
-        for resource_name in fixtures['resources']:
-            resource = fixtures['resources'][resource_name]
-
-            resource_tags = []
-            for tag_str in resource['tags']:
-                resource_tags.append(tags[tag_str])
-
-            resource = Resource(users[resource['owner']],
-                                resource['resource_type'],
-                                resource['title'],
-                                resource['url'],
-                                resource_tags)
-
-            resources[resource_name] = resource
-            self.db.session.add(resource)
-
-        # add Probes, keeping track of DB objects
-        probes = {}
-        for probe_name in fixtures['probes']:
-            probe = fixtures['probes'][probe_name]
-
-            probe = Probe(resources[probe['resource']],
-                          probe['proberunner'],
-                          probe['parameters'],
-                          )
-
-            probes[probe_name] = probe
-            self.db.session.add(probe)
-
-        # add Checks, keeping track of DB objects
-        checks = {}
-        for check_name in fixtures['checks']:
-            check = fixtures['checks'][check_name]
-
-            check = Check(probes[check['probe']],
-                          check['checker'],
-                          check['parameters'],
-                          )
-
-            checks[check_name] = check
-            self.db.session.add(check)
-
-        self.db.session.commit()
-        self.db.session.close()
 
     def setUp(self):
+        self.db = DB
         # do once per test
-        self.load_data()
+        load_data('%s/fixtures.json' % TEST_DIR)
 
     def tearDown(self):
         self.db = DB
@@ -154,6 +80,24 @@ class GeoHealthCheckTest(unittest.TestCase):
             self.assertIsNotNone(plugin)
             # Must have perform method
             self.assertIsNotNone(plugin.perform)
+
+        plugins = Plugin.get_plugins('GeoHealthCheck.proberunner.ProbeRunner',
+                filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')])
+        for plugin in plugins:
+            plugin_obj = Factory.create_obj(plugin)
+            self.assertIsNotNone(plugin_obj)
+
+            # Must have run_request method
+            self.assertIsNotNone(plugin_obj.run_request)
+
+            # Must have class var RESOURCE_TYPE='OGC:WMS'
+            class_vars = Factory.get_class_vars(plugin)
+            self.assertIn(class_vars['RESOURCE_TYPE'], ['OGC:WMS', 'OGC:*'])
+
+    def testProbeViews(self):
+        probes = probes_for_resource_type('OGC:WMS')
+        self.assertIsNotNone(probes)
+
 
     def testRunResoures(self):
         # Do the whole healthcheck for all Resources for now

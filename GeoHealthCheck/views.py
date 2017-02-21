@@ -29,7 +29,8 @@
 
 import models
 import util
-
+from plugin import Plugin
+from factory import Factory
 
 def list_resources(resource_type=None, query=None, tag=None):
     """return all resources"""
@@ -143,3 +144,20 @@ def get_query_field_term(query):
         term = '%%%s%%' % query
 
     return [field, term]
+
+
+def probes_for_resource_type(resource_type):
+
+    probe_classes = Plugin.get_plugins('GeoHealthCheck.proberunner.ProbeRunner',
+                filters=[('RESOURCE_TYPE', resource_type),
+                         ('RESOURCE_TYPE', '*:*')])
+
+    probes = dict()
+    for probe_class in probe_classes:
+        probes[probe_class] = Factory.get_class_vars(probe_class)
+        # print('probes[%s] = %s' % (probe_class, str(probes[probe_class])))
+
+    # import json
+    # j = json.dumps(probes)
+
+    return probes

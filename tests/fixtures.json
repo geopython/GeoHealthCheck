@@ -125,12 +125,12 @@
     },
     "WOUDC LINK - PING": {
       "resource": "WOUDC LINK",
-      "proberunner": "GeoHealthCheck.plugins.probe.ping.HttpPing",
+      "proberunner": "GeoHealthCheck.plugins.probe.http.HttpGet",
       "parameters": {}
     },
     "PDOK TMS - PING": {
       "resource": "PDOK TMS",
-      "proberunner": "GeoHealthCheck.plugins.probe.ping.HttpPing",
+      "proberunner": "GeoHealthCheck.plugins.probe.http.HttpGet",
       "parameters": {}
     },
     "PDOK TMS - Caps": {

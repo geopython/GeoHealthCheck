@@ -90,7 +90,7 @@ GHC_PLUGINS = {
     'GeoHealthCheck.plugins.probe.owsgetcaps',
     'GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatureBbox',
     'GeoHealthCheck.plugins.probe.tms',
-    'GeoHealthCheck.plugins.probe.ping',
+    'GeoHealthCheck.plugins.probe.http',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checkers',

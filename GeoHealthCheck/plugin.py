@@ -87,7 +87,7 @@ class Plugin(object):
         self.parms = dict()
 
     @staticmethod
-    def get_plugins(baseclass='GeoHealthCheck.plugin.Plugin'):
+    def get_plugins(baseclass='GeoHealthCheck.plugin.Plugin', filters=None):
         """
         Class method to get list of Plugins of particular baseclass,
         default is all Plugins
@@ -99,6 +99,17 @@ class Plugin(object):
         plugins = APP.config['GHC_PLUGINS']
         result = []
         baseclass = Factory.create_class(baseclass)
+
+        def add_result(plugin_name, class_obj):
+            if not filters:
+                result.append(plugin_name)
+            else:
+                vars = Factory.get_class_vars(class_obj)
+                for filter in filters:
+                    if vars[filter[0]] == filter[1]:
+                        result.append(plugin_name)
+                        break
+
         for plugin_name in plugins:
             try:
 
@@ -111,14 +122,14 @@ class Plugin(object):
                     if inspect.isclass(class_obj) \
                             and baseclass in inspect.getmro(class_obj) and \
                                     baseclass != class_obj:
-                        result.append('%s.%s' % (plugin_name, name))
+                        add_result('%s.%s' % (plugin_name, name), class_obj)
             except:
                 # Try for full classname
                 try:
                     class_obj = Factory.create_class(plugin_name)
                     if baseclass in inspect.getmro(class_obj)\
                             and baseclass != class_obj:
-                        result.append(plugin_name)
+                        add_result(plugin_name, class_obj)
                 except:
                     print('cannot create obj class=%s' % plugin_name)
 

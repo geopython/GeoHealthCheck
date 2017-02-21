@@ -344,6 +344,96 @@ def get_tag_counts():
     return dict(query)
 
 
+def load_data(file_path):
+    # Beware!
+    DB.drop_all()
+    db_commit()
+
+    # In particular for Postgres to drop connections
+    DB.session.close()
+
+    DB.create_all()
+
+    with open(file_path) as ff:
+        objects = json.load(ff)
+
+    # add users, keeping track of DB objects
+    users = {}
+    for user_name in objects['users']:
+        user = objects['users'][user_name]
+        user = User(user['username'],
+                    user['password'],
+                    user['email'],
+                    user['role'])
+        users[user_name] = user
+        DB.session.add(user)
+
+    # add tags, keeping track of DB objects
+    tags = {}
+    for tag_str in objects['tags']:
+        tag = objects['tags'][tag_str]
+
+        tag = Tag(tag)
+        tags[tag_str] = tag
+        DB.session.add(tag)
+
+    # add Resources, keeping track of DB objects
+    resources = {}
+    for resource_name in objects['resources']:
+        resource = objects['resources'][resource_name]
+
+        resource_tags = []
+        for tag_str in resource['tags']:
+            resource_tags.append(tags[tag_str])
+
+        resource = Resource(users[resource['owner']],
+                            resource['resource_type'],
+                            resource['title'],
+                            resource['url'],
+                            resource_tags)
+
+        resources[resource_name] = resource
+        DB.session.add(resource)
+
+    # add Probes, keeping track of DB objects
+    probes = {}
+    for probe_name in objects['probes']:
+        probe = objects['probes'][probe_name]
+
+        probe = Probe(resources[probe['resource']],
+                      probe['proberunner'],
+                      probe['parameters'],
+                      )
+
+        probes[probe_name] = probe
+        DB.session.add(probe)
+
+    # add Checks, keeping track of DB objects
+    checks = {}
+    for check_name in objects['checks']:
+        check = objects['checks'][check_name]
+
+        check = Check(probes[check['probe']],
+                      check['checker'],
+                      check['parameters'],
+                      )
+
+        checks[check_name] = check
+        DB.session.add(check)
+
+    db_commit()
+    DB.session.close()
+
+
+# commit or rollback shorthand
+def db_commit():
+    try:
+        DB.session.commit()
+    except Exception as err:
+        DB.session.rollback()
+        msg = str(err)
+        print(msg)
+
 if __name__ == '__main__':
     import sys
     from flask import Flask
@@ -351,14 +441,6 @@ if __name__ == '__main__':
     APP.config.from_pyfile('config_main.py')
     APP.config.from_pyfile('../instance/config_site.py')
 
-    # commit or rollback shorthand
-    def db_commit():
-        try:
-            DB.session.commit()
-        except Exception as err:
-            DB.session.rollback()
-            msg = str(err)
-            print(msg)
 
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
@@ -388,12 +470,36 @@ if __name__ == '__main__':
             print('Dropping database objects')
             DB.drop_all()
             db_commit()
+        elif sys.argv[1] == 'load':
+            print('Load database from JSON file (e.g. tests/fixtures.json)')
+            if len(sys.argv) > 2:
+                file_path = sys.argv[2]
+                yesno = 'n'
+                if len(sys.argv) == 3:
+                    print('WARNING: all DB data will be lost! Proceed?')
+                    yesno = raw_input(
+                        'Enter y (proceed) or n (abort): ').strip()
+                elif len(sys.argv) == 4:
+                    yesno = sys.argv[3]
+                else:
+                    sys.exit(0)
+                    
+                if yesno == 'y':
+                    print('Loading data....')
+                    load_data(file_path)
+                    print('Data loaded')
+                else:
+                    print('Aborted')
+            else:
+                print('Provide path to JSON file, e.g. tests/fixtures.json')
+
         elif sys.argv[1] == 'run':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
             from healthcheck import run_test_resource
             for resource in Resource.query.all():  # run all tests
-                print('Testing %s %s' % (resource.resource_type, resource.url))
+                print('Testing %s %s' %
+                      (resource.resource_type, resource.url))
 
                 # Get the status of the last run,
                 # assume success if there is none

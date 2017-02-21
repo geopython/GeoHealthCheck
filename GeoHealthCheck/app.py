@@ -67,6 +67,15 @@ LANGUAGES = (
 )
 
 
+# commit or rollback shorthand
+def db_commit():
+    err = None
+    try:
+        DB.session.commit()
+    except Exception as err:
+        DB.session.rollback()
+    return err
+
 @APP.before_request
 def before_request():
     g.user = current_user
@@ -476,7 +485,7 @@ def add():
                                tags=tag_list)
     
     # Always add a default Probe & Check
-    probe_to_add = Probe(resource_to_add, 'GeoHealthCheck.plugins.ping.HttpPing')
+    probe_to_add = Probe(resource_to_add, 'GeoHealthCheck.plugins.probe.http.HttpGet')
     check_to_add = Check(probe_to_add, 'GeoHealthCheck.plugins.check.checkers.HttpStatusNoError')
 
     run_data = run_test_resource(resource_to_add)
@@ -527,10 +536,13 @@ def update(resource_identifier):
             setattr(resource, key, resource_identifier_dict[key])
             update_counter += 1
 
+    status = 'success'
     if update_counter > 0:
-        DB.session.commit()
+        err = db_commit()
+        if err:
+            status = str(err)
 
-    return jsonify({'status': 'success'})
+    return jsonify({'status': status})
 
 
 @APP.route('/resource/<int:resource_identifier>/test', methods=['GET', 'POST'])
@@ -567,8 +579,10 @@ def edit_resource(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
+    probes = views.probes_for_resource_type(resource.resource_type)
+
     return render_template('edit_resource.html', lang=g.current_lang,
-                           resource=resource)
+                           resource=resource, probes=probes)
 
 
 @APP.route('/resource/<int:resource_identifier>/delete')

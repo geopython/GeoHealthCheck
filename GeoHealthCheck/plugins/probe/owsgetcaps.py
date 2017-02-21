@@ -5,7 +5,7 @@ class OwsGetCaps(ProbeRunner):
     """Abstract Base Class for OWS GetCapabilities Probes"""
 
     NAME = 'OWS GetCapabilities'
-    DESCRIPTION = 'fetch capabilities'
+    DESCRIPTION = 'Fetch capabilities doc'
     RESOURCE_TYPE = 'OGC:*'
 
     REQUEST_METHOD = 'GET'
@@ -28,6 +28,39 @@ class OwsGetCaps(ProbeRunner):
         Default: None
         """
         pass
+
+    # TODO Checks for ProbeRunner as Decorators
+
+    # @Check(checker='GeoHealthCheck.plugins.check.checkers.XmlParse', optional=False)
+    # def http_error_status(self):
+    #     """
+    #     response is parsable.
+    #     Optional: False
+    #     """
+    #     pass
+
+    # @Check(checker='GeoHealthCheck.plugins.check.checkers.NotContainsOwsException', optional=False)
+    # def no_ows_exception(self):
+    #     """
+    #     response does not contain OWS Exception.
+    #     Optional: False
+    #     """
+    #     pass
+
+    #  @Check(checker='GeoHealthCheck.plugins.check.checkers.ContainsStrings', optional=False,
+    #         parameters=[
+    #                 {
+    #                     'name': 'strings',
+    #                     'value': ['Title>']
+    #                 }
+    #             ])
+    #  def capabilities_title(self):
+    #      """
+    #   find title element in capabilities response doc.
+    #   Optional: False
+    #   """
+    #
+    # pass
 
     RESPONSE_CHECKS = [
         {

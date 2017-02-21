@@ -11,7 +11,7 @@ class ProbeRunner(Plugin):
     """
 
     # Generic attributes, subclassses override
-    RESOURCE_TYPE = '*'
+    RESOURCE_TYPE = '*:*'
 
     # Request attributes, defaults, subclassses override
     REQUEST_METHOD = 'GET'
@@ -91,6 +91,7 @@ class ProbeRunner(Plugin):
                                           headers=self.REQUEST_HEADERS)
 
         self.log('response: status=%d' % (self.response.status_code))
+
         if self.response.status_code /100 in [4,5]:
             self.log('Errro response: %s' % (str(self.response.text)))
 
@@ -121,6 +122,7 @@ class ProbeRunner(Plugin):
 
             self.result.add_result(self.create_check_result(
                 check, check.parameters, result[0], result[1]))
+
      # Lifecycle
     def calc_result(self):
         """ Calculate overall result from the Result object"""

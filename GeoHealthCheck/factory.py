@@ -58,7 +58,7 @@ class Factory:
         try:
             module_obj = __import__(module_string, globals(), locals(), fromlist=[''])
         except Exception, e:
-            print("cannot create module from '%s'" % module_string)
+            # print("cannot create module from '%s'" % module_string)
             raise e
 
         return module_obj
@@ -67,3 +67,36 @@ class Factory:
     def create_function(function_string):
         # Creating a global function instance is the same as a class instance
         return Factory.create_class(function_string)
+
+    @staticmethod
+    def get_class_vars(clazz):
+
+        """
+        Class method to get all class variables of a class
+        as a dict
+        """
+        import inspect
+        
+        if type(clazz) is str:
+            clazz = Factory.create_class(clazz)
+
+        members = inspect.getmembers(clazz)
+        # return members
+        vars = dict()
+        for member in members:
+            key, value = member
+            if not key.startswith('__') \
+                and not inspect.isclass(value) \
+                and not inspect.isfunction(value) \
+                and not inspect.isbuiltin(value) \
+                and not inspect.ismethod(value):
+
+                vars[key] = value
+
+        return vars
+
+        # return {
+        #     key:value for key,
+        #         value in clazz.__dict__.items()
+        #         if not key.startswith('__') and not callable(key)
+        #         }

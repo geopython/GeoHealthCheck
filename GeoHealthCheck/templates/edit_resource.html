@@ -4,7 +4,7 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">[{{ _('Edit') }}] <span id="resource_title_h1">{{ resource.title }}</span></h1>
 
-    <div class="table-responsive col-md-4">
+    <div class="table-responsive col-md-4" style="width: 100%;">
         <table class="table">
             <tr>
                 <th>{{ _('Type') }}</th>
@@ -19,7 +19,7 @@
                     {{ _('Name') }}
                 </th>
                 <td>
-                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}"/>
+                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" style="width: 100%;"/>
                 </td>
             </tr>
             <tr>
@@ -28,25 +28,58 @@
             </tr>
             <tr>
                 <th>Tags</th>
-                <td><input id="resource_tags" type="text" value="{{ resource.tags2csv }}" data-role="tagsinput"/></td>
+                <td>
+                    <select id="resource_tags" multiple="multiple" style="width: 100%;">
+                    {% for tag in resource.tags %}
+                        <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
+                    {% endfor %}
+                    </select>
+                </td>
             </tr>
             <tr>
                 <th>Probes</th>
 
                 <td>
-                    {% for probe in resource.probes %}
-                    {{ probe.name }}  <br/>
-                    {% endfor %}
+                    <table class="table">
+                        {% for probe in resource.probes %}
+                        <tr>
+
+                        <td id="{{ probe.proberunner }}" title="{{ probes[probe.proberunner].DESCRIPTION }}">{{ probe.name }}  </td>
+                            <td>
+                                <button id="infoprobe" type="button" title="{{ probes[probe.proberunner].DESCRIPTION }}"
+                                                    class="btn btn-success btn-xs">{{ _('Info') }}</button>
+                         <button id="editprobe" type="button" class="btn btn-primary btn-xs">{{ _('Edit') }}</button>
+                         <button id="delprobe" type="button" class="btn btn-danger btn-xs">{{ _('Delete') }}</button>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+
+            </tr>
+            <tr>
+                <th>Probes<br/>Available</th>
+
+                <td>
+                    <p>
+                        <span><button id="info_sug_probe" type="button" class="btn btn-success btn-xs">{{ _('Info') }}</button></span>
+                        <span><button id="add_sug_probe" type="button" class="btn btn-primary btn-xs">{{ _('Add') }}</button></span>
+                    </p>
+                    <select id="resource_probes" style="width: 100%;">
+                        {% for clazz in probes %}
+                         <option value="{{ clazz }}" selected="selected">{{ probes[clazz].NAME }} - {{ clazz }}</option>
+                     {% endfor %}
+                     </select>
+
                 </td>
 
             </tr>
             {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
             <tr>
-                <th>{{ _('Test') }}</th>
+                <th>{{ _('Status') }}</th>
 
                 <td>
-                    <button id="test" type="button" class="btn btn-primary btn-sm">{{ _('Test') }}</button>
-                    &nbsp;&nbsp;<span id="test_result"></span>
+                    
+                    <span id="status">OK</span>
                 </td>
 
             </tr>
@@ -55,6 +88,7 @@
 
                 <td>
                     <button id="save" type="button" class="btn btn-primary btn-sm">{{ _('Save') }}</button>
+                    &nbsp;&nbsp;&nbsp;<button id="test" type="button" class="btn btn-primary btn-sm">{{ _('Test') }}</button>
                     &nbsp;&nbsp;&nbsp;<a href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}"><button id="title_cancel" type="button" class="btn btn-primary btn-sm">{{ _('Cancel') }}</button></a>
                     &nbsp;&nbsp;&nbsp;<a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
                 </td>
@@ -71,10 +105,16 @@
 {% endblock %}
 {% block extrafoot %}
 <script type="text/javascript">
+    var all_tags = {{ tags.keys()|tojson }};
+    $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
+
+//    var all_probes = {{ probes }};
+//    $('#resource_probes').select2({data: all_probes, tags: false, disabled: false});
+
     {% if g.user.is_authenticated() %}
         
     $('#test').click(function() {
-         $('#test_result').text("{{ _('Test') }}...");
+         $('#status').text("{{ _('Test') }}...");
          $.ajax({
              type: "POST",
              url: "{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}",
@@ -82,11 +122,11 @@
              contentType: "application/json; charset=utf-8",
              dataType: "json",
              success: function(data){
-                 $('#test_result').text(data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
+                 $('#status').text("{{ _('Test') }}: " + data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
                  $('#test').blur();
              },
              error: function(errMsg) {
-                 $('#test_result').text(data.message);
+                 $('#status').text("{{ _('Test') }}: " + data.message);
                  $('#test').blur();
              }
          });
@@ -98,20 +138,24 @@
 
         // Need to fix dupkey error for tags submit
         var new_tags = $('#resource_tags').val();
+        // var new_probes = $('#resource_tags').val();
+        $('#status').text("{{ _('Save') }}...");
         $.ajax({
             type: "POST",
             url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
             data: JSON.stringify({
-                title: new_title
+                title: new_title,
+                tags: new_tags
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data){
                 $('#resource_title_h1').html(new_title);
+                $('#status').text("{{ _('Save') }}: " + data.status);
                 $('#save').blur();
             },
             error: function(data, msg, details) {
-                alert(msg);
+                $('#status').text("{{ _('ERROR') }} " + msg + ": " + details);
                 $('#save').blur();
             }
         });
