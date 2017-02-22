@@ -6,7 +6,6 @@ class TmsCaps(ProbeRunner):
     """ProbeRunner for TMS main endpoint url"""
 
     NAME = 'TMS Capabilities'
-    DESCRIPTION = 'fetch TMS main URL and check for keywords'
     RESOURCE_TYPE = 'OSGeo:TMS'
 
     REQUEST_METHOD = 'GET'
@@ -33,13 +32,13 @@ class TmsCaps(ProbeRunner):
 
 
 class TmsGetTile(ProbeRunner):
-    """ProbeRunner for TMS main GetTile operation"""
+    """Fetch TMS tile and check result"""
 
     NAME = 'TMS GetTile'
-    DESCRIPTION = 'fetch TMS tile and check result'
     RESOURCE_TYPE = 'OSGeo:TMS'
 
     REQUEST_METHOD = 'GET'
+
     # e.g. http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/1/0/0.png
     REQUEST_TEMPLATE = '/{layer}/{zoom}/{x}/{y}.{extension}'
 
@@ -47,8 +46,6 @@ class TmsGetTile(ProbeRunner):
     def layer(self):
         """
         The TMS Layer service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
@@ -56,8 +53,6 @@ class TmsGetTile(ProbeRunner):
     def zoom(self):
         """
         The tile pyramid zoomlevel.
-        Required: True
-        Default: None
         """
         pass
 
@@ -65,8 +60,6 @@ class TmsGetTile(ProbeRunner):
     def x(self):
         """
         The tile x offset.
-        Required: True
-        Default: None
         """
         pass
 
@@ -74,8 +67,6 @@ class TmsGetTile(ProbeRunner):
     def y(self):
         """
         The tile y offset.
-        Required: True
-        Default: None
         """
         pass
 
@@ -83,8 +74,6 @@ class TmsGetTile(ProbeRunner):
     def extension(self):
         """
         The tile image extension.
-        Required: True
-        Default: None
         """
         pass
 

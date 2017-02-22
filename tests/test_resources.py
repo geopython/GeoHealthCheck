@@ -37,8 +37,54 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 # Needed to find classes and plugins
 sys.path.append('%s/..' % TEST_DIR)
 
-# Shorthand to run all test scripts in tests dir.
-# TODO use nose or more intelligent test_*.py discovery
+from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check, load_data
+from GeoHealthCheck.healthcheck import run_test_resource
+
+
+class GeoHealthCheckTest(unittest.TestCase):
+
+    def setUp(self):
+        self.db = DB
+        # do once per test
+        load_data('%s/data/fixtures.json' % TEST_DIR)
+
+    def tearDown(self):
+        self.db = DB
+        # Needed for Postgres, otherwise hangs by aggressive locking
+        self.db.session.close()
+        self.db.drop_all()
+        self.db.session.commit()
+        self.db.session.close()
+
+    def testResourcesPresent(self):
+        resources = Resource.query.all()
+
+        self.assertEqual(len(resources), 7)
+
+
+    def testRunResoures(self):
+        # Do the whole healthcheck for all Resources for now
+        resources = Resource.query.all()
+        for resource in resources:
+            result = run_test_resource(resource)
+
+            run = Run(resource, result[1], result[2],
+                      result[3], result[4])
+
+            print('Adding Run: success=%s, response_time=%ss\n'
+                  % (str(run.success), run.response_time))
+            self.db.session.add(run)
+            self.db.session.commit()
+
+        self.db.session.close()
+
+        # Verify
+        resources = Resource.query.all()
+        for resource in resources:
+            # Each Resource should have one Run
+            self.assertEquals(resource.runs.count(), 1)
+            self.assertEquals(resource.runs[0].success, True)
+
+
 if __name__ == '__main__':
-    unittest.main(module='test_plugins', exit=False)
-    unittest.main(module='test_resources')
+    unittest.main()

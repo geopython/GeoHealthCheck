@@ -4,12 +4,10 @@ from GeoHealthCheck.plugin import Parameter
 class HttpGet(ProbeRunner):
     """
     Do HTTP GET Request, to poll/ping any Resource bare url.
-    for non-OGC Resources like WWW:LINK this can be a default Probe
     """
 
     NAME = 'HTTP GET Resource'
     RESOURCE_TYPE = '*:*'
-    DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET'
 
     REQUEST_METHOD = 'GET'
 
@@ -53,8 +51,6 @@ class HttpGetQuery(HttpGet):
     def query(self):
         """
         The query string to add to request (without ?).
-        Required: True
-        Default: None
         """
         pass
 
@@ -65,15 +61,32 @@ class HttpPost(HttpGet):
 
     NAME = 'HTTP POST Resource with body'
     DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET with query string'
-    REQUEST_METHOD = 'POST'
 
-    REQUEST_TEMPLATE = '{post_body}'
+    REQUEST_METHOD = 'POST'
+    REQUEST_HEADERS = { 'content-type': '{content_type}' }
+    REQUEST_TEMPLATE = '{body}'
 
     @Parameter(ptype=str, default=None, required=True)
-    def post_body(self):
+    def body(self):
         """
         The post body to send.
-        Required: True
-        Default: None
         """
         pass
+
+    @Parameter(ptype=str, required=True, default='text/xml;charset=UTF-8')
+    def content_type(self):
+        """
+        The post content type to send.
+        """
+        pass
+
+    def get_request_headers(self):
+        """
+        Overridden from ProbeRunner: construct request_headers via parameter substitution
+        from content_type Parameter.
+        """
+
+        content_type = { 'post_content_type': self.content_type }
+        request_headers = self.REQUEST_HEADERS.format(**content_type)
+
+        return request_headers

@@ -5,7 +5,8 @@
 # Author: Just van den Broecke
 #
 import os
-
+import inspect
+from factory import Factory
 
 class Parameter(object):
     """
@@ -38,11 +39,30 @@ class Parameter(object):
         """
         # Save the property name (is the name of the function calling us).
         self.parm_name = fget.__name__
+        
         # print "Inside __call__() name=%s" % self.parm_name
+        # parent_class = fget.im_class
+        members = inspect.getmembers(fget)
 
         # For Sphinx documention build we need the original function with docstring.
         if bool(os.getenv('SPHINX_BUILD')):
-            fget.__doc__ = '``CONFIG`` - %s' % fget.__doc__
+            if not fget.__doc__ or fget.__doc__ == '':
+                fget.__doc__ = 'no documentation, please provide...'
+                return fget
+
+            # Build Parameter Sphinx documentation
+            doc = fget.__doc__.strip()
+            doc = '``Parameter`` - %s\n\n' % doc
+            doc += '* type: %s\n' % self.ptype
+
+            if self.value:
+                doc += '* value: %s\n' % self.value
+            else:
+                doc += '* required: %s\n' % self.required
+                doc += '* default: %s\n' % self.default
+                doc += '* value_range: %s\n' % self.value_range
+
+            fget.__doc__ = doc
             return fget
         else:
             return self
@@ -73,13 +93,12 @@ class Parameter(object):
 class Plugin(object):
     """
     Abstract Base class for all GHC Plugins.
-
+    Place your description in class doc here.
     """
 
     # Generic attributes, subclassses override
     AUTHOR = 'GHC Team'
-    NAME = 'Fill in Name'
-    DESCRIPTION = 'Fill in Description'
+    NAME = 'Fill in Name in NAME class var'
 
     def __init__(self):
         # The actual typed values as populated within Parameter Decorator
@@ -90,7 +109,9 @@ class Plugin(object):
     def get_plugins(baseclass='GeoHealthCheck.plugin.Plugin', filters=None):
         """
         Class method to get list of Plugins of particular baseclass,
-        default is all Plugins
+        default is all Plugins. filters is a list of tuples to filter out
+        Plugins with class var values: (class var, value),
+        e.g. `filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')]`.
         """
         from GeoHealthCheck.init import APP
         from factory import Factory

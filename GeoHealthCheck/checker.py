@@ -14,9 +14,17 @@ class Checker(Plugin):
 
     # Lifecycle
     def init(self, probe_runner, parameters):
+        """
+        Initialize Checker with parent ProbeRunner and parameters dict.
+        :return:
+        """
         self.prober = probe_runner
         self.parms = parameters
 
     # Lifecycle
     def perform(self):
+        """
+        Perform the Checker's specific check.
+        :return:
+        """
         return True, 'OK'

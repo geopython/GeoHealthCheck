@@ -2,8 +2,11 @@ from GeoHealthCheck.proberunner import ProbeRunner
 from GeoHealthCheck.plugin import Parameter
 
 class WfsGetFeatureBbox(ProbeRunner):
+    """
+    do WFS GetFeature in BBOX
+    """
+
     NAME = 'WFS GetFeature in BBOX'
-    DESCRIPTION = 'do WFS GetFeature in BBOX'
     RESOURCE_TYPE = 'OGC:WFS'
 
     REQUEST_METHOD = 'POST'
@@ -36,8 +39,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     def type_name(self):
         """
         The TMS Layer service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
@@ -45,8 +46,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     def type_ns_prefix(self):
         """
         The typename namespace prefix.
-        Required: True
-        Default: None
         """
         pass
 
@@ -54,8 +53,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     def type_ns_uri(self):
         """
         The typename namespace URI.
-        Required: True
-        Default: None
         """
         pass
 
@@ -63,8 +60,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     def geom_property_name(self):
         """
         The geometry property of the feature type.
-        Required: True
-        Default: None
         """
         pass
 
@@ -81,8 +76,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     def bbox(self):
         """
         The bounding box as lower_X, lower_Y, upper_X, uppoer_Y in SRS scheme.
-        Required: True
-        Default: None
         """
         pass
 

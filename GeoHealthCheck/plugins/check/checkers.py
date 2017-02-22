@@ -34,8 +34,6 @@ class HttpHasHeaderValue(Checker):
     def header_name(self):
         """
         The HTTP header name.
-        Required: True
-        Default: None
         """
         pass
 
@@ -43,8 +41,6 @@ class HttpHasHeaderValue(Checker):
     def header_value(self):
         """
         The HTTP header value.
-        Required: True
-        Default: None
         """
         pass
 
@@ -65,14 +61,15 @@ class HttpHasHeaderValue(Checker):
 
 
 class HttpHasContentType(HttpHasHeaderValue):
+    """
+    Checks if HTTP response has content type.
+    """
 
     @Parameter(ptype=str, default=None, required=True, value='content-type')
     def header_name(self):
         """
         The HTTP header name.
-        Required: True
-        Default: None
-        """
+       """
         pass
 
     """Check if HTTP response has given ContentType header value"""
@@ -81,6 +78,10 @@ class HttpHasContentType(HttpHasHeaderValue):
 
 
 class XmlParse(Checker):
+    """
+    Checks if HTTP response is valid XML.
+    """
+
     def perform(self):
         result = True
         msg = 'OK'
@@ -94,13 +95,14 @@ class XmlParse(Checker):
 
 
 class ContainsStrings(Checker):
+    """
+    Checks if HTTP response contains given strings (keywords).
+    """
 
     @Parameter(ptype=list, default=None, required=True)
     def strings(self):
         """
         The string text(s) that should be contained in response.
-        Required: True
-        Default: None
         """
         pass
 
@@ -122,6 +124,10 @@ class ContainsStrings(Checker):
 
 
 class NotContainsStrings(ContainsStrings):
+    """
+    Checks if HTTP response NOT contains given strings (keywords).
+    """
+
     def perform(self):
         result, msg = ContainsStrings.perform(self)
         if result is False and 'not in response text' in msg:
@@ -135,12 +141,13 @@ class NotContainsStrings(ContainsStrings):
 
 
 class NotContainsOwsException(NotContainsStrings):
+    """
+    Checks if HTTP response NOT contains given OWS Exceptions.
+    """
 
     @Parameter(ptype=list, default=None, required=True, value=['ExceptionReport>', 'ServiceException>'])
     def strings(self):
         """
         The string text(s).
-        Required: True
-        Default: None
         """
         pass

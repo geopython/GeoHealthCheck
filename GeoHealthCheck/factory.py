@@ -88,10 +88,13 @@ class Factory:
             if not key.startswith('__') \
                 and not inspect.isclass(value) \
                 and not inspect.isfunction(value) \
-                and not inspect.isbuiltin(value) \
+                and not inspect.isbuiltin(value)\
                 and not inspect.ismethod(value):
 
                 vars[key] = value
+
+            if key == '__doc__':
+                vars['DESCRIPTION'] = value
 
         return vars
 
@@ -100,3 +103,19 @@ class Factory:
         #         value in clazz.__dict__.items()
         #         if not key.startswith('__') and not callable(key)
         #         }
+
+    @staticmethod
+    def get_class_for_method(method):
+        method_name = method.__name__
+        # if method.__self__:
+        #     classes = [method.__self__.__class__]
+        # else:
+        #unbound method
+        classes = [method.im_class]
+        while classes:
+            c = classes.pop()
+            if method_name in c.__dict__:
+                return c
+            else:
+                classes = list(c.__bases__) + classes
+        return None

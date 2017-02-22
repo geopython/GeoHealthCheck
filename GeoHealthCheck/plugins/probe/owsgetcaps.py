@@ -2,10 +2,9 @@ from GeoHealthCheck.proberunner import ProbeRunner
 from GeoHealthCheck.plugin import Parameter
 
 class OwsGetCaps(ProbeRunner):
-    """Abstract Base Class for OWS GetCapabilities Probes"""
+    """Fetch OWS capabilities doc"""
 
     NAME = 'OWS GetCapabilities'
-    DESCRIPTION = 'Fetch capabilities doc'
     RESOURCE_TYPE = 'OGC:*'
 
     REQUEST_METHOD = 'GET'
@@ -15,8 +14,6 @@ class OwsGetCaps(ProbeRunner):
     def service(self):
         """
         The OWS service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
@@ -24,8 +21,6 @@ class OwsGetCaps(ProbeRunner):
     def version(self):
         """
         The OWS service version within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
@@ -88,7 +83,7 @@ class OwsGetCaps(ProbeRunner):
 
 
 class WmsGetCaps(OwsGetCaps):
-    """WMS GetCapabilities ProbeRunner"""
+    """Fetch WMS capabilities doc"""
     
     NAME = 'WMS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WMS'
@@ -97,17 +92,13 @@ class WmsGetCaps(OwsGetCaps):
     def service(self):
         """
         The OWS service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, value_range=['1.1.1', '1.3.0'])
+    @Parameter(ptype=str, default='1.1.1', required=True, value_range=['1.1.1', '1.3.0'])
     def version(self):
         """
         The OWS service version within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
@@ -122,19 +113,16 @@ class WfsGetCaps(OwsGetCaps):
     def service(self):
         """
         The OWS service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, value_range=['1.0.0', '1.1.0', '2.0.2'])
+    @Parameter(ptype=str, default='1.1.0', required=True, value_range=['1.0.0', '1.1.0', '2.0.2'])
     def version(self):
         """
         The OWS service version within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
+
 
 class WcsGetCaps(OwsGetCaps):
     """WCS GetCapabilities ProbeRunner"""
@@ -146,19 +134,16 @@ class WcsGetCaps(OwsGetCaps):
     def service(self):
         """
         The OWS service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, value_range=['1.1.0', '1.1.1', '2.0.1'])
+    @Parameter(ptype=str, default='1.1.0', required=True, value_range=['1.1.0', '1.1.1', '2.0.1'])
     def version(self):
         """
         The OWS service version within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
+
 
 class CswGetCaps(OwsGetCaps):
     """CSW GetCapabilities ProbeRunner"""
@@ -170,19 +155,16 @@ class CswGetCaps(OwsGetCaps):
     def service(self):
         """
         The OWS service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, value_range=['2.0.2'])
+    @Parameter(ptype=str, default='2.0.2', required=True, value_range=['2.0.2'])
     def version(self):
         """
         The OWS service version within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
+
 
 class WmtsGetCaps(OwsGetCaps):
     """WMTS GetCapabilities ProbeRunner"""
@@ -195,19 +177,37 @@ class WmtsGetCaps(OwsGetCaps):
     def service(self):
         """
         The OWS service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, value_range=['1.0.0'])
+    @Parameter(ptype=str, default='1.0.0', required=True, value_range=['1.0.0'])
     def version(self):
         """
         The OWS service version within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
+
+
+class WpsGetCaps(OwsGetCaps):
+    """WPS GetCapabilities ProbeRunner"""
+
+    NAME = 'WPS GetCapabilities'
+    RESOURCE_TYPE = 'OGC:WPS'
+
+    @Parameter(ptype=str, value='WPS')
+    def service(self):
+        """
+        The OWS service within resource endpoint.
+        """
+        pass
+
+    @Parameter(ptype=str, default='1.0.0', required=True, value_range=['1.0.0', '2.0.0'])
+    def version(self):
+        """
+        The OWS service version within resource endpoint.
+        """
+        pass
+
 
 class SosGetCaps(OwsGetCaps):
     """SOS GetCapabilities ProbeRunner"""
@@ -219,17 +219,13 @@ class SosGetCaps(OwsGetCaps):
     def service(self):
         """
         The OWS service within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 
-    @Parameter(ptype=str, default=None, required=True, value_range=['1.0.0'])
+    @Parameter(ptype=str, default='1.0.0', required=True, value_range=['1.0.0'])
     def version(self):
         """
         The OWS service version within resource endpoint.
-        Required: True
-        Default: None
         """
         pass
 

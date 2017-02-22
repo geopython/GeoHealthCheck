@@ -59,6 +59,9 @@ class ProbeRunner(Plugin):
 
         self.result.stop()
 
+    def get_request_headers(self):
+        return self.REQUEST_HEADERS
+
     def perform_request(self):
         """ Perform actual request to service"""
 
@@ -84,11 +87,11 @@ class ProbeRunner(Plugin):
                 url = "%s%s" % (url, request_string)
                 
             self.response = requests.get(url,
-                                         headers=self.REQUEST_HEADERS)
+                                         headers=self.get_request_headers())
         elif self.REQUEST_METHOD == 'POST':
             self.response = requests.post(url_base,
                                           data=request_string,
-                                          headers=self.REQUEST_HEADERS)
+                                          headers=self.get_request_headers())
 
         self.log('response: status=%d' % (self.response.status_code))
 
