@@ -9,6 +9,9 @@ import inspect
 from factory import Factory
 
 class Parameter(object):
+
+    REGISTRY = dict()
+
     """
     Decorator class to tie parameter values from the .ini file to object instance
     parameter values. Somewhat like the Python standard @property but with
@@ -39,11 +42,26 @@ class Parameter(object):
         """
         # Save the property name (is the name of the function calling us).
         self.parm_name = fget.__name__
-        
-        # print "Inside __call__() name=%s" % self.parm_name
-        # parent_class = fget.im_class
-        members = inspect.getmembers(fget)
 
+        # Tricky bit: we need to know the calling class to
+        # be able to get its Parameter data. Normally this is lost.
+        # So we register the Parameter data in a class var REGISTRY.
+        # http://stackoverflow.com/questions/29530443/how-to-get-the-caller-of-a-method-in-a-decorator-in-python
+        stack = inspect.stack()
+        caller_obj = stack[1][0]
+        # module = caller_obj.f_locals['__module__']
+        clazz = caller_obj.f_locals['__module__'] + '.' + stack[1][3]
+        if clazz not in Parameter.REGISTRY:
+            Parameter.REGISTRY[clazz] = dict()
+
+            Parameter.REGISTRY[clazz][self.parm_name] = {
+                'type':  str(self.ptype.__name__),
+                'default':  self.default,
+                'required':  self.required,
+                'value':  self.value,
+                'value_range':  self.value_range
+            }
+                    
         # For Sphinx documention build we need the original function with docstring.
         if bool(os.getenv('SPHINX_BUILD')):
             if not fget.__doc__ or fget.__doc__ == '':
@@ -155,6 +173,13 @@ class Plugin(object):
                     print('cannot create obj class=%s' % plugin_name)
 
         return result
+
+    def get_parameters(self):
+        qualname = self.__module__ + "." + self.__class__.__name__
+        if qualname not in Parameter.REGISTRY:
+            return dict()
+        
+        return Parameter.REGISTRY[qualname]
 
     def __str__(self):
         return "%s" % str(self.__class__)

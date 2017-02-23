@@ -78,8 +78,14 @@ class GeoHealthCheckTest(unittest.TestCase):
         plugins = Plugin.get_plugins('GeoHealthCheck.proberunner.ProbeRunner',
                 filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')])
         for plugin in plugins:
+            plugin_class = Factory.create_class(plugin)
+            self.assertIsNotNone(plugin_class)
+            
             plugin_obj = Factory.create_obj(plugin)
-            self.assertIsNotNone(plugin_obj)
+            self.assertIsNotNone(plugin_obj, 'Cannot create Plugin from string %s' + plugin)
+
+            parameters = plugin_obj.get_parameters()
+            self.assertTrue(type(parameters) is dict, 'Plugin Parameters not a dict')
 
             # Must have run_request method
             self.assertIsNotNone(plugin_obj.run_request)

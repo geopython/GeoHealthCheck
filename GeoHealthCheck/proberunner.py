@@ -15,8 +15,8 @@ class ProbeRunner(Plugin):
 
     # Request attributes, defaults, subclassses override
     REQUEST_METHOD = 'GET'
-    REQUEST_HEADERS = None
-    REQUEST_TEMPLATE = None
+    REQUEST_HEADERS = {}
+    REQUEST_TEMPLATE = ''
 
     # Possible response checks attributes, instance determines which
     # checks are selected and their parameters

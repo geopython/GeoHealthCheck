@@ -155,6 +155,10 @@ def probes_for_resource_type(resource_type):
     probes = dict()
     for probe_class in probe_classes:
         probes[probe_class] = Factory.get_class_vars(probe_class)
+        probe_parms = Factory.create_obj(probe_class).get_parameters()
+
+        probes[probe_class]['PARAMETERS'] = probe_parms
+
         # print('probes[%s] = %s' % (probe_class, str(probes[probe_class])))
 
     # import json

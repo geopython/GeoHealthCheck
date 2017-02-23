@@ -573,7 +573,7 @@ def test(resource_identifier):
 @APP.route('/resource/<int:resource_identifier>/edit')
 @login_required
 def edit_resource(resource_identifier):
-    """test a resource"""
+    """edit a resource"""
     resource = Resource.query.filter_by(identifier=resource_identifier).first()
     if resource is None:
         flash(gettext('Resource not found'), 'danger')
