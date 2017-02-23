@@ -44,12 +44,28 @@
                         {% for probe in resource.probes %}
                         <tr>
 
-                        <td id="{{ probe.proberunner }}" title="{{ probes[probe.proberunner].DESCRIPTION }}">{{ probe.name }}  </td>
-                            <td>
-                                <button id="infoprobe" type="button" title="{{ probes[probe.proberunner].DESCRIPTION }}"
+                        <td title="{{ probes[probe.proberunner].DESCRIPTION }}">
+                            <span id="{{ probe.proberunner }}-{{ probe.identifier }}" >
+                                <strong>{{ probes[probe.proberunner].NAME }} ({{ probe.identifier }})</strong>  - by  {{ probes[probe.proberunner].AUTHOR }}
+                            </span>
+                            <div id="probeinfo-{{ probe.identifier }}" style="display: none">
+                                {% for param in probe.parameters  %}
+                                {{ param }} = {{ probe.parameters[param] }} <br/>
+                                {% endfor %}
+                            </div>
+                            <!--<div id="probe-edit-{{ probe.identifier }}" >-->
+                                <!--{% for param in probe.parameters  %}-->
+                                <!--<input type="text" id="probe-edit-{{ probe.identifier }}-{{ param }}"  -->
+                                       <!--value="{{ probe.parameters[param] }}" style="width: 100%;"/>-->
+                                 <!--{% endfor %}-->
+                            <!--</div>-->
+                        </td>
+                        <td>
+                         <button id="{{ probe.identifier }}-probeinfo" type="button" title="{{ probes[probe.proberunner].DESCRIPTION }}"
                                                     class="btn btn-success btn-xs">{{ _('Info') }}</button>
-                         <button id="editprobe" type="button" class="btn btn-primary btn-xs">{{ _('Edit') }}</button>
-                         <button id="delprobe" type="button" class="btn btn-danger btn-xs">{{ _('Delete') }}</button>
+                         <button id="{{ probe.identifier }}-edit-show" type="button" class="btn btn-primary btn-xs">{{ _('Edit') }}</button>
+                         <button id="{{ probe.identifier }}-delete" type="button" class="btn btn-danger btn-xs">{{ _('Delete') }}</button>
+                         </td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -60,16 +76,21 @@
                 <th>Probes<br/>Available</th>
 
                 <td>
-                    <p>
-                        <span><button id="info_sug_probe" type="button" class="btn btn-success btn-xs">{{ _('Info') }}</button></span>
-                        <span><button id="add_sug_probe" type="button" class="btn btn-primary btn-xs">{{ _('Add') }}</button></span>
-                    </p>
-                    <select id="resource_probes" style="width: 100%;">
+                    <table class="table">
                         {% for clazz in probes %}
-                         <option value="{{ clazz }}" selected="selected">{{ probes[clazz].NAME }} - {{ clazz }} - {{ probes[clazz].PARAMETERS }}</option>
-                     {% endfor %}
-                     </select>
+                         <tr>
 
+                         <td id="{{ probes[clazz] }}" title="{{ probes[clazz].DESCRIPTION }}">
+                             <span><strong>{{ probes[clazz].NAME }} </strong>- by  {{ probes[clazz].AUTHOR }}</span>
+                         </td>
+                         <td>
+                          <button id="info{{ probes[clazz] }}" type="button" title="{{ probes[clazz].DESCRIPTION }}"
+                                                     class="btn btn-success btn-xs">{{ _('Info') }}</button>
+                          <button id="add{{ probes[clazz] }}" type="button" class="btn btn-primary btn-xs">{{ _('Add') }}</button>
+                          </td>
+                         </tr>
+                         {% endfor %}
+                     </table>
                 </td>
 
             </tr>
@@ -108,10 +129,7 @@
     var all_tags = {{ tags.keys()|tojson }};
     $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
     var probes_json = '{{ probes|tojson }}';
-    var suggested_probes = JSON.parse(probes_json);
-
-    //    var all_probes = {{ probes }};
-//    $('#resource_probes').select2({data: all_probes, tags: false, disabled: false});
+    // probes_available = JSON.parse(probes_json);
 
     {% if g.user.is_authenticated() %}
         

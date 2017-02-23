@@ -6,7 +6,7 @@ class HttpGet(ProbeRunner):
     Do HTTP GET Request, to poll/ping any Resource bare url.
     """
 
-    NAME = 'HTTP GET Resource'
+    NAME = 'HTTP GET Resource URL'
     RESOURCE_TYPE = '*:*'
 
     REQUEST_METHOD = 'GET'
@@ -43,7 +43,7 @@ class HttpGetQuery(HttpGet):
     Do HTTP GET Request, to poll/ping any Resource bare url with query string.
     """
 
-    NAME = 'HTTP GET Resource with query'
+    NAME = 'HTTP GET Resource URL with query'
     DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET with query string'
     REQUEST_TEMPLATE = '?{query}'
 
@@ -59,7 +59,7 @@ class HttpPost(HttpGet):
     Do HTTP POST Request, to send POST request to Resource bare url with POST body.
     """
 
-    NAME = 'HTTP POST Resource with body'
+    NAME = 'HTTP POST Resource URL with body'
     DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET with query string'
 
     REQUEST_METHOD = 'POST'
