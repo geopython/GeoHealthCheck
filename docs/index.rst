@@ -130,7 +130,7 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)
 - **GHC_WWW_LINK_EXCEPTION_CHECK**: turn on checking for OGC Exceptions in ``WWW:LINK`` Resource responses (default ``False``)
 - **GHC_ADMIN_EMAIL**: email address of administrator / contact- notification emails will come from this address
-- **GHC_NOTIFICATIONS_EMAIL**: email address that notifications should come to. Use a different address to **GHC_ADMIN_EMAIL** if you have trouble receiving notification emails
+- **GHC_NOTIFICATIONS_EMAIL**: list of email addresses that notifications should come to. Use a different address to **GHC_ADMIN_EMAIL** if you have trouble receiving notification emails
 - **GHC_SITE_TITLE**: title used for installation / deployment
 - **GHC_SITE_URL**: url of the installation / deployment
 - **GHC_SMTP**:  configure SMTP settings if **GHC_NOTIFICATIONS** is enabled
