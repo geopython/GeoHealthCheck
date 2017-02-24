@@ -43,7 +43,7 @@ GHC_NOTIFICATIONS = False
 GHC_NOTIFICATIONS_VERBOSITY = True
 GHC_WWW_LINK_EXCEPTION_CHECK = False
 GHC_ADMIN_EMAIL = 'you@example.com'
-GHC_NOTIFICATIONS_EMAIL = 'you2@example.com'
+GHC_NOTIFICATIONS_EMAIL = ['you2@example.com']
 GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
 GHC_SITE_URL = 'http://host'
 
