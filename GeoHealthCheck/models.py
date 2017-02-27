@@ -83,9 +83,9 @@ class ProbeVars(DB.Model):
 
     # JSON string object specifying actual parameters for the Probe
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
-    _parameters = DB.Column("parameters", DB.Text, default='{}')
+    _parameters = DB.Column("parameters", DB.Text, default={})
 
-    def __init__(self, resource, probe_class, parameters='{}'):
+    def __init__(self, resource, probe_class, parameters={}):
         self.resource = resource
         self.probe_class = probe_class
         self.parameters = parameters
@@ -125,9 +125,9 @@ class CheckVars(DB.Model):
 
     # JSON string object specifying actual parameters for the Check
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
-    _parameters = DB.Column("parameters", DB.Text, default='{}')
+    _parameters = DB.Column("parameters", DB.Text, default={})
 
-    def __init__(self, probe_vars, check_class, parameters='{}'):
+    def __init__(self, probe_vars, check_class, parameters={}):
         self.probe_vars = probe_vars
         self.check_class = check_class
         self.parameters = parameters

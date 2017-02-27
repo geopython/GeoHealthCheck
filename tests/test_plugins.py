@@ -85,10 +85,10 @@ class GeoHealthCheckTest(unittest.TestCase):
             plugin_obj = Factory.create_obj(plugin)
             self.assertIsNotNone(plugin_obj, 'Cannot create Plugin from string %s' + plugin)
 
-            parameters = plugin_obj.get_parameters()
+            parameters = plugin_obj.PARAM_DEFS
             self.assertTrue(type(parameters) is dict, 'Plugin Parameters not a dict')
 
-            checks = plugin_obj.get_checks()
+            checks = plugin_obj.CHECKS_AVAIL
             self.assertTrue(type(checks) is dict, 'Plugin checks not a dict')
 
             # Must have run_request method
@@ -98,15 +98,32 @@ class GeoHealthCheckTest(unittest.TestCase):
             class_vars = Factory.get_class_vars(plugin)
             self.assertIn(class_vars['RESOURCE_TYPE'], ['OGC:WMS', 'OGC:*'])
 
-    def testPluginDecorators(self):
+    def testPluginParamDefs(self):
         plugin_obj = Factory.create_obj('GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps')
         self.assertIsNotNone(plugin_obj)
 
-        checks = plugin_obj.get_checks()
+        checks = plugin_obj.CHECKS_AVAIL
         self.assertEquals(len(checks), 3, 'WmsGetCaps should have 3 Checks')
 
-        parameters = plugin_obj.get_parameters()
+        parameters = plugin_obj.PARAM_DEFS
         self.assertEquals(len(parameters), 2, 'WmsGetCaps should have 2 Parameters')
+
+    def testPluginChecks(self):
+        plugin_obj = Factory.create_obj('GeoHealthCheck.plugins.check.checks.NotContainsStrings')
+        self.assertIsNotNone(plugin_obj)
+
+        parameters = plugin_obj.PARAM_DEFS
+        self.assertEquals(len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
+        self.assertEquals(parameters['strings']['type'], 'stringlist',
+                          'PARAM_DEFS.strings[type] should be stringlist')
+
+        plugin_obj = Factory.create_obj('GeoHealthCheck.plugins.check.checks.NotContainsOwsException')
+        self.assertIsNotNone(plugin_obj)
+
+        parameters = plugin_obj.PARAM_DEFS
+        self.assertEquals(len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
+        self.assertEquals(parameters['strings']['value'][0], 'ExceptionReport>',
+                          'PARAM_DEFS.strings[0] should be ExceptionReport>')
 
     def testProbeViews(self):
         probes = get_probes('OGC:WMS')

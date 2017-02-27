@@ -1,7 +1,6 @@
 import sys
 import requests
 from plugin import Plugin
-from plugindecor import PluginDecorator
 
 from factory import Factory
 from result import ProbeResult, CheckResult
@@ -15,52 +14,66 @@ class Probe(Plugin):
 
     # Generic attributes, subclassses override
     RESOURCE_TYPE = '*:*'
+    """
+    Type of GHC Resource e.g. 'OGC:WMS'
+    """
 
     # Request attributes, defaults, subclassses override
     REQUEST_METHOD = 'GET'
+    """
+    HTTP request method capitalized, GET (default) or POST
+    """
+
     REQUEST_HEADERS = {}
+    """
+    `dict` of optional requests headers.
+    """
+
     REQUEST_TEMPLATE = ''
+    """
+    Template in standard Python `str.format(*args)`. The variables
+    like {service} and {version} within a template are filled from 
+    actual values for parameters defined in PARAM_DEFS and substituted
+    from values or constant values specified by user in GUI and stored
+    in DB.
+    """
+
+    # Parameter definitions and possible Checks,
+    # subclassses override
+
+    PARAM_DEFS = {}
+    """
+    Parameter definitions mostly for `REQUEST_TEMPLATE` but potential other
+    uses in specific Probe implementations. Format is `dict` where each key 
+    is a parameter name and
+    the value a `dict` of: `type`, `description`, `required`, `default`,
+    `range` (value range) and optional `value` item. If `value` specified,
+    this value becomes fixed (non-editable) unless overridden in subclass.
+    """
+
+    CHECKS_AVAIL = {}
+    """
+    Available Check (classes) for this Probe in `dict` format.
+    Key is a Check class (string), values are optional (default `{}`).
+    In the (constant) value 'parameters' and other attributes for Check.PARAM_DEFS
+    can be specified.
+    """
 
     def __init__(self):
-        # The actual typed values as populated within Parameter Decorator
         Plugin.__init__(self)
-        self._use_checks = dict()
-
-    # Possible response checks attributes, instance determines which
-    # checks are selected and their parameters using @UseCheck decorator
 
     # Lifecycle
-    def init(self, probe_vars=None):
+    def init(self, resource, probe_vars):
         # Probe contains the actual Probe parameters (from Models/DB) for
         # requests and a list of response Checks with their functions+parameters
-        self.probe_vars = probe_vars
+        self._resource = resource
+        self._probe_vars = probe_vars
+        self._parameters = probe_vars.parameters
+        self._check_vars = probe_vars.check_vars
         self.response = None
         self.result = None
 
-
-    def get_checks(self, class_name=None):
-        if class_name:
-            if class_name not in PluginDecorator.REGISTRY['UseCheck']:
-                return None
-
-            return PluginDecorator.REGISTRY['UseCheck'][class_name]
-
-        class_name = self.__module__ + "." + self.__class__.__name__
-        class_obj = Factory.create_class(class_name)
-
-        result = dict()
-        for base in class_obj.__bases__:
-            update = self.get_checks(base.__module__ + "." + base.__name__)
-            if update:
-                result.update(update)
-
-        if class_name in PluginDecorator.REGISTRY['UseCheck']:
-            update = self.get_checks(class_name)
-            if update:
-                result.update(update)
-
-        return result
-
+    #
     # Lifecycle
     def exit(self):
         pass
@@ -98,14 +111,14 @@ class Probe(Plugin):
 
         # Actualize request query string or POST body
         # by substitution in template.
-        url_base = self.probe_vars.resource.url
+        url_base = self._resource.url
 
         request_string = None
         if self.REQUEST_TEMPLATE:
             request_string = self.REQUEST_TEMPLATE
 
-            if self.probe_vars.parameters:
-                request_parms = self.probe_vars.parameters
+            if self._probe_vars.parameters:
+                request_parms = self._probe_vars.parameters
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
         self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
@@ -129,7 +142,6 @@ class Probe(Plugin):
         if self.response.status_code /100 in [4,5]:
             self.log('Errro response: %s' % (str(self.response.text)))
 
-
     def run_request(self):
         """ Run actual request to service"""
         self.before_request()
@@ -141,8 +153,7 @@ class Probe(Plugin):
 
         # Config also determines which actual checks are performed from possible
         # Checks in Probe. Checks are performed by Checker instances.
-        check_vars = self.probe_vars.check_vars
-        for check_var in check_vars:
+        for check_var in self._check_vars:
             check_class = check_var.check_class
             check = Factory.create_obj(check_class)
             try:
@@ -163,14 +174,18 @@ class Probe(Plugin):
         self.log("Result: %s" % str(self.result))
 
     @staticmethod
-    def run(probe_vars):
-        """ Class method to create and run a single Probe"""
+    def run(resource, probe_vars):
+        """
+        Class method to create and run a single Probe.
+        Follows strict sequence of method calls.
+        Each method can be overridden in subclass.
+        """
 
         # Create Probe instance from module.class string
         probe = Factory.create_obj(probe_vars.probe_class)
 
         # Initialize with actual parameters
-        probe.init(probe_vars)
+        probe.init(resource, probe_vars)
 
         # Perform request
         probe.run_request()

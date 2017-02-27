@@ -101,7 +101,7 @@
                                                      <td width="30%">{{ param }}</td>
 
                                                      <td>
-                                                         {% if probes_avail[probe.probe_class].PARAMETERS[param]['value'] %}
+                                                         {% if 'value' in probes_avail[probe.probe_class].PARAM_DEFS[param] %}
                                                          {{ probe.parameters[param] }}
                                                          {% else %}
                                                          <input type="text"

@@ -48,6 +48,7 @@ from result import ResourceResult
 
 LOGGER = logging.getLogger(__name__)
 
+
 def run_test_resource(resource):
     """tests a service and provides run metrics"""
 
@@ -55,11 +56,12 @@ def run_test_resource(resource):
     result.start()
     probes = resource.probe_vars
     for probe in probes:
-        result.add_result(Probe.run(probe))
+        result.add_result(Probe.run(resource, probe))
 
     result.stop()
 
     return result.get_run_data()
+
 
 def sniff_test_resource(config, resource_type, url):
     """tests a service and provides run metrics"""

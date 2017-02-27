@@ -1,5 +1,5 @@
+from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.probe import Probe
-from GeoHealthCheck.plugindecor import Parameter, UseCheck
 
 
 class OwsGetCaps(Probe):
@@ -15,76 +15,49 @@ class OwsGetCaps(Probe):
     REQUEST_METHOD = 'GET'
     REQUEST_TEMPLATE = '?SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
 
-    def __init__(self):
-        Probe.__init__(self)
+    PARAM_DEFS = {
+        'service': {
+            'type': 'string',
+            'description': 'The OWS service within resource endpoint',
+            'default': None,
+            'required': True
+        },
+        'version': {
+            'type': 'string',
+            'description': 'The OWS service version within resource endpoint',
+            'default': None,
+            'required': True,
+            'range': None
+        }
+    }
+    """Param defs, to be specified in subclasses"""
 
-    #
-    # Parameters for Probe as Decorators
-    #
-
-    @Parameter(ptype=str, default=None, required=True)
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default=None, required=True)
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
-
-    #
-    # Checks for Probe as Decorators
-    #
-
-    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.XmlParse')
-    def xml_parsable(self):
-        """
-        response is parsable.
-        """
-        pass
-
-    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.NotContainsOwsException')
-    def no_ows_exception(self):
-        """
-        response does not contain OWS Exception.
-        Optional: False
-        """
-        pass
-
-    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.ContainsStrings',
-        parameters={'strings': ['Title>']})
-    def has_title_element(self):
-        """
-        Should have title element in capabilities response doc.
-        """
-        pass
+    CHECKS_AVAIL = {
+        'GeoHealthCheck.plugins.check.checks.XmlParse': {},
+        'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {},
+        'GeoHealthCheck.plugins.check.checks.ContainsStrings': {
+            'parameters': {'strings': ['Title>']}
+        },
+    }
+    """Checks avail for all specific Caps checks"""
 
 class WmsGetCaps(OwsGetCaps):
     """Fetch WMS capabilities doc"""
     
     NAME = 'WMS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WMS'
+    
+    PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
 
-    def __init__(self):
-        OwsGetCaps.__init__(self)
-
-    @Parameter(ptype=str, value='WMS')
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default='1.1.1', required=True, value_range=['1.1.1', '1.3.0'])
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
+            'service': {
+                'value': 'WMS'
+            },
+            'version': {
+                'default':  '1.1.1',
+                'range': ['1.1.1', '1.3.0']
+            }
+        })
+    """Param defs"""
 
 
 class WfsGetCaps(OwsGetCaps):
@@ -96,19 +69,16 @@ class WfsGetCaps(OwsGetCaps):
     def __init__(self):
         OwsGetCaps.__init__(self)
 
-    @Parameter(ptype=str, value='WFS')
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default='1.1.0', required=True, value_range=['1.0.0', '1.1.0', '2.0.2'])
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
+    PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
+        'service': {
+            'value': 'WFS'
+        },
+        'version': {
+            'default': '1.1.0',
+            'range': ['1.0.0', '1.1.0', '2.0.2']
+        }
+    })
+    """Param defs"""
 
 
 class WcsGetCaps(OwsGetCaps):
@@ -117,22 +87,16 @@ class WcsGetCaps(OwsGetCaps):
     NAME = 'WCS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WCS'
 
-    def __init__(self):
-        OwsGetCaps.__init__(self)
-
-    @Parameter(ptype=str, value='WCS')
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default='1.1.0', required=True, value_range=['1.1.0', '1.1.1', '2.0.1'])
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
+    PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
+        'service': {
+            'value': 'WCS'
+        },
+        'version': {
+            'default': '1.1.0',
+            'range': ['1.1.0', '1.1.1', '2.0.1']
+        }
+    })
+    """Param defs"""
 
 
 class CswGetCaps(OwsGetCaps):
@@ -141,22 +105,16 @@ class CswGetCaps(OwsGetCaps):
     NAME = 'CSW GetCapabilities'
     RESOURCE_TYPE = 'OGC:CSW'
 
-    def __init__(self):
-        OwsGetCaps.__init__(self)
-
-    @Parameter(ptype=str, value='CSW')
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default='2.0.2', required=True, value_range=['2.0.2'])
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
+    PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
+        'service': {
+            'value': 'CSW'
+        },
+        'version': {
+            'default': '2.0.2',
+            'range': ['2.0.2']
+        }
+    })
+    """Param defs"""
 
 
 class WmtsGetCaps(OwsGetCaps):
@@ -168,19 +126,16 @@ class WmtsGetCaps(OwsGetCaps):
     def __init__(self):
         OwsGetCaps.__init__(self)
 
-    @Parameter(ptype=str, value='WMTS')
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default='1.0.0', required=True, value_range=['1.0.0'])
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
+    PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
+        'service': {
+            'value': 'CSW'
+        },
+        'version': {
+            'default': '1.0.0',
+            'range': ['1.0.0']
+        }
+    })
+    """Param defs"""
 
 
 class WpsGetCaps(OwsGetCaps):
@@ -189,22 +144,16 @@ class WpsGetCaps(OwsGetCaps):
     NAME = 'WPS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WPS'
 
-    def __init__(self):
-        OwsGetCaps.__init__(self)
-
-    @Parameter(ptype=str, value='WPS')
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default='1.0.0', required=True, value_range=['1.0.0', '2.0.0'])
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
+    PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
+        'service': {
+            'value': 'WPS'
+        },
+        'version': {
+            'default': '1.0.0',
+            'range': ['1.0.0', '2.0.0']
+        }
+    })
+    """Param defs"""
 
 
 class SosGetCaps(OwsGetCaps):
@@ -213,20 +162,13 @@ class SosGetCaps(OwsGetCaps):
     NAME = 'SOS GetCapabilities'
     RESOURCE_TYPE = 'OGC:SOS'
 
-    def __init__(self):
-        OwsGetCaps.__init__(self)
-
-    @Parameter(ptype=str, value='SOS')
-    def service(self):
-        """
-        The OWS service within resource endpoint.
-        """
-        pass
-
-    @Parameter(ptype=str, default='1.0.0', required=True, value_range=['1.0.0'])
-    def version(self):
-        """
-        The OWS service version within resource endpoint.
-        """
-        pass
-
+    PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
+        'service': {
+            'value': 'SOS'
+        },
+        'version': {
+            'default': '1.0.0',
+            'range': ['1.0.0', '2.0.0']
+        }
+    })
+    """Param defs"""

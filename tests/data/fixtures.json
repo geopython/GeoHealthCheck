@@ -169,7 +169,9 @@
     "PDOK BAG WFS - GetFeature - No Exception": {
       "probe_vars": "PDOK BAG WFS - GetFeature",
       "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
-      "parameters": {}
+      "parameters": {
+        "strings": ["ExceptionReport>", "ServiceException>"]
+      }
     },
     "PDOK BAG WFS - GetFeature - FeatureCollection": {
       "probe_vars": "PDOK BAG WFS - GetFeature",
@@ -214,6 +216,7 @@
       "probe_vars": "PDOK TMS - TopTile",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasContentType",
       "parameters": {
+        "header_name": "content-type",
         "header_value": "image/png"
       }
     }

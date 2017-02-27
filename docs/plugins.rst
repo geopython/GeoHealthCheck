@@ -9,7 +9,7 @@ most installations. However, there is no limit to detailed healthchecks
 one may want to perform. Hence developers can extend or even replace
 the GHC standard Plugins with custom implementations.
 
-Two extension points exist: `Probes` and `Checks`.
+Two extension points exist: the `Probe` and `Check` classes.
 
 *TODO: extend once Plugin implementation stabilizes...*
 
@@ -18,15 +18,16 @@ Configuration
 
 Plugins available to a GHC installation are configured via `site_admin.py`.
 
-- **GHC_PLUGINS**: list of Plugin classes or modules available on installation
+- **GHC_PLUGINS**: `list` of Plugin classes and/or modules available on installation
 
 
 Plugin API Docs
 ---------------
 
 For GHC extension via Plugins the following classes apply.
-Most Plugins have `@Parameter` decorators. These are variables that
-should be filled in by the user unless a fixed `value` applies.
+
+Most Plugins have `PARAM_DEFS` parameter definitions. These are variables that
+should be filled in by the user in the GUI unless a fixed `value` applies.
 
 Plugins - Base Classes
 ......................
@@ -51,7 +52,7 @@ Plugins - Probes
 
 `Probes` apply to a single `Resource` instance. They are responsible for running
 requests against the Resource URL endpoint. Most `Probes` are implemented mainly
-via configuring class variables and `@Parameters` and `@Checks`, but one is free
+via configuring class variables in particular `PARAM_DEFS` and `CHECKS_AVAIL`, but one is free
 to override any of the `Probe` baseclass methods.
 
 .. automodule:: GeoHealthCheck.plugins.probe.http

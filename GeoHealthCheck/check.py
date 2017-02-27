@@ -1,5 +1,6 @@
 from plugin import Plugin
 
+
 class Check(Plugin):
     """
      Base class for specific implementations to perform a check
@@ -10,7 +11,7 @@ class Check(Plugin):
     TAGS = []
 
     # Check parameter definitions, defaults, subclassses override
-    PARAMETERS = None
+    PARAM_DEFS = {}
 
     # Lifecycle
     def init(self, probe, parameters):
@@ -19,7 +20,7 @@ class Check(Plugin):
         :return:
         """
         self.probe = probe
-        self._parms = parameters
+        self._parameters = parameters
 
     # Lifecycle
     def perform(self):

@@ -1,9 +1,12 @@
 import datetime
 
+
 class Result(object):
     """
      Base class for results for Resource or Probe.
+     TODO: finalize Result processing/storage.
     """
+
     def __init__(self, success=True, message='OK'):
         self.success = success
         self.message = message
@@ -34,20 +37,20 @@ class Result(object):
     def __str__(self):
         return "success=%s msg=%s response_time=%s" % (self.success, self.message, self.response_time_str)
 
+
 class ResourceResult(Result):
     """
      Holds result data from a single Resource: one Resource, N Probe(Results).
      Provides Run data.
-
     """
 
     def __init__(self, resource):
         Result.__init__(self)
         self.resource = resource
 
-
     def get_run_data(self):
         return [self.resource.title, self.success, self.response_time_str, self.message, self.start_time]
+
 
 class ProbeResult(Result):
     """
@@ -59,14 +62,13 @@ class ProbeResult(Result):
         Result.__init__(self)
         self.probe = probe
 
+
 class CheckResult(Result):
     """
      Holds result data from a single Check.
-
     """
 
     def __init__(self, check, parameters, success, message):
         Result.__init__(self, success, message)
         self.check = check
         self.parameters = parameters
-

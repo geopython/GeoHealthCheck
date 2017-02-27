@@ -164,12 +164,5 @@ def get_probes(resource_type=None):
     result = dict()
     for probe in probes:
         result[probe] = Factory.get_class_vars(probe)
-        probe_obj = Factory.create_obj(probe)
-
-        probe_parms = probe_obj.get_parameters()
-        result[probe]['PARAMETERS'] = probe_parms
-
-        probe_checks = probe_obj.get_checks()
-        result[probe]['CHECKS'] = probe_checks
 
     return result

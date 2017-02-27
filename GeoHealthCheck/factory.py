@@ -94,16 +94,7 @@ class Factory:
 
                 vars[key] = value
 
-            if key == '__doc__':
-                vars['DESCRIPTION'] = value
-
         return vars
-
-        # return {
-        #     key:value for key,
-        #         value in clazz.__dict__.items()
-        #         if not key.startswith('__') and not callable(key)
-        #         }
 
     @staticmethod
     def get_class_for_method(method):

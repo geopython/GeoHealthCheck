@@ -1,26 +1,88 @@
 # -*- coding: utf-8 -*-
 from factory import Factory
 import inspect
-from plugindecor import PluginDecorator
+import collections
+import copy
 
 class Plugin(object):
     """
     Abstract Base class for all GHC Plugins.
-    Place your description in class doc here.
+    Derived classes should fill in all class variables that
+    are UPPER_CASE, unless they ar fine with default-values from
+    superclass(es).
     """
 
     # Generic attributes, subclassses override
     AUTHOR = 'GHC Team'
+    """
+    Plugin author or team.
+    """
+
     NAME = 'Fill in Name in NAME class var'
+    """
+    Short name of Plugin. TODO: i18n e.g. NAME_nl_NL ?
+    """
+
+    DESCRIPTION = 'Fill in description in DESCRIPTION class var'
+    """
+    Longer description of Plugin.
+    TODO: optional i18n e.g. DESCRIPTION_de_DE ?
+    """
 
     def __init__(self):
-        # The actual typed values as populated within Parameter Decorator
-        self._parms = dict()
+        self._parameters = {}
+
+    def get_param(self, param_name):
+        """
+        Get actual parameter value. `param_name` should be defined
+        in `PARAM_DEFS`.
+        """
+
+        if param_name not in self._parameters:
+            return None
+        return self._parameters[param_name]
+
+    @staticmethod
+    def copy(obj):
+        """
+        Deep copy of usually `dict` object.
+        """
+        return copy.deepcopy(obj)
+
+    @staticmethod
+    def merge(dict1, dict2):
+        """
+        Recursive merge of two `dict`, mainly used for PARAM_DEFS, CHECKS_AVAIL
+        overriding.
+        :param dict1: base dict
+        :param dict2: dict to merge into dict1
+        :return: deep copy of dict2 merged into dict1
+        """
+        def dict_merge(dct, merge_dct):
+            """ Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
+            updating only top-level keys, dict_merge recurses down into dicts nested
+            to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
+            ``dct``. See https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
+
+            :param dct: dict onto which the merge is executed
+            :param merge_dct: dict merged into dct
+            :return: None
+            """
+            for k, v in merge_dct.iteritems():
+                if (k in dct and isinstance(dct[k], dict)
+                        and isinstance(merge_dct[k], collections.Mapping)):
+                    dict_merge(dct[k], merge_dct[k])
+                else:
+                    dct[k] = merge_dct[k]
+
+        result_dict = copy.deepcopy(dict1)
+        dict_merge(result_dict, dict2)
+        return result_dict
 
     @staticmethod
     def get_plugins(baseclass='GeoHealthCheck.plugin.Plugin', filters=None):
         """
-        Class method to get list of Plugins of particular baseclass,
+        Class method to get list of Plugins of particular baseclass (optional),
         default is all Plugins. filters is a list of tuples to filter out
         Plugins with class var values: (class var, value),
         e.g. `filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')]`.
@@ -63,31 +125,6 @@ class Plugin(object):
                         add_result(plugin_name, class_obj)
                 except:
                     print('cannot create obj class=%s' % plugin_name)
-
-        return result
-
-    def get_parameters(self, class_name=None):
-        if class_name:
-            if class_name not in PluginDecorator.REGISTRY['Parameter']:
-                return None
-
-            return PluginDecorator.REGISTRY['Parameter'][class_name]
-
-        class_name = self.__module__ + "." + self.__class__.__name__
-        class_obj = Factory.create_class(class_name)
-
-        result = dict()
-        for base in class_obj.__bases__:
-            b = str(base)
-            base_class_name = base.__module__ + "." + base.__name__
-            update = self.get_parameters(base_class_name)
-            if update:
-                result.update(update)
-
-        if class_name in PluginDecorator.REGISTRY['Parameter']:
-            update = self.get_parameters(class_name)
-            if update:
-                result.update(update)
 
         return result
 
