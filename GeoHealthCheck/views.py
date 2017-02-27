@@ -146,22 +146,30 @@ def get_query_field_term(query):
     return [field, term]
 
 
-def probes_for_resource_type(resource_type):
+def get_probes(resource_type=None):
+    """
+    Get all available Probes with their attributes.
+    :param resource_type: optional resource type e.g. OGC:WMS
+    :return:
+    """
 
-    probe_classes = Plugin.get_plugins('GeoHealthCheck.proberunner.ProbeRunner',
-                filters=[('RESOURCE_TYPE', resource_type),
-                         ('RESOURCE_TYPE', '*:*')])
+    # Assume no resource type
+    filters = None
+    if resource_type:
+        filters=[('RESOURCE_TYPE', resource_type),
+                 ('RESOURCE_TYPE', '*:*')]
+    probes = Plugin.get_plugins('GeoHealthCheck.probe.Probe',
+                filters)
 
-    probes = dict()
-    for probe_class in probe_classes:
-        probes[probe_class] = Factory.get_class_vars(probe_class)
-        probe_parms = Factory.create_obj(probe_class).get_parameters()
+    result = dict()
+    for probe in probes:
+        result[probe] = Factory.get_class_vars(probe)
+        probe_obj = Factory.create_obj(probe)
 
-        probes[probe_class]['PARAMETERS'] = probe_parms
+        probe_parms = probe_obj.get_parameters()
+        result[probe]['PARAMETERS'] = probe_parms
 
-        # print('probes[%s] = %s' % (probe_class, str(probes[probe_class])))
+        probe_checks = probe_obj.get_checks()
+        result[probe]['CHECKS'] = probe_checks
 
-    # import json
-    # j = json.dumps(probes)
-
-    return probes
+    return result

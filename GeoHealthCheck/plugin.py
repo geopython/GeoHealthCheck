@@ -1,112 +1,7 @@
 # -*- coding: utf-8 -*-
-#
-# Plugin base class and utils for GHC.
-#
-# Author: Just van den Broecke
-#
-import os
-import inspect
 from factory import Factory
-
-class Parameter(object):
-
-    REGISTRY = dict()
-
-    """
-    Decorator class to tie parameter values from the .ini file to object instance
-    parameter values. Somewhat like the Python standard @property but with
-    the possibility to define default values, typing and making properties required.
-
-    Each parameter is defined by @Parameter(type, default, required).
-    Basic idea comes from:  https://wiki.python.org/moin/PythonDecoratorLibrary#Cached_Properties
-    """
-
-    def __init__(self, ptype=str, default=None, required=False, value=None, value_range=None):
-        """
-        If there are no decorator arguments, the function
-        to be decorated is passed to the constructor.
-        """
-        # print "Inside __init__()"
-        self.ptype = ptype
-        self.default = default
-        self.required = required
-        self.value = value
-        self.value_range = value_range
-
-    def __call__(self, fget, doc=None):
-        """
-        The __call__ method is not called until the
-        decorated function is called. self is returned such that __get__ below is called
-        with the Plugin instance. That allows us to cache the actual property value
-        in the Plugin itself.
-        """
-        # Save the property name (is the name of the function calling us).
-        self.parm_name = fget.__name__
-
-        # Tricky bit: we need to know the calling class to
-        # be able to get its Parameter data. Normally this is lost.
-        # So we register the Parameter data in a class var REGISTRY.
-        # http://stackoverflow.com/questions/29530443/how-to-get-the-caller-of-a-method-in-a-decorator-in-python
-        stack = inspect.stack()
-        caller_obj = stack[1][0]
-        # module = caller_obj.f_locals['__module__']
-        clazz = caller_obj.f_locals['__module__'] + '.' + stack[1][3]
-        if clazz not in Parameter.REGISTRY:
-            Parameter.REGISTRY[clazz] = dict()
-
-            Parameter.REGISTRY[clazz][self.parm_name] = {
-                'type':  str(self.ptype.__name__),
-                'default':  self.default,
-                'required':  self.required,
-                'value':  self.value,
-                'value_range':  self.value_range
-            }
-                    
-        # For Sphinx documention build we need the original function with docstring.
-        if bool(os.getenv('SPHINX_BUILD')):
-            if not fget.__doc__ or fget.__doc__ == '':
-                fget.__doc__ = 'no documentation, please provide...'
-                return fget
-
-            # Build Parameter Sphinx documentation
-            doc = fget.__doc__.strip()
-            doc = '``Parameter`` - %s\n\n' % doc
-            doc += '* type: %s\n' % self.ptype
-
-            if self.value:
-                doc += '* value: %s\n' % self.value
-            else:
-                doc += '* required: %s\n' % self.required
-                doc += '* default: %s\n' % self.default
-                doc += '* value_range: %s\n' % self.value_range
-
-            fget.__doc__ = doc
-            return fget
-        else:
-            return self
-
-    def __get__(self, plugin_obj, owner):
-        # Gets used so often...
-        name = self.parm_name
-
-        # If already value, transfer to parameter dict of plugin object
-        if self.value:
-            plugin_obj.parms[name] = self.value
-            self.value = None
-
-        # print "Inside __get__() owner=%s" % owner
-        """ descr.__get__(obj[, type]) -> value """
-        if name not in plugin_obj.parms:
-            # Value not provided in Plugin's parms
-            value = self.default
-
-            if self.required is True and value is None:
-                raise Exception('Parameter property: %s is required in parameter for %s' % (name, str(plugin_obj)))
-
-            plugin_obj.parms[name] = value
-
-        return plugin_obj.parms[name]
-
+import inspect
+from plugindecor import PluginDecorator
 
 class Plugin(object):
     """
@@ -120,8 +15,7 @@ class Plugin(object):
 
     def __init__(self):
         # The actual typed values as populated within Parameter Decorator
-        c = self.__class__
-        self.parms = dict()
+        self._parms = dict()
 
     @staticmethod
     def get_plugins(baseclass='GeoHealthCheck.plugin.Plugin', filters=None):
@@ -132,8 +26,6 @@ class Plugin(object):
         e.g. `filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')]`.
         """
         from GeoHealthCheck.init import APP
-        from factory import Factory
-        import inspect
 
         plugins = APP.config['GHC_PLUGINS']
         result = []
@@ -174,12 +66,30 @@ class Plugin(object):
 
         return result
 
-    def get_parameters(self):
-        qualname = self.__module__ + "." + self.__class__.__name__
-        if qualname not in Parameter.REGISTRY:
-            return dict()
-        
-        return Parameter.REGISTRY[qualname]
+    def get_parameters(self, class_name=None):
+        if class_name:
+            if class_name not in PluginDecorator.REGISTRY['Parameter']:
+                return None
+
+            return PluginDecorator.REGISTRY['Parameter'][class_name]
+
+        class_name = self.__module__ + "." + self.__class__.__name__
+        class_obj = Factory.create_class(class_name)
+
+        result = dict()
+        for base in class_obj.__bases__:
+            b = str(base)
+            base_class_name = base.__module__ + "." + base.__name__
+            update = self.get_parameters(base_class_name)
+            if update:
+                result.update(update)
+
+        if class_name in PluginDecorator.REGISTRY['Parameter']:
+            update = self.get_parameters(class_name)
+            if update:
+                result.update(update)
+
+        return result
 
     def __str__(self):
         return "%s" % str(self.__class__)

@@ -37,8 +37,10 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 # Needed to find classes and plugins
 sys.path.append('%s/..' % TEST_DIR)
 
-from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check, load_data
+from GeoHealthCheck.models import DB, Resource, Run, User, Tag, ProbeVars, CheckVars, load_data
 from GeoHealthCheck.views import *
+from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.factory import Factory
 
 
 class GeoHealthCheckTest(unittest.TestCase):
@@ -57,10 +59,8 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.db.session.close()
 
     def testPluginsPresent(self):
-        from GeoHealthCheck.plugin import Plugin
-        from GeoHealthCheck.factory import Factory
 
-        plugins = Plugin.get_plugins('GeoHealthCheck.proberunner.ProbeRunner')
+        plugins = Plugin.get_plugins('GeoHealthCheck.probe.Probe')
         for plugin in plugins:
             plugin = Factory.create_obj(plugin)
             self.assertIsNotNone(plugin)
@@ -68,15 +68,16 @@ class GeoHealthCheckTest(unittest.TestCase):
             # Must have run_request method
             self.assertIsNotNone(plugin.run_request)
 
-        plugins = Plugin.get_plugins('GeoHealthCheck.checker.Checker')
+        plugins = Plugin.get_plugins('GeoHealthCheck.check.Check')
         for plugin in plugins:
             plugin = Factory.create_obj(plugin)
             self.assertIsNotNone(plugin)
             # Must have perform method
             self.assertIsNotNone(plugin.perform)
 
-        plugins = Plugin.get_plugins('GeoHealthCheck.proberunner.ProbeRunner',
+        plugins = Plugin.get_plugins('GeoHealthCheck.probe.Probe',
                 filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')])
+
         for plugin in plugins:
             plugin_class = Factory.create_class(plugin)
             self.assertIsNotNone(plugin_class)
@@ -87,6 +88,9 @@ class GeoHealthCheckTest(unittest.TestCase):
             parameters = plugin_obj.get_parameters()
             self.assertTrue(type(parameters) is dict, 'Plugin Parameters not a dict')
 
+            checks = plugin_obj.get_checks()
+            self.assertTrue(type(checks) is dict, 'Plugin checks not a dict')
+
             # Must have run_request method
             self.assertIsNotNone(plugin_obj.run_request)
 
@@ -94,8 +98,18 @@ class GeoHealthCheckTest(unittest.TestCase):
             class_vars = Factory.get_class_vars(plugin)
             self.assertIn(class_vars['RESOURCE_TYPE'], ['OGC:WMS', 'OGC:*'])
 
+    def testPluginDecorators(self):
+        plugin_obj = Factory.create_obj('GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps')
+        self.assertIsNotNone(plugin_obj)
+
+        checks = plugin_obj.get_checks()
+        self.assertEquals(len(checks), 3, 'WmsGetCaps should have 3 Checks')
+
+        parameters = plugin_obj.get_parameters()
+        self.assertEquals(len(parameters), 2, 'WmsGetCaps should have 2 Parameters')
+
     def testProbeViews(self):
-        probes = probes_for_resource_type('OGC:WMS')
+        probes = get_probes('OGC:WMS')
         self.assertIsNotNone(probes)
 
 if __name__ == '__main__':

@@ -1,9 +1,9 @@
 from plugin import Plugin
 
-class Checker(Plugin):
+class Check(Plugin):
     """
      Base class for specific implementations to perform a check
-     on Result from a ProbeRunner.
+     on Result from a Probe.
 
     """
 
@@ -13,13 +13,13 @@ class Checker(Plugin):
     PARAMETERS = None
 
     # Lifecycle
-    def init(self, probe_runner, parameters):
+    def init(self, probe, parameters):
         """
-        Initialize Checker with parent ProbeRunner and parameters dict.
+        Initialize Checker with parent Probe and parameters dict.
         :return:
         """
-        self.prober = probe_runner
-        self.parms = parameters
+        self.probe = probe
+        self._parms = parameters
 
     # Lifecycle
     def perform(self):

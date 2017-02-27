@@ -1,10 +1,13 @@
 import sys
 import requests
 from plugin import Plugin
+from plugindecor import PluginDecorator
+
 from factory import Factory
 from result import ProbeResult, CheckResult
 
-class ProbeRunner(Plugin):
+
+class Probe(Plugin):
     """
      Base class for specific implementations to run a Probe with Checks.
 
@@ -18,17 +21,45 @@ class ProbeRunner(Plugin):
     REQUEST_HEADERS = {}
     REQUEST_TEMPLATE = ''
 
+    def __init__(self):
+        # The actual typed values as populated within Parameter Decorator
+        Plugin.__init__(self)
+        self._use_checks = dict()
+
     # Possible response checks attributes, instance determines which
-    # checks are selected and their parameters
-    RESPONSE_CHECKS = None
+    # checks are selected and their parameters using @UseCheck decorator
 
     # Lifecycle
-    def init(self, probe=None):
-        # Probe contains the actual ProbeRunner parameters (from Models/DB) for
+    def init(self, probe_vars=None):
+        # Probe contains the actual Probe parameters (from Models/DB) for
         # requests and a list of response Checks with their functions+parameters
-        self.probe = probe
+        self.probe_vars = probe_vars
         self.response = None
         self.result = None
+
+
+    def get_checks(self, class_name=None):
+        if class_name:
+            if class_name not in PluginDecorator.REGISTRY['UseCheck']:
+                return None
+
+            return PluginDecorator.REGISTRY['UseCheck'][class_name]
+
+        class_name = self.__module__ + "." + self.__class__.__name__
+        class_obj = Factory.create_class(class_name)
+
+        result = dict()
+        for base in class_obj.__bases__:
+            update = self.get_checks(base.__module__ + "." + base.__name__)
+            if update:
+                result.update(update)
+
+        if class_name in PluginDecorator.REGISTRY['UseCheck']:
+            update = self.get_checks(class_name)
+            if update:
+                result.update(update)
+
+        return result
 
     # Lifecycle
     def exit(self):
@@ -38,7 +69,7 @@ class ProbeRunner(Plugin):
         print('%s: %s' % (self.__class__.__name__, text))
 
     def create_result(self):
-        """ Create ProbeResult object that gathers all results for single ProbeRunner"""
+        """ Create ProbeResult object that gathers all results for single Probe"""
 
         self.result = ProbeResult(self)
 
@@ -67,14 +98,14 @@ class ProbeRunner(Plugin):
 
         # Actualize request query string or POST body
         # by substitution in template.
-        url_base = self.probe.resource.url
+        url_base = self.probe_vars.resource.url
 
         request_string = None
         if self.REQUEST_TEMPLATE:
             request_string = self.REQUEST_TEMPLATE
 
-            if self.probe.parameters:
-                request_parms = self.probe.parameters
+            if self.probe_vars.parameters:
+                request_parms = self.probe_vars.parameters
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
         self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
@@ -109,22 +140,22 @@ class ProbeRunner(Plugin):
         """ Do the checks on the response from request"""
 
         # Config also determines which actual checks are performed from possible
-        # Checks in ProbeRunner. Checks are performed by Checker instances.
-        checks = self.probe.checks
-        for check in checks:
-            checker_class = check.checker
-            checker = Factory.create_obj(checker_class)
+        # Checks in Probe. Checks are performed by Checker instances.
+        check_vars = self.probe_vars.check_vars
+        for check_var in check_vars:
+            check_class = check_var.check_class
+            check = Factory.create_obj(check_class)
             try:
-                checker.init(self, check.parameters)
-                result = checker.perform()
+                check.init(self, check_var.parameters)
+                result = check.perform()
             except:
                 msg = "Exception: %s" % str(sys.exc_info())
                 self.log(msg)
                 result = False, msg
-            self.log('Check: fun=%s result=%s' % (checker_class, result[0]))
+            self.log('Check: fun=%s result=%s' % (check_class, result[0]))
 
             self.result.add_result(self.create_check_result(
-                check, check.parameters, result[0], result[1]))
+                check_var, check_var.parameters, result[0], result[1]))
 
      # Lifecycle
     def calc_result(self):
@@ -132,27 +163,27 @@ class ProbeRunner(Plugin):
         self.log("Result: %s" % str(self.result))
 
     @staticmethod
-    def run(probe):
-        """ Class method to create and run a single ProbeRunner"""
+    def run(probe_vars):
+        """ Class method to create and run a single Probe"""
 
-        # Create ProbeRunner instance from module.class string
-        proberunner = Factory.create_obj(probe.proberunner)
+        # Create Probe instance from module.class string
+        probe = Factory.create_obj(probe_vars.probe_class)
 
         # Initialize with actual parameters
-        proberunner.init(probe)
+        probe.init(probe_vars)
 
         # Perform request
-        proberunner.run_request()
+        probe.run_request()
 
-        # Perform the ProbeRunner's checks
-        proberunner.run_checks()
+        # Perform the Probe's checks
+        probe.run_checks()
 
         # Determine result
-        proberunner.calc_result()
+        probe.calc_result()
 
         # Lifecycle
-        proberunner.exit()
+        probe.exit()
 
         # Return result
-        return proberunner.result
+        return probe.result
 

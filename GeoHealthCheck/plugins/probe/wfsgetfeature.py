@@ -1,7 +1,8 @@
-from GeoHealthCheck.proberunner import ProbeRunner
-from GeoHealthCheck.plugin import Parameter
+from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugindecor import Parameter, UseCheck
 
-class WfsGetFeatureBbox(ProbeRunner):
+
+class WfsGetFeatureBbox(Probe):
     """
     do WFS GetFeature in BBOX
     """
@@ -34,6 +35,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   </wfs:Query>
 </wfs:GetFeature>
     """
+    def __init__(self):
+        Probe.__init__(self)
 
     @Parameter(ptype=str, default=None, required=True)
     def type_name(self):
@@ -79,28 +82,29 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         """
         pass
 
-    RESPONSE_CHECKS = [
-        {
-            'name': 'parse_response',
-            'description': 'response is parsable',
-            'class': 'GeoHealthCheck.plugins.check.checkers.XmlParse'
-        },
-        {
-            'name': 'no OWS Exception',
-            'description': 'response does not contain OWS Exception',
-            'class': 'GeoHealthCheck.plugins.check.checkers.NotContainsOwsException'
-        },
-        {
-            'name': 'contains_feature_coll',
-            'description': 'find FeatureCollection element in response doc',
-            'class': 'GeoHealthCheck.plugins.check.checkers.ContainsStrings',
-            'parameters': [
-                {
-                    'name': 'text',
-                    'type': 'string',
-                    'value': 'FeatureCollection>'
-                }
-            ]
-        }
-    ]
+    #
+    # Checks for Probe as Decorators
+    #
 
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.XmlParse')
+    def xml_parsable(self):
+        """
+        response is parsable.
+        """
+        pass
+
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.NotContainsOwsException')
+    def no_ows_exception(self):
+        """
+        response does not contain OWS Exception.
+        Optional: False
+        """
+        pass
+
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.ContainsStrings',
+        parameters={'strings': ['FeatureCollection>']})
+    def has_feature_collection_element(self):
+        """
+        Has FeatureCollection element in response doc.
+        """
+        pass

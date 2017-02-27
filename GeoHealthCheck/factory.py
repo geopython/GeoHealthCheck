@@ -86,6 +86,7 @@ class Factory:
         for member in members:
             key, value = member
             if not key.startswith('__') \
+                and key.isupper() \
                 and not inspect.isclass(value) \
                 and not inspect.isfunction(value) \
                 and not inspect.isbuiltin(value)\

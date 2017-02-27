@@ -1,12 +1,12 @@
 import sys
 from owslib.etree import etree
-from GeoHealthCheck.checker import Checker
-from GeoHealthCheck.plugin import Parameter
+from GeoHealthCheck.check import Check
+from GeoHealthCheck.plugindecor import Parameter
 
-""" Contains basic Checker classes for a ProbeRunner object."""
+""" Contains basic Check classes for a Probe object."""
 
 
-class HttpStatusNoError(Checker):
+class HttpStatusNoError(Check):
     """
     Checks if HTTP status code is not in the 400- or 500-range.
     """
@@ -15,7 +15,7 @@ class HttpStatusNoError(Checker):
         """Default check: Resource should at least give no error"""
         result = True
         msg = 'OK'
-        status = self.prober.response.status_code
+        status = self.probe.response.status_code
         overall_status = status/100
         if overall_status in [4, 5]:
             result = False
@@ -24,7 +24,7 @@ class HttpStatusNoError(Checker):
         return result, msg
 
 
-class HttpHasHeaderValue(Checker):
+class HttpHasHeaderValue(Check):
     """
     Checks if header exists and has given header value.
     See http://docs.python-requests.org/en/master/user/quickstart
@@ -49,7 +49,7 @@ class HttpHasHeaderValue(Checker):
         msg = 'OK'
         name = self.header_name
         value = self.header_value
-        headers = self.prober.response.headers
+        headers = self.probe.response.headers
         if name not in headers:
             result = False
             msg = 'HTTP response has no header %s' % name
@@ -77,7 +77,28 @@ class HttpHasContentType(HttpHasHeaderValue):
         return HttpHasHeaderValue.perform(self)
 
 
-class XmlParse(Checker):
+class HttpHasImageContentType(Check):
+    """
+    Checks if HTTP response has image content type.
+    """
+
+    """Check if HTTP response has given ContentType header value"""
+    def perform(self):
+        result = True
+        msg = 'OK'
+        name = 'content-type'
+        headers = self.probe.response.headers
+        if name not in headers:
+            result = False
+            msg = 'HTTP response has no header %s' % name
+        elif 'image/' not in headers[name]:
+            result = False
+            msg = 'HTTP response header %s is not image type' % name
+
+        return result, msg
+
+
+class XmlParse(Check):
     """
     Checks if HTTP response is valid XML.
     """
@@ -86,7 +107,7 @@ class XmlParse(Checker):
         result = True
         msg = 'OK'
         try:
-            etree.fromstring(self.prober.response.content)
+            etree.fromstring(self.probe.response.content)
         except:
             result = False
             msg = str(sys.exc_info())
@@ -94,7 +115,7 @@ class XmlParse(Checker):
         return result, msg
 
 
-class ContainsStrings(Checker):
+class ContainsStrings(Check):
     """
     Checks if HTTP response contains given strings (keywords).
     """
@@ -111,7 +132,7 @@ class ContainsStrings(Checker):
         msg = 'OK'
         for text in self.strings:
             try:
-                result = text in self.prober.response.text
+                result = text in self.probe.response.text
                 if result is False:
                     msg = '%s not in response text' % text
                     break

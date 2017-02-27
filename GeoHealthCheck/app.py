@@ -42,7 +42,7 @@ from __init__ import __version__
 from healthcheck import sniff_test_resource, run_test_resource
 from init import DB
 from enums import RESOURCE_TYPES
-from models import Resource, Run, Probe, Check, Tag, User
+from models import Resource, Run, ProbeVars, CheckVars, Tag, User
 from util import render_template2, send_email
 import views
 
@@ -485,8 +485,8 @@ def add():
                                tags=tag_list)
     
     # Always add a default Probe & Check
-    probe_to_add = Probe(resource_to_add, 'GeoHealthCheck.plugins.probe.http.HttpGet')
-    check_to_add = Check(probe_to_add, 'GeoHealthCheck.plugins.check.checkers.HttpStatusNoError')
+    probe_to_add = ProbeVars(resource_to_add, 'GeoHealthCheck.plugins.probe.http.HttpGet')
+    check_to_add = CheckVars(probe_to_add, 'GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
 
     run_data = run_test_resource(resource_to_add)
 
@@ -579,10 +579,10 @@ def edit_resource(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    probes = views.probes_for_resource_type(resource.resource_type)
+    probes_avail = views.get_probes(resource.resource_type)
 
     return render_template('edit_resource.html', lang=g.current_lang,
-                           resource=resource, probes=probes)
+                           resource=resource, probes_avail=probes_avail)
 
 
 @APP.route('/resource/<int:resource_identifier>/delete')
@@ -676,6 +676,16 @@ def recover():
         return redirect(request.args.get('next'))
     return redirect(url_for('home', lang=g.current_lang))
 
+#
+# REST Interface Calls
+#
+@APP.route('/rest/v1/probe/')
+@APP.route('/rest/v1/probe/<resource_type>')
+def rest_probe(resource_type=None):
+    
+    """get """
+    probes = views.get_probes(resource_type)
+    return jsonify(probes)
 
 if __name__ == '__main__':  # run locally, for fun
     import sys

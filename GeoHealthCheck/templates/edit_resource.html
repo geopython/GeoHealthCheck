@@ -41,30 +41,93 @@
 
                 <td>
                     <table class="table">
-                        {% for probe in resource.probes %}
+                        {% for probe in resource.probe_vars %}
                         <tr>
 
-                        <td title="{{ probes[probe.proberunner].DESCRIPTION }}">
-                            <span id="{{ probe.proberunner }}-{{ probe.identifier }}" >
-                                <strong>{{ probes[probe.proberunner].NAME }} ({{ probe.identifier }})</strong>  - by  {{ probes[probe.proberunner].AUTHOR }}
+                        <td title="{{ probes_avail[probe.probe_class].DESCRIPTION }}">
+                            <span id="{{ probe.probe_class }}-{{ probe.identifier }}" >
+                                <strong>{{ probes_avail[probe.probe_class].NAME }} ({{ probe.identifier }})</strong>  - by  {{ probes_avail[probe.probe_class].AUTHOR }}
                             </span>
-                            <div id="probeinfo-{{ probe.identifier }}" style="display: none">
-                                {% for param in probe.parameters  %}
-                                {{ param }} = {{ probe.parameters[param] }} <br/>
-                                {% endfor %}
-                            </div>
-                            <!--<div id="probe-edit-{{ probe.identifier }}" >-->
-                                <!--{% for param in probe.parameters  %}-->
-                                <!--<input type="text" id="probe-edit-{{ probe.identifier }}-{{ param }}"  -->
-                                       <!--value="{{ probe.parameters[param] }}" style="width: 100%;"/>-->
-                                 <!--{% endfor %}-->
-                            <!--</div>-->
+                            <div id="resource-probe-info-{{ probe.resource_identifier }}-{{ probe.identifier }}"
+                                 class="resource-probe-info" style="display: none">
+                                <table class="table">
+                                    <tr>
+                                        <td>{{ probes_avail[probe.probe_class].DESCRIPTION }}</td>
+                                    </tr>
+                                    <tr>
+                                         <td><strong>Parameters</strong>
+                                             {% if not probe.parameters %}
+                                                 This Probe has no parameters.
+                                             {% endif %}
+                                             <table class="table">
+                                                 {% for param in probe.parameters  %}
+                                                        <tr>
+                                                            <td width="30%">{{ param }}</td>
+                                                            <td>{{ probe.parameters[param] }}</td>
+                                                        </tr>
+                                                 {% endfor %}
+                                             </table>
+                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Checks</strong>
+                                            {% if not probe.check_vars %}
+                                                This Probe has no checks.
+                                            {% endif %}
+                                            <table class="table">
+                                                {% for check in probe.check_vars  %}
+                                                       <tr>
+                                                           <td width="30%">{{ check.check_class }}</td>
+                                                           <td>{{ check.parameters }}</td>
+                                                       </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </td>
+                                     </tr>
+                                </table>
+                             </div>
+                            <div id="resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}"
+                                 class="resource-probe-edit" style="display: none">
+                                <table class="table">
+                                    <tr>
+                                         <td> <strong>Parameters</strong>
+                                             {% if not probe.parameters %}
+                                                 This Probe has no parameters.
+                                             {% endif %}
+
+                                             {% for param in probe.parameters  %}
+                                             <table class="table">
+                                                 <tr>
+                                                     <td width="30%">{{ param }}</td>
+
+                                                     <td>
+                                                         {% if probes_avail[probe.probe_class].PARAMETERS[param]['value'] %}
+                                                         {{ probe.parameters[param] }}
+                                                         {% else %}
+                                                         <input type="text"
+                                                         id="resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}-{{ param }}"
+                                                         value="{{ probe.parameters[param] }}" style="width: 100%;"/>
+                                                         {% endif %}
+
+                                                     </td>
+                                                 </tr>
+                                             </table>
+
+                                             {% endfor %}
+                                         </td>
+                                     </tr>
+
+                                </table>
+                             </div>
+
                         </td>
                         <td>
-                         <button id="{{ probe.identifier }}-probeinfo" type="button" title="{{ probes[probe.proberunner].DESCRIPTION }}"
-                                                    class="btn btn-success btn-xs">{{ _('Info') }}</button>
-                         <button id="{{ probe.identifier }}-edit-show" type="button" class="btn btn-primary btn-xs">{{ _('Edit') }}</button>
-                         <button id="{{ probe.identifier }}-delete" type="button" class="btn btn-danger btn-xs">{{ _('Delete') }}</button>
+                         <button id="button-resource-probe-info-{{ probe.resource_identifier }}-{{ probe.identifier }}"
+                                 type="button" title="{{ probes_avail[probe.probe_class].DESCRIPTION }}"
+                                                    class="button-resource-probe-info btn btn-success btn-xs">{{ _('Info') }}</button>
+                         <button id="button-resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}" type="button"
+                                 class="button-resource-probe-edit btn btn-primary btn-xs">{{ _('Edit') }}</button>
+                         <button id="button-resource-probe-delete"-{{ probe.resource_identifier }}-{{ probe.identifier }} type="button" class="btn btn-danger btn-xs">{{ _('Delete') }}</button>
                          </td>
                         </tr>
                         {% endfor %}
@@ -77,16 +140,16 @@
 
                 <td>
                     <table class="table">
-                        {% for clazz in probes %}
+                        {% for clazz in probes_avail %}
                          <tr>
 
-                         <td id="{{ probes[clazz] }}" title="{{ probes[clazz].DESCRIPTION }}">
-                             <span><strong>{{ probes[clazz].NAME }} </strong>- by  {{ probes[clazz].AUTHOR }}</span>
+                         <td id="{{ probes_avail[clazz] }}" title="{{ probes_avail[clazz].DESCRIPTION }}">
+                             <span><strong>{{ probes_avail[clazz].NAME }} </strong>- by  {{ probes_avail[clazz].AUTHOR }}</span>
                          </td>
                          <td>
-                          <button id="info{{ probes[clazz] }}" type="button" title="{{ probes[clazz].DESCRIPTION }}"
+                          <button id="info{{ probes_avail[clazz] }}" type="button" title="{{ probes_avail[clazz].DESCRIPTION }}"
                                                      class="btn btn-success btn-xs">{{ _('Info') }}</button>
-                          <button id="add{{ probes[clazz] }}" type="button" class="btn btn-primary btn-xs">{{ _('Add') }}</button>
+                          <button id="add{{ probes_avail[clazz] }}" type="button" class="btn btn-primary btn-xs">{{ _('Add') }}</button>
                           </td>
                          </tr>
                          {% endfor %}
@@ -99,7 +162,7 @@
                 <th>{{ _('Status') }}</th>
 
                 <td>
-                    
+
                     <span id="status">OK</span>
                 </td>
 
@@ -128,11 +191,43 @@
 <script type="text/javascript">
     var all_tags = {{ tags.keys()|tojson }};
     $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
-    var probes_json = '{{ probes|tojson }}';
+    var probes_json = '{{ probes_avail|tojson }}';
     // probes_available = JSON.parse(probes_json);
 
     {% if g.user.is_authenticated() %}
-        
+
+    $(".button-resource-probe-info").click(function(){
+        $('.resource-probe-edit').hide()
+        var button_id = $(this).attr('id');
+        var id_arr = button_id.split('-');
+        var resource_id = id_arr[id_arr.length-2];
+        var probe_id = id_arr[id_arr.length-1];
+        var resource_probe_info_id = '#resource-probe-info-' + resource_id + '-' + probe_id;
+
+        if( $(resource_probe_info_id).css('display') == 'none' ) {
+            $('.resource-probe-info').hide();
+            $(resource_probe_info_id).show();
+        } else {
+            $(resource_probe_info_id).hide();
+        }
+    });
+
+    $(".button-resource-probe-edit").click(function(){
+        $('.resource-probe-info').hide()
+        var button_id = $(this).attr('id');
+        var id_arr = button_id.split('-');
+        var resource_id = id_arr[id_arr.length-2];
+        var probe_id = id_arr[id_arr.length-1];
+        var resource_probe_edit_id = '#resource-probe-edit-' + resource_id + '-' + probe_id;
+
+        if( $(resource_probe_edit_id).css('display') == 'none' ) {
+            $('.resource-probe-edit').hide();
+            $(resource_probe_edit_id).show();
+        } else {
+            $(resource_probe_edit_id).hide();
+        }
+    });
+
     $('#test').click(function() {
          $('#status').text("{{ _('Test') }}...");
          $.ajax({

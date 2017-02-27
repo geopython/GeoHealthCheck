@@ -18,7 +18,7 @@ GeoHealthCheck is built with the following concepts in mind:
 - Each `Resource` is tested "probed" via one or more `Probes`
 - Each `Probe` typically runs one or more requests on `Resource` URL
 - Each `Probe` invokes one or more `Checks` to determine `Run` result
-- `Probes` and `Checks` are extensible `Plugins` via respective `ProbeRunner` and `Checker` classes
+- `Probes` and `Checks` are extensible `Plugins` via respective `Probe` and `Check` classes
 
 Data Model
 ----------

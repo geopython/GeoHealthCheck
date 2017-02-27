@@ -37,7 +37,7 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 # Needed to find classes and plugins
 sys.path.append('%s/..' % TEST_DIR)
 
-from GeoHealthCheck.models import DB, Resource, Run, User, Tag, Probe, Check, load_data
+from GeoHealthCheck.models import DB, Resource, Run, User, Tag, ProbeVars, CheckVars, load_data
 from GeoHealthCheck.healthcheck import run_test_resource
 
 

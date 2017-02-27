@@ -1,42 +1,40 @@
-from GeoHealthCheck.proberunner import ProbeRunner
-from GeoHealthCheck.plugin import Parameter
+from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugindecor import Parameter, UseCheck
 
-class HttpGet(ProbeRunner):
+
+class HttpGet(Probe):
     """
     Do HTTP GET Request, to poll/ping any Resource bare url.
     """
 
     NAME = 'HTTP GET Resource URL'
     RESOURCE_TYPE = '*:*'
-
     REQUEST_METHOD = 'GET'
 
-    # TODO Check as Decorators
-    # @Check(checker='GeoHealthCheck.plugins.check.checkers.HttpStatusNoError', optional=False)
-    # def http_error_status(self):
-    #     """
-    #     response not in error range: i.e. 400 or 500-range.
-    #     Optional: False
-    #     """
-    #     pass
+    def __init__(self):
+        Probe.__init__(self)
 
-    RESPONSE_CHECKS = [
-        {
-            'name': 'http_error_status',
-            'description': 'response not in error range: i.e. 400 or 500-range',
-            'class': 'GeoHealthCheck.plugins.check.checkers.HttpStatusNoError'
-        },
-        {
-            'name': 'keywords exist',
-            'description': 'keywords should be in response doc',
-            'class': 'GeoHealthCheck.plugins.check.checkers.ContainsStrings',
-        },
-        {
-            'name': 'keywords not_exist',
-            'description': 'keywords should be not be in response doc',
-            'class': 'GeoHealthCheck.plugins.check.checkers.NotContainsStrings',
-        }
-    ]
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
+    def no_http_error(self):
+        """
+        response not in error range: i.e. 400 or 500-range.
+        """
+        pass
+
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.ContainsStrings')
+    def contains_strings(self):
+        """
+        keywords should be in response doc.
+        """
+        pass
+
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.NotContainsStrings')
+    def not_contains_strings(self):
+        """
+        keywords should NOT be in response doc.
+        """
+        pass
+
 
 class HttpGetQuery(HttpGet):
     """
@@ -47,12 +45,16 @@ class HttpGetQuery(HttpGet):
     DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET with query string'
     REQUEST_TEMPLATE = '?{query}'
 
+    def __init__(self):
+        HttpGet.__init__(self)
+
     @Parameter(ptype=str, default=None, required=True)
     def query(self):
         """
         The query string to add to request (without ?).
         """
         pass
+
 
 class HttpPost(HttpGet):
     """
@@ -63,8 +65,11 @@ class HttpPost(HttpGet):
     DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET with query string'
 
     REQUEST_METHOD = 'POST'
-    REQUEST_HEADERS = { 'content-type': '{content_type}' }
+    REQUEST_HEADERS = {'content-type': '{content_type}'}
     REQUEST_TEMPLATE = '{body}'
+
+    def __init__(self):
+        HttpGet.__init__(self)
 
     @Parameter(ptype=str, default=None, required=True)
     def body(self):
@@ -82,7 +87,7 @@ class HttpPost(HttpGet):
 
     def get_request_headers(self):
         """
-        Overridden from ProbeRunner: construct request_headers via parameter substitution
+        Overridden from Probe: construct request_headers via parameter substitution
         from content_type Parameter.
         """
 

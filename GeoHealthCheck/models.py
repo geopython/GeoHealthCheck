@@ -68,80 +68,68 @@ class Run(DB.Model):
         return '<Run %r>' % (self.identifier)
 
 
-class Probe(DB.Model):
-    """Identifies and parameterizes ProbeRunner, applies to single Resource"""
+class ProbeVars(DB.Model):
+    """
+    Identifies and parameterizes single Probe class. Probe
+    instance applies to single parent Resource.
+    """
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_identifier = DB.Column(DB.Integer,
                                     DB.ForeignKey('resource.identifier'))
     resource = DB.relationship('Resource',
-                               backref=DB.backref('probes', lazy='dynamic'))
-    proberunner = DB.Column(DB.Text, nullable=False)
+                               backref=DB.backref('probe_vars', lazy='dynamic'))
+    probe_class = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Probe
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
-    def __init__(self, resource, proberunner, parameters='{}'):
+    def __init__(self, resource, probe_class, parameters='{}'):
         self.resource = resource
-        self.proberunner = proberunner
+        self.probe_class = probe_class
         self.parameters = parameters
 
     @property
     def parameters(self):
         return json.loads(self._parameters)
-        # First get parameters already valued from ProbeRunner
-
-        # TODO not here but in GUI (adding values and defaults)
-        # parms = {}
-        # runner_parms = self.proberunner_parameters
-        # for parm in runner_parms:
-        #     parms[parm['name']] = None
-        #     if 'value' in parm:
-        #         parms[parm['name']] = parm['value']
-        #
-        # for key in parms:
-        #     if key in probe_parms:
-        #         parms[key] = probe_parms[key]
-        #
-        # return parms
 
     @parameters.setter
     def parameters(self, parameters):
         self._parameters = json.dumps(parameters)
 
     @property
-    def proberunner_instance(self):
-        return Factory.create_obj(self.proberunner)
+    def probe_instance(self):
+        return Factory.create_obj(self.probe_class)
 
     @property
     def name(self):
-        return self.proberunner_instance.NAME
+        return self.probe_instance.NAME
 
     @property
-    def proberunner_parameters(self):
-        return self.proberunner_instance.REQUEST_PARAMETERS
+    def probe_parameters(self):
+        return self.probe_instance.REQUEST_PARAMETERS
 
     def __repr__(self):
-        return '<Probe %r>' % self.identifier
+        return '<ProbeVars %r>' % self.identifier
 
 
-class Check(DB.Model):
+class CheckVars(DB.Model):
     """Identifies and parameterizes check function, applies to single Probe"""
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
-    probe_identifier = DB.Column(DB.Integer, DB.ForeignKey('probe.identifier'))
-    probe = DB.relationship('Probe',
-                               backref=DB.backref('checks', lazy='dynamic'))
-    checker = DB.Column(DB.Text, nullable=False)
+    probe_vars_identifier = DB.Column(DB.Integer, DB.ForeignKey('probe_vars.identifier'))
+    probe_vars = DB.relationship('ProbeVars',
+                               backref=DB.backref('check_vars', lazy='dynamic'))
+    check_class = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Check
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default='{}')
 
-    def __init__(self, probe, checker, parameters='{}'):
-        self.probe = probe
-        self.checker = checker
+    def __init__(self, probe_vars, check_class, parameters='{}'):
+        self.probe_vars = probe_vars
+        self.check_class = check_class
         self.parameters = parameters
 
     @property
@@ -154,7 +142,7 @@ class Check(DB.Model):
 
 
     def __repr__(self):
-        return '<Check %r>' % self.identifier
+        return '<CheckVars %r>' % self.identifier
 
 
 class Tag(DB.Model):
@@ -397,11 +385,11 @@ def load_data(file_path):
 
     # add Probes, keeping track of DB objects
     probes = {}
-    for probe_name in objects['probes']:
-        probe = objects['probes'][probe_name]
+    for probe_name in objects['probe_vars']:
+        probe = objects['probe_vars'][probe_name]
 
-        probe = Probe(resources[probe['resource']],
-                      probe['proberunner'],
+        probe = ProbeVars(resources[probe['resource']],
+                      probe['probe_class'],
                       probe['parameters'],
                       )
 
@@ -410,11 +398,11 @@ def load_data(file_path):
 
     # add Checks, keeping track of DB objects
     checks = {}
-    for check_name in objects['checks']:
-        check = objects['checks'][check_name]
+    for check_name in objects['check_vars']:
+        check = objects['check_vars'][check_name]
 
-        check = Check(probes[check['probe']],
-                      check['checker'],
+        check = CheckVars(probes[check['probe_vars']],
+                      check['check_class'],
                       check['parameters'],
                       )
 

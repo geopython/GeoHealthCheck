@@ -1,14 +1,26 @@
-from GeoHealthCheck.proberunner import ProbeRunner
-from GeoHealthCheck.plugin import Parameter
+from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugindecor import Parameter, UseCheck
 
-class OwsGetCaps(ProbeRunner):
-    """Fetch OWS capabilities doc"""
+
+class OwsGetCaps(Probe):
+    """
+    Fetch OWS capabilities doc
+    """
 
     NAME = 'OWS GetCapabilities'
-    RESOURCE_TYPE = 'OGC:*'
+
+    # Abstract Base Class for OGC OWS GetCaps Probes
+    RESOURCE_TYPE = 'OGC:ABC'
 
     REQUEST_METHOD = 'GET'
     REQUEST_TEMPLATE = '?SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
+
+    def __init__(self):
+        Probe.__init__(self)
+
+    #
+    # Parameters for Probe as Decorators
+    #
 
     @Parameter(ptype=str, default=None, required=True)
     def service(self):
@@ -24,69 +36,41 @@ class OwsGetCaps(ProbeRunner):
         """
         pass
 
-    # TODO Checks for ProbeRunner as Decorators
-
-    # @Check(checker='GeoHealthCheck.plugins.check.checkers.XmlParse', optional=False)
-    # def http_error_status(self):
-    #     """
-    #     response is parsable.
-    #     Optional: False
-    #     """
-    #     pass
-
-    # @Check(checker='GeoHealthCheck.plugins.check.checkers.NotContainsOwsException', optional=False)
-    # def no_ows_exception(self):
-    #     """
-    #     response does not contain OWS Exception.
-    #     Optional: False
-    #     """
-    #     pass
-
-    #  @Check(checker='GeoHealthCheck.plugins.check.checkers.ContainsStrings', optional=False,
-    #         parameters=[
-    #                 {
-    #                     'name': 'strings',
-    #                     'value': ['Title>']
-    #                 }
-    #             ])
-    #  def capabilities_title(self):
-    #      """
-    #   find title element in capabilities response doc.
-    #   Optional: False
-    #   """
     #
-    # pass
+    # Checks for Probe as Decorators
+    #
 
-    RESPONSE_CHECKS = [
-        {
-            'name': 'parse_response',
-            'description': 'response is parsable',
-            'class': 'GeoHealthCheck.plugins.check.checkers.XmlParse'
-        },
-        {
-            'name': 'no OWS Exception',
-            'description': 'response does not contain OWS Exception',
-            'class': 'GeoHealthCheck.plugins.check.checkers.NotContainsOwsException'
-        },
-        {
-            'name': 'capabilities_title',
-            'description': 'find title element in capabilities response doc',
-            'class': 'GeoHealthCheck.plugins.check.checkers.ContainsStrings',
-            'parameters': [
-                {
-                    'name': 'strings',
-                    'value': ['Title>']
-                }
-            ]
-        }
-    ]
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.XmlParse')
+    def xml_parsable(self):
+        """
+        response is parsable.
+        """
+        pass
 
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.NotContainsOwsException')
+    def no_ows_exception(self):
+        """
+        response does not contain OWS Exception.
+        Optional: False
+        """
+        pass
+
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.ContainsStrings',
+        parameters={'strings': ['Title>']})
+    def has_title_element(self):
+        """
+        Should have title element in capabilities response doc.
+        """
+        pass
 
 class WmsGetCaps(OwsGetCaps):
     """Fetch WMS capabilities doc"""
     
     NAME = 'WMS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WMS'
+
+    def __init__(self):
+        OwsGetCaps.__init__(self)
 
     @Parameter(ptype=str, value='WMS')
     def service(self):
@@ -104,10 +88,13 @@ class WmsGetCaps(OwsGetCaps):
 
 
 class WfsGetCaps(OwsGetCaps):
-    """WFS GetCapabilities ProbeRunner"""
+    """WFS GetCapabilities Probe"""
 
     NAME = 'WFS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WFS'
+
+    def __init__(self):
+        OwsGetCaps.__init__(self)
 
     @Parameter(ptype=str, value='WFS')
     def service(self):
@@ -125,10 +112,13 @@ class WfsGetCaps(OwsGetCaps):
 
 
 class WcsGetCaps(OwsGetCaps):
-    """WCS GetCapabilities ProbeRunner"""
+    """WCS GetCapabilities Probe"""
 
     NAME = 'WCS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WCS'
+
+    def __init__(self):
+        OwsGetCaps.__init__(self)
 
     @Parameter(ptype=str, value='WCS')
     def service(self):
@@ -146,10 +136,13 @@ class WcsGetCaps(OwsGetCaps):
 
 
 class CswGetCaps(OwsGetCaps):
-    """CSW GetCapabilities ProbeRunner"""
+    """CSW GetCapabilities Probe"""
 
-    NAME = 'WCS GetCapabilities'
+    NAME = 'CSW GetCapabilities'
     RESOURCE_TYPE = 'OGC:CSW'
+
+    def __init__(self):
+        OwsGetCaps.__init__(self)
 
     @Parameter(ptype=str, value='CSW')
     def service(self):
@@ -167,11 +160,13 @@ class CswGetCaps(OwsGetCaps):
 
 
 class WmtsGetCaps(OwsGetCaps):
-    """WMTS GetCapabilities ProbeRunner"""
+    """WMTS GetCapabilities Probe"""
 
     NAME = 'WMTS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WMTS'
 
+    def __init__(self):
+        OwsGetCaps.__init__(self)
 
     @Parameter(ptype=str, value='WMTS')
     def service(self):
@@ -189,10 +184,13 @@ class WmtsGetCaps(OwsGetCaps):
 
 
 class WpsGetCaps(OwsGetCaps):
-    """WPS GetCapabilities ProbeRunner"""
+    """WPS GetCapabilities Probe"""
 
     NAME = 'WPS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WPS'
+
+    def __init__(self):
+        OwsGetCaps.__init__(self)
 
     @Parameter(ptype=str, value='WPS')
     def service(self):
@@ -210,10 +208,13 @@ class WpsGetCaps(OwsGetCaps):
 
 
 class SosGetCaps(OwsGetCaps):
-    """SOS GetCapabilities ProbeRunner"""
+    """SOS GetCapabilities Probe"""
 
     NAME = 'SOS GetCapabilities'
     RESOURCE_TYPE = 'OGC:SOS'
+
+    def __init__(self):
+        OwsGetCaps.__init__(self)
 
     @Parameter(ptype=str, value='SOS')
     def service(self):

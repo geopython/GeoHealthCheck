@@ -1,37 +1,42 @@
-from GeoHealthCheck.proberunner import ProbeRunner
-from GeoHealthCheck.plugin import Parameter
+from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugindecor import Parameter, UseCheck
 
 
-class TmsCaps(ProbeRunner):
-    """ProbeRunner for TMS main endpoint url"""
+class TmsCaps(Probe):
+    """Probe for TMS main endpoint url"""
 
     NAME = 'TMS Capabilities'
     RESOURCE_TYPE = 'OSGeo:TMS'
 
     REQUEST_METHOD = 'GET'
 
-    RESPONSE_CHECKS = [
-        {
-            'name': 'parse_response',
-            'description': 'response is parsable',
-            'class': 'GeoHealthCheck.plugins.checkxml_parse'
-        },
-        {
-            'name': 'contains TileMap',
-            'description': 'find TileMap(s) element in capabilities response doc',
-            'class': 'GeoHealthCheck.plugins.checkcontains_string',
-            'parameters': [
-                {
-                    'name': 'text',
-                    'type': 'string',
-                    'value': 'TileMap>'
-                }
-            ]
-        }
-    ]
+    def __init__(self):
+        Probe.__init__(self)
+
+    #
+    # Checks for Probe as Decorators
+    #
+
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.XmlParse')
+    def xml_parsable(self):
+        """
+        response is parsable.
+        """
+        pass
+
+    #
+    # Checks for Probe as Decorators
+    #
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.ContainsStrings',
+        parameters={'strings': ['TileMap>']})
+    def has_tilemap_element(self):
+        """
+        Should have TileMap element in capabilities response doc.
+        """
+        pass
 
 
-class TmsGetTile(ProbeRunner):
+class TmsGetTile(Probe):
     """Fetch TMS tile and check result"""
 
     NAME = 'TMS GetTile'
@@ -41,6 +46,9 @@ class TmsGetTile(ProbeRunner):
 
     # e.g. http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/1/0/0.png
     REQUEST_TEMPLATE = '/{layer}/{zoom}/{x}/{y}.{extension}'
+
+    def __init__(self):
+        Probe.__init__(self)
 
     @Parameter(ptype=str, default=None, required=True)
     def layer(self):
@@ -77,17 +85,6 @@ class TmsGetTile(ProbeRunner):
         """
         pass
 
-    RESPONSE_CHECKS = [
-        {
-            'name': 'has content type',
-            'description': 'checks if response content type matches',
-            'class': 'GeoHealthCheck.plugins.check.checkers.HttpHasContentType',
-            'parameters': [
-                {
-                    'header_value': 'value',
-                    'type': 'string'
-                }
-            ]
-        }
-    ]
-
+    @UseCheck(check_class='GeoHealthCheck.plugins.check.checks.HttpHasImageContentType')
+    def has_image_content_type(self):
+        pass

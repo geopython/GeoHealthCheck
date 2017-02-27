@@ -86,12 +86,12 @@ GHC_MAP = {
 # The latter will include all classes derived from GeoHealthCheck.plugin.Plugin
 # in the module file.
 GHC_PLUGINS = {
-    # ProbeRunners
+    # Probes
     'GeoHealthCheck.plugins.probe.owsgetcaps',
     'GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatureBbox',
     'GeoHealthCheck.plugins.probe.tms',
     'GeoHealthCheck.plugins.probe.http',
 
     # Checkers
-    'GeoHealthCheck.plugins.check.checkers',
+    'GeoHealthCheck.plugins.check.checks',
 }

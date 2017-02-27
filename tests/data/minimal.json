@@ -18,20 +18,20 @@
       "tags": []
     }
   },
-  "probes": {
+  "probe_vars": {
     "WOUDC WMS - GetCaps": {
       "resource": "WOUDC WMS",
-      "proberunner": "GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps",
       "parameters": {
         "service": "WMS",
         "version": "1.0.0"
       }
     }
   },
-  "checks": {
+  "check_vars": {
     "WOUDC WMS - GetCaps - XML Parse": {
-      "probe": "WOUDC WMS - GetCaps",
-      "checker": "GeoHealthCheck.plugins.check.checkers.XmlParse",
+      "probe_vars": "WOUDC WMS - GetCaps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
       "parameters": {}
     }
   }

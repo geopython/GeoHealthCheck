@@ -9,7 +9,7 @@ most installations. However, there is no limit to detailed healthchecks
 one may want to perform. Hence developers can extend or even replace
 the GHC standard Plugins with custom implementations.
 
-Two extension points exist: `ProbeRunners` and `Checkers`.
+Two extension points exist: `Probes` and `Checks`.
 
 *TODO: extend once Plugin implementation stabilizes...*
 
@@ -32,27 +32,27 @@ Plugins - Base Classes
 ......................
 
 These are the base classes for GHC Plugins. Developers will
-mainly extend `ProbeRunner` and `Checker`.
+mainly extend `Probe` and `Check`.
 
 .. automodule:: GeoHealthCheck.plugin
    :members:
    :show-inheritance:
 
-.. automodule:: GeoHealthCheck.proberunner
+.. automodule:: GeoHealthCheck.probe
    :members:
    :show-inheritance:
 
-.. automodule:: GeoHealthCheck.checker
+.. automodule:: GeoHealthCheck.check
    :members:
    :show-inheritance:
 
-Plugins - Proberunners
-......................
+Plugins - Probes
+................
 
-`Proberunners` apply to a single `Resource` instance. They are responsible for running
-requests against the Resource URL endpoint. Most `Proberunners` are implemented mainly
+`Probes` apply to a single `Resource` instance. They are responsible for running
+requests against the Resource URL endpoint. Most `Probes` are implemented mainly
 via configuring class variables and `@Parameters` and `@Checks`, but one is free
-to override any of the `Proberunner` baseclass methods.
+to override any of the `Probe` baseclass methods.
 
 .. automodule:: GeoHealthCheck.plugins.probe.http
    :members:
@@ -70,13 +70,13 @@ to override any of the `Proberunner` baseclass methods.
    :members:
    :show-inheritance:
 
-Plugins - Checkers
-..................
+Plugins - Checks
+................
 
-`Checkers` apply to a single `ProbeRunner` instance. They are responsible for checking
-request results from their `ProbeRunner`.
+`Checks` apply to a single `Probe` instance. They are responsible for checking
+request results from their `Probe`.
 
-.. automodule:: GeoHealthCheck.plugins.check.checkers
+.. automodule:: GeoHealthCheck.plugins.check.checks
    :members:
    :show-inheritance:
 
