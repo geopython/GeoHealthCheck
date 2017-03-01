@@ -679,8 +679,8 @@ def recover():
 #
 # REST Interface Calls
 #
-@APP.route('/rest/v1/probe/')
-@APP.route('/rest/v1/probe/<resource_type>')
+@APP.route('/api/v1.0/probe/')
+@APP.route('/api/v1.0/probe/<resource_type>')
 def rest_probe(resource_type=None):
     
     """get """

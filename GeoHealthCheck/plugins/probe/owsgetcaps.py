@@ -10,7 +10,8 @@ class OwsGetCaps(Probe):
     NAME = 'OWS GetCapabilities'
 
     # Abstract Base Class for OGC OWS GetCaps Probes
-    RESOURCE_TYPE = 'OGC:ABC'
+    # Needs specification in subclasses
+    # RESOURCE_TYPE = 'OGC:ABC'
 
     REQUEST_METHOD = 'GET'
     REQUEST_TEMPLATE = '?SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
@@ -40,6 +41,7 @@ class OwsGetCaps(Probe):
         },
     }
     """Checks avail for all specific Caps checks"""
+
 
 class WmsGetCaps(OwsGetCaps):
     """Fetch WMS capabilities doc"""

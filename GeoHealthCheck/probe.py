@@ -9,19 +9,23 @@ from result import ProbeResult, CheckResult
 class Probe(Plugin):
     """
      Base class for specific implementations to run a Probe with Checks.
-
+     Most Probes can be implemented using REQUEST_TEMPLATES parameterized
+     via actualized PARAM_DEFS but specialized Probes may implement
+     their own Requests and Checks, for example by "drilling down"
+     through OWS services on an OGC OWS endpoint starting at the
+     Capabilities level or for specific WWW:LINK-based REST APIs.
     """
 
     # Generic attributes, subclassses override
-    RESOURCE_TYPE = '*:*'
+    RESOURCE_TYPE = 'Not Applicable'
     """
-    Type of GHC Resource e.g. 'OGC:WMS'
+    Type of GHC Resource e.g. 'OGC:WMS', default not applicable.
     """
 
     # Request attributes, defaults, subclassses override
     REQUEST_METHOD = 'GET'
     """
-    HTTP request method capitalized, GET (default) or POST
+    HTTP request method capitalized, GET (default) or POST.
     """
 
     REQUEST_HEADERS = {}
@@ -137,7 +141,7 @@ class Probe(Plugin):
                                           data=request_string,
                                           headers=self.get_request_headers())
 
-        self.log('response: status=%d' % (self.response.status_code))
+        self.log('response: status=%d' % self.response.status_code)
 
         if self.response.status_code /100 in [4,5]:
             self.log('Errro response: %s' % (str(self.response.text)))
@@ -176,8 +180,8 @@ class Probe(Plugin):
     @staticmethod
     def run(resource, probe_vars):
         """
-        Class method to create and run a single Probe.
-        Follows strict sequence of method calls.
+        Class method to create and run a single Probe
+        instance. Follows strict sequence of method calls.
         Each method can be overridden in subclass.
         """
 

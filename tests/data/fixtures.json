@@ -87,6 +87,12 @@
         "version": "1.0.0"
       }
     },
+    "WOUDC WMS - Drilldown": {
+      "resource": "WOUDC WMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wmsdrilldown.WmsDrilldown",
+      "parameters": {
+      }
+    },
     "WOUDC WFS - GetCaps": {
       "resource": "WOUDC WFS",
       "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WfsGetCaps",

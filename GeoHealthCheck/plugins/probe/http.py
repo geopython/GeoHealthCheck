@@ -24,7 +24,7 @@ class HttpGetQuery(HttpGet):
     """
 
     NAME = 'HTTP GET Resource URL with query'
-    DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET with query string'
+    DESCRIPTION = 'HTTP GET Resource URL with query string to be supplied'
     REQUEST_TEMPLATE = '?{query}'
 
     PARAM_DEFS = {

@@ -91,6 +91,7 @@ GHC_PLUGINS = {
     'GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatureBbox',
     'GeoHealthCheck.plugins.probe.tms',
     'GeoHealthCheck.plugins.probe.http',
+    'GeoHealthCheck.plugins.probe.wmsdrilldown',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',

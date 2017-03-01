@@ -24,6 +24,10 @@ class Result(object):
             self.message = result.message
             self.results_failed.append(result)
 
+    def set(self, success, message):
+        self.success = success
+        self.message = message
+
     def start(self):
         self.start_time = datetime.datetime.utcnow()
 

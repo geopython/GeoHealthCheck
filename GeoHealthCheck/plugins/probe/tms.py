@@ -45,7 +45,7 @@ class TmsGetTile(Probe):
         'zoom': {
             'type': 'string',
             'description': 'The tile pyramid zoomlevel',
-            'default': None,
+            'default': '0',
             'required': True,
             'range': None
         },
