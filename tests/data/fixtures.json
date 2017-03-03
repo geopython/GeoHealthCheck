@@ -91,6 +91,7 @@
       "resource": "WOUDC WMS",
       "probe_class": "GeoHealthCheck.plugins.probe.wmsdrilldown.WmsDrilldown",
       "parameters": {
+        "drilldown_level": "minor"
       }
     },
     "WOUDC WFS - GetCaps": {
@@ -220,11 +221,8 @@
     },
     "PDOK TMS - TopTile - Content Type": {
       "probe_vars": "PDOK TMS - TopTile",
-      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasContentType",
-      "parameters": {
-        "header_name": "content-type",
-        "header_value": "image/png"
-      }
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
+      "parameters": {}
     }
   }
 }

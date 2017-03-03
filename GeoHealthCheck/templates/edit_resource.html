@@ -51,14 +51,14 @@
                             <div id="resource-probe-info-{{ probe.resource_identifier }}-{{ probe.identifier }}"
                                  class="resource-probe-info" style="display: none">
                                 <table class="table">
-                                    <tr>
+                                     <tr>
                                         <td>{{ probes_avail[probe.probe_class].DESCRIPTION }}</td>
                                     </tr>
                                     <tr>
                                          <td><strong>Parameters</strong>
                                              {% if not probe.parameters %}
                                                  This Probe has no parameters.
-                                             {% endif %}
+                                             {% else %}
                                              <table class="table">
                                                  {% for param in probe.parameters  %}
                                                         <tr>
@@ -67,13 +67,15 @@
                                                         </tr>
                                                  {% endfor %}
                                              </table>
+                                             {% endif %}
+
                                          </td>
                                     </tr>
                                     <tr>
                                         <td><strong>Checks</strong>
                                             {% if not probe.check_vars %}
                                                 This Probe has no checks.
-                                            {% endif %}
+                                            {% else %}
                                             <table class="table">
                                                 {% for check in probe.check_vars  %}
                                                        <tr>
@@ -82,38 +84,103 @@
                                                        </tr>
                                                 {% endfor %}
                                             </table>
+                                            {% endif %}
+
                                         </td>
                                      </tr>
                                 </table>
                              </div>
                             <div id="resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}"
                                  class="resource-probe-edit" style="display: none">
-                                <table class="table">
+                                <table class="table resource-probe-data" data-probe-class="{{ probe.probe_class }}">
                                     <tr>
-                                         <td> <strong>Parameters</strong>
+                                         <td>
+                                             <strong>Probe Parameters</strong>
                                              {% if not probe.parameters %}
-                                                 This Probe has no parameters.
-                                             {% endif %}
+                                             <br/><span>This Probe has no parameters.</span>
+                                             {% else %}
 
                                              {% for param in probe.parameters  %}
-                                             <table class="table">
+                                             <table class="table resource-probe-params">
                                                  <tr>
                                                      <td width="30%">{{ param }}</td>
 
                                                      <td>
+                                                         <input data-param-name="{{ param }}" type="text"
+                                                                value="{{ probe.parameters[param] }}"
+                                                                style="width: 100%;"
                                                          {% if 'value' in probes_avail[probe.probe_class].PARAM_DEFS[param] %}
-                                                         {{ probe.parameters[param] }}
-                                                         {% else %}
-                                                         <input type="text"
-                                                         id="resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}-{{ param }}"
-                                                         value="{{ probe.parameters[param] }}" style="width: 100%;"/>
-                                                         {% endif %}
-
+                                                            readonly="true"
+                                                          {% endif %}
+                                                          />
                                                      </td>
                                                  </tr>
                                              </table>
 
                                              {% endfor %}
+                                             {% endif %}
+
+                                         </td>
+                                     </tr>
+                                    <tr>
+                                         <td class="resource-probe-checks">
+                                             <strong>Checks</strong>
+                                             {% if not probe.check_vars %}
+                                             <br/><span>This Probe has no Checks (maybe internal Checking).</span>
+                                             {% else %}
+
+                                             {% for check in probe.check_vars %}
+                                             <table class="table resource-probe-check" data-check-class="{{ check.check_class }}">
+                                             <tr>
+                                                 <td><strong>{{ probes_avail[probe.probe_class].CHECKS_AVAIL[check.check_class].NAME }}</strong></td>
+                                             </tr>
+                                                 {% if check.parameters %}
+                                                 <tr>
+                                                    <td>
+                                                        <i>Check Parameters</i>
+                                                        <table class="table">
+                                                            {% for param in check.parameters %}
+                                                             <tr>
+                                                                 <td>{{ param }}</td>
+                                                                 <td>
+                                                                 <input data-param-name="{{ param }}" type="text"
+                                                                         value="{{ check.parameters[param] }}"
+                                                                         style="width: 100%;"
+                                                                  {% if 'value' in probes_avail[probe.probe_class].CHECKS_AVAIL[check.check_class].PARAM_DEFS[param] %}
+                                                                     readonly="true"
+                                                                   {% endif %}
+                                                                   />
+
+                                                                 </td>
+                                                             </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </td>
+                                                  </tr>
+                                                 {% endif %}
+                                             </table>
+                                             {% endfor %}
+                                             {% endif %}
+
+                                         </td>
+                                     </tr>
+                                    <tr>
+                                         <td>
+                                             <strong>Checks Available</strong>
+                                             {% if not probes_avail[probe.probe_class].CHECKS_AVAIL %}
+                                              <br/><span>No Checks available (maybe internal Checking).</span>
+                                              {% else %}
+
+                                             <ul>
+
+                                             {% for check_avail in probes_avail[probe.probe_class].CHECKS_AVAIL %}
+                                               <li>{{ probes_avail[probe.probe_class].CHECKS_AVAIL[check_avail].NAME }}</li>
+
+                                             {% endfor %}
+                                             </ul>
+                                             {% endif %}
+
+
                                          </td>
                                      </tr>
 
@@ -122,9 +189,6 @@
 
                         </td>
                         <td>
-                         <button id="button-resource-probe-info-{{ probe.resource_identifier }}-{{ probe.identifier }}"
-                                 type="button" title="{{ probes_avail[probe.probe_class].DESCRIPTION }}"
-                                                    class="button-resource-probe-info btn btn-success btn-xs">{{ _('Info') }}</button>
                          <button id="button-resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}" type="button"
                                  class="button-resource-probe-edit btn btn-primary btn-xs">{{ _('Edit') }}</button>
                          <button id="button-resource-probe-delete"-{{ probe.resource_identifier }}-{{ probe.identifier }} type="button" class="btn btn-danger btn-xs">{{ _('Delete') }}</button>
@@ -197,7 +261,7 @@
     {% if g.user.is_authenticated() %}
 
     $(".button-resource-probe-info").click(function(){
-        $('.resource-probe-edit').hide()
+        $('.resource-probe-edit').hide();
         var button_id = $(this).attr('id');
         var id_arr = button_id.split('-');
         var resource_id = id_arr[id_arr.length-2];
@@ -210,10 +274,11 @@
         } else {
             $(resource_probe_info_id).hide();
         }
+        return false;
     });
 
     $(".button-resource-probe-edit").click(function(){
-        $('.resource-probe-info').hide()
+        $('.resource-probe-info').hide();
         var button_id = $(this).attr('id');
         var id_arr = button_id.split('-');
         var resource_id = id_arr[id_arr.length-2];
@@ -226,6 +291,7 @@
         } else {
             $(resource_probe_edit_id).hide();
         }
+        return false;
     });
 
     $('#test').click(function() {
@@ -249,18 +315,61 @@
      });
 
     $('#save').click(function() {
+        // Collect title
         var new_title = $('input[name="resource_title_value"]').val();
 
-        // Need to fix dupkey error for tags submit
+        // Collect tags
         var new_tags = $('#resource_tags').val();
-        // var new_probes = $('#resource_tags').val();
+
+        // Collect Probes with parameters and contained Checks
+        // also with parameters
+        var new_probes = [];
+        var probe_data = $('.resource-probe-data');
+        probe_data.each(function (key, table) {
+            var probe_class = $(table).attr('data-probe-class');
+            var probe_map = {
+                'probe_class': probe_class,
+                'parameters': {},
+                'checks': []
+            };
+
+            // Collect this Probe's parameters
+            var parameters = {};
+            $('input', table).each(function (key, input) {
+                var param_name = $(input).attr('data-param-name');
+                parameters[param_name] = $(input).val();
+            });
+            probe_map['parameters'] = parameters;
+
+            // Collect this Probe's Checks with parameters
+            var checks_data = $('.resource-probe-checks', table);
+            var checks = probe_map['checks'];
+            $('.resource-probe-check', checks_data).each(function (key, check) {
+                var check_entry = {
+                   'check_class': $(check).attr('data-check-class'),
+                    'parameters': {}
+                };
+                var parameters = {};
+                $('input', check).each(function (key, input) {
+                    var param_name = $(input).attr('data-param-name');
+                    parameters[param_name] = $(input).val();
+                });
+                check_entry['parameters'] = parameters;
+                checks.push(check_entry);
+            });
+
+            probe_map['checks'] = checks;
+            new_probes.push(probe_map);
+        });
+
         $('#status').text("{{ _('Save') }}...");
         $.ajax({
             type: "POST",
             url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
             data: JSON.stringify({
                 title: new_title,
-                tags: new_tags
+                tags: new_tags,
+                probes: new_probes
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",

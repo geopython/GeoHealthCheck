@@ -4,6 +4,7 @@ import inspect
 import collections
 import copy
 
+
 class Plugin(object):
     """
     Abstract Base class for all GHC Plugins.
@@ -41,6 +42,24 @@ class Plugin(object):
         if param_name not in self._parameters:
             return None
         return self._parameters[param_name]
+
+    def get_var_names(self):
+        """
+        Get all Plugin variable names as a dict
+        """
+        return ['AUTHOR', 'NAME', 'DESCRIPTION']
+
+    def get_plugin_vars(self):
+
+        """
+        Get all (uppercase) class variables of a class
+        as a dict
+        """
+        plugin_vars={}
+        var_names = self.get_var_names()
+        for var_name in var_names:
+            plugin_vars[var_name] = getattr(self, var_name, None)
+        return plugin_vars
 
     @staticmethod
     def copy(obj):

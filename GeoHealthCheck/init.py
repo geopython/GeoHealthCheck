@@ -30,6 +30,7 @@
 from flask import Flask
 
 from flask.ext.sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 
 APP = Flask(__name__)
 APP.config.from_pyfile('config_main.py')

@@ -146,7 +146,7 @@ def get_query_field_term(query):
     return [field, term]
 
 
-def get_probes(resource_type=None):
+def get_probes_avail(resource_type=None):
     """
     Get all available Probes with their attributes.
     :param resource_type: optional resource type e.g. OGC:WMS
@@ -158,11 +158,12 @@ def get_probes(resource_type=None):
     if resource_type:
         filters=[('RESOURCE_TYPE', resource_type),
                  ('RESOURCE_TYPE', '*:*')]
-    probes = Plugin.get_plugins('GeoHealthCheck.probe.Probe',
-                filters)
+
+    probe_classes = Plugin.get_plugins('GeoHealthCheck.probe.Probe', filters)
 
     result = dict()
-    for probe in probes:
-        result[probe] = Factory.get_class_vars(probe)
+    for probe_class in probe_classes:
+        probe = Factory.create_obj(probe_class)
+        result[probe_class] = probe.get_plugin_vars()
 
     return result

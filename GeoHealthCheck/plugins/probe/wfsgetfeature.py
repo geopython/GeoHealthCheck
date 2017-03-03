@@ -86,10 +86,17 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         'GeoHealthCheck.plugins.check.checks.XmlParse': {},
         'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {},
         'GeoHealthCheck.plugins.check.checks.ContainsStrings': {
-            'parameters': {
-                'description': 'Has FeatureCollection element in response doc',
-                'strings': ['FeatureCollection>']
+            'set_params': {
+                'strings': {
+                    'name': 'Must contain FeatureCollection Element',
+                    'description': 'Has FeatureCollection element in response doc',
+                    'value': ['FeatureCollection>']
+                }
             }
         }
     }
-    """Checks for WFS GetFeature Response available"""
+    """
+    Checks for WFS GetFeature Response available.
+    Optionally override Check PARAM_DEFS using set_params
+    e.g. with specific `value` or even `name`.
+    """

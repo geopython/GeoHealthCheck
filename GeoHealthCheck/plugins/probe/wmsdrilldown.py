@@ -10,13 +10,26 @@ class WmsDrilldown(Probe):
     Probe for WMS endpoint "drilldown": starting
     with GetCapabilities doc: get Layers and do
     GetMap on them etc. Using OWSLib.WebMapService.
-     """
+
+    TODO: needs finalization.
+    """
 
     NAME = 'WMS Drilldown'
     DESCRIPTION = 'Traverses a WMS endpoint by drilling down from Capabilities'
     RESOURCE_TYPE = 'OGC:WMS'
 
     REQUEST_METHOD = 'GET'
+
+    PARAM_DEFS = {
+        'drilldown_level': {
+            'type': 'string',
+            'description': 'How heavy the drilldown should be.',
+            'default': 'minor',
+            'required': True,
+            'range': ['minor', 'moderate','full']
+        }
+    }
+    """Param defs"""
 
     def __init__(self):
         Probe.__init__(self)
@@ -43,7 +56,9 @@ class WmsDrilldown(Probe):
         self.result.add_result(result)
 
         # 2. Test layers
-        result = Result(True, 'Test Capabilities')
+        # TODO: use parameters to work on less/more drilling
+        # "full" could be all layers.
+        result = Result(True, 'Test Layers')
         result.start()
         try:
             # Pick a random layer
@@ -88,4 +103,6 @@ class WmsDrilldown(Probe):
             result.set(False, str(err))
 
         result.stop()
+
+        # Add to overall Probe result
         self.result.add_result(result)

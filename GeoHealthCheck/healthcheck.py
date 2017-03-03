@@ -60,7 +60,7 @@ def run_test_resource(resource):
 
     result.stop()
 
-    return result.get_run_data()
+    return result
 
 
 def sniff_test_resource(config, resource_type, url):

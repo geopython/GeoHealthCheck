@@ -37,10 +37,19 @@ class OwsGetCaps(Probe):
         'GeoHealthCheck.plugins.check.checks.XmlParse': {},
         'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {},
         'GeoHealthCheck.plugins.check.checks.ContainsStrings': {
-            'parameters': {'strings': ['Title>']}
+            'set_params': {
+                'strings': {
+                    'name': 'Contains Title Element',
+                    'value': ['Title>']
+                }
+            }
         },
     }
-    """Checks avail for all specific Caps checks"""
+    """
+    Checks avail for all specific Caps checks.
+    Optionally override Check PARAM_DEFS using set_params
+    e.g. with specific `value`.
+    """
 
 
 class WmsGetCaps(OwsGetCaps):

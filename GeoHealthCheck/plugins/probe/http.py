@@ -11,9 +11,9 @@ class HttpGet(Probe):
     REQUEST_METHOD = 'GET'
 
     CHECKS_AVAIL = {
-        'GeoHealthCheck.plugins.check.checkers.HttpStatusNoError': {},
-        'GeoHealthCheck.plugins.check.checkers.ContainsStrings': {},
-        'GeoHealthCheck.plugins.check.checkers.NotContainsStrings': {},
+        'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {},
+        'GeoHealthCheck.plugins.check.checks.ContainsStrings': {},
+        'GeoHealthCheck.plugins.check.checks.NotContainsStrings': {},
     }
     """Checks avail"""
 

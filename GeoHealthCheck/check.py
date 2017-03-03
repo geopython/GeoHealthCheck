@@ -1,5 +1,5 @@
 from plugin import Plugin
-
+from result import CheckResult
 
 class Check(Plugin):
     """
@@ -8,6 +8,7 @@ class Check(Plugin):
     """
 
     PARAM_DEFS = {}
+
     """
     Check parameter definitions, defaults, subclassses override
     """
@@ -17,14 +18,29 @@ class Check(Plugin):
         self.probe = None
 
     # Lifecycle
-    def init(self, probe, parameters):
+    def init(self, probe, check_vars):
         """
         Initialize Checker with parent Probe and parameters dict.
         :return:
         """
 
         self.probe = probe
-        self._parameters = parameters
+        self.check_vars = check_vars
+        self._parameters = check_vars.parameters
+        self._result = CheckResult(self, check_vars)
+        self._result.start()
+
+    def get_var_names(self):
+        var_names = Plugin.get_var_names(self)
+        var_names.extend([
+            'PARAM_DEFS'
+        ])
+        return var_names
+
+    # Lifecycle
+    def set_result(self, success, message):
+        self._result.set(success, message)
+        self._result.stop()
 
     # Lifecycle
     def perform(self):
@@ -32,4 +48,4 @@ class Check(Plugin):
         Perform this Check's specific check. TODO: return Result object.
         :return:
         """
-        return True, 'OK'
+        pass

@@ -1,9 +1,12 @@
 import sys
+import logging
 import requests
 from plugin import Plugin
 
 from factory import Factory
 from result import ProbeResult, CheckResult
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Probe(Plugin):
@@ -75,37 +78,58 @@ class Probe(Plugin):
         self._parameters = probe_vars.parameters
         self._check_vars = probe_vars.check_vars
         self.response = None
-        self.result = None
+
+        # Create ProbeResult object that gathers all results for single Probe
+        self.result = ProbeResult(self, self._probe_vars)
 
     #
     # Lifecycle
     def exit(self):
         pass
 
+    def get_var_names(self):
+        var_names = Plugin.get_var_names(self)
+        var_names.extend([
+            'RESOURCE_TYPE',
+            'REQUEST_METHOD',
+            'REQUEST_HEADERS',
+            'REQUEST_TEMPLATE',
+            'PARAM_DEFS',
+            'CHECKS_AVAIL'
+        ])
+        return var_names
+
+    def get_plugin_vars(self):
+        probe_vars = Plugin.get_plugin_vars(self)
+        for check_class in probe_vars['CHECKS_AVAIL']:
+            check_avail = probe_vars['CHECKS_AVAIL'][check_class]
+            check = Factory.create_obj(check_class)
+            check_vars = check.get_plugin_vars()
+
+            # Check if Probe class overrides Check Params
+            # mainly "value" entries.
+            if 'set_params' in check_avail:
+                set_params = check_avail['set_params']
+                for set_param in set_params:
+                    if set_param in check_vars['PARAM_DEFS']:
+                        param_orig = check_vars['PARAM_DEFS'][set_param]
+                        param_override =  set_params[set_param]
+                        param_def = Plugin.merge(param_orig, param_override)
+                        check_vars['PARAM_DEFS'][set_param] = param_def
+                        
+            probe_vars['CHECKS_AVAIL'][check_class] = check_vars
+        return probe_vars
+    
     def log(self, text):
-        print('%s: %s' % (self.__class__.__name__, text))
-
-    def create_result(self):
-        """ Create ProbeResult object that gathers all results for single Probe"""
-
-        self.result = ProbeResult(self)
-
-    def create_check_result(self, check, parameters, success, message):
-        """ Create CheckResult object that gathers all results for single Check"""
-
-        return CheckResult(check, parameters, success, message)
+        LOGGER.info(text)
 
     def before_request(self):
         """ Before running actual request to service"""
-
-        self.create_result()
-
-        self.result.start()
+        pass
 
     def after_request(self):
         """ After running actual request to service"""
-
-        self.result.stop()
+        pass
 
     def get_request_headers(self):
         return self.REQUEST_HEADERS
@@ -144,13 +168,23 @@ class Probe(Plugin):
         self.log('response: status=%d' % self.response.status_code)
 
         if self.response.status_code /100 in [4,5]:
-            self.log('Errro response: %s' % (str(self.response.text)))
+            self.log('Error response: %s' % (str(self.response.text)))
 
     def run_request(self):
         """ Run actual request to service"""
-        self.before_request()
-        self.perform_request()
-        self.after_request()
+        try:
+            self.result.start()
+            self.before_request()
+            self.perform_request()
+            self.after_request()
+            self.result.stop()
+        except:
+            # We must never bailout because of Exception
+            # in Probe.
+            msg = "Exception: %s" % str(sys.exc_info())
+            self.log(msg)
+            self.result.set(False, msg)
+
 
     def run_checks(self):
         """ Do the checks on the response from request"""
@@ -158,19 +192,28 @@ class Probe(Plugin):
         # Config also determines which actual checks are performed from possible
         # Checks in Probe. Checks are performed by Checker instances.
         for check_var in self._check_vars:
-            check_class = check_var.check_class
-            check = Factory.create_obj(check_class)
+            check = None
             try:
-                check.init(self, check_var.parameters)
-                result = check.perform()
+                check_class = check_var.check_class
+                check = Factory.create_obj(check_class)
+            except:
+                LOGGER.error("Cannot create Check class: %s %s"
+                             % (check_class, str(sys.exc_info())))
+
+            if not check:
+                continue
+                
+            try:
+                check.init(self, check_var)
+                check.perform()
             except:
                 msg = "Exception: %s" % str(sys.exc_info())
-                self.log(msg)
-                result = False, msg
-            self.log('Check: fun=%s result=%s' % (check_class, result[0]))
+                LOGGER.error(msg)
+                check.set_result(False, msg)
 
-            self.result.add_result(self.create_check_result(
-                check_var, check_var.parameters, result[0], result[1]))
+            self.log('Check: fun=%s result=%s' % (check_class, check._result.success))
+
+            self.result.add_result(check._result)
 
      # Lifecycle
     def calc_result(self):
@@ -184,9 +227,16 @@ class Probe(Plugin):
         instance. Follows strict sequence of method calls.
         Each method can be overridden in subclass.
         """
+        probe = None
+        try:
+            # Create Probe instance from module.class string
+            probe = Factory.create_obj(probe_vars.probe_class)
+        except:
+            LOGGER.error("Cannot create Probe class: %s %s"
+                         % (probe_vars.probe_class, str(sys.exc_info())))
 
-        # Create Probe instance from module.class string
-        probe = Factory.create_obj(probe_vars.probe_class)
+        if not probe:
+            return
 
         # Initialize with actual parameters
         probe.init(resource, probe_vars)
@@ -205,4 +255,3 @@ class Probe(Plugin):
 
         # Return result
         return probe.result
-

@@ -69,10 +69,10 @@ class Factory:
         return Factory.create_class(function_string)
 
     @staticmethod
-    def get_class_vars(clazz):
+    def get_class_vars(clazz, candidates=[]):
 
         """
-        Class method to get all class variables of a class
+        Class method to get all (uppercase) class variables of a class
         as a dict
         """
         import inspect
@@ -85,6 +85,10 @@ class Factory:
         vars = dict()
         for member in members:
             key, value = member
+            if key in candidates:
+                vars[key] = value
+                continue
+
             if not key.startswith('__') \
                 and key.isupper() \
                 and not inspect.isclass(value) \

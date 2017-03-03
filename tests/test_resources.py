@@ -68,8 +68,7 @@ class GeoHealthCheckTest(unittest.TestCase):
         for resource in resources:
             result = run_test_resource(resource)
 
-            run = Run(resource, result[1], result[2],
-                      result[3], result[4])
+            run = Run(resource, result)
 
             print('Adding Run: success=%s, response_time=%ss\n'
                   % (str(run.success), run.response_time))

@@ -33,6 +33,7 @@ import logging
 import json
 
 from sqlalchemy import func
+from sqlalchemy.orm import deferred
 
 from enums import RESOURCE_TYPES
 from init import DB
@@ -56,13 +57,29 @@ class Run(DB.Model):
     response_time = DB.Column(DB.Float, nullable=False)
     message = DB.Column(DB.Text, default='OK')
 
-    def __init__(self, resource, success, response_time, message='OK',
+    # Make report 'deferred' as not to be included in all queries.
+    report = deferred(DB.Column(DB.Text, default={}))
+
+    def __init__(self, resource, result,
                  checked_datetime=datetime.utcnow()):
         self.resource = resource
-        self.success = success
-        self.response_time = response_time
+        self.success = result.success
+        self.response_time = result.response_time_str
         self.checked_datetime = checked_datetime
-        self.message = message
+        self.message = result.message
+        self.report = result.get_report()
+
+    # JSON string object specifying report for the Run
+    # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
+    _report = DB.Column("report", DB.Text, default={})
+
+    @property
+    def report(self):
+        return json.loads(self._report)
+
+    @report.setter
+    def report(self, report):
+        self._report = json.dumps(report)
 
     def __repr__(self):
         return '<Run %r>' % (self.identifier)
@@ -78,7 +95,9 @@ class ProbeVars(DB.Model):
     resource_identifier = DB.Column(DB.Integer,
                                     DB.ForeignKey('resource.identifier'))
     resource = DB.relationship('Resource',
-                               backref=DB.backref('probe_vars', lazy='dynamic'))
+                            backref=DB.backref('probe_vars',
+                            lazy='dynamic',
+                            cascade="all, delete-orphan"))
     probe_class = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Probe
@@ -120,7 +139,8 @@ class CheckVars(DB.Model):
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     probe_vars_identifier = DB.Column(DB.Integer, DB.ForeignKey('probe_vars.identifier'))
     probe_vars = DB.relationship('ProbeVars',
-                               backref=DB.backref('check_vars', lazy='dynamic'))
+                            backref=DB.backref('check_vars',
+                            cascade="all, delete-orphan"))
     check_class = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Check
@@ -429,7 +449,6 @@ if __name__ == '__main__':
     APP.config.from_pyfile('config_main.py')
     APP.config.from_pyfile('../instance/config_site.py')
 
-
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
             print('Creating database objects')
@@ -497,13 +516,13 @@ if __name__ == '__main__':
                     last_run_success = last_run.success
 
                 # Run test
-                run_to_add = run_test_resource(resource)
+                result = run_test_resource(resource)
 
-                run1 = Run(resource, run_to_add[1], run_to_add[2],
-                           run_to_add[3], run_to_add[4])
+                run1 = Run(resource, result)
 
                 print('Adding Run: success=%s, response_time=%ss\n'
                       % (str(run1.success), run1.response_time))
+
                 DB.session.add(run1)
                 # commit or rollback each run to avoid long-lived transactions
                 # see https://github.com/geopython/GeoHealthCheck/issues/14

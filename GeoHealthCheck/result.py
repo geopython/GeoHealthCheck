@@ -4,7 +4,6 @@ import datetime
 class Result(object):
     """
      Base class for results for Resource or Probe.
-     TODO: finalize Result processing/storage.
     """
 
     def __init__(self, success=True, message='OK'):
@@ -24,6 +23,14 @@ class Result(object):
             self.message = result.message
             self.results_failed.append(result)
 
+    def get_report(self):
+
+        return {
+            'success': self.success,
+            'message': self.message,
+            'response_time': self.response_time_str
+        }
+    
     def set(self, success, message):
         self.success = success
         self.message = message
@@ -47,13 +54,33 @@ class ResourceResult(Result):
      Holds result data from a single Resource: one Resource, N Probe(Results).
      Provides Run data.
     """
+    REPORT_VERSION = '1'
 
     def __init__(self, resource):
         Result.__init__(self)
         self.resource = resource
 
-    def get_run_data(self):
-        return [self.resource.title, self.success, self.response_time_str, self.message, self.start_time]
+    def get_report(self):
+        report = {
+            'report_version': ResourceResult.REPORT_VERSION,
+            'resource_id': self.resource.identifier,
+            'resource_type': self.resource.resource_type,
+            'resource_title': self.resource.title,
+            'success': self.success,
+            'message': self.message,
+            'start_time': self.start_time.strftime(
+                                '%Y-%m-%dT%H:%M:%SZ'),
+            'end_time': self.end_time.strftime(
+                         '%Y-%m-%dT%H:%M:%SZ'),
+            'response_time': self.response_time_str,
+            'probes': []
+        }
+
+        for probe_result in self.results:
+            probe_report = probe_result.get_report()
+            report['probes'].append(probe_report)
+
+        return report
 
 
 class ProbeResult(Result):
@@ -62,9 +89,26 @@ class ProbeResult(Result):
 
     """
 
-    def __init__(self, probe):
+    def __init__(self, probe, probe_vars):
         Result.__init__(self)
         self.probe = probe
+        self.probe_vars = probe_vars
+
+    def get_report(self):
+        report = {
+            'probe_id': self.probe_vars.identifier,
+            'probe_class': self.probe_vars.probe_class,
+            'success': self.success,
+            'message': self.message,
+            'response_time': self.response_time_str,
+            'checks': []
+        }
+
+        for check_result in self.results:
+            check_report = check_result.get_report()
+            report['checks'].append(check_report)
+
+        return report
 
 
 class CheckResult(Result):
@@ -72,7 +116,19 @@ class CheckResult(Result):
      Holds result data from a single Check.
     """
 
-    def __init__(self, check, parameters, success, message):
+    def __init__(self, check, check_vars, success=True, message="OK"):
         Result.__init__(self, success, message)
         self.check = check
-        self.parameters = parameters
+        self.check_vars = check_vars
+        self.parameters = check_vars.parameters
+
+    def get_report(self):
+        report = {
+            'check_id': self.check_vars.identifier,
+            'check_class': self.check_vars.check_class,
+            'success': self.success,
+            'message': self.message,
+            'response_time': self.response_time_str
+        }
+
+        return report

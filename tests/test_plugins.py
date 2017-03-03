@@ -126,7 +126,7 @@ class GeoHealthCheckTest(unittest.TestCase):
                           'PARAM_DEFS.strings[0] should be ExceptionReport>')
 
     def testProbeViews(self):
-        probes = get_probes('OGC:WMS')
+        probes = get_probes_avail('OGC:WMS')
         self.assertIsNotNone(probes)
 
 if __name__ == '__main__':

@@ -488,10 +488,9 @@ def add():
     probe_to_add = ProbeVars(resource_to_add, 'GeoHealthCheck.plugins.probe.http.HttpGet')
     check_to_add = CheckVars(probe_to_add, 'GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
 
-    run_data = run_test_resource(resource_to_add)
+    result = run_test_resource(resource_to_add)
 
-    run_to_add = Run(resource_to_add, run_data[1], run_data[2],
-                     run_data[3], run_data[4])
+    run_to_add = Run(resource_to_add, result)
 
     DB.session.add(resource_to_add)
     DB.session.add(probe_to_add)
@@ -532,7 +531,22 @@ def update(resource_identifier):
                 resource.tags.remove(tag_to_delete)
 
             update_counter += 1
+        elif key == 'probes':
+            # Remove all existing ProbeVars for Resource
+            for probe_var in resource.probe_vars:
+                resource.probe_vars.remove(probe_var)
+
+            # Add ProbeVars anew each with optional CheckVars
+            for probe in value:
+                print('adding Probe class=%s parms=%s' % (probe['probe_class'], str(probe)))
+                probe_vars = ProbeVars(resource, probe['probe_class'], probe['parameters'])
+                for check in probe['checks']:
+                    check_vars = CheckVars(probe_vars, check['check_class'], check['parameters'])
+                    probe_vars.check_vars.append(check_vars)
+                    
+                resource.probe_vars.append(probe_vars)
         elif getattr(resource, key) != resource_identifier_dict[key]:
+            # Update other resource attrs, mainly 'name'
             setattr(resource, key, resource_identifier_dict[key])
             update_counter += 1
 
@@ -554,20 +568,20 @@ def test(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    [title, success, response_time, message, start_time] = run_test_resource(
+    result = run_test_resource(
         resource)
 
     if request.method == 'GET':
-        if message not in ['OK', None, 'None']:
+        if result.message not in ['OK', None, 'None']:
             msg = gettext('ERROR')
-            flash('%s: %s' % (msg, message), 'danger')
+            flash('%s: %s' % (msg, result.message), 'danger')
         else:
             flash(gettext('Resource tested successfully'), 'success')
 
         return redirect(url_for('get_resource_by_id', lang=g.current_lang,
                     identifier=resource_identifier))
     elif request.method == 'POST':
-        return jsonify({'success': success, 'message': message, 'response_time' : response_time})
+        return jsonify(result.get_report())
 
 
 @APP.route('/resource/<int:resource_identifier>/edit')
@@ -579,7 +593,7 @@ def edit_resource(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    probes_avail = views.get_probes(resource.resource_type)
+    probes_avail = views.get_probes_avail(resource.resource_type)
 
     return render_template('edit_resource.html', lang=g.current_lang,
                            resource=resource, probes_avail=probes_avail)
@@ -679,12 +693,17 @@ def recover():
 #
 # REST Interface Calls
 #
-@APP.route('/api/v1.0/probe/')
-@APP.route('/api/v1.0/probe/<resource_type>')
-def rest_probe(resource_type=None):
-    
-    """get """
-    probes = views.get_probes(resource_type)
+
+
+@APP.route('/api/v1.0/probes-avail/')
+@APP.route('/api/v1.0/probes-avail/<resource_type>')
+def api_probes_avail(resource_type=None):
+    """
+    Get available (configured) Probes for this
+    installation, optional for resource type
+    """
+
+    probes = views.get_probes_avail(resource_type)
     return jsonify(probes)
 
 if __name__ == '__main__':  # run locally, for fun

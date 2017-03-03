@@ -15,10 +15,19 @@ class TmsCaps(Probe):
     CHECKS_AVAIL = {
         'GeoHealthCheck.plugins.check.checks.XmlParse': {},
         'GeoHealthCheck.plugins.check.checks.ContainsStrings': {
-            'parameters': {'strings': ['TileMap>']}
+            'set_params': {
+                'strings': {
+                    'name': 'Must contain TileMap Element',
+                    'value': ['<TileMap']
+                }
+            }
         },
     }
-    """Chacks avail"""
+    """
+    Checks avail for all specific Caps checks.
+    Optionally override Check.PARAM_DEFS using set_params
+    e.g. with specific `value` or even `name`.
+    """
 
 
 class TmsGetTile(Probe):
