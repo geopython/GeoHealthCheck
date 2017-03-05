@@ -1,0 +1,158 @@
+<table class="probe-entry table">
+    <tr>
+        <td title="{{ probe_avail.DESCRIPTION }}">
+            <span><strong>{{ probe_avail.NAME }} </strong>- by  {{ probe_avail.AUTHOR }}</span>
+            <div class="probe-detail probe-avail-info" style="display: none">
+                <table class="table">
+                    <tr>
+                        <td><i>{{ probe_avail.DESCRIPTION }}</i></td>
+                    </tr>
+                    <tr>
+                         <td>Class: <i>{{ probe_class }}</i></td>
+                     </tr>
+                    <tr>
+                        <td>
+                            <table class="table">
+                                <tr>
+                                    <td>resource type</td>
+                                    <td>{{ probe_avail.RESOURCE_TYPE }}</td>
+                                </tr>
+                                <tr>
+                                    <td>request method</td>
+                                    <td>{{ probe_avail.REQUEST_METHOD }}</td>
+                                </tr>
+                                <tr>
+                                    <td>request template</td>
+                                    <td>{{ probe_avail.REQUEST_TEMPLATE }}</td>
+                                </tr>
+                                <tr>
+                                    <td>request headers</td>
+                                    <td>{{ probe_avail.REQUEST_HEADERS }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Parameters</strong>
+                            {% if not probe_avail.PARAM_DEFS %}
+                            This Probe has no parameters.
+                            {% else %}
+                            <table class="table">
+                                {% for param in probe_avail.PARAM_DEFS %}
+                                <tr>
+                                    <td width="30%">{{ param }}</td>
+                                    <td>
+                                        <i>{{ probe_avail.PARAM_DEFS[param].description }}</i>
+                                        <table class="table">
+                                            <tr>
+                                                <td>type</td>
+                                                <td>{{ probe_avail.PARAM_DEFS[param].type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>required</td>
+                                                <td>{{ probe_avail.PARAM_DEFS[param].required }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>range</td>
+                                                <td>{{ probe_avail.PARAM_DEFS[param].range }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>default</td>
+                                                <td>{{ probe_avail.PARAM_DEFS[param].default }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>(fixed) value</td>
+                                                <td>{{ probe_avail.PARAM_DEFS[param].value }}</td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Checks</strong>
+                            {% if not probe_avail.CHECKS_AVAIL %}
+                            This Probe has no checks.
+                            {% else %}
+                            {% for check_class, check_avail in probe_avail.CHECKS_AVAIL.iteritems() %}
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <strong>Check: {{ check_avail.NAME }} by {{ check_avail.AUTHOR }}</strong>
+                                        <br/><i>{{ check_avail.DESCRIPTION }}</i>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Check-class: <i>{{ check_class }}</i>
+                                    </td>
+                                </tr>
+
+                            <tr>
+                            <td>
+                            <i>Check-Parameters</i>
+                            {% if not check_avail.PARAM_DEFS %}
+                                <br/>This Check has no parameters.
+                            {% else %}
+                            <table class="table">
+                                {% for param, param_def in check_avail.PARAM_DEFS.iteritems() %}
+                                <tr>
+                                    <td width="30%">{{ param }}</td>
+                                    <td>
+                                        <i>{{ param_def.description }}</i>
+                                        <table class="table">
+                                            <tr>
+                                                <td>type</td>
+                                                <td>{{ param_def.type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>required</td>
+                                                <td>{{ param_def.required }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>range</td>
+                                                <td>{{ param_def.range }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>default</td>
+                                                <td>{{ param_def.default }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>(fixed) value</td>
+                                                <td>{{ param_def.value }}</td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </table>
+                            {% endif %}
+                            </td>
+                            </tr>
+                            </table>
+                            {% endfor %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </td>
+        <td width="20%">
+            <button type="button" title="{{ probe_avail.DESCRIPTION }}"
+                    class="button-probes-avail-info btn btn-success btn-xs">{{ _('Info') }}
+            </button>
+            <button type="button"
+                    class="button-probes-avail-add btn btn-primary btn-xs">{{ _('Add') }}
+            </button>
+        </td>
+    </tr>
+</table>
