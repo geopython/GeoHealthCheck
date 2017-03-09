@@ -2,7 +2,7 @@
     <tr>
         <td title="{{ probe_avail.DESCRIPTION }}">
             <span><strong>{{ probe_avail.NAME }} </strong>- by  {{ probe_avail.AUTHOR }}</span>
-            <div class="probe-detail probe-avail-info" style="display: none">
+            <div class="probe-detail probe-avail-info" data-probe-class="{{ probe_class }}" style="display: none">
                 <table class="table">
                     <tr>
                         <td><i>{{ probe_avail.DESCRIPTION }}</i></td>
@@ -79,12 +79,12 @@
                             {% if not probe_avail.CHECKS_AVAIL %}
                             This Probe has no checks.
                             {% else %}
-                            {% for check_class, check_avail in probe_avail.CHECKS_AVAIL.iteritems() %}
+                            {% for check_class, check_info in probe_avail.CHECKS_AVAIL.iteritems() %}
                             <table class="table">
                                 <tr>
                                     <td>
-                                        <strong>Check: {{ check_avail.NAME }} by {{ check_avail.AUTHOR }}</strong>
-                                        <br/><i>{{ check_avail.DESCRIPTION }}</i>
+                                        <strong>Check: {{ check_info.NAME }} - by {{ check_info.AUTHOR }}</strong>
+                                        <br/><i>{{ check_info.DESCRIPTION }}</i>
 
                                     </td>
                                 </tr>
@@ -97,11 +97,11 @@
                             <tr>
                             <td>
                             <i>Check-Parameters</i>
-                            {% if not check_avail.PARAM_DEFS %}
+                            {% if not check_info.PARAM_DEFS %}
                                 <br/>This Check has no parameters.
                             {% else %}
                             <table class="table">
-                                {% for param, param_def in check_avail.PARAM_DEFS.iteritems() %}
+                                {% for param, param_def in check_info.PARAM_DEFS.iteritems() %}
                                 <tr>
                                     <td width="30%">{{ param }}</td>
                                     <td>

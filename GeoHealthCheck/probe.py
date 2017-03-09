@@ -94,15 +94,13 @@ class Probe(Plugin):
             'REQUEST_METHOD',
             'REQUEST_HEADERS',
             'REQUEST_TEMPLATE',
-            'PARAM_DEFS',
             'CHECKS_AVAIL'
         ])
         return var_names
 
-    def get_plugin_vars(self):
-        probe_vars = Plugin.get_plugin_vars(self)
-        for check_class in probe_vars['CHECKS_AVAIL']:
-            check_avail = probe_vars['CHECKS_AVAIL'][check_class]
+    def expand_check_vars(self, checks_avail):
+        for check_class in checks_avail:
+            check_avail = checks_avail[check_class]
             check = Factory.create_obj(check_class)
             check_vars = check.get_plugin_vars()
 
@@ -113,13 +111,18 @@ class Probe(Plugin):
                 for set_param in set_params:
                     if set_param in check_vars['PARAM_DEFS']:
                         param_orig = check_vars['PARAM_DEFS'][set_param]
-                        param_override =  set_params[set_param]
+                        param_override = set_params[set_param]
                         param_def = Plugin.merge(param_orig, param_override)
                         check_vars['PARAM_DEFS'][set_param] = param_def
-                        
-            probe_vars['CHECKS_AVAIL'][check_class] = check_vars
+
+            checks_avail[check_class] = check_vars
+        return checks_avail
+
+    def get_plugin_vars(self):
+        probe_vars = Plugin.get_plugin_vars(self)
+        probe_vars['CHECKS_AVAIL'] = self.expand_check_vars(probe_vars['CHECKS_AVAIL'])
         return probe_vars
-    
+
     def log(self, text):
         LOGGER.info(text)
 

@@ -11,7 +11,8 @@ class HttpStatusNoError(Check):
     Checks if HTTP status code is not in the 400- or 500-range.
     """
 
-    NAME = 'No HTTP 400 or 500 Error'
+    NAME = 'HTTP status should not be errored'
+    DESCRIPTION = 'Response should not contain a HTTP 400 or 500 range Error'
 
     def __init__(self):
         Check.__init__(self)
@@ -30,6 +31,7 @@ class HttpHasHeaderValue(Check):
     """
 
     NAME = 'Has specific HTTP Header value'
+    DESCRIPTION = 'HTTP response has specific HTTP Header value'
 
     PARAM_DEFS = {
         'header_name': {
@@ -75,6 +77,7 @@ class HttpHasContentType(HttpHasHeaderValue):
     """
 
     NAME = 'Has specific Content-Type'
+    DESCRIPTION = 'HTTP response has specific Content-Type'
 
     PARAM_DEFS = Plugin.merge(HttpHasHeaderValue.PARAM_DEFS, {
         'header_name': {
@@ -95,7 +98,8 @@ class HttpHasImageContentType(Check):
     Checks if HTTP response has image content type.
     """
 
-    NAME = 'Has image/* Content-Type'
+    NAME = 'HTTP response is image'
+    DESCRIPTION = 'HTTP response has image/* Content-Type'
 
     def __init__(self):
         Check.__init__(self)
@@ -123,7 +127,8 @@ class XmlParse(Check):
     Checks if HTTP response is valid XML.
     """
 
-    NAME = 'Response XML-parsable'
+    NAME = 'Valid XML response'
+    DESCRIPTION = 'HTTP response contains valid XML'
 
     def __init__(self):
         Check.__init__(self)
@@ -141,6 +146,7 @@ class ContainsStrings(Check):
     """
 
     NAME = 'Response contains strings'
+    DESCRIPTION = 'HTTP response contains all strings specified'
 
     PARAM_DEFS = {
         'strings': {
@@ -179,6 +185,7 @@ class NotContainsStrings(ContainsStrings):
     """
 
     NAME = 'Response NOT contains strings'
+    DESCRIPTION = 'HTTP response does not contain any of the strings specified'
 
     PARAM_DEFS = Plugin.copy(ContainsStrings.PARAM_DEFS)
     """Param defs"""
@@ -187,15 +194,18 @@ class NotContainsStrings(ContainsStrings):
         ContainsStrings.__init__(self)
 
     def perform(self):
-        ContainsStrings.perform(self)
-        result = self._result.success
-        msg = self._result.message
-        if result is False and 'not in response text' in msg:
-            result = True
-            msg = 'OK'
-        elif result is True:
-            result = False
-            msg = '%s in response text' % str(self.get_param('strings'))
+        result = True
+        msg = 'OK'
+        for text in self.get_param('strings'):
+            try:
+                result = text not in self.probe.response.text
+                if result is False:
+                    msg = '%s in response text' % text
+                    break
+            except:
+                result = False
+                msg = str(sys.exc_info())
+                break
 
         self.set_result(result, msg)
 
@@ -206,6 +216,7 @@ class NotContainsOwsException(NotContainsStrings):
     """
 
     NAME = 'Response NOT contains OWS Exception'
+    DESCRIPTION = 'HTTP response does not contain an OWS Exception'
 
     PARAM_DEFS = Plugin.merge(ContainsStrings.PARAM_DEFS, {
         'strings': {

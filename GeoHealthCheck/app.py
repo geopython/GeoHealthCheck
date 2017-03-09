@@ -43,6 +43,7 @@ from healthcheck import sniff_test_resource, run_test_resource
 from init import DB
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User
+from factory import Factory
 from util import render_template2, send_email
 import views
 
@@ -503,7 +504,9 @@ def add():
     except Exception as err:
         DB.session.rollback()
         flash(str(err), 'danger')
-    return redirect(url_for('home', lang=g.current_lang))
+        return redirect(url_for('home', lang=g.current_lang))
+    else:
+        return edit_resource(resource_to_add.identifier)
 
 
 @APP.route('/resource/<int:resource_identifier>/update', methods=['POST'])
@@ -545,6 +548,9 @@ def update(resource_identifier):
                     probe_vars.check_vars.append(check_vars)
                     
                 resource.probe_vars.append(probe_vars)
+
+            update_counter += 1
+
         elif getattr(resource, key) != resource_identifier_dict[key]:
             # Update other resource attrs, mainly 'name'
             setattr(resource, key, resource_identifier_dict[key])
@@ -631,7 +637,25 @@ def delete(resource_identifier):
         return redirect(url_for(request.referrer))
 
 
-@APP.route('/login', methods=['GET', 'POST'])
+@APP.route('/probe/<string:probe_class>/edit_form')
+@login_required
+def get_probe_edit_form(probe_class):
+    """get the form to edit a Probe"""
+
+    probe_obj = Factory.create_obj(probe_class)
+    probe_info = probe_obj.get_plugin_vars()
+    probe_vars = ProbeVars(None, probe_class, probe_obj.get_default_parameter_values())
+    check_vars = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
+    for check_class in check_vars:
+        print(str(check_vars[check_class]['PARAM_DEFS']))
+    #check_vars = CheckVars(probe_vars, check_class, check_vars[check_class]['PARAM_DEFS'])
+    #     probe_vars.check_vars.append(check_vars)
+
+    return render_template('includes/probe_edit_form.html', lang=g.current_lang,
+                           probe=probe_vars, probe_info=probe_info)
+
+
+@APP.route('/login', methods=['GET','POST'])
 def login():
     """login"""
     if request.method == 'GET':

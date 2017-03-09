@@ -8,7 +8,7 @@ class OwsGetCaps(Probe):
     """
 
     NAME = 'OWS GetCapabilities'
-
+    DESCRIPTION = 'Perform GetCapabilities Operation and check validity'
     # Abstract Base Class for OGC OWS GetCaps Probes
     # Needs specification in subclasses
     # RESOURCE_TYPE = 'OGC:ABC'

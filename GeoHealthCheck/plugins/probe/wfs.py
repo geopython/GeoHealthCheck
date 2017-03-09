@@ -7,6 +7,7 @@ class WfsGetFeatureBbox(Probe):
     """
 
     NAME = 'WFS GetFeature in BBOX'
+    DESCRIPTION = 'Do WFS GetFeature request in BBOX with user-specified parameters'
     RESOURCE_TYPE = 'OGC:WFS'
 
     REQUEST_METHOD = 'POST'

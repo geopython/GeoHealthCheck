@@ -7,12 +7,6 @@ class Check(Plugin):
      a check  on results from a Probe.
     """
 
-    PARAM_DEFS = {}
-
-    """
-    Check parameter definitions, defaults, subclassses override
-    """
-
     def __init__(self):
         Plugin.__init__(self)
         self.probe = None
@@ -29,13 +23,6 @@ class Check(Plugin):
         self._parameters = check_vars.parameters
         self._result = CheckResult(self, check_vars)
         self._result.start()
-
-    def get_var_names(self):
-        var_names = Plugin.get_var_names(self)
-        var_names.extend([
-            'PARAM_DEFS'
-        ])
-        return var_names
 
     # Lifecycle
     def set_result(self, success, message):

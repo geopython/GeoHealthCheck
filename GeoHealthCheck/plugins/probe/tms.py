@@ -5,6 +5,7 @@ class TmsCaps(Probe):
     """Probe for TMS main endpoint url"""
 
     NAME = 'TMS Capabilities'
+    DESCRIPTION = 'Perform TMS Capabilities Operation and check validity'
     RESOURCE_TYPE = 'OSGeo:TMS'
 
     REQUEST_METHOD = 'GET'
@@ -34,6 +35,7 @@ class TmsGetTile(Probe):
     """Fetch TMS tile and check result"""
 
     NAME = 'TMS GetTile'
+    DESCRIPTION = 'Fetch single, user-specified, TMS-tile and check validity'
     RESOURCE_TYPE = 'OSGeo:TMS'
 
     REQUEST_METHOD = 'GET'

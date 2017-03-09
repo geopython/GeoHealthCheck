@@ -104,8 +104,8 @@ class ProbeVars(DB.Model):
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _parameters = DB.Column("parameters", DB.Text, default={})
 
-    def __init__(self, resource, probe_class, parameters={}):
-        self.resource = resource
+    def __init__(self, resource_obj, probe_class, parameters={}):
+        self.resource = resource_obj
         self.probe_class = probe_class
         self.parameters = parameters
 

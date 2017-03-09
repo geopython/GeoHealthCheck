@@ -88,7 +88,8 @@ GHC_MAP = {
 GHC_PLUGINS = {
     # Probes
     'GeoHealthCheck.plugins.probe.owsgetcaps',
-    'GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatureBbox',
+    'GeoHealthCheck.plugins.probe.wms',
+    'GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox',
     'GeoHealthCheck.plugins.probe.tms',
     'GeoHealthCheck.plugins.probe.http',
     'GeoHealthCheck.plugins.probe.wmsdrilldown',

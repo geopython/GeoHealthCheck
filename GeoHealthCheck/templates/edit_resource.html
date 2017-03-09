@@ -39,163 +39,11 @@
             <tr>
                 <th>Probes</th>
 
-                <td>
-                    <table class="table">
-                        {% for probe in resource.probe_vars %}
-                        <tr>
-
-                        <td title="{{ probes_avail[probe.probe_class].DESCRIPTION }}">
-                            <span id="{{ probe.probe_class }}-{{ probe.identifier }}" >
-                                <strong>{{ probes_avail[probe.probe_class].NAME }} ({{ probe.identifier }})</strong>  - by  {{ probes_avail[probe.probe_class].AUTHOR }}
-                            </span>
-                            <div id="resource-probe-info-{{ probe.resource_identifier }}-{{ probe.identifier }}"
-                                 class="resource-probe-info" style="display: none">
-                                <table class="table">
-                                     <tr>
-                                        <td>{{ probes_avail[probe.probe_class].DESCRIPTION }}</td>
-                                    </tr>
-                                    <tr>
-                                         <td><strong>Parameters</strong>
-                                             {% if not probe.parameters %}
-                                                 This Probe has no parameters.
-                                             {% else %}
-                                             <table class="table">
-                                                 {% for param in probe.parameters  %}
-                                                        <tr>
-                                                            <td width="30%">{{ param }}</td>
-                                                            <td>{{ probe.parameters[param] }}</td>
-                                                        </tr>
-                                                 {% endfor %}
-                                             </table>
-                                             {% endif %}
-
-                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Checks</strong>
-                                            {% if not probe.check_vars %}
-                                                This Probe has no checks.
-                                            {% else %}
-                                            <table class="table">
-                                                {% for check in probe.check_vars  %}
-                                                       <tr>
-                                                           <td width="30%">{{ check.check_class }}</td>
-                                                           <td>{{ check.parameters }}</td>
-                                                       </tr>
-                                                {% endfor %}
-                                            </table>
-                                            {% endif %}
-
-                                        </td>
-                                     </tr>
-                                </table>
-                             </div>
-                            <div id="resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}"
-                                 class="resource-probe-edit" style="display: none">
-                                <table class="table resource-probe-data" data-probe-class="{{ probe.probe_class }}">
-                                    <tr>
-                                         <td>
-                                             <strong>Probe Parameters</strong>
-                                             {% if not probe.parameters %}
-                                             <br/><span>This Probe has no parameters.</span>
-                                             {% else %}
-
-                                             {% for param in probe.parameters  %}
-                                             <table class="table resource-probe-params">
-                                                 <tr>
-                                                     <td width="30%">{{ param }}</td>
-
-                                                     <td>
-                                                         <input data-param-name="{{ param }}" type="text"
-                                                                value="{{ probe.parameters[param] }}"
-                                                                style="width: 100%;"
-                                                         {% if 'value' in probes_avail[probe.probe_class].PARAM_DEFS[param] %}
-                                                            readonly="true"
-                                                          {% endif %}
-                                                          />
-                                                     </td>
-                                                 </tr>
-                                             </table>
-
-                                             {% endfor %}
-                                             {% endif %}
-
-                                         </td>
-                                     </tr>
-                                    <tr>
-                                         <td class="resource-probe-checks">
-                                             <strong>Checks</strong>
-                                             {% if not probe.check_vars %}
-                                             <br/><span>This Probe has no Checks (maybe internal Checking).</span>
-                                             {% else %}
-
-                                             {% for check in probe.check_vars %}
-                                             <table class="table resource-probe-check" data-check-class="{{ check.check_class }}">
-                                             <tr>
-                                                 <td><strong>{{ probes_avail[probe.probe_class].CHECKS_AVAIL[check.check_class].NAME }}</strong></td>
-                                             </tr>
-                                                 {% if check.parameters %}
-                                                 <tr>
-                                                    <td>
-                                                        <i>Check Parameters</i>
-                                                        <table class="table">
-                                                            {% for param in check.parameters %}
-                                                             <tr>
-                                                                 <td>{{ param }}</td>
-                                                                 <td>
-                                                                 <input data-param-name="{{ param }}" type="text"
-                                                                         value="{{ check.parameters[param] }}"
-                                                                         style="width: 100%;"
-                                                                  {% if 'value' in probes_avail[probe.probe_class].CHECKS_AVAIL[check.check_class].PARAM_DEFS[param] %}
-                                                                     readonly="true"
-                                                                   {% endif %}
-                                                                   />
-
-                                                                 </td>
-                                                             </tr>
-                                                            {% endfor %}
-                                                        </table>
-                                                    </td>
-                                                  </tr>
-                                                 {% endif %}
-                                             </table>
-                                             {% endfor %}
-                                             {% endif %}
-
-                                         </td>
-                                     </tr>
-                                    <tr>
-                                         <td>
-                                             <strong>Checks Available</strong>
-                                             {% if not probes_avail[probe.probe_class].CHECKS_AVAIL %}
-                                              <br/><span>No Checks available (maybe internal Checking).</span>
-                                              {% else %}
-
-                                             <ul>
-
-                                             {% for check_avail in probes_avail[probe.probe_class].CHECKS_AVAIL %}
-                                               <li>{{ probes_avail[probe.probe_class].CHECKS_AVAIL[check_avail].NAME }}</li>
-
-                                             {% endfor %}
-                                             </ul>
-                                             {% endif %}
-
-
-                                         </td>
-                                     </tr>
-
-                                </table>
-                             </div>
-
-                        </td>
-                        <td>
-                         <button id="button-resource-probe-edit-{{ probe.resource_identifier }}-{{ probe.identifier }}" type="button"
-                                 class="button-resource-probe-edit btn btn-primary btn-xs">{{ _('Edit') }}</button>
-                         <button id="button-resource-probe-delete"-{{ probe.resource_identifier }}-{{ probe.identifier }} type="button" class="btn btn-danger btn-xs">{{ _('Delete') }}</button>
-                         </td>
-                        </tr>
-                        {% endfor %}
-                    </table>
+                <td id="probe-edit-forms">
+                    {% for probe in resource.probe_vars %}
+                        {% set probe_info = probes_avail[probe.probe_class] %}
+                        {% include 'includes/probe_edit_form.html' %}
+                    {% endfor %}
                 </td>
 
             </tr>
@@ -203,21 +51,9 @@
                 <th>Probes<br/>Available</th>
 
                 <td>
-                    <table class="table">
-                        {% for clazz in probes_avail %}
-                         <tr>
-
-                         <td id="{{ probes_avail[clazz] }}" title="{{ probes_avail[clazz].DESCRIPTION }}">
-                             <span><strong>{{ probes_avail[clazz].NAME }} </strong>- by  {{ probes_avail[clazz].AUTHOR }}</span>
-                         </td>
-                         <td>
-                          <button id="info{{ probes_avail[clazz] }}" type="button" title="{{ probes_avail[clazz].DESCRIPTION }}"
-                                                     class="btn btn-success btn-xs">{{ _('Info') }}</button>
-                          <button id="add{{ probes_avail[clazz] }}" type="button" class="btn btn-primary btn-xs">{{ _('Add') }}</button>
-                          </td>
-                         </tr>
-                         {% endfor %}
-                     </table>
+                    {% for probe_class, probe_avail in probes_avail.iteritems() %}
+                        {% include 'includes/probe_info.html' %}
+                    {% endfor %}
                 </td>
 
             </tr>
@@ -243,7 +79,7 @@
             </tr>
             {% endif %}
 
-         </table>
+        </table>
     </div>
 
     <div class="clearfix"></div>
@@ -255,65 +91,72 @@
 <script type="text/javascript">
     var all_tags = {{ tags.keys()|tojson }};
     $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
-    var probes_json = '{{ probes_avail|tojson }}';
+    // var probes_json = '{{ probes_avail|tojson }}';
     // probes_available = JSON.parse(probes_json);
 
     {% if g.user.is_authenticated() %}
 
-    $(".button-resource-probe-info").click(function(){
-        $('.resource-probe-edit').hide();
-        var button_id = $(this).attr('id');
-        var id_arr = button_id.split('-');
-        var resource_id = id_arr[id_arr.length-2];
-        var probe_id = id_arr[id_arr.length-1];
-        var resource_probe_info_id = '#resource-probe-info-' + resource_id + '-' + probe_id;
+    function get_probe_entry(button) {
+        // Find parent Probe entry and the detail div therein
+        return $(button).closest('.probe-entry');
+    }
 
-        if( $(resource_probe_info_id).css('display') == 'none' ) {
-            $('.resource-probe-info').hide();
-            $(resource_probe_info_id).show();
+    function get_probe_detail(button) {
+        // Find parent Probe entry and the detail div therein
+        var probe_entry = get_probe_entry(button);
+        return $('.probe-detail', probe_entry);
+    }
+
+    function toggle_probe_details(button) {
+        var probe_detail = get_probe_detail(button);
+
+        if( $(probe_detail).css('display') == 'none' ) {
+            $('.probe-detail').hide();
+            $(probe_detail).show();
         } else {
-            $(resource_probe_info_id).hide();
+            $('.probe-detail').hide();
+            $('button').blur();
         }
+    }
+
+    // As Probe entry element may be appended dynamically need this construct
+    $(document).on('click','.button-resource-probe-edit',function(){
+        toggle_probe_details(this);
         return false;
     });
 
-    $(".button-resource-probe-edit").click(function(){
-        $('.resource-probe-info').hide();
-        var button_id = $(this).attr('id');
-        var id_arr = button_id.split('-');
-        var resource_id = id_arr[id_arr.length-2];
-        var probe_id = id_arr[id_arr.length-1];
-        var resource_probe_edit_id = '#resource-probe-edit-' + resource_id + '-' + probe_id;
+    $(document).on('click','.button-resource-probe-delete',function(){
+        var probe_entry = get_probe_entry(this);
+        $(probe_entry).remove();
+    });
 
-        if( $(resource_probe_edit_id).css('display') == 'none' ) {
-            $('.resource-probe-edit').hide();
-            $(resource_probe_edit_id).show();
-        } else {
-            $(resource_probe_edit_id).hide();
-        }
+    $(".button-probes-avail-add").click(function(){
+        var probe_entry = get_probe_detail(this);
+        var probe_class = $(probe_entry).attr('data-probe-class');
+        $.get('/probe/' + probe_class + '/edit_form', function(result) {
+            $('#probe-edit-forms').append(result);
+        });
         return false;
     });
 
-    $('#test').click(function() {
-         $('#status').text("{{ _('Test') }}...");
-         $.ajax({
-             type: "POST",
-             url: "{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}",
-             data: JSON.stringify({}),
-             contentType: "application/json; charset=utf-8",
-             dataType: "json",
-             success: function(data){
-                 $('#status').text("{{ _('Test') }}: " + data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
-                 $('#test').blur();
-             },
-             error: function(errMsg) {
-                 $('#status').text("{{ _('Test') }}: " + data.message);
-                 $('#test').blur();
-             }
-         });
-         return false;
-     });
+    $(".button-probes-avail-info").click(function(){
+        toggle_probe_details(this);
+        return false;
+    });
 
+    /* Check Element Management */
+
+    function get_check_entry(button) {
+        // Find parent Check entry and the detail div therein
+        return $(button).closest('.check-entry');
+    }
+
+    $(document).on('click','.button-resource-probe-check-delete',function(){
+        var entry = get_check_entry(this);
+        $(entry).remove();
+    });
+
+    /* Resource Probe actions. */
     $('#save').click(function() {
         // Collect title
         var new_title = $('input[name="resource_title_value"]').val();
@@ -333,11 +176,16 @@
                 'checks': []
             };
 
-            // Collect this Probe's parameters
+            // Collect this Probe's parameters from input elements
             var parameters = {};
-            $('input', table).each(function (key, input) {
-                var param_name = $(input).attr('data-param-name');
-                parameters[param_name] = $(input).val();
+            $('input[data-probe-param]', table).each(function (key, input) {
+                var param_name = $(input).attr('data-probe-param');
+                var param_val = $.trim($(input).val());
+                var param_type = $(input).attr('data-probe-param-type');
+                if (param_type == 'list') {
+                    param_val = param_val.split(',');
+                }
+                parameters[param_name] = param_val;
             });
             probe_map['parameters'] = parameters;
 
@@ -349,10 +197,17 @@
                    'check_class': $(check).attr('data-check-class'),
                     'parameters': {}
                 };
+
+                // Parameters from input elements
                 var parameters = {};
-                $('input', check).each(function (key, input) {
-                    var param_name = $(input).attr('data-param-name');
-                    parameters[param_name] = $(input).val();
+                $('input[data-check-param]', check).each(function (key, input) {
+                    var param_name = $(input).attr('data-check-param');
+                    var param_val = $.trim($(input).val());
+                    var param_type = $(input).attr('data-check-param-type');
+                    if (param_type == 'list') {
+                        param_val = param_val.split(',');
+                    }
+                    parameters[param_name] = param_val;
                 });
                 check_entry['parameters'] = parameters;
                 checks.push(check_entry);
@@ -385,6 +240,26 @@
         });
         return false;
     });
+
+    $('#test').click(function() {
+         $('#status').text("{{ _('Test') }}...");
+         $.ajax({
+             type: "POST",
+             url: "{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}",
+             data: JSON.stringify({}),
+             contentType: "application/json; charset=utf-8",
+             dataType: "json",
+             success: function(data){
+                 $('#status').text("{{ _('Test') }}: " + data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
+                 $('#test').blur();
+             },
+             error: function(errMsg) {
+                 $('#status').text("{{ _('Test') }}: " + data.message);
+                 $('#test').blur();
+             }
+         });
+         return false;
+     });
 
     $('#confirm-delete').click(function() {
         if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {

@@ -104,7 +104,7 @@
     },
     "PDOK BAG WFS - GetFeature": {
       "resource": "PDOK BAG WFS",
-      "probe_class": "GeoHealthCheck.plugins.probe.wfsgetfeature.WfsGetFeatureBbox",
+      "probe_class": "GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox",
       "parameters": {
         "type_name": "verblijfsobject:verblijfsobject",
         "type_ns_prefix": "verblijfsobject",
@@ -197,12 +197,19 @@
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
       "parameters": {}
     },
-    "WOUDC LINK - Ping - NoError": {
+    "WOUDC LINK - HTTP - NoError": {
       "probe_vars": "WOUDC LINK - PING",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpStatusNoError",
       "parameters": {}
     },
-    "PDOK TMS - Ping - NoError": {
+    "WOUDC LINK - HTTP - ContainsStrings": {
+      "probe_vars": "WOUDC LINK - PING",
+      "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
+      "parameters": {
+        "strings": ["RDF>"]
+      }
+    },
+    "PDOK TMS - HTTP - NoError": {
       "probe_vars": "PDOK TMS - PING",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpStatusNoError",
       "parameters": {}

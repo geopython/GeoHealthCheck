@@ -19,15 +19,20 @@ class Plugin(object):
     Plugin author or team.
     """
 
-    NAME = 'Fill in Name in NAME class var'
+    NAME = 'Name missing in NAME class var'
     """
     Short name of Plugin. TODO: i18n e.g. NAME_nl_NL ?
     """
 
-    DESCRIPTION = 'Fill in description in DESCRIPTION class var'
+    DESCRIPTION = 'Description missing in DESCRIPTION class var'
     """
     Longer description of Plugin.
     TODO: optional i18n e.g. DESCRIPTION_de_DE ?
+    """
+
+    PARAM_DEFS = {}
+    """
+     Plugin Parameter definitions.
     """
 
     def __init__(self):
@@ -43,11 +48,29 @@ class Plugin(object):
             return None
         return self._parameters[param_name]
 
+    def get_default_parameter_values(self):
+
+        """
+        Get all default parameter values
+        """
+        params = getattr(self, 'PARAM_DEFS', {})
+        param_values = {}
+        for param in params:
+            param_values[param] = ''
+            if 'default' in params[param]:
+                if params[param]['default']:
+                    param_values[param] = params[param]['default']
+                
+            if 'value' in params[param]:
+                param_values[param] = params[param]['value']
+
+        return param_values
+
     def get_var_names(self):
         """
         Get all Plugin variable names as a dict
         """
-        return ['AUTHOR', 'NAME', 'DESCRIPTION']
+        return ['AUTHOR', 'NAME', 'DESCRIPTION', 'PARAM_DEFS']
 
     def get_plugin_vars(self):
 

@@ -7,6 +7,7 @@ class HttpGet(Probe):
     """
 
     NAME = 'HTTP GET Resource URL'
+    DESCRIPTION = 'Simple HTTP GET on Resource URL'
     RESOURCE_TYPE = '*:*'
     REQUEST_METHOD = 'GET'
 
@@ -24,7 +25,7 @@ class HttpGetQuery(HttpGet):
     """
 
     NAME = 'HTTP GET Resource URL with query'
-    DESCRIPTION = 'HTTP GET Resource URL with query string to be supplied'
+    DESCRIPTION = 'HTTP GET Resource URL with ?query string to be user-supplied'
     REQUEST_TEMPLATE = '?{query}'
 
     PARAM_DEFS = {
@@ -44,7 +45,7 @@ class HttpPost(HttpGet):
     """
 
     NAME = 'HTTP POST Resource URL with body'
-    DESCRIPTION = 'HTTP Resource responds without client (400) or server (500) error on HTTP GET with query string'
+    DESCRIPTION = 'HTTP POST to Resource URL with body content(-type) to be user-supplied'
 
     REQUEST_METHOD = 'POST'
     REQUEST_HEADERS = {'content-type': '{post_content_type}'}

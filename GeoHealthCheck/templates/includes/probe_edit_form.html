@@ -1,9 +1,10 @@
-<table class="probe-entry table">
+<table class="probe-entry table" data-probe-class="{{ probe.probe_class }}">
+    <!-- HTML segment for single Probe edit, need this to dynamically add new Probes to Resource in edit_resource.html -->
     <tr>
        <td>
-           <span><strong>{{ probes_avail[probe.probe_class].NAME }} </strong>- by  {{ probes_avail[probe.probe_class].AUTHOR }}</span>
+           <strong>{{ probe_info.NAME }} </strong>- by  {{ probe_info.AUTHOR }}
+           <br/><i>{{ probe_info.DESCRIPTION }}</i>
         <div class="probe-detail resource-probe-edit" style="display: none">
-            <br/><i>{{ probes_avail[probe.probe_class].DESCRIPTION }}</i>
             <table class="table resource-probe-data" data-probe-class="{{ probe.probe_class }}">
                 <tr>
                      <td>
@@ -18,10 +19,18 @@
                                  <td width="30%">{{ param }}</td>
 
                                  <td>
-                                     <input data-probe-param="{{ param }}" type="text"
-                                            value="{{ probe.parameters[param] }}"
+                                     {% set probe_param_val = probe.parameters[param] %}
+                                     {% set probe_param_type = probe_info.PARAM_DEFS[param]['type']  %}
+
+                                     {% if probe_param_type == 'bbox' or probe_param_type == 'stringlist' %}
+                                        {% set probe_param_type = 'list'  %}
+                                        {% set probe_param_val = probe_param_val|join(',') %}
+                                     {% endif %}
+
+                                     <input data-probe-param="{{ param }}" data-probe-param-type="{{ probe_param_type }}" type="text"
+                                            value="{{ probe_param_val }}"
                                             style="width: 100%;"
-                                     {% if 'value' in probes_avail[probe.probe_class].PARAM_DEFS[param] %}
+                                     {% if 'value' in probe_info.PARAM_DEFS[param] %}
                                         readonly="true"
                                       {% endif %}
                                       />
@@ -36,68 +45,99 @@
                  </tr>
                 <tr>
                      <td class="resource-probe-checks">
-                         <strong>Checks</strong>
+                         <strong>Probe Checks</strong>
                          {% if not probe.check_vars %}
-                         <br/><span>This Probe has no Checks (maybe internal Checking).</span>
+                         <br/><span>This Probe has no Checks yet (or none avail).</span>
                          {% else %}
 
                          {% for check in probe.check_vars %}
-                         <table class="table resource-probe-check" data-check-class="{{ check.check_class }}">
+                         {% set check_info = probe_info.CHECKS_AVAIL[check.check_class] %}
+
+                         <table class="table check-entry resource-probe-check" data-check-class="{{ check.check_class }}">
                          <tr>
                              <td>
-                                 <strong>{{ probes_avail[probe.probe_class].CHECKS_AVAIL[check.check_class].NAME }}</strong>
-                                 <br/><i>{{ probes_avail[probe.probe_class].CHECKS_AVAIL[check.check_class].DESCRIPTION }}</i>
+                                 <table class="table">
+                                     <tr>
+                                        <td>
+                                            <strong>Check: {{ check_info.NAME }}</strong>
+                                            <br/><i>Check: {{ check_info.DESCRIPTION }}</i>
+                                        </td>
+                                         <td width="20%">
+                                             <button type="button"
+                                                     class="button-resource-probe-check-delete btn btn-danger btn-xs">{{ _('Delete') }}
+                                             </button>
+                                         </td>
+                                     </tr>
+                                     {% if check.parameters %}
+                                     <tr>
+                                        <td>
+                                            <table class="table">
+                                                <tr>
+                                                 <td>
+                                                <i>Check Parameters</i>
+                                                <table class="table">
+                                                    {% for param in check.parameters %}
+                                                     <tr>
+                                                         <td>{{ param }}</td>
+                                                         <td>
+                                                             {% set check_param_val = check.parameters[param] %}
+                                                             {% set check_param_type = check_info.PARAM_DEFS[param]['type']  %}
+
+                                                            {% if check_param_type == 'bbox' or check_param_type == 'stringlist' %}
+                                                               {% set check_param_type = 'list'  %}
+                                                               {% set check_param_val = check_param_val|join(',') %}
+                                                            {% endif %}
+
+                                                         <input data-check-param="{{ param }}" data-check-param-type="{{ check_param_type }}" type="text"
+                                                                 value="{{ check_param_val }}"
+                                                                 style="width: 100%;"
+                                                          {% if 'value' in check_info.PARAM_DEFS[param] %}
+                                                             readonly="true"
+                                                           {% endif %}
+                                                           />
+                                                         </td>
+                                                     </tr>
+                                                    {% endfor %}
+                                                </table>
+                                                </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                         <td>&nbsp;</td>
+                                      </tr>
+                                     {% endif %}
+
+                                 </table>
                              </td>
                          </tr>
-                             {% if check.parameters %}
-                             <tr>
-                                <td>
-                                    <i>Check Parameters</i>
-                                    <table class="table">
-                                        {% for param in check.parameters %}
-                                         <tr>
-                                             <td>{{ param }}</td>
-                                             <td>
-                                             <input data-check-param="{{ param }}" type="text"
-                                                     value="{{ check.parameters[param] }}"
-                                                     style="width: 100%;"
-                                              {% if 'value' in probes_avail[probe.probe_class].CHECKS_AVAIL[check.check_class].PARAM_DEFS[param] %}
-                                                 readonly="true"
-                                               {% endif %}
-                                               />
-
-                                             </td>
-                                         </tr>
-                                        {% endfor %}
-                                    </table>
-                                </td>
-                              </tr>
-                             {% endif %}
                          </table>
                          {% endfor %}
                          {% endif %}
-
                      </td>
                  </tr>
                 <tr>
                      <td>
                          <strong>Checks Available</strong>
-                         {% if not probes_avail[probe.probe_class].CHECKS_AVAIL %}
+                         {% if not probe_info.CHECKS_AVAIL %}
                           <br/><span>No Checks available (maybe internal Checking).</span>
                           {% else %}
 
-                         <ul>
-
-                         {% for check_class, check in probes_avail[probe.probe_class].CHECKS_AVAIL.iteritems() %}
-                           <li>
-                               {{ check.NAME }}
-                           </li>
+                          <table class="table">
+                         {% for check_class, check in probe_info.CHECKS_AVAIL.iteritems() %}
+                           <tr>
+                               <td>
+                                   <strong>{{ check.NAME }}</strong>
+                               </td>
+                               <td width="20%">
+                                   <button type="button"
+                                           class="button-checks-avail-add btn btn-primary btn-xs">{{ _('Add') }}
+                                   </button>
+                               </td>
+                           </tr>
 
                          {% endfor %}
-                         </ul>
+                          </table>
                          {% endif %}
-
-
                      </td>
                  </tr>
 
