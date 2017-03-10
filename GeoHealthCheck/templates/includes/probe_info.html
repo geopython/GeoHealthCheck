@@ -80,64 +80,7 @@
                             This Probe has no checks.
                             {% else %}
                             {% for check_class, check_info in probe_avail.CHECKS_AVAIL.iteritems() %}
-                            <table class="table">
-                                <tr>
-                                    <td>
-                                        <strong>Check: {{ check_info.NAME }} - by {{ check_info.AUTHOR }}</strong>
-                                        <br/><i>{{ check_info.DESCRIPTION }}</i>
-
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Check-class: <i>{{ check_class }}</i>
-                                    </td>
-                                </tr>
-
-                            <tr>
-                            <td>
-                            <i>Check-Parameters</i>
-                            {% if not check_info.PARAM_DEFS %}
-                                <br/>This Check has no parameters.
-                            {% else %}
-                            <table class="table">
-                                {% for param, param_def in check_info.PARAM_DEFS.iteritems() %}
-                                <tr>
-                                    <td width="30%">{{ param }}</td>
-                                    <td>
-                                        <i>{{ param_def.description }}</i>
-                                        <table class="table">
-                                            <tr>
-                                                <td>type</td>
-                                                <td>{{ param_def.type }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>required</td>
-                                                <td>{{ param_def.required }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>range</td>
-                                                <td>{{ param_def.range }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>default</td>
-                                                <td>{{ param_def.default }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>(fixed) value</td>
-                                                <td>{{ param_def.value }}</td>
-                                            </tr>
-                                        </table>
-
-                                    </td>
-                                </tr>
-                                {% endfor %}
-
-                            </table>
-                            {% endif %}
-                            </td>
-                            </tr>
-                            </table>
+                                {% include 'includes/check_info.html' %}
                             {% endfor %}
                             {% endif %}
                         </td>

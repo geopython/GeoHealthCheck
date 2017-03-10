@@ -1,0 +1,59 @@
+<table class="table check-entry resource-probe-check" data-check-class="{{ check.check_class }}">
+    <tr>
+        <td>
+            <table class="table">
+                <tr>
+                    <td>
+                        <strong>Check: {{ check_info.NAME }}</strong>
+                        <br/><i>Check: {{ check_info.DESCRIPTION }}</i>
+                    </td>
+                    <td width="20%">
+                        <button type="button"
+                                class="button-resource-probe-check-delete btn btn-danger btn-xs">{{ _('Delete') }}
+                        </button>
+                    </td>
+                </tr>
+                {% if check.parameters %}
+                <tr>
+                    <td>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <i>Check Parameters</i>
+                                    <table class="table">
+                                        {% for param in check.parameters %}
+                                        <tr>
+                                            <td>{{ param }}</td>
+                                            <td>
+                                                {% set check_param_val = check.parameters[param] %}
+                                                {% set check_param_type = check_info.PARAM_DEFS[param]['type'] %}
+
+                                                {% if check_param_type == 'bbox' or check_param_type == 'stringlist' %}
+                                                {% set check_param_type = 'list' %}
+                                                {% set check_param_val = check_param_val|join(',') %}
+                                                {% endif %}
+
+                                                <input data-check-param="{{ param }}"
+                                                       data-check-param-type="{{ check_param_type }}" type="text"
+                                                       value="{{ check_param_val }}"
+                                                       style="width: 100%;"
+                                                       {% if 'value' in check_info.PARAM_DEFS[param] %}
+                                                readonly="true"
+                                                {% endif %}
+                                                />
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+                {% endif %}
+
+            </table>
+        </td>
+    </tr>
+</table>

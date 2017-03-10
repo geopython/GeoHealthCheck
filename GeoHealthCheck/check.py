@@ -1,6 +1,7 @@
 from plugin import Plugin
 from result import CheckResult
 
+
 class Check(Plugin):
     """
      Base class for specific Plugin implementations to perform

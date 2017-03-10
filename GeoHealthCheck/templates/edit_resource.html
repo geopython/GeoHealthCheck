@@ -150,13 +150,24 @@
         // Find parent Check entry and the detail div therein
         return $(button).closest('.check-entry');
     }
-
+    
     $(document).on('click','.button-resource-probe-check-delete',function(){
         var entry = get_check_entry(this);
         $(entry).remove();
     });
 
+    $(document).on('click','.button-checks-avail-add',function(){
+        var check_class = $(this).attr('data-check-class');
+        var button = this;
+        $.get('/check/' + check_class + '/edit_form', function(result) {
+            // $(button).closest('.check-entry');
+            $('.check-edit-forms').append(result);
+        });
+        return false;
+    });
+
     /* Resource Probe actions. */
+    
     $('#save').click(function() {
         // Collect title
         var new_title = $('input[name="resource_title_value"]').val();

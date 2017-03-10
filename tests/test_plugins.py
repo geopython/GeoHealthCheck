@@ -31,20 +31,18 @@
 import unittest
 import sys
 import os
+from GeoHealthCheck.models import DB, load_data
+from GeoHealthCheck.views import *
+from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.factory import Factory
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Needed to find classes and plugins
 sys.path.append('%s/..' % TEST_DIR)
 
-from GeoHealthCheck.models import DB, Resource, Run, User, Tag, ProbeVars, CheckVars, load_data
-from GeoHealthCheck.views import *
-from GeoHealthCheck.plugin import Plugin
-from GeoHealthCheck.factory import Factory
-
 
 class GeoHealthCheckTest(unittest.TestCase):
-
     def setUp(self):
         self.db = DB
         # do once per test
@@ -75,21 +73,25 @@ class GeoHealthCheckTest(unittest.TestCase):
             # Must have perform method
             self.assertIsNotNone(plugin.perform)
 
-        plugins = Plugin.get_plugins('GeoHealthCheck.probe.Probe',
-                filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')])
+        plugins = Plugin.get_plugins(
+            'GeoHealthCheck.probe.Probe',
+            filters=[('RESOURCE_TYPE', 'OGC:*'), ('RESOURCE_TYPE', 'OGC:WMS')])
 
         for plugin in plugins:
             plugin_class = Factory.create_class(plugin)
             self.assertIsNotNone(plugin_class)
-            
+
             plugin_obj = Factory.create_obj(plugin)
-            self.assertIsNotNone(plugin_obj, 'Cannot create Plugin from string %s' + plugin)
+            self.assertIsNotNone(
+                plugin_obj, 'Cannot create Plugin from string %s' + plugin)
 
             parameters = plugin_obj.PARAM_DEFS
-            self.assertTrue(type(parameters) is dict, 'Plugin Parameters not a dict')
+            self.assertTrue(
+                type(parameters) is dict, 'Plugin Parameters not a dict')
 
             checks = plugin_obj.CHECKS_AVAIL
-            self.assertTrue(type(checks) is dict, 'Plugin checks not a dict')
+            self.assertTrue(
+                type(checks) is dict, 'Plugin checks not a dict')
 
             # Must have run_request method
             self.assertIsNotNone(plugin_obj.run_request)
@@ -99,35 +101,43 @@ class GeoHealthCheckTest(unittest.TestCase):
             self.assertIn(class_vars['RESOURCE_TYPE'], ['OGC:WMS', 'OGC:*'])
 
     def testPluginParamDefs(self):
-        plugin_obj = Factory.create_obj('GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps')
+        plugin_obj = Factory.create_obj(
+            'GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps')
         self.assertIsNotNone(plugin_obj)
 
         checks = plugin_obj.CHECKS_AVAIL
         self.assertEquals(len(checks), 3, 'WmsGetCaps should have 3 Checks')
 
         parameters = plugin_obj.PARAM_DEFS
-        self.assertEquals(len(parameters), 2, 'WmsGetCaps should have 2 Parameters')
+        self.assertEquals(
+            len(parameters), 2, 'WmsGetCaps should have 2 Parameters')
 
     def testPluginChecks(self):
-        plugin_obj = Factory.create_obj('GeoHealthCheck.plugins.check.checks.NotContainsStrings')
+        plugin_obj = Factory.create_obj(
+            'GeoHealthCheck.plugins.check.checks.NotContainsStrings')
         self.assertIsNotNone(plugin_obj)
 
         parameters = plugin_obj.PARAM_DEFS
-        self.assertEquals(len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
+        self.assertEquals(
+            len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
         self.assertEquals(parameters['strings']['type'], 'stringlist',
                           'PARAM_DEFS.strings[type] should be stringlist')
 
-        plugin_obj = Factory.create_obj('GeoHealthCheck.plugins.check.checks.NotContainsOwsException')
+        plugin_obj = Factory.create_obj(
+            'GeoHealthCheck.plugins.check.checks.NotContainsOwsException')
         self.assertIsNotNone(plugin_obj)
 
         parameters = plugin_obj.PARAM_DEFS
-        self.assertEquals(len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
-        self.assertEquals(parameters['strings']['value'][0], 'ExceptionReport>',
-                          'PARAM_DEFS.strings[0] should be ExceptionReport>')
+        self.assertEquals(
+            len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
+        self.assertEquals(
+            parameters['strings']['value'][0], 'ExceptionReport>',
+            'PARAM_DEFS.strings[0] should be ExceptionReport>')
 
     def testProbeViews(self):
         probes = get_probes_avail('OGC:WMS')
         self.assertIsNotNone(probes)
+
 
 if __name__ == '__main__':
     unittest.main()

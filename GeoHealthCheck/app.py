@@ -2,6 +2,7 @@
 # =================================================================
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
+# Just van den Broecke <justb4@gmail.com>
 #
 # Copyright (c) 2014 Tom Kralidis
 #
@@ -148,11 +149,11 @@ def cssize_reliability(value, css_type=None):
         score = 'danger'
         panel = 'red'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
-              APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
+            APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
         panel = 'yellow'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
-              APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
+            APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
         panel = 'green'
     else:  # should never really get here
@@ -203,7 +204,6 @@ def home():
     """homepage"""
 
     resource_type = None
-    tag = None
 
     if request.args.get('resource_type') in RESOURCE_TYPES.keys():
         resource_type = request.args['resource_type']
@@ -487,10 +487,10 @@ def add():
                                tags=tag_list)
 
     # Always add a default Probe & Check
-    probe_to_add = ProbeVars(resource_to_add,
-                             'GeoHealthCheck.plugins.probe.http.HttpGet')
-    check_to_add = CheckVars(probe_to_add,
-                             'GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
+    probe_to_add = ProbeVars(
+        resource_to_add, 'GeoHealthCheck.plugins.probe.http.HttpGet')
+    check_to_add = CheckVars(
+        probe_to_add, 'GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
 
     result = run_test_resource(resource_to_add)
 
@@ -650,15 +650,33 @@ def get_probe_edit_form(probe_class):
 
     probe_obj = Factory.create_obj(probe_class)
     probe_info = probe_obj.get_plugin_vars()
-    probe_vars = ProbeVars(None, probe_class, probe_obj.get_default_parameter_values())
+    probe_vars = ProbeVars(
+        None, probe_class, probe_obj.get_default_parameter_values())
     check_vars = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
     for check_class in check_vars:
         print(str(check_vars[check_class]['PARAM_DEFS']))
-    # check_vars = CheckVars(probe_vars, check_class, check_vars[check_class]['PARAM_DEFS'])
+    # check_vars = CheckVars(probe_vars, check_class,
+    # check_vars[check_class]['PARAM_DEFS'])
     #     probe_vars.check_vars.append(check_vars)
 
-    return render_template('includes/probe_edit_form.html', lang=g.current_lang,
+    return render_template('includes/probe_edit_form.html',
+                           lang=g.current_lang,
                            probe=probe_vars, probe_info=probe_info)
+
+
+@APP.route('/check/<string:check_class>/edit_form')
+@login_required
+def get_check_edit_form(check_class):
+    """get the form to edit a Check"""
+
+    check_obj = Factory.create_obj(check_class)
+    check_info = check_obj.get_plugin_vars()
+    check_vars = CheckVars(
+        None, check_class, check_obj.get_default_parameter_values())
+
+    return render_template('includes/check_edit_form.html',
+                           lang=g.current_lang,
+                           check=check_vars, check_info=check_info)
 
 
 @APP.route('/login', methods=['GET', 'POST'])

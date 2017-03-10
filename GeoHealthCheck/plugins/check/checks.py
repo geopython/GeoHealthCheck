@@ -3,6 +3,7 @@ from owslib.etree import etree
 from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.check import Check
 
+
 """ Contains basic Check classes for a Probe object."""
 
 
@@ -23,6 +24,7 @@ class HttpStatusNoError(Check):
         overall_status = status / 100
         if overall_status in [4, 5]:
             self.set_result(False, 'HTTP Error status=%d' % status)
+
 
 class HttpHasHeaderValue(Check):
     """

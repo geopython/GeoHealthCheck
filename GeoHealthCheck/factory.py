@@ -1,7 +1,8 @@
 class Factory:
     """
     Object, Function class Factory (Pattern).
-    Based on: http://stackoverflow.com/questions/2226330/instantiate-a-python-class-from-a-name
+    Based on: http://stackoverflow.com/questions/2226330/
+        instantiate-a-python-class-from-a-name
     """
 
     @staticmethod
@@ -18,7 +19,8 @@ class Factory:
             # class instance from class object with constructor args
             return class_obj()
         except Exception, e:
-            print("cannot create object instance from class '%s' e=%s" % (class_string, str(e)))
+            print("cannot create object instance from class '%s' e=%s" %
+                  (class_string, str(e)))
             raise e
 
     @staticmethod
@@ -37,7 +39,8 @@ class Factory:
             if module_name == '':
                 raise ValueError('Class name must contain module part.')
             class_obj = getattr(
-                __import__(module_name, globals(), locals(), [class_name], -1), class_name)
+                __import__(module_name, globals(), locals(),
+                           [class_name], -1), class_name)
         except Exception, e:
             print("cannot create class '%s'" % class_string)
             raise e
@@ -56,9 +59,10 @@ class Factory:
         """
         module_obj = None
         try:
-            module_obj = __import__(module_string, globals(), locals(), fromlist=[''])
+            module_obj = __import__(module_string, globals(),
+                                    locals(), fromlist=[''])
         except Exception, e:
-            # print("cannot create module from '%s'" % module_string)
+            print("cannot create module from '%s'" % module_string)
             raise e
 
         return module_obj
@@ -70,13 +74,12 @@ class Factory:
 
     @staticmethod
     def get_class_vars(clazz, candidates=[]):
-
         """
         Class method to get all (uppercase) class variables of a class
         as a dict
         """
         import inspect
-        
+
         if type(clazz) is str:
             clazz = Factory.create_class(clazz)
 
@@ -89,13 +92,11 @@ class Factory:
                 vars[key] = value
                 continue
 
-            if not key.startswith('__') \
-                and key.isupper() \
-                and not inspect.isclass(value) \
-                and not inspect.isfunction(value) \
-                and not inspect.isbuiltin(value)\
-                and not inspect.ismethod(value):
-
+            if not key.startswith('__') and key.isupper() \
+                    and not inspect.isclass(value) \
+                    and not inspect.isfunction(value) \
+                    and not inspect.isbuiltin(value) \
+                    and not inspect.ismethod(value):
                 vars[key] = value
 
         return vars
@@ -103,10 +104,6 @@ class Factory:
     @staticmethod
     def get_class_for_method(method):
         method_name = method.__name__
-        # if method.__self__:
-        #     classes = [method.__self__.__class__]
-        # else:
-        #unbound method
         classes = [method.im_class]
         while classes:
             c = classes.pop()

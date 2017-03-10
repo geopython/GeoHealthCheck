@@ -4,7 +4,7 @@ import requests
 from plugin import Plugin
 
 from factory import Factory
-from result import ProbeResult, CheckResult
+from result import ProbeResult
 
 LOGGER = logging.getLogger(__name__)
 

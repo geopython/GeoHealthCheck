@@ -28,18 +28,18 @@
 #
 # =================================================================
 
-from datetime import datetime
-import logging
 import json
-
+import logging
+from datetime import datetime
 from sqlalchemy import func
+
 from sqlalchemy.orm import deferred
 
+import util
 from enums import RESOURCE_TYPES
+from factory import Factory
 from init import DB
 from notifications import notify
-from factory import Factory
-import util
 
 LOGGER = logging.getLogger(__name__)
 
@@ -94,10 +94,10 @@ class ProbeVars(DB.Model):
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_identifier = DB.Column(DB.Integer,
                                     DB.ForeignKey('resource.identifier'))
-    resource = DB.relationship('Resource',
-                            backref=DB.backref('probe_vars',
-                            lazy='dynamic',
-                            cascade="all, delete-orphan"))
+    resource = DB.relationship(
+        'Resource', backref=DB.backref('probe_vars',
+                                       lazy='dynamic',
+                                       cascade="all, delete-orphan"))
     probe_class = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Probe
@@ -137,10 +137,11 @@ class CheckVars(DB.Model):
     """Identifies and parameterizes check function, applies to single Probe"""
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
-    probe_vars_identifier = DB.Column(DB.Integer, DB.ForeignKey('probe_vars.identifier'))
-    probe_vars = DB.relationship('ProbeVars',
-                            backref=DB.backref('check_vars',
-                            cascade="all, delete-orphan"))
+    probe_vars_identifier = DB.Column(
+        DB.Integer, DB.ForeignKey('probe_vars.identifier'))
+    probe_vars = DB.relationship(
+        'ProbeVars', backref=DB.backref(
+            'check_vars', cascade="all, delete-orphan"))
     check_class = DB.Column(DB.Text, nullable=False)
 
     # JSON string object specifying actual parameters for the Check
@@ -160,7 +161,6 @@ class CheckVars(DB.Model):
     def parameters(self, parameters):
         self._parameters = json.dumps(parameters)
 
-
     def __repr__(self):
         return '<CheckVars %r>' % self.identifier
 
@@ -174,6 +174,7 @@ class Tag(DB.Model):
 
     def __repr__(self):
         return '<Tag %r>' % (self.name)
+
 
 resource_tags = DB.Table('resource_tags',
                          DB.Column('identifier', DB.Integer, primary_key=True,
@@ -233,12 +234,12 @@ class Resource(DB.Model):
     @property
     def first_run(self):
         return self.runs.order_by(
-                Run.checked_datetime.asc()).first()
+            Run.checked_datetime.asc()).first()
 
     @property
     def last_run(self):
         return self.runs.order_by(
-                Run.checked_datetime.desc()).first()
+            Run.checked_datetime.desc()).first()
 
     @property
     def average_response_time(self):
@@ -348,7 +349,7 @@ def get_tag_counts():
 
     query = DB.session.query(Tag.name,
                              DB.func.count(Resource.identifier)).join(
-                             Resource.tags).group_by(Tag.id)
+        Resource.tags).group_by(Tag.id)
     return dict(query)
 
 
@@ -409,9 +410,9 @@ def load_data(file_path):
         probe = objects['probe_vars'][probe_name]
 
         probe = ProbeVars(resources[probe['resource']],
-                      probe['probe_class'],
-                      probe['parameters'],
-                      )
+                          probe['probe_class'],
+                          probe['parameters'],
+                          )
 
         probes[probe_name] = probe
         DB.session.add(probe)
@@ -422,9 +423,9 @@ def load_data(file_path):
         check = objects['check_vars'][check_name]
 
         check = CheckVars(probes[check['probe_vars']],
-                      check['check_class'],
-                      check['parameters'],
-                      )
+                          check['check_class'],
+                          check['parameters'],
+                          )
 
         checks[check_name] = check
         DB.session.add(check)
@@ -442,9 +443,11 @@ def db_commit():
         msg = str(err)
         print(msg)
 
+
 if __name__ == '__main__':
     import sys
     from flask import Flask
+
     APP = Flask(__name__)
     APP.config.from_pyfile('config_main.py')
     APP.config.from_pyfile('../instance/config_site.py')
@@ -490,7 +493,7 @@ if __name__ == '__main__':
                     yesno = sys.argv[3]
                 else:
                     sys.exit(0)
-                    
+
                 if yesno == 'y':
                     print('Loading data....')
                     load_data(file_path)
@@ -504,6 +507,7 @@ if __name__ == '__main__':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
             from healthcheck import run_test_resource
+
             for resource in Resource.query.all():  # run all tests
                 print('Testing %s %s' %
                       (resource.resource_type, resource.url))
