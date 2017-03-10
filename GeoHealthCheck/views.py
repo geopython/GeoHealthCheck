@@ -32,6 +32,7 @@ import util
 from plugin import Plugin
 from factory import Factory
 
+
 def list_resources(resource_type=None, query=None, tag=None):
     """return all resources"""
 
@@ -88,7 +89,7 @@ def list_resources(resource_type=None, query=None, tag=None):
                 response['success']['number'] += 1
             else:
                 response['fail']['number'] += 1
-                
+
             reliability_values.append(resource.reliability)
 
     response['success']['percentage'] = util.percentage(
@@ -156,8 +157,8 @@ def get_probes_avail(resource_type=None):
     # Assume no resource type
     filters = None
     if resource_type:
-        filters=[('RESOURCE_TYPE', resource_type),
-                 ('RESOURCE_TYPE', '*:*')]
+        filters = [('RESOURCE_TYPE', resource_type),
+                   ('RESOURCE_TYPE', '*:*')]
 
     probe_classes = Plugin.get_plugins('GeoHealthCheck.probe.Probe', filters)
 

@@ -46,7 +46,8 @@ class Result(object):
         self.response_time_str = '%s.%s' % (delta.seconds, delta.microseconds)
 
     def __str__(self):
-        return "success=%s msg=%s response_time=%s" % (self.success, self.message, self.response_time_str)
+        return "success=%s msg=%s response_time=%s" % \
+               (self.success, self.message, self.response_time_str)
 
 
 class ResourceResult(Result):

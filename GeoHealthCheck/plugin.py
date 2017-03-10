@@ -60,7 +60,7 @@ class Plugin(object):
             if 'default' in params[param]:
                 if params[param]['default']:
                     param_values[param] = params[param]['default']
-                
+
             if 'value' in params[param]:
                 param_values[param] = params[param]['value']
 
@@ -73,12 +73,12 @@ class Plugin(object):
         return ['AUTHOR', 'NAME', 'DESCRIPTION', 'PARAM_DEFS']
 
     def get_plugin_vars(self):
-
         """
         Get all (uppercase) class variables of a class
         as a dict
         """
-        plugin_vars={}
+
+        plugin_vars = {}
         var_names = self.get_var_names()
         for var_name in var_names:
             plugin_vars[var_name] = getattr(self, var_name, None)
@@ -100,19 +100,21 @@ class Plugin(object):
         :param dict2: dict to merge into dict1
         :return: deep copy of dict2 merged into dict1
         """
+
         def dict_merge(dct, merge_dct):
-            """ Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
-            updating only top-level keys, dict_merge recurses down into dicts nested
-            to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
-            ``dct``. See https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
+            """ Recursive dict merge. Inspired by :meth:``dict.update()``,
+            instead of updating only top-level keys, dict_merge recurses
+            down into dicts nested to an arbitrary depth, updating keys.
+            The ``merge_dct`` is merged into ``dct``.
+            See https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
 
             :param dct: dict onto which the merge is executed
             :param merge_dct: dict merged into dct
             :return: None
             """
             for k, v in merge_dct.iteritems():
-                if (k in dct and isinstance(dct[k], dict)
-                        and isinstance(merge_dct[k], collections.Mapping)):
+                if k in dct and isinstance(dct[k], dict) \
+                        and isinstance(merge_dct[k], collections.Mapping):
                     dict_merge(dct[k], merge_dct[k])
                 else:
                     dct[k] = merge_dct[k]
@@ -127,7 +129,8 @@ class Plugin(object):
         Class method to get list of Plugins of particular baseclass (optional),
         default is all Plugins. filters is a list of tuples to filter out
         Plugins with class var values: (class var, value),
-        e.g. `filters=[('RESOURCE_TYPE', 'OGC:*'),('RESOURCE_TYPE', 'OGC:WMS')]`.
+        e.g. `filters=[('RESOURCE_TYPE', 'OGC:*'),
+        ('RESOURCE_TYPE', 'OGC:WMS')]`.
         """
         from GeoHealthCheck.init import APP
 
@@ -155,14 +158,14 @@ class Plugin(object):
                     # Must be a class object inheriting from baseclass
                     # but not the baseclass itself
                     if inspect.isclass(class_obj) \
-                            and baseclass in inspect.getmro(class_obj) and \
-                                    baseclass != class_obj:
+                        and baseclass in inspect.getmro(class_obj) and \
+                            baseclass != class_obj:
                         add_result('%s.%s' % (plugin_name, name), class_obj)
             except:
                 # Try for full classname
                 try:
                     class_obj = Factory.create_class(plugin_name)
-                    if baseclass in inspect.getmro(class_obj)\
+                    if baseclass in inspect.getmro(class_obj) \
                             and baseclass != class_obj:
                         add_result(plugin_name, class_obj)
                 except:

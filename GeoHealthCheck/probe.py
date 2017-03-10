@@ -52,18 +52,18 @@ class Probe(Plugin):
     """
     Parameter definitions mostly for `REQUEST_TEMPLATE` but potential other
     uses in specific Probe implementations. Format is `dict` where each key 
-    is a parameter name and
-    the value a `dict` of: `type`, `description`, `required`, `default`,
-    `range` (value range) and optional `value` item. If `value` specified,
-    this value becomes fixed (non-editable) unless overridden in subclass.
+    is a parameter name and the value a `dict` of: `type`, `description`,
+    `required`, `default`, `range` (value range) and optional `value` item.
+    If `value` specified, this value becomes fixed (non-editable) unless
+    overridden in subclass.
     """
 
     CHECKS_AVAIL = {}
     """
     Available Check (classes) for this Probe in `dict` format.
     Key is a Check class (string), values are optional (default `{}`).
-    In the (constant) value 'parameters' and other attributes for Check.PARAM_DEFS
-    can be specified.
+    In the (constant) value 'parameters' and other attributes for
+    Check.PARAM_DEFS can be specified.
     """
 
     def __init__(self):
@@ -71,8 +71,14 @@ class Probe(Plugin):
 
     # Lifecycle
     def init(self, resource, probe_vars):
-        # Probe contains the actual Probe parameters (from Models/DB) for
-        # requests and a list of response Checks with their functions+parameters
+        """
+        Probe contains the actual Probe parameters (from Models/DB) for
+        requests and a list of response Checks with their
+        functions and parameters
+        :param resource:
+        :param probe_vars:
+        :return: None
+        """
         self._resource = resource
         self._probe_vars = probe_vars
         self._parameters = probe_vars.parameters
@@ -120,7 +126,8 @@ class Probe(Plugin):
 
     def get_plugin_vars(self):
         probe_vars = Plugin.get_plugin_vars(self)
-        probe_vars['CHECKS_AVAIL'] = self.expand_check_vars(probe_vars['CHECKS_AVAIL'])
+        probe_vars['CHECKS_AVAIL'] = \
+            self.expand_check_vars(probe_vars['CHECKS_AVAIL'])
         return probe_vars
 
     def log(self, text):
@@ -152,7 +159,7 @@ class Probe(Plugin):
                 request_parms = self._probe_vars.parameters
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
-        self.log('Doing request: method=%s url=%s' % (self.REQUEST_METHOD, url_base))
+        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
 
         if self.REQUEST_METHOD == 'GET':
             # Default is plain URL, e.g. for WWW:LINK
@@ -160,7 +167,7 @@ class Probe(Plugin):
             if request_string:
                 # Query String: mainly OWS:* resources
                 url = "%s%s" % (url, request_string)
-                
+
             self.response = requests.get(url,
                                          headers=self.get_request_headers())
         elif self.REQUEST_METHOD == 'POST':
@@ -170,7 +177,7 @@ class Probe(Plugin):
 
         self.log('response: status=%d' % self.response.status_code)
 
-        if self.response.status_code /100 in [4,5]:
+        if self.response.status_code / 100 in [4, 5]:
             self.log('Error response: %s' % (str(self.response.text)))
 
     def run_request(self):
@@ -188,12 +195,12 @@ class Probe(Plugin):
             self.log(msg)
             self.result.set(False, msg)
 
-
     def run_checks(self):
         """ Do the checks on the response from request"""
 
-        # Config also determines which actual checks are performed from possible
-        # Checks in Probe. Checks are performed by Checker instances.
+        # Config also determines which actual checks are performed
+        # from possible Checks in Probe. Checks are performed
+        # by Check instances.
         for check_var in self._check_vars:
             check = None
             try:
@@ -205,7 +212,7 @@ class Probe(Plugin):
 
             if not check:
                 continue
-                
+
             try:
                 check.init(self, check_var)
                 check.perform()
@@ -214,11 +221,13 @@ class Probe(Plugin):
                 LOGGER.error(msg)
                 check.set_result(False, msg)
 
-            self.log('Check: fun=%s result=%s' % (check_class, check._result.success))
+            self.log('Check: fun=%s result=%s' % (check_class,
+                                                  check._result.success))
 
             self.result.add_result(check._result)
 
-     # Lifecycle
+            # Lifecycle
+
     def calc_result(self):
         """ Calculate overall result from the Result object"""
         self.log("Result: %s" % str(self.result))
