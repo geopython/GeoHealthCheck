@@ -63,11 +63,19 @@ to override any of the `Probe` baseclass methods.
    :members:
    :show-inheritance:
 
+.. automodule:: GeoHealthCheck.plugins.probe.wms
+   :members:
+   :show-inheritance:
+
+.. automodule:: GeoHealthCheck.plugins.probe.wmsdrilldown
+   :members:
+   :show-inheritance:
+
 .. automodule:: GeoHealthCheck.plugins.probe.tms
    :members:
    :show-inheritance:
 
-.. automodule:: GeoHealthCheck.plugins.probe.wfsgetfeature
+.. automodule:: GeoHealthCheck.plugins.probe.wfs
    :members:
    :show-inheritance:
 

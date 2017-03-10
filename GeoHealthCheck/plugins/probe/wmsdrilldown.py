@@ -26,7 +26,7 @@ class WmsDrilldown(Probe):
             'description': 'How heavy the drilldown should be.',
             'default': 'minor',
             'required': True,
-            'range': ['minor', 'moderate','full']
+            'range': ['minor', 'moderate', 'full']
         }
     }
     """Param defs"""
@@ -38,7 +38,7 @@ class WmsDrilldown(Probe):
         """
         Perform the drilldown.
         See https://github.com/geopython/OWSLib/blob/
-            master/tests/doctests/wms_GeoServerCapabilities.txt
+        master/tests/doctests/wms_GeoServerCapabilities.txt
         """
         wms = None
 
@@ -67,7 +67,7 @@ class WmsDrilldown(Probe):
 
             # TODO Only use EPSG:4326, later random CRS
             if 'EPSG:4326' in layer.crsOptions \
-                and layer.boundingBoxWGS84:
+                    and layer.boundingBoxWGS84:
 
                 # Search GetMap operation
                 get_map_oper = None
@@ -86,15 +86,15 @@ class WmsDrilldown(Probe):
                 self.log('testing layer: %s' % layer_name)
                 layer_bbox = layer.boundingBoxWGS84
                 img = wms.getmap(layers=[layer_name],
-                                      styles=[''],
-                                      srs='EPSG:4326',
-                                      bbox=(layer_bbox[0],
-                                            layer_bbox[1],
-                                            layer_bbox[2],
-                                            layer_bbox[3]),
-                                      size=(256, 256),
-                                      format=format,
-                                      transparent=False)
+                                 styles=[''],
+                                 srs='EPSG:4326',
+                                 bbox=(layer_bbox[0],
+                                       layer_bbox[1],
+                                       layer_bbox[2],
+                                       layer_bbox[3]),
+                                 size=(256, 256),
+                                 format=format,
+                                 transparent=False)
 
                 self.log('WMS GetMap: format=%s' % format)
                 # Etc, to be finalized

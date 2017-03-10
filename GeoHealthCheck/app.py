@@ -77,6 +77,7 @@ def db_commit():
         DB.session.rollback()
     return err
 
+
 @APP.before_request
 def before_request():
     g.user = current_user
@@ -143,15 +144,15 @@ def cssize_reliability(value, css_type=None):
     number = int(value)
 
     if APP.config['GHC_RELIABILITY_MATRIX']['red']['min'] <= number <= \
-       APP.config['GHC_RELIABILITY_MATRIX']['red']['max']:
+            APP.config['GHC_RELIABILITY_MATRIX']['red']['max']:
         score = 'danger'
         panel = 'red'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
-          APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
+              APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
         panel = 'yellow'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
-          APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
+              APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
         panel = 'green'
     else:  # should never really get here
@@ -484,10 +485,12 @@ def add():
 
     resource_to_add = Resource(current_user, resource_type, title, url,
                                tags=tag_list)
-    
+
     # Always add a default Probe & Check
-    probe_to_add = ProbeVars(resource_to_add, 'GeoHealthCheck.plugins.probe.http.HttpGet')
-    check_to_add = CheckVars(probe_to_add, 'GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
+    probe_to_add = ProbeVars(resource_to_add,
+                             'GeoHealthCheck.plugins.probe.http.HttpGet')
+    check_to_add = CheckVars(probe_to_add,
+                             'GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
 
     result = run_test_resource(resource_to_add)
 
@@ -541,12 +544,15 @@ def update(resource_identifier):
 
             # Add ProbeVars anew each with optional CheckVars
             for probe in value:
-                print('adding Probe class=%s parms=%s' % (probe['probe_class'], str(probe)))
-                probe_vars = ProbeVars(resource, probe['probe_class'], probe['parameters'])
+                print('adding Probe class=%s parms=%s' %
+                      (probe['probe_class'], str(probe)))
+                probe_vars = ProbeVars(resource, probe['probe_class'],
+                                       probe['parameters'])
                 for check in probe['checks']:
-                    check_vars = CheckVars(probe_vars, check['check_class'], check['parameters'])
+                    check_vars = CheckVars(probe_vars, check['check_class'],
+                                           check['parameters'])
                     probe_vars.check_vars.append(check_vars)
-                    
+
                 resource.probe_vars.append(probe_vars)
 
             update_counter += 1
@@ -585,7 +591,7 @@ def test(resource_identifier):
             flash(gettext('Resource tested successfully'), 'success')
 
         return redirect(url_for('get_resource_by_id', lang=g.current_lang,
-                    identifier=resource_identifier))
+                                identifier=resource_identifier))
     elif request.method == 'POST':
         return jsonify(result.get_report())
 
@@ -648,14 +654,14 @@ def get_probe_edit_form(probe_class):
     check_vars = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
     for check_class in check_vars:
         print(str(check_vars[check_class]['PARAM_DEFS']))
-    #check_vars = CheckVars(probe_vars, check_class, check_vars[check_class]['PARAM_DEFS'])
+    # check_vars = CheckVars(probe_vars, check_class, check_vars[check_class]['PARAM_DEFS'])
     #     probe_vars.check_vars.append(check_vars)
 
     return render_template('includes/probe_edit_form.html', lang=g.current_lang,
                            probe=probe_vars, probe_info=probe_info)
 
 
-@APP.route('/login', methods=['GET','POST'])
+@APP.route('/login', methods=['GET', 'POST'])
 def login():
     """login"""
     if request.method == 'GET':
@@ -691,7 +697,7 @@ def recover():
     if request.method == 'GET':
         return render_template('recover_password.html')
     username = request.form['username']
-    registered_user = User.query.filter_by(username=username,).first()
+    registered_user = User.query.filter_by(username=username, ).first()
     if registered_user is None:
         flash(gettext('Invalid username'), 'danger')
         return redirect(url_for('recover', lang=g.current_lang))
@@ -714,6 +720,7 @@ def recover():
         return redirect(request.args.get('next'))
     return redirect(url_for('home', lang=g.current_lang))
 
+
 #
 # REST Interface Calls
 #
@@ -730,8 +737,10 @@ def api_probes_avail(resource_type=None):
     probes = views.get_probes_avail(resource_type)
     return jsonify(probes)
 
+
 if __name__ == '__main__':  # run locally, for fun
     import sys
+
     HOST = '0.0.0.0'
     PORT = 8000
     if len(sys.argv) > 1:
