@@ -27,6 +27,8 @@
 #
 # =================================================================
 
+from email.mime.text import MIMEText
+import email.utils
 import logging
 import smtplib
 
@@ -75,23 +77,31 @@ def notify(config, resource, run, last_run_success):
 
     msgbody = render_template2('notification_email.txt', template_vars)
 
-    fromaddr = '%s <%s>' % (config['GHC_SITE_TITLE'],
-                            config['GHC_ADMIN_EMAIL'])
-    toaddrs = config['GHC_NOTIFICATIONS_EMAIL']
+    msg = MIMEText(msgbody)
 
-    msg = ("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n" %
-           (config['GHC_ADMIN_EMAIL'], toaddrs, config['GHC_SITE_TITLE']))
+    msg['From'] = email.utils.formataddr((config['GHC_SITE_TITLE'],
+                                          config['GHC_ADMIN_EMAIL']))
 
-    msg = msg + msgbody
-    print msg
-    server = smtplib.SMTP('%s:%s' % (config['GHC_SMTP']['server'],
-                                     config['GHC_SMTP']['port']))
+    msg['To'] = ','.join(config['GHC_NOTIFICATIONS_EMAIL'])
+
+    msg['Subject'] = '[%s] %s: %s' % (config['GHC_SITE_TITLE'],
+                                      result, resource.title)
+
+    server = smtplib.SMTP(config['GHC_SMTP']['server'],
+                          config['GHC_SMTP']['port'])
+
+    if config['DEBUG']:
+        server.set_debuglevel(True)
 
     if config['GHC_SMTP']['tls']:
         server.starttls()
         server.login(config['GHC_SMTP']['username'],
                      config['GHC_SMTP']['password'])
-    server.sendmail(fromaddr, toaddrs, msg)
-    server.quit()
+    try:
+        server.sendmail(config['GHC_ADMIN_EMAIL'],
+                        config['GHC_NOTIFICATIONS_EMAIL'],
+                        msg.as_string())
+    finally:
+        server.quit()
 
     return True

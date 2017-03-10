@@ -473,8 +473,8 @@ def add():
                                 resource_type=resource_type))
 
     if tags:
-        tag_found = False
         for tag in tags:
+            tag_found = False
             for tag_obj in Tag.query.all():
                 if tag == tag_obj.name:  # use existing
                     tag_found = True

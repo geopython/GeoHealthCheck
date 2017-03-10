@@ -1,7 +1,5 @@
-
 GeoHealthCheck
 ==============
-
 
 Overview
 --------
