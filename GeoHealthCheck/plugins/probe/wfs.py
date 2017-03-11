@@ -7,7 +7,9 @@ class WfsGetFeatureBbox(Probe):
     """
 
     NAME = 'WFS GetFeature in BBOX'
-    DESCRIPTION = 'Do WFS GetFeature request in BBOX with user-specified parameters'
+    DESCRIPTION = """
+        Do WFS GetFeature request in BBOX with user-specified parameters
+        """
     RESOURCE_TYPE = 'OGC:WFS'
 
     REQUEST_METHOD = 'POST'
@@ -22,7 +24,8 @@ outputFormat="GML2"
 xsi:schemaLocation="http://www.opengis.net/wfs
 http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <wfs:Query typeName="{type_name}" srsName="{srs}" xmlns:{type_ns_prefix}="{type_ns_uri}">
+  <wfs:Query typeName="{type_name}" srsName="{srs}"
+        xmlns:{type_ns_prefix}="{type_ns_uri}">
     <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
       <ogc:BBOX>
         <ogc:PropertyName>{geom_property_name}</ogc:PropertyName>
@@ -35,6 +38,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   </wfs:Query>
 </wfs:GetFeature>
     """
+
     def __init__(self):
         Probe.__init__(self)
 
@@ -90,7 +94,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             'set_params': {
                 'strings': {
                     'name': 'Must contain FeatureCollection Element',
-                    'description': 'Has FeatureCollection element in response doc',
+                    'description': """
+                        Has FeatureCollection element in response doc
+                        """,
                     'value': ['FeatureCollection>']
                 }
             }

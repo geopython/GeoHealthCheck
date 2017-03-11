@@ -25,7 +25,10 @@ class HttpGetQuery(HttpGet):
     """
 
     NAME = 'HTTP GET Resource URL with query'
-    DESCRIPTION = 'HTTP GET Resource URL with ?query string to be user-supplied'
+    DESCRIPTION = """
+        HTTP GET Resource URL with
+        ?query string to be user-supplied (without ?)
+        """
     REQUEST_TEMPLATE = '?{query}'
 
     PARAM_DEFS = {
@@ -41,11 +44,15 @@ class HttpGetQuery(HttpGet):
 
 class HttpPost(HttpGet):
     """
-    Do HTTP POST Request, to send POST request to Resource bare url with POST body.
+    Do HTTP POST Request, to send POST request to
+    Resource bare url with POST body.
     """
 
     NAME = 'HTTP POST Resource URL with body'
-    DESCRIPTION = 'HTTP POST to Resource URL with body content(-type) to be user-supplied'
+    DESCRIPTION = """
+        HTTP POST to Resource URL with body
+        content(-type) to be user-supplied
+        """
 
     REQUEST_METHOD = 'POST'
     REQUEST_HEADERS = {'content-type': '{post_content_type}'}
@@ -69,11 +76,11 @@ class HttpPost(HttpGet):
 
     def get_request_headers(self):
         """
-        Overridden from Probe: construct request_headers via parameter substitution
-        from content_type Parameter.
+        Overridden from Probe: construct request_headers
+        via parameter substitution from content_type Parameter.
         """
 
-        content_type = {'post_content_type': self.content_type }
+        content_type = {'post_content_type': self.content_type}
         request_headers = self.REQUEST_HEADERS.format(**content_type)
 
         return request_headers

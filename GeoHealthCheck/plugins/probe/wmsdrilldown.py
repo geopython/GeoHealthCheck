@@ -85,16 +85,16 @@ class WmsDrilldown(Probe):
 
                 self.log('testing layer: %s' % layer_name)
                 layer_bbox = layer.boundingBoxWGS84
-                img = wms.getmap(layers=[layer_name],
-                                 styles=[''],
-                                 srs='EPSG:4326',
-                                 bbox=(layer_bbox[0],
-                                       layer_bbox[1],
-                                       layer_bbox[2],
-                                       layer_bbox[3]),
-                                 size=(256, 256),
-                                 format=format,
-                                 transparent=False)
+                wms.getmap(layers=[layer_name],
+                           styles=[''],
+                           srs='EPSG:4326',
+                           bbox=(layer_bbox[0],
+                                 layer_bbox[1],
+                                 layer_bbox[2],
+                                 layer_bbox[3]),
+                           size=(256, 256),
+                           format=format,
+                           transparent=False)
 
                 self.log('WMS GetMap: format=%s' % format)
                 # Etc, to be finalized

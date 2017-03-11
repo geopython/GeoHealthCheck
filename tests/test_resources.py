@@ -31,14 +31,13 @@
 import unittest
 import sys
 import os
+from GeoHealthCheck.models import DB, Resource, Run, load_data
+from GeoHealthCheck.healthcheck import run_test_resource
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Needed to find classes and plugins
 sys.path.append('%s/..' % TEST_DIR)
-
-from GeoHealthCheck.models import DB, Resource, Run, User, Tag, ProbeVars, CheckVars, load_data
-from GeoHealthCheck.healthcheck import run_test_resource
 
 
 class GeoHealthCheckTest(unittest.TestCase):
@@ -60,7 +59,6 @@ class GeoHealthCheckTest(unittest.TestCase):
         resources = Resource.query.all()
 
         self.assertEqual(len(resources), 7)
-
 
     def testRunResoures(self):
         # Do the whole healthcheck for all Resources for now

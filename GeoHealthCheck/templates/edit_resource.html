@@ -108,6 +108,8 @@
     }
 
     function toggle_probe_details(button) {
+//        var probe_entry = get_probe_entry(button);
+//        $(probe_entry).toggleClass('table-inverse');
         var probe_detail = get_probe_detail(button);
 
         if( $(probe_detail).css('display') == 'none' ) {
@@ -261,11 +263,11 @@
              contentType: "application/json; charset=utf-8",
              dataType: "json",
              success: function(data){
-                 $('#status').text("{{ _('Test') }}: " + data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
+                 $('#status').text("{{ _('Test') }}: result=" + data.success + " msg=" + data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
                  $('#test').blur();
              },
              error: function(errMsg) {
-                 $('#status').text("{{ _('Test') }}: " + data.message);
+                 $('#status').text("{{ _('Test') }}:result=" + data.success + " msg=" + data.message);
                  $('#test').blur();
              }
          });

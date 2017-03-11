@@ -14,7 +14,8 @@ class OwsGetCaps(Probe):
     # RESOURCE_TYPE = 'OGC:ABC'
 
     REQUEST_METHOD = 'GET'
-    REQUEST_TEMPLATE = '?SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
+    REQUEST_TEMPLATE = \
+        '?SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
 
     PARAM_DEFS = {
         'service': {
@@ -54,20 +55,20 @@ class OwsGetCaps(Probe):
 
 class WmsGetCaps(OwsGetCaps):
     """Fetch WMS capabilities doc"""
-    
+
     NAME = 'WMS GetCapabilities'
     RESOURCE_TYPE = 'OGC:WMS'
-    
+
     PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
 
-            'service': {
-                'value': 'WMS'
-            },
-            'version': {
-                'default':  '1.1.1',
-                'range': ['1.1.1', '1.3.0']
-            }
-        })
+        'service': {
+            'value': 'WMS'
+        },
+        'version': {
+            'default': '1.1.1',
+            'range': ['1.1.1', '1.3.0']
+        }
+    })
     """Param defs"""
 
 

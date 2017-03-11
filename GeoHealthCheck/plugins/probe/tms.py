@@ -40,7 +40,8 @@ class TmsGetTile(Probe):
 
     REQUEST_METHOD = 'GET'
 
-    # e.g. http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/1/0/0.png
+    # e.g. http://geodata.nationaalgeoregister.nl/tms/1.0.0/
+    # brtachtergrondkaart/1/0/0.png
     REQUEST_TEMPLATE = '/{layer}/{zoom}/{x}/{y}.{extension}'
 
     def __init__(self):

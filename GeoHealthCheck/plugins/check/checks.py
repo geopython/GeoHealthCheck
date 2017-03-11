@@ -53,7 +53,6 @@ class HttpHasHeaderValue(Check):
     }
     """Param defs"""
 
-
     def __init__(self):
         Check.__init__(self)
 
@@ -148,12 +147,15 @@ class ContainsStrings(Check):
     """
 
     NAME = 'Response contains strings'
-    DESCRIPTION = 'HTTP response contains all strings specified'
+    DESCRIPTION = \
+        'HTTP response contains all (comma-separated) strings specified'
 
     PARAM_DEFS = {
         'strings': {
             'type': 'stringlist',
-            'description': 'The string text(s) that should be contained in response',
+            'description':
+                'The string text(s) that should be contained \
+                 in response (comma-separated)',
             'default': None,
             'required': True,
             'range': None
@@ -187,9 +189,22 @@ class NotContainsStrings(ContainsStrings):
     """
 
     NAME = 'Response NOT contains strings'
-    DESCRIPTION = 'HTTP response does not contain any of the strings specified'
+    DESCRIPTION = """
+        HTTP response does not contain any of the
+        (comma-separated) strings specified
+        """
 
-    PARAM_DEFS = Plugin.copy(ContainsStrings.PARAM_DEFS)
+    PARAM_DEFS = {
+        'strings': {
+            'type': 'stringlist',
+            'description':
+                """The string text(s) that should NOT be
+                contained in response (comma-separated)""",
+            'default': None,
+            'required': True,
+            'range': None
+        }
+    }
     """Param defs"""
 
     def __init__(self):
