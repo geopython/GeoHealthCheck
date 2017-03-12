@@ -11,10 +11,11 @@ class WmsGetMapV1(Probe):
     RESOURCE_TYPE = 'OGC:WMS'
 
     REQUEST_METHOD = 'GET'
-    REQUEST_TEMPLATE = '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&\
-                        LAYERS={layers}&SRS={srs}&BBOX={bbox}&\
-                        WIDTH={width}&HEIGHT={height}&FORMAT={format)\
-                        &STYLES={styles}&EXCEPTIONS={exceptions}'
+    REQUEST_TEMPLATE = '?SERVICE=WMS&VERSION=1.1.1&' + \
+                       'REQUEST=GetMap&LAYERS={layers}&SRS={srs}&' + \
+                       'BBOX={bbox[0]},{bbox[1]},{bbox[2]},{bbox[3]}&' + \
+                       'WIDTH={width}&HEIGHT={height}&FORMAT={format}' + \
+                       '&STYLES={styles}&EXCEPTIONS={exceptions}'
 
     def __init__(self):
         Probe.__init__(self)
@@ -23,7 +24,7 @@ class WmsGetMapV1(Probe):
         'layers': {
             'type': 'stringlist',
             'description': 'The WMS Layers, comma separated',
-            'default': None,
+            'default': [],
             'required': True,
             'range': None
         },
@@ -62,8 +63,8 @@ class WmsGetMapV1(Probe):
         'styles': {
             'type': 'string',
             'description': 'The Styles to apply',
-            'default': '',
-            'required': True
+            'default': None,
+            'required': False
         },
         'exceptions': {
             'type': 'string',

@@ -108,7 +108,7 @@ class Probe(Plugin):
         for check_class in checks_avail:
             check_avail = checks_avail[check_class]
             check = Factory.create_obj(check_class)
-            check_vars = check.get_plugin_vars()
+            check_vars = Plugin.copy(check.get_plugin_vars())
 
             # Check if Probe class overrides Check Params
             # mainly "value" entries.
@@ -125,7 +125,8 @@ class Probe(Plugin):
         return checks_avail
 
     def get_plugin_vars(self):
-        probe_vars = Plugin.get_plugin_vars(self)
+        probe_vars = Plugin.copy(Plugin.get_plugin_vars(self))
+
         probe_vars['CHECKS_AVAIL'] = \
             self.expand_check_vars(probe_vars['CHECKS_AVAIL'])
         return probe_vars
@@ -157,6 +158,13 @@ class Probe(Plugin):
 
             if self._probe_vars.parameters:
                 request_parms = self._probe_vars.parameters
+                param_defs = self.get_param_defs()
+
+                # Expand string list array to comma separated string
+                for param in request_parms:
+                    if param_defs[param]['type'] == 'stringlist':
+                        request_parms[param] = ','.join(request_parms[param])
+
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
@@ -191,8 +199,8 @@ class Probe(Plugin):
         except:
             # We must never bailout because of Exception
             # in Probe.
-            msg = "Exception: %s" % str(sys.exc_info())
-            self.log(msg)
+            msg = "Probe Err: %s" % str(sys.exc_info())
+            LOGGER.error(msg)
             self.result.set(False, msg)
 
     def run_checks(self):
@@ -217,7 +225,7 @@ class Probe(Plugin):
                 check.init(self, check_var)
                 check.perform()
             except:
-                msg = "Exception: %s" % str(sys.exc_info())
+                msg = "Check Err: %s" % str(sys.exc_info())
                 LOGGER.error(msg)
                 check.set_result(False, msg)
 

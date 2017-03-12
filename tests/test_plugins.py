@@ -116,7 +116,9 @@ class GeoHealthCheckTest(unittest.TestCase):
             'GeoHealthCheck.plugins.probe.http.HttpGet')
         self.assertIsNotNone(probe_obj)
         check_vars = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
+        self.assertIsNotNone(check_vars)
         plugin_vars = probe_obj.get_plugin_vars()
+        self.assertIsNotNone(plugin_vars)
 
     def testPluginChecks(self):
         plugin_obj = Factory.create_obj(
@@ -128,6 +130,7 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertIsNotNone(plugin_obj)
 
         plugin_vars = plugin_obj.get_plugin_vars()
+        self.assertIsNotNone(plugin_vars)
 
         parameters = plugin_obj.PARAM_DEFS
         self.assertEquals(

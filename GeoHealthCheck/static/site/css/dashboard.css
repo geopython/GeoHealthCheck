@@ -139,3 +139,7 @@ footer {
 .col-md-2.sidebar {
     width: 16.6667% !important;
 }
+
+input:read-only {
+    background-color: #eeeeee !important;
+}

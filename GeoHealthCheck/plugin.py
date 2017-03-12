@@ -84,6 +84,13 @@ class Plugin(object):
             plugin_vars[var_name] = getattr(self, var_name, None)
         return plugin_vars
 
+    def get_param_defs(self):
+        """
+        Get all PARAM_DEFS as dict.
+        """
+
+        return self.get_plugin_vars()['PARAM_DEFS']
+
     @staticmethod
     def copy(obj):
         """
