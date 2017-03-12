@@ -11,7 +11,10 @@ class WmsGetMapV1(Probe):
     RESOURCE_TYPE = 'OGC:WMS'
 
     REQUEST_METHOD = 'GET'
-    REQUEST_TEMPLATE = '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS={layers}&SRS={srs}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&FORMAT={format)&STYLES={styles}&EXCEPTIONS={exceptions}'
+    REQUEST_TEMPLATE = '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&\
+                        LAYERS={layers}&SRS={srs}&BBOX={bbox}&\
+                        WIDTH={width}&HEIGHT={height}&FORMAT={format)\
+                        &STYLES={styles}&EXCEPTIONS={exceptions}'
 
     def __init__(self):
         Probe.__init__(self)

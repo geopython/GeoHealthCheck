@@ -39,7 +39,7 @@ class Probe(Plugin):
     REQUEST_TEMPLATE = ''
     """
     Template in standard Python `str.format(*args)`. The variables
-    like {service} and {version} within a template are filled from 
+    like {service} and {version} within a template are filled from
     actual values for parameters defined in PARAM_DEFS and substituted
     from values or constant values specified by user in GUI and stored
     in DB.
@@ -51,7 +51,7 @@ class Probe(Plugin):
     PARAM_DEFS = {}
     """
     Parameter definitions mostly for `REQUEST_TEMPLATE` but potential other
-    uses in specific Probe implementations. Format is `dict` where each key 
+    uses in specific Probe implementations. Format is `dict` where each key
     is a parameter name and the value a `dict` of: `type`, `description`,
     `required`, `default`, `range` (value range) and optional `value` item.
     If `value` specified, this value becomes fixed (non-editable) unless

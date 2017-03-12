@@ -32,7 +32,7 @@ import unittest
 import sys
 import os
 from GeoHealthCheck.models import DB, load_data
-from GeoHealthCheck.views import *
+from GeoHealthCheck.views import get_probes_avail
 from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.factory import Factory
 
@@ -112,10 +112,22 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertEquals(
             len(parameters), 2, 'WmsGetCaps should have 2 Parameters')
 
+        probe_obj = Factory.create_obj(
+            'GeoHealthCheck.plugins.probe.http.HttpGet')
+        self.assertIsNotNone(probe_obj)
+        check_vars = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
+        plugin_vars = probe_obj.get_plugin_vars()
+
     def testPluginChecks(self):
         plugin_obj = Factory.create_obj(
             'GeoHealthCheck.plugins.check.checks.NotContainsStrings')
         self.assertIsNotNone(plugin_obj)
+
+        plugin_obj = Factory.create_obj(
+            'GeoHealthCheck.plugins.check.checks.ContainsStrings')
+        self.assertIsNotNone(plugin_obj)
+
+        plugin_vars = plugin_obj.get_plugin_vars()
 
         parameters = plugin_obj.PARAM_DEFS
         self.assertEquals(

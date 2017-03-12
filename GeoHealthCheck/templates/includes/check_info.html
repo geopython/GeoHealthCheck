@@ -1,4 +1,4 @@
-<table class="check-entry table" data-check-class="{{ check_class }}">
+<table class="check-entry table table-condensed table-bordered" data-check-class="{{ check_class }}">
     <tr>
         <td>
             <strong>Check: {{ check_info.NAME }} - by {{ check_info.AUTHOR }}</strong>
@@ -16,7 +16,7 @@
                         {% if not check_info.PARAM_DEFS %}
                         <br/>This Check has no parameters.
                         {% else %}
-                        <table class="table">
+                        <table class="table table-condensed table-bordered">
                             {% for param, param_def in check_info.PARAM_DEFS.iteritems() %}
                             <tr>
                                 <td width="30%">{{ param }}</td>

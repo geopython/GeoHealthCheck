@@ -1,11 +1,11 @@
-<table class="probe-entry table" data-probe-class="{{ probe.probe_class }}">
+<table class="probe-entry table table-condensed table-bordered" data-probe-class="{{ probe.probe_class }}">
     <!-- HTML segment for single Probe edit, need this to dynamically add new Probes to Resource in edit_resource.html -->
     <tr>
        <td>
            <strong>{{ probe_info.NAME }} </strong>- by  {{ probe_info.AUTHOR }}
            <br/><i>{{ probe_info.DESCRIPTION }}</i>
         <div class="probe-detail resource-probe-edit" style="display: none">
-            <table class="table resource-probe-data" data-probe-class="{{ probe.probe_class }}">
+            <table class="table resource-probe-data table-condensed table-bordered" data-probe-class="{{ probe.probe_class }}">
                 <tr>
                      <td>
                          <strong>Probe Parameters</strong>
@@ -14,7 +14,7 @@
                          {% else %}
 
                          {% for param in probe.parameters  %}
-                         <table class="table resource-probe-params">
+                         <table class="table table-condensed table-bordered resource-probe-params">
                              <tr>
                                  <td width="30%">{{ param }}</td>
 

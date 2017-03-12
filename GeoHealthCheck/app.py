@@ -652,12 +652,14 @@ def get_probe_edit_form(probe_class):
     probe_info = probe_obj.get_plugin_vars()
     probe_vars = ProbeVars(
         None, probe_class, probe_obj.get_default_parameter_values())
-    check_vars = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
-    for check_class in check_vars:
-        print(str(check_vars[check_class]['PARAM_DEFS']))
-    # check_vars = CheckVars(probe_vars, check_class,
-    # check_vars[check_class]['PARAM_DEFS'])
+    # checks_avail = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
+    # for check_class in checks_avail:
+    #     check_obj = Factory.create_obj(check_class)
+    #     # check_info = check_obj.get_plugin_vars()
+    #     check_vars = CheckVars(
+    #    probe_vars, check_class, check_obj.get_default_parameter_values())
     #     probe_vars.check_vars.append(check_vars)
+    print(str(probe_vars))
 
     return render_template('includes/probe_edit_form.html',
                            lang=g.current_lang,
@@ -674,6 +676,7 @@ def get_check_edit_form(check_class):
     check_vars = CheckVars(
         None, check_class, check_obj.get_default_parameter_values())
 
+    print(str(check_info))
     return render_template('includes/check_edit_form.html',
                            lang=g.current_lang,
                            check=check_vars, check_info=check_info)

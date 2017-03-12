@@ -1,10 +1,10 @@
-<table class="probe-entry table">
+<table class="probe-entry table table-condensed table-bordered">
     <tr>
         <td title="{{ probe_avail.DESCRIPTION }}">
             <span><strong>{{ probe_avail.NAME }} </strong>- by  {{ probe_avail.AUTHOR }}</span>
             <br/><i>{{ probe_avail.DESCRIPTION }}</i>
             <div class="probe-detail probe-avail-info" data-probe-class="{{ probe_class }}" style="display: none">
-                <table class="table">
+                <table class="table table-condensed table-bordered">
                     <tr>
                          <td>Class: <i>{{ probe_class }}</i></td>
                      </tr>
@@ -35,7 +35,7 @@
                             {% if not probe_avail.PARAM_DEFS %}
                             This Probe has no parameters.
                             {% else %}
-                            <table class="table">
+                            <table class="table table-condensed table-bordered">
                                 {% for param in probe_avail.PARAM_DEFS %}
                                 <tr>
                                     <td width="30%">{{ param }}</td>

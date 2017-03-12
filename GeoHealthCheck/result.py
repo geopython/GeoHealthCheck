@@ -24,13 +24,12 @@ class Result(object):
             self.results_failed.append(result)
 
     def get_report(self):
-
         return {
             'success': self.success,
             'message': self.message,
             'response_time': self.response_time_str
         }
-    
+
     def set(self, success, message):
         self.success = success
         self.message = message
@@ -70,9 +69,9 @@ class ResourceResult(Result):
             'success': self.success,
             'message': self.message,
             'start_time': self.start_time.strftime(
-                                '%Y-%m-%dT%H:%M:%SZ'),
+                '%Y-%m-%dT%H:%M:%SZ'),
             'end_time': self.end_time.strftime(
-                         '%Y-%m-%dT%H:%M:%SZ'),
+                '%Y-%m-%dT%H:%M:%SZ'),
             'response_time': self.response_time_str,
             'probes': []
         }
