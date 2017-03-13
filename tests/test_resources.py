@@ -41,7 +41,6 @@ sys.path.append('%s/..' % TEST_DIR)
 
 
 class GeoHealthCheckTest(unittest.TestCase):
-
     def setUp(self):
         self.db = DB
         # do once per test
@@ -79,8 +78,13 @@ class GeoHealthCheckTest(unittest.TestCase):
         resources = Resource.query.all()
         for resource in resources:
             # Each Resource should have one Run
-            self.assertEquals(resource.runs.count(), 1)
-            self.assertEquals(resource.runs[0].success, True)
+            self.assertEquals(
+                resource.runs.count(), 1,
+                'RunCount should be 1 for %s' % resource.url)
+            self.assertEquals(
+                resource.runs[0].success, True,
+                'Run should be success for %s report=%s' %
+                (resource.url, str(resource.runs[0])))
 
 
 if __name__ == '__main__':
