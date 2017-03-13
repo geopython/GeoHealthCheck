@@ -30,6 +30,8 @@
 
 import json
 import logging
+import sys
+import os
 from datetime import datetime
 from sqlalchemy import func
 
@@ -42,6 +44,10 @@ from init import DB
 from notifications import notify
 
 LOGGER = logging.getLogger(__name__)
+
+# Needed to find Plugins
+GHC_HOME_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append('%s/..' % GHC_HOME_DIR)
 
 
 class Run(DB.Model):
