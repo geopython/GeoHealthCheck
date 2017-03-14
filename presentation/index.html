@@ -270,16 +270,33 @@
             <h2>Check runner</h2>
             <h3>- Via cron-job</h3>
             <h3>- Frequency and history retain configured</h3>
+            <h3>- Result reports</h3>
             <h3>- Email Notification trigger (optional)</h3>
         </section>
 
         <!-- Setup -->
         <section style="text-align: left;">
+            <h2>Plugins - Probes and Checks</h2>
+            <h3>- Standard (included in GHC)</h3>
+            <h3>- Custom (include your own!)</h3>
+            <h3>- More later on...</h3>
+        </section>
+
+        <!-- Setup -->
+        <section style="text-align: left;">
             <h2>Database</h2>
-            <h3>- Entities: Users, Resources, Runs</h3>
+            <h3>- Entities: Users, Resources, Runs, Tags, ProbeVars, CheckVars</h3>
             <h3>- Maintains history (Runs)</h3>
             <h3>- Multiple backends</h3>
             <h3>&nbsp;&nbsp;&nbsp; via SQLAlchemy: default SQLite</h3>
+        </section>
+
+        <!-- Setup -->
+        <section style="text-align: left;">
+            <h2>Tags</h2>
+            <h3>- For grouping Resources</h3>
+            <h3>- Provide in UI</h3>
+            <h3>- More later on...</h3>
         </section>
 
         <!-- Setup -->
@@ -301,17 +318,65 @@ GHC_SELF_REGISTER = False
 GHC_NOTIFICATIONS = False
 GHC_NOTIFICATIONS_VERBOSITY = True
 GHC_ADMIN_EMAIL = 'you@example.com'
+GHC_NOTIFICATIONS_EMAIL = ['you2@example.com', ..]
 GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
 GHC_SITE_URL = 'http://host'
 GHC_SMTP = (email settings)
 GHC_RELIABILITY_MATRIX = (when to show green/orange/red)
+GHC_PLUGINS = [(standard, and/or YOUR PLUGINS)]
 GHC_MAP = (map setup)
             </code>
             </pre>
 
         </section>
 
-        <!-- Part 4 - Project -->
+        <!-- Part 4 - Architecture -->
+        <section id="architecture">
+            <h1>GeoHealthCheck</h1>
+            <h1>Architecture</h1>
+        </section>
+
+        <!-- Data model -->
+        <section style="text-align: left;">
+            <h2>Data Model</h2>
+            <img src="media/datamodel.jpg" alt="datamodel"/>
+        </section>
+
+        <!-- Plugin model -->
+        <section style="text-align: left;">
+            <h2>HealthCheck Model</h2>
+            <h3>- Resource has URL</h3>
+            <h3>- URL is usually OWS Endpoint</h3>
+            <h3>- Probes: fire request(s) on URL</h3>
+            <h3>- Resource has N Probes</h3>
+        </section>
+
+        <!-- Plugin model -->
+        <section style="text-align: left;">
+            <h2>HealthCheck Model</h2>
+            <h3>- Probe has N Checks (checklist)</h3>
+            <h3>- Each Check checks Probe result aspect</h3>
+            <h3>- Check gives aspect verdict (success/fail)</h3>
+            <h3>- All Checks: Probe Run Report (JSON)</h3>
+        </section>
+
+        <!-- Plugin model -->
+        <section style="text-align: left;">
+            <h2>Plugin Model</h2>
+            <h3>- Probes and Checks are Plugins</h3>
+            <h3>- Plugin class and/or modules conf: GHC_PLUGINS</h3>
+            <h3>- Standard Probes &amp; Checks</h3>
+            <h3>- User/Your Probes &amp; Checks</h3>
+        </section>
+
+        <!-- Plugin model -->
+        <section style="text-align: left;">
+            <h2>Plugin Model - Probe Types</h2>
+            <h3>- Template (OWS) Requests</h3>
+            <h3>- Free-form</h3>
+        </section>
+
+        <!-- Part 5 - Project -->
         <section id="project">
             <h1>GeoHealthCheck</h1>
             <h1>Project</h1>
@@ -340,16 +405,17 @@ GHC_MAP = (map setup)
             <h2>Current Status</h2>
             <h3>- v0.1</h3>
             <h3>- Capabilities Checks</h3>
-            <h3>- See <a href="http://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h3>
+            <h3>- Tags and Plugins (Probes &amp; Checks) under dev</h3>
+            <h3>- Demo <a href="http://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h3>
+            <h3>- Dev <a href="http://dev.geohealthcheck.org">de.geohealthcheck.org</a></h3>
         </section>
 
         <!-- Project -->
         <section style="text-align: left;">
-            <h2>TODO Highlights</h2>
+            <h2>Under Development</h2>
             <h3>- See <a href="https://github.com/geopython/GeoHealthCheck/issues">Issue Tracker</a></h3>
-            <h3>- More checks: <a href="https://github.com/geopython/GeoHealthCheck/issues/19">alternative responses</a></h3>
-            <h3>&nbsp;&nbsp;&nbsp;(plugin system?)</h3>
-            <h3>- <a href="https://github.com/geopython/GeoHealthCheck/issues/18">Resource Grouping</a></h3>
+            <h3>- Plugins: <a href="https://github.com/geopython/GeoHealthCheck/issues/82">Probes &amp; Checks</a></h3>
+            <h3>- Tags: <a href="https://github.com/geopython/GeoHealthCheck/issues/75">Resource Grouping</a></h3>
             <h3>- Documentation</h3>
         </section>
 
@@ -359,7 +425,7 @@ GHC_MAP = (map setup)
             <h3>- Testing</h3>
             <h3>- Documentation</h3>
             <h3>- User Stories</h3>
-            <h3>- Coding</h3>
+            <h3>- Coding (Plugins!)</h3>
             <h3>- Sponsored Development</h3>
         </section>
 
@@ -368,6 +434,7 @@ GHC_MAP = (map setup)
             <p>
                 - Website: <a href="http://geohealthcheck.org">geohealthcheck.org</a> <br>
                 - Demo: <a href="http://demo.geohealthcheck.org">demo.geohealthcheck.org</a> <br>
+                - Development: <a href="http://dev.geohealthcheck.org">dev.geohealthcheck.org</a> (unstable!)<br>
                 - Sources: <a href="http://code.geohealthcheck.org">code.geohealthcheck.org</a>  <br>
                 - Docs: <a href="http://docs.geohealthcheck.org">docs.geohealthcheck.org</a>  <br>
                 - Presentation: <a href="http://geohealthcheck.org/presentation">geohealthcheck.org/presentation</a> <br>
