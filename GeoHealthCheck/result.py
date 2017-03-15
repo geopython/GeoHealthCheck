@@ -66,6 +66,7 @@ class ResourceResult(Result):
             'resource_id': self.resource.identifier,
             'resource_type': self.resource.resource_type,
             'resource_title': self.resource.title,
+            'url': self.resource.url,
             'success': self.success,
             'message': self.message,
             'start_time': self.start_time.strftime(
@@ -97,7 +98,8 @@ class ProbeResult(Result):
     def get_report(self):
         report = {
             'probe_id': self.probe_vars.identifier,
-            'probe_class': self.probe_vars.probe_class,
+            'class': self.probe_vars.probe_class,
+            'name': getattr(self.probe, 'NAME', None),
             'success': self.success,
             'message': self.message,
             'response_time': self.response_time_str,
@@ -125,7 +127,8 @@ class CheckResult(Result):
     def get_report(self):
         report = {
             'check_id': self.check_vars.identifier,
-            'check_class': self.check_vars.check_class,
+            'class': self.check_vars.check_class,
+            'name': getattr(self.check, 'NAME', None),
             'success': self.success,
             'message': self.message,
             'response_time': self.response_time_str

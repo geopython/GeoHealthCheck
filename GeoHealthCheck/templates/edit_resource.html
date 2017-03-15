@@ -62,8 +62,10 @@
                 <th>{{ _('Status') }}</th>
 
                 <td>
-
-                    <span id="status">OK</span>
+                    <div><span id="status">OK</span>&nbsp;&nbsp;<span><button type="button" id="toggle-status-detail"
+                                        class="btn btn-success btn-xs">{{ _('Details') }}
+                                </button></span></div>
+                    <br/><span id="status-detail"></span>
                 </td>
 
             </tr>
@@ -169,8 +171,11 @@
     });
 
     /* Resource Probe actions. */
-    
+    $('#toggle-status-detail').hide();
+
     $('#save').click(function() {
+        $('#toggle-status-detail').hide();
+
         // Collect title
         var new_title = $('input[name="resource_title_value"]').val();
 
@@ -255,6 +260,7 @@
     });
 
     $('#test').click(function() {
+         $('#toggle-status-detail').hide();
          $('#status').text("{{ _('Test') }}...");
          $.ajax({
              type: "POST",
@@ -263,16 +269,31 @@
              contentType: "application/json; charset=utf-8",
              dataType: "json",
              success: function(data){
-                 $('#status').text("{{ _('Test') }}: result=" + data.success + " msg=" + data.message + ' - ' + data.response_time + " {{ _('seconds') }}");
+                 $('#status').text('{{ _("Test") }}: result=' + data.success);
+                 $('#toggle-status-detail').show();
+                 // Format JSON: http://jsfiddle.net/K83cK
+                 $('#status-detail').html('<pre>' + JSON.stringify(data, undefined, 2) + '</pre>').hide();
                  $('#test').blur();
              },
              error: function(errMsg) {
-                 $('#status').text("{{ _('Test') }}:result=" + data.success + " msg=" + data.message);
+                 $('#status').text("{{ _('Test') }}:result=" + errMsg);
                  $('#test').blur();
              }
          });
          return false;
      });
+
+    $('#toggle-status-detail').click(function(button) {
+        var detail = $('#status-detail');
+        if ($(detail).css('display') == 'none')  {
+            $(detail).show();
+        } else {
+            $(detail).hide();
+            $('button').blur();
+        }
+
+        return false;
+    });
 
     $('#confirm-delete').click(function() {
         if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
