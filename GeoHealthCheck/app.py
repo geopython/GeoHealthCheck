@@ -76,6 +76,8 @@ def db_commit():
         DB.session.commit()
     except Exception as err:
         DB.session.rollback()
+    # finally:
+    #     DB.session.close()
     return err
 
 
@@ -149,11 +151,11 @@ def cssize_reliability(value, css_type=None):
         score = 'danger'
         panel = 'red'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
-            APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
+              APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
         panel = 'yellow'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
-            APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
+              APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
         panel = 'green'
     else:  # should never really get here
@@ -518,51 +520,76 @@ def update(resource_identifier):
     """update a resource"""
 
     update_counter = 0
-
-    resource_identifier_dict = request.get_json()
-
-    resource = Resource.query.filter_by(identifier=resource_identifier).first()
-
-    for key, value in resource_identifier_dict.items():
-        if key == 'tags':
-            resource_tags = [t.name for t in resource.tags]
-
-            tags_to_add = set(value) - set(resource_tags)
-            tags_to_delete = set(resource_tags) - set(value)
-
-            for tag in tags_to_add:
-                resource.tags.append(Tag(name=tag))
-            for tag in tags_to_delete:
-                tag_to_delete = Tag.query.filter_by(name=tag).first()
-                resource.tags.remove(tag_to_delete)
-
-            update_counter += 1
-        elif key == 'probes':
-            # Remove all existing ProbeVars for Resource
-            for probe_var in resource.probe_vars:
-                resource.probe_vars.remove(probe_var)
-
-            # Add ProbeVars anew each with optional CheckVars
-            for probe in value:
-                print('adding Probe class=%s parms=%s' %
-                      (probe['probe_class'], str(probe)))
-                probe_vars = ProbeVars(resource, probe['probe_class'],
-                                       probe['parameters'])
-                for check in probe['checks']:
-                    check_vars = CheckVars(probe_vars, check['check_class'],
-                                           check['parameters'])
-                    probe_vars.check_vars.append(check_vars)
-
-                resource.probe_vars.append(probe_vars)
-
-            update_counter += 1
-
-        elif getattr(resource, key) != resource_identifier_dict[key]:
-            # Update other resource attrs, mainly 'name'
-            setattr(resource, key, resource_identifier_dict[key])
-            update_counter += 1
-
     status = 'success'
+
+    try:
+
+        resource_identifier_dict = request.get_json()
+
+        resource = Resource.query.filter_by(
+            identifier=resource_identifier).first()
+
+        for key, value in resource_identifier_dict.items():
+            if key == 'tags':
+                resource_tags = [t.name for t in resource.tags]
+
+                tags_to_add = set(value) - set(resource_tags)
+                tags_to_delete = set(resource_tags) - set(value)
+
+                # Existing Tags: create relation else add new Tag
+                all_tag_objs = Tag.query.all()
+                for tag in tags_to_add:
+                    tag_add_obj = None
+                    for tag_obj in all_tag_objs:
+                        if tag == tag_obj.name:
+                            # use existing
+                            tag_add_obj = tag_obj
+                            break
+
+                    if not tag_add_obj:
+                        # add new
+                        tag_add_obj = Tag(name=tag)
+                        DB.session.add(tag_add_obj)
+
+                    resource.tags.append(tag_add_obj)
+
+                for tag in tags_to_delete:
+                    tag_to_delete = Tag.query.filter_by(name=tag).first()
+                    resource.tags.remove(tag_to_delete)
+
+                update_counter += 1
+            elif key == 'probes':
+                # Remove all existing ProbeVars for Resource
+                for probe_var in resource.probe_vars:
+                    resource.probe_vars.remove(probe_var)
+
+                # Add ProbeVars anew each with optional CheckVars
+                for probe in value:
+                    print('adding Probe class=%s parms=%s' %
+                          (probe['probe_class'], str(probe)))
+                    probe_vars = ProbeVars(resource, probe['probe_class'],
+                                           probe['parameters'])
+                    for check in probe['checks']:
+                        check_vars = CheckVars(probe_vars, check['check_class'],
+                                               check['parameters'])
+                        probe_vars.check_vars.append(check_vars)
+
+                    resource.probe_vars.append(probe_vars)
+
+                update_counter += 1
+
+            elif getattr(resource, key) != resource_identifier_dict[key]:
+                # Update other resource attrs, mainly 'name'
+                setattr(resource, key, resource_identifier_dict[key])
+                update_counter += 1
+
+    except Exception as err:
+        DB.session.rollback()
+        status = str(err)
+        update_counter = 0
+    # finally:
+    #     DB.session.close()
+
     if update_counter > 0:
         err = db_commit()
         if err:
