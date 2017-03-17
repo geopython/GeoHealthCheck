@@ -151,11 +151,11 @@ def cssize_reliability(value, css_type=None):
         score = 'danger'
         panel = 'red'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
-              APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
+            APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
         panel = 'yellow'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
-              APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
+            APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
         panel = 'green'
     else:  # should never really get here
@@ -523,7 +523,6 @@ def update(resource_identifier):
     status = 'success'
 
     try:
-
         resource_identifier_dict = request.get_json()
 
         resource = Resource.query.filter_by(
@@ -570,8 +569,9 @@ def update(resource_identifier):
                     probe_vars = ProbeVars(resource, probe['probe_class'],
                                            probe['parameters'])
                     for check in probe['checks']:
-                        check_vars = CheckVars(probe_vars, check['check_class'],
-                                               check['parameters'])
+                        check_vars = CheckVars(
+                            probe_vars, check['check_class'],
+                            check['parameters'])
                         probe_vars.check_vars.append(check_vars)
 
                     resource.probe_vars.append(probe_vars)
