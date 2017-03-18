@@ -67,6 +67,18 @@ LANGUAGES = (
 )
 
 
+# commit or rollback shorthand
+def db_commit():
+    err = None
+    try:
+        DB.session.commit()
+    except Exception as err:
+        DB.session.rollback()
+    # finally:
+    #     DB.session.close()
+    return err
+
+
 @APP.before_request
 def before_request():
     g.user = current_user
@@ -495,33 +507,62 @@ def update(resource_identifier):
     """update a resource"""
 
     update_counter = 0
+    status = 'success'
 
-    resource_identifier_dict = request.get_json()
+    try:
+        resource_identifier_dict = request.get_json()
 
-    resource = Resource.query.filter_by(identifier=resource_identifier).first()
+        resource = Resource.query.filter_by(
+            identifier=resource_identifier).first()
 
-    for key, value in resource_identifier_dict.items():
-        if key == 'tags':
-            resource_tags = [t.name for t in resource.tags]
+        for key, value in resource_identifier_dict.items():
+            if key == 'tags':
+                resource_tags = [t.name for t in resource.tags]
 
-            tags_to_add = set(value) - set(resource_tags)
-            tags_to_delete = set(resource_tags) - set(value)
+                tags_to_add = set(value) - set(resource_tags)
+                tags_to_delete = set(resource_tags) - set(value)
 
-            for tag in tags_to_add:
-                resource.tags.append(Tag(name=tag))
-            for tag in tags_to_delete:
-                tag_to_delete = Tag.query.filter_by(name=tag).first()
-                resource.tags.remove(tag_to_delete)
+                # Existing Tags: create relation else add new Tag
+                all_tag_objs = Tag.query.all()
+                for tag in tags_to_add:
+                    tag_add_obj = None
+                    for tag_obj in all_tag_objs:
+                        if tag == tag_obj.name:
+                            # use existing
+                            tag_add_obj = tag_obj
+                            break
 
-            update_counter += 1
-        elif getattr(resource, key) != resource_identifier_dict[key]:
-            setattr(resource, key, resource_identifier_dict[key])
-            update_counter += 1
+                    if not tag_add_obj:
+                        # add new
+                        tag_add_obj = Tag(name=tag)
+                        DB.session.add(tag_add_obj)
+
+                    resource.tags.append(tag_add_obj)
+
+                for tag in tags_to_delete:
+                    tag_to_delete = Tag.query.filter_by(name=tag).first()
+                    resource.tags.remove(tag_to_delete)
+
+                update_counter += 1
+
+            elif getattr(resource, key) != resource_identifier_dict[key]:
+                # Update other resource attrs, mainly 'name'
+                setattr(resource, key, resource_identifier_dict[key])
+                update_counter += 1
+
+    except Exception as err:
+        DB.session.rollback()
+        status = str(err)
+        update_counter = 0
+    # finally:
+    #     DB.session.close()
 
     if update_counter > 0:
-        DB.session.commit()
+        err = db_commit()
+        if err:
+            status = str(err)
 
-    return str({'status': 'success'})
+    return str({'status': status})
 
 
 @APP.route('/resource/<int:resource_identifier>/test')
