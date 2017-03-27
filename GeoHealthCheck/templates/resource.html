@@ -83,9 +83,18 @@
             <div id="resource-map" class="resource-map"></div>
         </div>
         <div class="col-lg-4 col-md-4">
-            <pre>
-{{ resource.snippet() }}
-            </pre>
+            <h4>Last Run Result</h4>
+             {% if resource.last_run %}
+                <ul>
+                    <li>{{ _('Last Check') }} : {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} </li>
+                    <li>{{ _('Success') }}: {{ resource.last_run.success }} </li>
+                    <li>{{ _('Message') }}: {{ resource.last_run.message }} </li>
+                    <li>{{ _('Response Time') }}: {{ resource.last_run.response_time|round(2) }} </li>
+                </ul>
+            {% else %}
+                <p>No runs yet.</p>
+            {% endif %}
+            <h4>Last Run Summary</h4>
             <a class="btn btn-default btn-xs" href="{{ url_for('json-resource', identifier=resource.identifier) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv-resource', identifier=resource.identifier) }}"><span class="fa fa-download"></span> CSV</a>
         </div>
     </div>

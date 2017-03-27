@@ -285,7 +285,20 @@ class Resource(DB.Model):
         return ','.join([t.name for t in self.tags])
 
     def snippet(self):
-        return util.get_python_snippet(self)
+        if not self.last_run:
+            return 'No Runs yet'
+
+        report = '''
+        - time: %s <br/>
+        - success: %s <br/>
+        - message: %s <br/>
+        - response_time: %s
+        ''' % (self.last_run.checked_datetime,
+               self.last_run.success,
+               self.last_run.message,
+               self.last_run.response_time)
+
+        return report
 
     def runs_to_json(self):
         runs = []
