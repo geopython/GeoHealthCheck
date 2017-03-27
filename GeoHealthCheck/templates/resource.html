@@ -54,8 +54,8 @@
                 <th>Probes</th>
 
                 <td>
-                    {% for probe in resource.probes %}
-                    {{ probe.name }}  <br/>
+                    {% for probe_var in resource.probe_vars %}
+                    - {{ probe_var.name }}  <br/>
                     {% endfor %}
                 </td>
 
