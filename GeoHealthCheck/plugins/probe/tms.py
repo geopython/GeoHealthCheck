@@ -14,8 +14,11 @@ class TmsCaps(Probe):
         Probe.__init__(self)
 
     CHECKS_AVAIL = {
-        'GeoHealthCheck.plugins.check.checks.XmlParse': {},
+        'GeoHealthCheck.plugins.check.checks.XmlParse': {
+            'default': True
+        },
         'GeoHealthCheck.plugins.check.checks.ContainsStrings': {
+            'default': True,
             'set_params': {
                 'strings': {
                     'name': 'Must contain TileMap Element',
@@ -86,6 +89,8 @@ class TmsGetTile(Probe):
     """Param defs"""
 
     CHECKS_AVAIL = {
-        'GeoHealthCheck.plugins.check.checks.HttpHasImageContentType': {}
+        'GeoHealthCheck.plugins.check.checks.HttpHasImageContentType': {
+            'default': True
+        }
     }
     """Check for TMS GetTile"""

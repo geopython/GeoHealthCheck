@@ -35,15 +35,20 @@ class OwsGetCaps(Probe):
     """Param defs, to be specified in subclasses"""
 
     CHECKS_AVAIL = {
-        'GeoHealthCheck.plugins.check.checks.XmlParse': {},
-        'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {},
+        'GeoHealthCheck.plugins.check.checks.XmlParse': {
+            'default': True
+         },
+        'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {
+            'default': True
+        },
         'GeoHealthCheck.plugins.check.checks.ContainsStrings': {
             'set_params': {
                 'strings': {
                     'name': 'Contains Title Element',
                     'value': ['Title>']
                 }
-            }
+            },
+            'default': True
         },
     }
     """

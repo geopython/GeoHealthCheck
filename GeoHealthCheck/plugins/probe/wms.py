@@ -77,8 +77,12 @@ class WmsGetMapV1(Probe):
     """Param defs"""
 
     CHECKS_AVAIL = {
-        'GeoHealthCheck.plugins.check.checks.HttpHasImageContentType': {},
-        'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {}
+        'GeoHealthCheck.plugins.check.checks.HttpHasImageContentType': {
+            'default': True
+        },
+        'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {
+            'default': True
+        }
     }
     """
     Checks for WMS GetMap Response available.

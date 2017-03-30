@@ -63,7 +63,8 @@ class Probe(Plugin):
     Available Check (classes) for this Probe in `dict` format.
     Key is a Check class (string), values are optional (default `{}`).
     In the (constant) value 'parameters' and other attributes for
-    Check.PARAM_DEFS can be specified.
+    Check.PARAM_DEFS can be specified, including `default` if this Check
+    should be added to Probe on creation.
     """
 
     def __init__(self):
@@ -123,6 +124,9 @@ class Probe(Plugin):
 
             checks_avail[check_class] = check_vars
         return checks_avail
+
+    def get_checks_info(self):
+        return Plugin.copy(Plugin.get_plugin_vars(self))['CHECKS_AVAIL']
 
     def get_plugin_vars(self):
         probe_vars = Plugin.copy(Plugin.get_plugin_vars(self))

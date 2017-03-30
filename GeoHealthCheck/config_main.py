@@ -97,3 +97,40 @@ GHC_PLUGINS = {
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
 }
+
+# Default Probe to assign on "add" per Resource-type
+GHC_PROBE_DEFAULTS = {
+    'OGC:WMS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps'
+    },
+    'OGC:WMTS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetCaps'
+    },
+    'OSGeo:TMS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.tms.TmsCaps'
+    },
+    'OGC:WFS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WfsGetCaps'
+    },
+    'OGC:WCS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WcsGetCaps'
+    },
+    'OGC:WPS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WpsGetCaps'
+    },
+    'OGC:CSW': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.CswGetCaps'
+    },
+    'OGC:SOS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.SosGetCaps'
+    },
+    'urn:geoss:waf': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
+    },
+    'WWW:LINK': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
+    },
+    'FTP': {
+        'probe_class': None
+    }
+}

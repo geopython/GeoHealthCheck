@@ -488,20 +488,48 @@ def add():
     resource_to_add = Resource(current_user, resource_type, title, url,
                                tags=tag_list)
 
-    # Always add a default Probe & Check
-    probe_to_add = ProbeVars(
-        resource_to_add, 'GeoHealthCheck.plugins.probe.http.HttpGet')
-    check_to_add = CheckVars(
-        probe_to_add, 'GeoHealthCheck.plugins.check.checks.HttpStatusNoError')
+    probe_to_add = None
+    checks_to_add = []
+
+    # Always add a default Probe and Check(s)  from the GHC_PROBE_DEFAULTS conf
+    if resource_type in APP.config['GHC_PROBE_DEFAULTS']:
+        resource_settings = APP.config['GHC_PROBE_DEFAULTS'][resource_type]
+        probe_class = resource_settings['probe_class']
+        if probe_class:
+            # Add the default Probe
+            probe_obj = Factory.create_obj(probe_class)
+            probe_to_add = ProbeVars(
+                resource_to_add, probe_class,
+                probe_obj.get_default_parameter_values())
+
+            # Add optional default (parameterized) Checks to add to this Probe
+            checks_info = probe_obj.get_checks_info()
+            checks_param_info = probe_obj.get_plugin_vars()['CHECKS_AVAIL']
+            for check_class in checks_info:
+                check_param_info = checks_param_info[check_class]
+                if 'default' in checks_info[check_class]:
+                    if checks_info[check_class]['default']:
+                        # Filter out params for Check with fixed values
+                        param_defs = check_param_info['PARAM_DEFS']
+                        param_vals = {}
+                        for param in param_defs:
+                            if param_defs[param]['value']:
+                                param_vals[param] = param_defs[param]['value']
+                        check_vars = CheckVars(
+                            probe_to_add, check_class, param_vals)
+                        checks_to_add.append(check_vars)
 
     result = run_test_resource(resource_to_add)
 
     run_to_add = Run(resource_to_add, result)
 
     DB.session.add(resource_to_add)
-    DB.session.add(probe_to_add)
-    DB.session.add(check_to_add)
+    if probe_to_add:
+        DB.session.add(probe_to_add)
+    for check_to_add in checks_to_add:
+        DB.session.add(check_to_add)
     DB.session.add(run_to_add)
+
     try:
         DB.session.commit()
         msg = gettext('Service registered')

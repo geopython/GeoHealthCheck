@@ -88,9 +88,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     """Param defs"""
 
     CHECKS_AVAIL = {
-        'GeoHealthCheck.plugins.check.checks.XmlParse': {},
-        'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {},
+        'GeoHealthCheck.plugins.check.checks.XmlParse': {
+            'default': True
+        },
+        'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {
+            'default': True
+        },
         'GeoHealthCheck.plugins.check.checks.ContainsStrings': {
+            'default': True,
             'set_params': {
                 'strings': {
                     'name': 'Must contain FeatureCollection Element',
