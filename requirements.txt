@@ -1,5 +1,5 @@
 Flask-Babel
 Flask-Login==0.2.11
-Flask-SQLAlchemy
+Flask-SQLAlchemy==2.1
 OWSLib
 Sphinx
