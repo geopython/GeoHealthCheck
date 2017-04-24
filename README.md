@@ -61,6 +61,7 @@ users
 admin
 - drop db
 - create db
+- upgrade db
 - add service
 - delete service
 - run health check (cron or interactive)

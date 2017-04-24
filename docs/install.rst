@@ -38,6 +38,7 @@ Quick and Dirty
 
   # init database
   python GeoHealthCheck/models.py create
+
   # start server
   python GeoHealthCheck/app.py  # http://localhost:8000/
 
@@ -48,6 +49,7 @@ Requirements
 
 GeoHealthCheck is built on the awesome Flask microframework and uses
 Flask-SQLAlchemy for database interaction and Flask-Login for authorization.
+Flask-Migrate with Alembic and Flask-Script support is used for database upgrades.
 
 OWSLib is used to interact with OGC Web Services.
 
@@ -63,6 +65,24 @@ Install
 
 - Download GeoHealthCheck (releases can be found at
   https://github.com/geopython/GeoHealthCheck/releases)
+
+Upgrade
+-------
+
+An existing GHC database installation can be upgraded with:
+
+.. code-block:: bash
+
+  # In the top directory (e.g. the topdir cloned from github)
+  paver upgrade
+
+  # Notice any output, in particular errors
+
+Notes:
+
+* **Always backup your database first!!**
+* upgrading should be "smart": only performed when required
+
 
 Running
 -------

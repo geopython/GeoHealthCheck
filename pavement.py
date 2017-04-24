@@ -184,6 +184,15 @@ def create(options):
 
 
 @task
+def upgrade():
+    """upgrade database if changed; be sure to backup first!"""
+
+    info('Upgrading database...')
+    with pushd(path('%s/GeoHealthCheck' % BASEDIR)):
+        sh('python manage.py db upgrade')
+
+
+@task
 def create_wsgi():
     """create WSGI wrapper and Apache2 configuration"""
     wsgi_script = '%s%sGeoHealthCheck.wsgi' % (options.base.instance, os.sep)

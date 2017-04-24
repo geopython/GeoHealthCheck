@@ -38,6 +38,7 @@ from flask import (flash, Flask, g, jsonify, redirect,
 from flask.ext.babel import Babel, gettext
 from flask.ext.login import (LoginManager, login_user, logout_user,
                              current_user, login_required)
+from flask_migrate import Migrate
 
 from __init__ import __version__
 from healthcheck import sniff_test_resource, run_test_resource
@@ -53,6 +54,8 @@ BABEL = Babel(APP)
 APP.config.from_pyfile('config_main.py')
 APP.config.from_pyfile('../instance/config_site.py')
 APP.secret_key = APP.config['SECRET_KEY']
+
+MIGRATE = Migrate(APP, DB)
 
 LOGIN_MANAGER = LoginManager()
 LOGIN_MANAGER.init_app(APP)

@@ -12,7 +12,7 @@ install:
 
 script:
   - echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
-  - find . -name "*.py" | grep -v docs | xargs flake8
+  - find . -name "*.py" | grep -v docs | grep -v migrations | xargs flake8
   - python GeoHealthCheck/models.py load tests/data/fixtures.json y
   - python GeoHealthCheck/models.py run
   - python tests/run_tests.py

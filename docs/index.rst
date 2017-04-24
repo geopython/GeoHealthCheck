@@ -19,6 +19,7 @@ Features
 - flexible and customizable: look and feel, scoring matrix
 - user management
 - database agnostic: any SQLAlchemy supported backend
+- database upgrades: using Alembic with Flask-Migrate
 - extensible healthchecks via Plugins
 
 Links
