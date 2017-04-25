@@ -23,7 +23,7 @@ conventions has changed a new migration should be created via the command.
 	python manage.py db migrate
 	
 This will create a new revision and a `<revision_number>_.py` file 
-under `versions/` to ugprade
+under `versions/` to upgrade
 to that revision. After this command that `.py` file should be inspected 
 and modified where needed. In particular Postgres installations using the
 `public` schema should comment out any management of the `spatial_ref_sys` table.
@@ -32,7 +32,7 @@ to check various DB metadata.
 
 Subsequently the upgrade can be performed using:
 
-	python manage.py db migrate
+	python manage.py db upgrade
 	# or the equivalent (for users) 
 	paver upgrade
 
