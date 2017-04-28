@@ -67,6 +67,10 @@ RESOURCE_TYPES = {
         'versions': ['1.0.0'],
         'capabilities': '?service=SOS&version=1.0.0&request=GetCapabilities'
     },
+    'OGC:STA': {
+        'label': 'SensorThings API (STA)',
+        'versions': ['1.0']
+    },
     'urn:geoss:waf': {
         'label': 'Web Accessible Folder (WAF)'
     },

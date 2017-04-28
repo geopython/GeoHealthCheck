@@ -92,6 +92,7 @@ GHC_PLUGINS = {
     'GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox',
     'GeoHealthCheck.plugins.probe.tms',
     'GeoHealthCheck.plugins.probe.http',
+    'GeoHealthCheck.plugins.probe.sta',
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
 
     # Checkers
@@ -123,6 +124,9 @@ GHC_PROBE_DEFAULTS = {
     },
     'OGC:SOS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.SosGetCaps'
+    },
+    'OGC:STA': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.sta.StaCaps'
     },
     'urn:geoss:waf': {
         'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'

@@ -24,6 +24,7 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_SMTP**:  configure SMTP settings if **GHC_NOTIFICATIONS** is enabled
 - **GHC_RELIABILITY_MATRIX**: classification scheme for grading resource
 - **GHC_PLUGINS**: list of Plugin classes or modules available on installation
+- **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
 - **GHC_MAP**: default map settings
 
   - **url**: URL of TileLayer

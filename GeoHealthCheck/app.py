@@ -254,7 +254,8 @@ def export():
                 'min_response_time': round(r.min_response_time, 2),
                 'average_response_time': round(r.average_response_time, 2),
                 'max_response_time': round(r.max_response_time, 2),
-                'reliability': round(r.reliability, 2)
+                'reliability': round(r.reliability, 2),
+                'last_report': r.last_run.report
             })
         return jsonify(json_dict)
     elif request.url_rule.rule == '/csv':
@@ -325,7 +326,8 @@ def export_resource(identifier):
             'last_run': resource.last_run.checked_datetime.strftime(
                 '%Y-%m-%dT%H:%M:%SZ'),
             'history_csv': history_csv,
-            'history_json': history_json
+            'history_json': history_json,
+            'last_report': resource.last_run.report
         }
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:

@@ -141,6 +141,25 @@ class XmlParse(Check):
             self.set_result(False, str(sys.exc_info()))
 
 
+class JsonParse(Check):
+    """
+    Checks if HTTP response is valid JSON.
+    """
+
+    NAME = 'Valid JSON response'
+    DESCRIPTION = 'HTTP response contains valid JSON'
+
+    def __init__(self):
+        Check.__init__(self)
+
+    def perform(self):
+        import json
+        try:
+            json.loads(self.probe.response.content)
+        except:
+            self.set_result(False, str(sys.exc_info()))
+
+
 class ContainsStrings(Check):
     """
     Checks if HTTP response contains given strings (keywords).

@@ -16,9 +16,10 @@ Two extension points exist: the `Probe` and `Check` classes.
 Configuration
 -------------
 
-Plugins available to a GHC installation are configured via `site_admin.py`.
+Plugins available to a GHC installation are configured via `config_site.py`.
 
 - **GHC_PLUGINS**: `list` of Plugin classes and/or modules available on installation
+- **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
 
 
 Plugin API Docs
@@ -72,6 +73,10 @@ to override any of the `Probe` baseclass methods.
    :show-inheritance:
 
 .. automodule:: GeoHealthCheck.plugins.probe.tms
+   :members:
+   :show-inheritance:
+
+.. automodule:: GeoHealthCheck.plugins.probe.sta
    :members:
    :show-inheritance:
 

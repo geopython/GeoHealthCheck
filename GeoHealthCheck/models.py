@@ -223,7 +223,8 @@ class Resource(DB.Model):
 
     @property
     def get_capabilities_url(self):
-        if self.resource_type.startswith('OGC:'):
+        if self.resource_type.startswith('OGC:') \
+                and self.resource_type != 'OGC:STA':
             url = '%s%s' % (self.url,
                             RESOURCE_TYPES[self.resource_type]['capabilities'])
         else:

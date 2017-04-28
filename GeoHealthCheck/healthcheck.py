@@ -93,6 +93,8 @@ def sniff_test_resource(config, resource_type, url):
             ows = CatalogueServiceWeb(url)
         elif resource_type == 'OGC:SOS':
             ows = SensorObservationService(url)
+        elif resource_type == 'OGC:STA':
+            ows = urlopen(url)
         elif resource_type in ['WWW:LINK', 'urn:geoss:waf']:
             ows = urlopen(url)
             if resource_type == 'WWW:LINK':
@@ -133,7 +135,10 @@ def sniff_test_resource(config, resource_type, url):
             title = urlparse(url).hostname
         success = True
         if resource_type.startswith(('OGC:', 'OSGeo')):
-            title = ows.identification.title
+            if resource_type == 'OGC:STA':
+                title = 'OGC STA'
+            else:
+                title = ows.identification.title
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
     except Exception as err:
