@@ -25,7 +25,7 @@ class Probe(Plugin):
     Type of GHC Resource e.g. 'OGC:WMS', default not applicable.
     """
 
-    # Request attributes, defaults, subclassses override
+    # Request attributes, defaults, subclasses override
     REQUEST_METHOD = 'GET'
     """
     HTTP request method capitalized, GET (default) or POST.

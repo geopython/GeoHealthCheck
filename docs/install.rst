@@ -81,7 +81,9 @@ An existing GHC database installation can be upgraded with:
 Notes:
 
 * **Always backup your database first!!**
+* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.0.3`
 * upgrading should be "smart": only performed when required
+* when upgrading from pre-v0.2.0 (first version with Plugins) adapt your `config_site.py` to Plugin settings from `config_main.py`
 
 
 Running

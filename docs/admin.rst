@@ -44,7 +44,16 @@ Hint: see `tests/data` for example JSON data files.
 export data
 ...........
 
-TODO: export data to .json file with or without runs.
+Exporting database-data to a .json file with or without Runs is still to be done.
+
+Exporting Resource and Run data from a running GHC instance can be effected via
+a REST API, for example:
+
+* all Resources: http://demo.geohealthcheck.org/json  (or `as CSV <http://demo.geohealthcheck.org/csv>`_)
+* one Resource: http://demo.geohealthcheck.org/resource/1/json (or `CSV <http://demo.geohealthcheck.org/resource/1/csv>`_)
+* all history (Runs) of one Resource: http://demo.geohealthcheck.org/resource/1/history/json (or `in csv <http://demo.geohealthcheck.org/resource/1/history/csv>`_)
+
+NB for detailed reporting data only JSON is supported.
 
 User Management
 ---------------
@@ -71,6 +80,7 @@ The folowing resource types are available:
 - Tile Map Service (TMS)
 - Web Accessible Folder (WAF)
 - Sensor Observation Service (SOS)
+- `SensorThings API <http://docs.opengeospatial.org/is/15-078r6/15-078r6.html>`_ (STA)
 
 
 Deleting Resources
