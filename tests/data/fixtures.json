@@ -1,0 +1,235 @@
+{
+  "users": {
+    "admin": {
+      "username": "admin",
+      "password": "admin",
+      "email": "foo@example.com",
+      "role": "admin"
+    }
+  },
+  "tags": {
+    "ows": "ows",
+    "tiling": "tiling",
+    "pdok": "pdok"
+  },
+  "resources": {
+    "WOUDC WMS": {
+      "owner": "admin",
+      "resource_type": "OGC:WMS",
+      "title": "WOUDC Web Map Service",
+      "url": "http://geo.woudc.org/ows",
+      "tags": [
+        "ows"
+      ]
+    },
+    "WOUDC WFS": {
+      "owner": "admin",
+      "resource_type": "OGC:WFS",
+      "title": "WOUDC Web Feature Service",
+      "url": "http://geo.woudc.org/ows",
+      "tags": [
+        "ows"
+      ]
+    },
+    "PDOK BAG WFS": {
+      "owner": "admin",
+      "resource_type": "OGC:WFS",
+      "title": "PDOK BAG Web Feature Service",
+      "url": "https://geodata.nationaalgeoregister.nl/bag/wfs",
+      "tags": [
+        "ows",
+        "pdok"
+      ]
+    },
+    "WOUDC CSW": {
+      "owner": "admin",
+      "resource_type": "OGC:CSW",
+      "title": "WOUDC Catalogue Service",
+      "url": "http://geo.woudc.org/csw",
+      "tags": [
+        "ows"
+      ]
+    },
+    "WOUDC WMTS": {
+      "owner": "admin",
+      "resource_type": "OGC:WMTS",
+      "title": "NASA Global Imagery Browse Services for EOSDIS",
+      "url": "http://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
+      "tags": [
+        "ows",
+        "tiling"
+      ]
+    },
+    "WOUDC LINK": {
+      "owner": "admin",
+      "resource_type": "WWW:LINK",
+      "title": "WOUDC Definitions Service",
+      "url": "http://geo.woudc.org/def",
+      "tags": []
+    },
+    "PDOK TMS": {
+      "owner": "admin",
+      "resource_type": "OSGeo:TMS",
+      "title": "Tile Map Service",
+      "url": "http://geodata.nationaalgeoregister.nl/tms/1.0.0",
+      "tags": [
+        "tiling",
+        "pdok"
+      ]
+    }
+  },
+  "probe_vars": {
+    "WOUDC WMS - GetCaps": {
+      "resource": "WOUDC WMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps",
+      "parameters": {
+        "service": "WMS",
+        "version": "1.0.0"
+      }
+    },
+    "WOUDC WMS - Drilldown": {
+      "resource": "WOUDC WMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wmsdrilldown.WmsDrilldown",
+      "parameters": {
+        "drilldown_level": "minor"
+      }
+    },
+    "WOUDC WFS - GetCaps": {
+      "resource": "WOUDC WFS",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WfsGetCaps",
+      "parameters": {
+        "service": "WFS",
+        "version": "1.1.0"
+      }
+    },
+    "PDOK BAG WFS - GetFeature": {
+      "resource": "PDOK BAG WFS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox",
+      "parameters": {
+        "type_name": "verblijfsobject:verblijfsobject",
+        "type_ns_prefix": "verblijfsobject",
+        "type_ns_uri": "http://bag.geonovum.nl",
+        "geom_property_name": "geometrie",
+        "srs": "EPSG:28992",
+        "bbox": ["180635", "455870", "180961", "456050"]
+      }
+    },
+    "WOUDC CSW - GetCaps": {
+      "resource": "WOUDC CSW",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.CswGetCaps",
+      "parameters": {
+        "service": "CSW",
+        "version": "2.0.2"
+      }
+    },
+    "WOUDC WMTS - GetCaps": {
+      "resource": "WOUDC WMTS",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetCaps",
+      "parameters": {
+        "service": "WMTS",
+        "version": "1.0.0"
+      }
+    },
+    "WOUDC LINK - PING": {
+      "resource": "WOUDC LINK",
+      "probe_class": "GeoHealthCheck.plugins.probe.http.HttpGet",
+      "parameters": {}
+    },
+    "PDOK TMS - PING": {
+      "resource": "PDOK TMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.http.HttpGet",
+      "parameters": {}
+    },
+    "PDOK TMS - Caps": {
+      "resource": "PDOK TMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.tms.TmsCaps",
+      "parameters": {}
+    },
+    "PDOK TMS - TopTile": {
+      "resource": "PDOK TMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.tms.TmsGetTile",
+      "parameters": {
+        "layer": "brtachtergrondkaart",
+        "zoom": "0",
+        "x": "0",
+        "y": "0",
+        "extension" : "png"
+      }
+    }
+  },
+  "check_vars": {
+    "WOUDC WMS - GetCaps - XML Parse": {
+      "probe_vars": "WOUDC WMS - GetCaps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "WOUDC WFS - GetCaps - XML Parse": {
+      "probe_vars": "WOUDC WFS - GetCaps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "PDOK BAG WFS - GetFeature - XML Parse": {
+      "probe_vars": "PDOK BAG WFS - GetFeature",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "PDOK BAG WFS - GetFeature - No Exception": {
+      "probe_vars": "PDOK BAG WFS - GetFeature",
+      "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
+      "parameters": {
+        "strings": ["ExceptionReport>", "ServiceException>"]
+      }
+    },
+    "PDOK BAG WFS - GetFeature - FeatureCollection": {
+      "probe_vars": "PDOK BAG WFS - GetFeature",
+      "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
+      "parameters": {
+        "strings": ["FeatureCollection>"]
+      }
+    },
+    "WOUDC CSW - GetCaps - XML Parse": {
+      "probe_vars": "WOUDC CSW - GetCaps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "WOUDC WMTS - GetCaps - XML Parse": {
+      "probe_vars": "WOUDC WMTS - GetCaps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "WOUDC LINK - HTTP - NoError": {
+      "probe_vars": "WOUDC LINK - PING",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpStatusNoError",
+      "parameters": {}
+    },
+    "WOUDC LINK - HTTP - ContainsStrings": {
+      "probe_vars": "WOUDC LINK - PING",
+      "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
+      "parameters": {
+        "strings": ["RDF>"]
+      }
+    },
+    "PDOK TMS - HTTP - NoError": {
+      "probe_vars": "PDOK TMS - PING",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpStatusNoError",
+      "parameters": {}
+    },
+    "PDOK TMS - Caps - XML Parse": {
+      "probe_vars": "PDOK TMS - Caps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "PDOK TMS - Caps - TileMap": {
+      "probe_vars": "PDOK TMS - Caps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
+      "parameters": {
+        "strings": ["<TileMap"]
+      }
+    },
+    "PDOK TMS - TopTile - Content Type": {
+      "probe_vars": "PDOK TMS - TopTile",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
+      "parameters": {}
+    }
+  }
+}

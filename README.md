@@ -47,6 +47,11 @@ python GeoHealthCheck/app.py 192.168.0.105:8001
 #
 # drop database
 python GeoHealthCheck/models.py drop
+
+# load data in database (WARN: deletes existing data!)
+# See example data .json files in tests/data
+python GeoHealthCheck/models.py load <.json data file> [y/n]
+
 ```
 
 users
@@ -56,6 +61,7 @@ users
 admin
 - drop db
 - create db
+- upgrade db
 - add service
 - delete service
 - run health check (cron or interactive)

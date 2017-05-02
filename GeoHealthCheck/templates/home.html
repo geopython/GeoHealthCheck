@@ -147,27 +147,34 @@
                         </select>
                         {% endif %}
                     </td>
+                    {% if resource.last_run %}
                     <td>
-                        <ul>
-                            <li>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</li>
-                            <li>{{ resource.last_run.response_time|round(2) }} {{ _('seconds') }}</li>
-                        </ul>
-                    </td>
-                    {% if resource.last_run.success %}
-                    <td><button type="button" class="btn btn-success btn-circle btn nohover"><i class="fa fa-check"></i></button></td>
+                         <ul>
+                             <li>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</li>
+                             <li>{{ resource.last_run.response_time|round(2) }} {{ _('seconds') }}</li>
+                         </ul>
+                     </td>
+                     {% if resource.last_run.success %}
+                     <td><button type="button" class="btn btn-success btn-circle btn nohover"><i class="fa fa-check"></i></button></td>
+                     {% else %}
+                     <td><span title="{{ resource.last_run.message }}" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></span></td>
+                     {% endif %}
+                     <td>
+                         <ul>
+                             <li>Min: {{ resource.min_response_time|round(2) }}</li>
+                             <li>Average: {{ resource.average_response_time|round(2) }}</li>
+                             <li>Max: {{ resource.max_response_time|round(2) }}</li>
+                         </ul>
+                         <span style="display: none; color: green" class="sparkline col-md-10">{{ resource.all_response_times }}</span>
+                     </td>
+                     <td class="text-right"><button type="button" class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block nohover">{{ resource.reliability|round2 }}%</button></td>
                     {% else %}
-                    <td><span title="{{ resource.last_run.message }}" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></span></td>
+                    <td><span>No runs yet</span></td>
+                    <td><span>0</span></td>
+                    <td><span>0</span></td>
+                    <td><span>0</span></td>
                     {% endif %}
-                    <td>
-                        <ul>
-                            <li>Min: {{ resource.min_response_time|round(2) }}</li>
-                            <li>Average: {{ resource.average_response_time|round(2) }}</li>
-                            <li>Max: {{ resource.max_response_time|round(2) }}</li>
-                        </ul>
-                        <span style="display: none; color: green" class="sparkline col-md-10">{{ resource.all_response_times }}</span>
-                    </td>
-                    <td class="text-right"><button type="button" class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block nohover">{{ resource.reliability|round2 }}%</button></td>
-                </tr>
+               </tr>
             {% endfor %}
             </tbody>
         </table>

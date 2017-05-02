@@ -43,12 +43,28 @@ from owslib.sos import SensorObservationService
 
 from flask.ext.babel import gettext
 from enums import RESOURCE_TYPES
+from probe import Probe
+from result import ResourceResult
 
 LOGGER = logging.getLogger(__name__)
 
 
-def run_test_resource(config, resource_type, url):
-    """tests a CSW service and provides run metrics"""
+def run_test_resource(resource):
+    """tests a service and provides run metrics"""
+
+    result = ResourceResult(resource)
+    result.start()
+    probes = resource.probe_vars
+    for probe in probes:
+        result.add_result(Probe.run(resource, probe))
+
+    result.stop()
+
+    return result
+
+
+def sniff_test_resource(config, resource_type, url):
+    """tests a service and provides run metrics"""
 
     if resource_type not in RESOURCE_TYPES.keys():
         msg = gettext('Invalid resource type')
@@ -77,6 +93,8 @@ def run_test_resource(config, resource_type, url):
             ows = CatalogueServiceWeb(url)
         elif resource_type == 'OGC:SOS':
             ows = SensorObservationService(url)
+        elif resource_type == 'OGC:STA':
+            ows = urlopen(url)
         elif resource_type in ['WWW:LINK', 'urn:geoss:waf']:
             ows = urlopen(url)
             if resource_type == 'WWW:LINK':
@@ -117,7 +135,10 @@ def run_test_resource(config, resource_type, url):
             title = urlparse(url).hostname
         success = True
         if resource_type.startswith(('OGC:', 'OSGeo')):
-            title = ows.identification.title
+            if resource_type == 'OGC:STA':
+                title = 'OGC STA'
+            else:
+                title = ows.identification.title
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
     except Exception as err:
@@ -141,4 +162,4 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # TODO: need APP.config here, None for now
-    print(run_test_resource(None, sys.argv[1], sys.argv[2]))
+    print(sniff_test_resource(None, sys.argv[1], sys.argv[2]))

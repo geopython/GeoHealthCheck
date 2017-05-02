@@ -110,6 +110,7 @@ footer {
     bottom: 0;
     width: 100%;
     background-color: black;
+    color: #9d9d9d;
 }
 
 .totals-chart {
@@ -138,4 +139,13 @@ footer {
 
 .col-md-2.sidebar {
     width: 16.6667% !important;
+}
+
+input:read-only {
+    background-color: #eeeeee !important;
+}
+
+.probe-entry {
+    border: 1px solid #aaa;
+    background-color: #eee !important;
 }

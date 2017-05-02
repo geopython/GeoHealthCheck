@@ -1,6 +1,7 @@
 # =================================================================
 #
-# Authors: Tom Kralidis <tomkralidis@gmail.com>
+# Authors: Tom Kralidis <tomkralidis@gmail.com>,
+# Just van den Broecke <justb4@gmail.com>
 #
 # Copyright (c) 2014 Tom Kralidis
 #
@@ -27,49 +28,17 @@
 #
 # =================================================================
 
-import datetime
-import json
 import unittest
 import sys
+import os
 
-from GeoHealthCheck.models import DB, Resource, Run, User
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
-sys.path.append('..')
+# Needed to find classes and plugins
+sys.path.append('%s/..' % TEST_DIR)
 
-
-class GeoHealthCheckTest(unittest.TestCase):
-    def setUp(self):
-        self.db = DB
-        self.db.create_all()
-        with open('fixtures.json') as ff:
-            fixtures = json.load(ff)
-        # add users
-        for user in fixtures['users']:
-            account = User(user['user']['username'],
-                           user['user']['password'],
-                           user['user']['email'],
-                           user['user']['role'])
-            self.db.session.add(account)
-        # add data
-        for record in fixtures['data']:
-            resource = Resource(account,
-                                record['resource']['resource_type'],
-                                record['resource']['title'],
-                                record['resource']['url'])
-            self.db.session.add(resource)
-            for run in record['runs']:
-                dt = datetime.datetime.strptime(run[0], '%Y-%m-%dT%H:%M:%SZ')
-                run2 = Run(resource, run[1], run[2], run[3], dt)
-                self.db.session.add(run2)
-        self.db.session.commit()
-
-    def tearDown(self):
-        # self.db.drop_all()
-        pass
-
-    def testFoo(self):
-        self.assertEqual(1, 1)
-
-
+# Shorthand to run all test scripts in tests dir.
+# TODO use nose or more intelligent test_*.py discovery
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(module='test_plugins', exit=False)
+    unittest.main(module='test_resources')

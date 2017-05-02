@@ -1,0 +1,310 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">[{{ _('Edit') }}] <span id="resource_title_h1">{{ resource.title }}</span></h1>
+
+    <div class="table-responsive col-md-4" style="width: 100%;">
+        <table class="table">
+            <tr>
+                <th>{{ _('Type') }}</th>
+                <td>{{ resource_types[resource.resource_type]['label'] }}</td>
+            </tr>
+            <tr>
+                <th>{{ _('Owner') }}</th>
+                <td>{{ resource.owner.username }}</td>
+            </tr>
+            <tr>
+                <th>
+                    {{ _('Name') }}
+                </th>
+                <td>
+                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" style="width: 100%;"/>
+                </td>
+            </tr>
+            <tr>
+                <th>URL</th>
+                <td><a href="{{ resource.get_capabilities_url }}">{{ resource.url }}</a></td>
+            </tr>
+            <tr>
+                <th>Tags</th>
+                <td>
+                    <select id="resource_tags" multiple="multiple" style="width: 100%;">
+                    {% for tag in resource.tags %}
+                        <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Probes</th>
+
+                <td id="probe-edit-forms">
+                    {% for probe in resource.probe_vars %}
+                        {% set probe_info = probes_avail[probe.probe_class] %}
+                        {% include 'includes/probe_edit_form.html' %}
+                    {% endfor %}
+                </td>
+
+            </tr>
+            <tr>
+                <th>Probes<br/>Available</th>
+
+                <td>
+                    {% for probe_class, probe_avail in probes_avail.iteritems() %}
+                        {% include 'includes/probe_info.html' %}
+                    {% endfor %}
+                </td>
+
+            </tr>
+            {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
+            <tr>
+                <th>{{ _('Status') }}</th>
+
+                <td>
+                    <div><span id="status">OK</span>&nbsp;&nbsp;<span><button type="button" id="toggle-status-detail"
+                                        class="btn btn-success btn-xs">{{ _('Details') }}
+                                </button></span></div>
+                    <br/><span id="status-detail"></span>
+                </td>
+
+            </tr>
+            <tr>
+                <th>Action</th>
+
+                <td>
+                    <button id="save" type="button" class="btn btn-primary btn-sm">{{ _('Save') }}</button>
+                    &nbsp;&nbsp;&nbsp;<button id="test" type="button" class="btn btn-primary btn-sm">{{ _('Test') }}</button>
+                    &nbsp;&nbsp;&nbsp;<a href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}"><button id="title_cancel" type="button" class="btn btn-primary btn-sm">{{ _('Cancel') }}</button></a>
+                    &nbsp;&nbsp;&nbsp;<a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
+                </td>
+            </tr>
+            {% endif %}
+
+        </table>
+    </div>
+
+    <div class="clearfix"></div>
+
+
+</div>
+{% endblock %}
+{% block extrafoot %}
+<script type="text/javascript">
+    var all_tags = {{ tags.keys()|tojson }};
+    $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
+    // var probes_json = '{{ probes_avail|tojson }}';
+    // probes_available = JSON.parse(probes_json);
+
+    {% if g.user.is_authenticated() %}
+
+    function get_probe_entry(button) {
+        // Find parent Probe entry and the detail div therein
+        return $(button).closest('.probe-entry');
+    }
+
+    function get_probe_detail(button) {
+        // Find parent Probe entry and the detail div therein
+        var probe_entry = get_probe_entry(button);
+        return $('.probe-detail', probe_entry);
+    }
+
+    function toggle_probe_details(button) {
+//        var probe_entry = get_probe_entry(button);
+//        $(probe_entry).toggleClass('table-inverse');
+        var probe_detail = get_probe_detail(button);
+
+        if( $(probe_detail).css('display') == 'none' ) {
+            $('.probe-detail').hide();
+            $(probe_detail).show();
+        } else {
+            $('.probe-detail').hide();
+            $('button').blur();
+        }
+    }
+
+    // As Probe entry element may be appended dynamically need this construct
+    $(document).on('click','.button-resource-probe-edit',function(){
+        toggle_probe_details(this);
+        return false;
+    });
+
+    $(document).on('click','.button-resource-probe-delete',function(){
+        var probe_entry = get_probe_entry(this);
+        $(probe_entry).remove();
+    });
+
+    $(".button-probes-avail-add").click(function(){
+        var probe_entry = get_probe_detail(this);
+        var probe_class = $(probe_entry).attr('data-probe-class');
+        $.get('/probe/' + probe_class + '/edit_form', function(result) {
+            $('#probe-edit-forms').append(result);
+        });
+        return false;
+    });
+
+    $(".button-probes-avail-info").click(function(){
+        toggle_probe_details(this);
+        return false;
+    });
+
+    /* Check Element Management */
+
+    function get_check_entry(button) {
+        // Find parent Check entry and the detail div therein
+        return $(button).closest('.check-entry');
+    }
+    
+    $(document).on('click','.button-resource-probe-check-delete',function(){
+        var entry = get_check_entry(this);
+        $(entry).remove();
+    });
+
+    $(document).on('click','.button-checks-avail-add',function(){
+        var check_class = $(this).attr('data-check-class');
+        var button = this;
+        $.get('/check/' + check_class + '/edit_form', function(result) {
+            // $(button).closest('.check-entry');
+            $('.check-edit-forms').append(result);
+        });
+        return false;
+    });
+
+    /* Resource Probe actions. */
+    $('#toggle-status-detail').hide();
+
+    $('#save').click(function() {
+        $('#toggle-status-detail').hide();
+
+        // Collect title
+        var new_title = $('input[name="resource_title_value"]').val();
+
+        // Collect tags
+        var new_tags = $('#resource_tags').val();
+
+        // Collect Probes with parameters and contained Checks
+        // also with parameters
+        var new_probes = [];
+        var probe_data = $('.resource-probe-data');
+        probe_data.each(function (key, table) {
+            var probe_class = $(table).attr('data-probe-class');
+            var probe_map = {
+                'probe_class': probe_class,
+                'parameters': {},
+                'checks': []
+            };
+
+            // Collect this Probe's parameters from input elements
+            var parameters = {};
+            $('input[data-probe-param]', table).each(function (key, input) {
+                var param_name = $(input).attr('data-probe-param');
+                var param_val = $.trim($(input).val());
+                var param_type = $(input).attr('data-probe-param-type');
+                if (param_type == 'list') {
+                    param_val = param_val.split(',');
+                }
+                parameters[param_name] = param_val;
+            });
+            probe_map['parameters'] = parameters;
+
+            // Collect this Probe's Checks with parameters
+            var checks_data = $('.resource-probe-checks', table);
+            var checks = probe_map['checks'];
+            $('.resource-probe-check', checks_data).each(function (key, check) {
+                var check_entry = {
+                   'check_class': $(check).attr('data-check-class'),
+                    'parameters': {}
+                };
+
+                // Parameters from input elements
+                var parameters = {};
+                $('input[data-check-param]', check).each(function (key, input) {
+                    var param_name = $(input).attr('data-check-param');
+                    var param_val = $.trim($(input).val());
+                    var param_type = $(input).attr('data-check-param-type');
+                    if (param_type == 'list') {
+                        param_val = param_val.split(',');
+                    }
+                    parameters[param_name] = param_val;
+                });
+                check_entry['parameters'] = parameters;
+                checks.push(check_entry);
+            });
+
+            probe_map['checks'] = checks;
+            new_probes.push(probe_map);
+        });
+
+        $('#status').text("{{ _('Save') }}...");
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
+            data: JSON.stringify({
+                title: new_title,
+                tags: new_tags,
+                probes: new_probes
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data){
+                $('#resource_title_h1').html(new_title);
+                $('#status').text("{{ _('Save') }}: " + data.status);
+                $('#save').blur();
+            },
+            error: function(data, msg, details) {
+                $('#status').text("{{ _('ERROR') }} " + msg + ": " + details);
+                $('#save').blur();
+            }
+        });
+        return false;
+    });
+
+    $('#test').click(function() {
+         $('#toggle-status-detail').hide();
+         $('#status').text("{{ _('Test') }}...");
+         $.ajax({
+             type: "POST",
+             url: "{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}",
+             data: JSON.stringify({}),
+             contentType: "application/json; charset=utf-8",
+             dataType: "json",
+             success: function(data){
+                 $('#status').text('{{ _("Test") }}: result=' + data.success);
+                 $('#toggle-status-detail').show();
+                 // Format JSON: http://jsfiddle.net/K83cK
+                 $('#status-detail').html('<pre>' + JSON.stringify(data, undefined, 2) + '</pre>').hide();
+                 $('#test').blur();
+             },
+             error: function(errMsg) {
+                 $('#status').text("{{ _('Test') }}: success=" + errMsg);
+                 $('#test').blur();
+             }
+         });
+         return false;
+     });
+
+    $('#toggle-status-detail').click(function(button) {
+        var detail = $('#status-detail');
+        if ($(detail).css('display') == 'none')  {
+            $(detail).show();
+        } else {
+            $(detail).hide();
+            $('button').blur();
+        }
+
+        return false;
+    });
+
+    $('#confirm-delete').click(function() {
+        if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
+            $('#confirm-delete').blur();
+            return false;
+        }
+    });
+
+
+    {% endif %}
+
+
+</script>
+{% endblock %}

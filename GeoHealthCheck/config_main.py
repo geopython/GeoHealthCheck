@@ -78,3 +78,63 @@ GHC_MAP = {
     'maxzoom': 18,
     'subdomains': 1234,
 }
+
+
+# Each GHC Plugin should derive from GeoHealthCheck.plugin.Plugin,
+# and should be findable in sys/PYTHONPATH.
+# An entry may be a Python classname or module.
+# The latter will include all classes derived from GeoHealthCheck.plugin.Plugin
+# in the module file.
+GHC_PLUGINS = {
+    # Probes
+    'GeoHealthCheck.plugins.probe.owsgetcaps',
+    'GeoHealthCheck.plugins.probe.wms',
+    'GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox',
+    'GeoHealthCheck.plugins.probe.tms',
+    'GeoHealthCheck.plugins.probe.http',
+    'GeoHealthCheck.plugins.probe.sta',
+    'GeoHealthCheck.plugins.probe.wmsdrilldown',
+
+    # Checkers
+    'GeoHealthCheck.plugins.check.checks',
+}
+
+# Default Probe to assign on "add" per Resource-type
+GHC_PROBE_DEFAULTS = {
+    'OGC:WMS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps'
+    },
+    'OGC:WMTS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetCaps'
+    },
+    'OSGeo:TMS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.tms.TmsCaps'
+    },
+    'OGC:WFS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WfsGetCaps'
+    },
+    'OGC:WCS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WcsGetCaps'
+    },
+    'OGC:WPS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.WpsGetCaps'
+    },
+    'OGC:CSW': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.CswGetCaps'
+    },
+    'OGC:SOS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.owsgetcaps.SosGetCaps'
+    },
+    'OGC:STA': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.sta.StaCaps'
+    },
+    'urn:geoss:waf': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
+    },
+    'WWW:LINK': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
+    },
+    'FTP': {
+        'probe_class': None
+    }
+}

@@ -2,6 +2,7 @@
 # =================================================================
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
+# Just van den Broecke <justb4@gmail.com>
 #
 # Copyright (c) 2014 Tom Kralidis
 #
@@ -37,12 +38,14 @@ from flask import (flash, Flask, g, jsonify, redirect,
 from flask.ext.babel import Babel, gettext
 from flask.ext.login import (LoginManager, login_user, logout_user,
                              current_user, login_required)
+from flask_migrate import Migrate
 
 from __init__ import __version__
-from healthcheck import run_test_resource
+from healthcheck import sniff_test_resource, run_test_resource
 from init import DB
 from enums import RESOURCE_TYPES
-from models import Resource, Run, Tag, User
+from models import Resource, Run, ProbeVars, CheckVars, Tag, User
+from factory import Factory
 from util import render_template2, send_email
 import views
 
@@ -51,6 +54,8 @@ BABEL = Babel(APP)
 APP.config.from_pyfile('config_main.py')
 APP.config.from_pyfile('../instance/config_site.py')
 APP.secret_key = APP.config['SECRET_KEY']
+
+MIGRATE = Migrate(APP, DB)
 
 LOGIN_MANAGER = LoginManager()
 LOGIN_MANAGER.init_app(APP)
@@ -145,15 +150,15 @@ def cssize_reliability(value, css_type=None):
     number = int(value)
 
     if APP.config['GHC_RELIABILITY_MATRIX']['red']['min'] <= number <= \
-       APP.config['GHC_RELIABILITY_MATRIX']['red']['max']:
+            APP.config['GHC_RELIABILITY_MATRIX']['red']['max']:
         score = 'danger'
         panel = 'red'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
-          APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
+            APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
         panel = 'yellow'
     elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
-          APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
+            APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
         panel = 'green'
     else:  # should never really get here
@@ -204,7 +209,6 @@ def home():
     """homepage"""
 
     resource_type = None
-    tag = None
 
     if request.args.get('resource_type') in RESOURCE_TYPES.keys():
         resource_type = request.args['resource_type']
@@ -250,7 +254,8 @@ def export():
                 'min_response_time': round(r.min_response_time, 2),
                 'average_response_time': round(r.average_response_time, 2),
                 'max_response_time': round(r.max_response_time, 2),
-                'reliability': round(r.reliability, 2)
+                'reliability': round(r.reliability, 2),
+                'last_report': r.last_run.report
             })
         return jsonify(json_dict)
     elif request.url_rule.rule == '/csv':
@@ -321,7 +326,8 @@ def export_resource(identifier):
             'last_run': resource.last_run.checked_datetime.strftime(
                 '%Y-%m-%dT%H:%M:%SZ'),
             'history_csv': history_csv,
-            'history_json': history_json
+            'history_json': history_json,
+            'last_report': resource.last_run.report
         }
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:
@@ -466,7 +472,7 @@ def add():
                                     resource_type=rtype))
         return redirect(url_for('add', lang=g.current_lang))
 
-    [title, success, response_time, message, start_time] = run_test_resource(
+    [title, success, response_time, message, start_time] = sniff_test_resource(
         APP.config, resource_type, url)
 
     if not success:
@@ -486,11 +492,49 @@ def add():
 
     resource_to_add = Resource(current_user, resource_type, title, url,
                                tags=tag_list)
-    run_to_add = Run(resource_to_add, success, response_time, message,
-                     start_time)
+
+    probe_to_add = None
+    checks_to_add = []
+
+    # Always add a default Probe and Check(s)  from the GHC_PROBE_DEFAULTS conf
+    if resource_type in APP.config['GHC_PROBE_DEFAULTS']:
+        resource_settings = APP.config['GHC_PROBE_DEFAULTS'][resource_type]
+        probe_class = resource_settings['probe_class']
+        if probe_class:
+            # Add the default Probe
+            probe_obj = Factory.create_obj(probe_class)
+            probe_to_add = ProbeVars(
+                resource_to_add, probe_class,
+                probe_obj.get_default_parameter_values())
+
+            # Add optional default (parameterized) Checks to add to this Probe
+            checks_info = probe_obj.get_checks_info()
+            checks_param_info = probe_obj.get_plugin_vars()['CHECKS_AVAIL']
+            for check_class in checks_info:
+                check_param_info = checks_param_info[check_class]
+                if 'default' in checks_info[check_class]:
+                    if checks_info[check_class]['default']:
+                        # Filter out params for Check with fixed values
+                        param_defs = check_param_info['PARAM_DEFS']
+                        param_vals = {}
+                        for param in param_defs:
+                            if param_defs[param]['value']:
+                                param_vals[param] = param_defs[param]['value']
+                        check_vars = CheckVars(
+                            probe_to_add, check_class, param_vals)
+                        checks_to_add.append(check_vars)
+
+    result = run_test_resource(resource_to_add)
+
+    run_to_add = Run(resource_to_add, result)
 
     DB.session.add(resource_to_add)
+    if probe_to_add:
+        DB.session.add(probe_to_add)
+    for check_to_add in checks_to_add:
+        DB.session.add(check_to_add)
     DB.session.add(run_to_add)
+
     try:
         DB.session.commit()
         msg = gettext('Service registered')
@@ -498,7 +542,9 @@ def add():
     except Exception as err:
         DB.session.rollback()
         flash(str(err), 'danger')
-    return redirect(url_for('home', lang=g.current_lang))
+        return redirect(url_for('home', lang=g.current_lang))
+    else:
+        return edit_resource(resource_to_add.identifier)
 
 
 @APP.route('/resource/<int:resource_identifier>/update', methods=['POST'])
@@ -544,6 +590,26 @@ def update(resource_identifier):
                     resource.tags.remove(tag_to_delete)
 
                 update_counter += 1
+            elif key == 'probes':
+                # Remove all existing ProbeVars for Resource
+                for probe_var in resource.probe_vars:
+                    resource.probe_vars.remove(probe_var)
+
+                # Add ProbeVars anew each with optional CheckVars
+                for probe in value:
+                    print('adding Probe class=%s parms=%s' %
+                          (probe['probe_class'], str(probe)))
+                    probe_vars = ProbeVars(resource, probe['probe_class'],
+                                           probe['parameters'])
+                    for check in probe['checks']:
+                        check_vars = CheckVars(
+                            probe_vars, check['check_class'],
+                            check['parameters'])
+                        probe_vars.check_vars.append(check_vars)
+
+                    resource.probe_vars.append(probe_vars)
+
+                update_counter += 1
 
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
@@ -562,10 +628,10 @@ def update(resource_identifier):
         if err:
             status = str(err)
 
-    return str({'status': status})
+    return jsonify({'status': status})
 
 
-@APP.route('/resource/<int:resource_identifier>/test')
+@APP.route('/resource/<int:resource_identifier>/test', methods=['GET', 'POST'])
 @login_required
 def test(resource_identifier):
     """test a resource"""
@@ -574,17 +640,35 @@ def test(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    [title, success, response_time, message, start_time] = run_test_resource(
-        APP.config, resource.resource_type, resource.url)
+    result = run_test_resource(
+        resource)
 
-    if message not in ['OK', None, 'None']:
-        msg = gettext('ERROR')
-        flash('%s: %s' % (msg, message), 'danger')
-    else:
-        flash(gettext('Resource tested successfully'), 'success')
+    if request.method == 'GET':
+        if result.message not in ['OK', None, 'None']:
+            msg = gettext('ERROR')
+            flash('%s: %s' % (msg, result.message), 'danger')
+        else:
+            flash(gettext('Resource tested successfully'), 'success')
 
-    return redirect(url_for('get_resource_by_id', lang=g.current_lang,
-                    identifier=resource_identifier))
+        return redirect(url_for('get_resource_by_id', lang=g.current_lang,
+                                identifier=resource_identifier))
+    elif request.method == 'POST':
+        return jsonify(result.get_report())
+
+
+@APP.route('/resource/<int:resource_identifier>/edit')
+@login_required
+def edit_resource(resource_identifier):
+    """edit a resource"""
+    resource = Resource.query.filter_by(identifier=resource_identifier).first()
+    if resource is None:
+        flash(gettext('Resource not found'), 'danger')
+        return redirect(request.referrer)
+
+    probes_avail = views.get_probes_avail(resource.resource_type)
+
+    return render_template('edit_resource.html', lang=g.current_lang,
+                           resource=resource, probes_avail=probes_avail)
 
 
 @APP.route('/resource/<int:resource_identifier>/delete')
@@ -617,6 +701,45 @@ def delete(resource_identifier):
         DB.session.rollback()
         flash(str(err), 'danger')
         return redirect(url_for(request.referrer))
+
+
+@APP.route('/probe/<string:probe_class>/edit_form')
+@login_required
+def get_probe_edit_form(probe_class):
+    """get the form to edit a Probe"""
+
+    probe_obj = Factory.create_obj(probe_class)
+    probe_info = probe_obj.get_plugin_vars()
+    probe_vars = ProbeVars(
+        None, probe_class, probe_obj.get_default_parameter_values())
+    # checks_avail = probe_obj.expand_check_vars(probe_obj.CHECKS_AVAIL)
+    # for check_class in checks_avail:
+    #     check_obj = Factory.create_obj(check_class)
+    #     # check_info = check_obj.get_plugin_vars()
+    #     check_vars = CheckVars(
+    #    probe_vars, check_class, check_obj.get_default_parameter_values())
+    #     probe_vars.check_vars.append(check_vars)
+    print(str(probe_vars))
+
+    return render_template('includes/probe_edit_form.html',
+                           lang=g.current_lang,
+                           probe=probe_vars, probe_info=probe_info)
+
+
+@APP.route('/check/<string:check_class>/edit_form')
+@login_required
+def get_check_edit_form(check_class):
+    """get the form to edit a Check"""
+
+    check_obj = Factory.create_obj(check_class)
+    check_info = check_obj.get_plugin_vars()
+    check_vars = CheckVars(
+        None, check_class, check_obj.get_default_parameter_values())
+
+    print(str(check_info))
+    return render_template('includes/check_edit_form.html',
+                           lang=g.current_lang,
+                           check=check_vars, check_info=check_info)
 
 
 @APP.route('/login', methods=['GET', 'POST'])
@@ -655,7 +778,7 @@ def recover():
     if request.method == 'GET':
         return render_template('recover_password.html')
     username = request.form['username']
-    registered_user = User.query.filter_by(username=username,).first()
+    registered_user = User.query.filter_by(username=username, ).first()
     if registered_user is None:
         flash(gettext('Invalid username'), 'danger')
         return redirect(url_for('recover', lang=g.current_lang))
@@ -679,8 +802,26 @@ def recover():
     return redirect(url_for('home', lang=g.current_lang))
 
 
+#
+# REST Interface Calls
+#
+
+
+@APP.route('/api/v1.0/probes-avail/')
+@APP.route('/api/v1.0/probes-avail/<resource_type>')
+def api_probes_avail(resource_type=None):
+    """
+    Get available (configured) Probes for this
+    installation, optional for resource type
+    """
+
+    probes = views.get_probes_avail(resource_type)
+    return jsonify(probes)
+
+
 if __name__ == '__main__':  # run locally, for fun
     import sys
+
     HOST = '0.0.0.0'
     PORT = 8000
     if len(sys.argv) > 1:

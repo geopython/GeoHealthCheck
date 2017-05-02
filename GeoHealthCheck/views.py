@@ -29,6 +29,8 @@
 
 import models
 import util
+from plugin import Plugin
+from factory import Factory
 
 
 def list_resources(resource_type=None, query=None, tag=None):
@@ -71,18 +73,24 @@ def list_resources(resource_type=None, query=None, tag=None):
         response['resources'] = models.Resource.query.all()
 
     response['total'] = len(response['resources'])
+    response['success']['percentage'] = 0
+    response['fail']['percentage'] = 0
+    response['reliability'] = 0
     for resource in response['resources']:
-        if resource.first_run < first_run or first_run is None:
-            first_run = resource.first_run
-        if resource.last_run < last_run or last_run is None:
-            last_run = resource.last_run
-        response['first_run'] = first_run
-        response['last_run'] = last_run
-        if resource.last_run.success:
-            response['success']['number'] += 1
-        else:
-            response['fail']['number'] += 1
-        reliability_values.append(resource.reliability)
+        if resource.runs.count() > 0:
+            # View should work even without Runs
+            if resource.first_run < first_run or first_run is None:
+                first_run = resource.first_run
+            if resource.last_run < last_run or last_run is None:
+                last_run = resource.last_run
+            response['first_run'] = first_run
+            response['last_run'] = last_run
+            if resource.last_run.success:
+                response['success']['number'] += 1
+            else:
+                response['fail']['number'] += 1
+
+            reliability_values.append(resource.reliability)
 
     response['success']['percentage'] = util.percentage(
         response['success']['number'], response['total'])
@@ -137,3 +145,26 @@ def get_query_field_term(query):
         term = '%%%s%%' % query
 
     return [field, term]
+
+
+def get_probes_avail(resource_type=None):
+    """
+    Get all available Probes with their attributes.
+    :param resource_type: optional resource type e.g. OGC:WMS
+    :return:
+    """
+
+    # Assume no resource type
+    filters = None
+    if resource_type:
+        filters = [('RESOURCE_TYPE', resource_type),
+                   ('RESOURCE_TYPE', '*:*')]
+
+    probe_classes = Plugin.get_plugins('GeoHealthCheck.probe.Probe', filters)
+
+    result = dict()
+    for probe_class in probe_classes:
+        probe = Factory.create_obj(probe_class)
+        result[probe_class] = probe.get_plugin_vars()
+
+    return result

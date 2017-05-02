@@ -1,0 +1,38 @@
+{
+  "users": {
+    "admin": {
+      "username": "admin",
+      "password": "admin",
+      "email": "foo@example.com",
+      "role": "admin"
+    }
+  },
+  "tags": {
+  },
+  "resources": {
+    "WOUDC WMS": {
+      "owner": "admin",
+      "resource_type": "OGC:WMS",
+      "title": "WOUDC Web Map Service",
+      "url": "http://geo.woudc.org/ows",
+      "tags": []
+    }
+  },
+  "probe_vars": {
+    "WOUDC WMS - GetCaps": {
+      "resource": "WOUDC WMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps",
+      "parameters": {
+        "service": "WMS",
+        "version": "1.0.0"
+      }
+    }
+  },
+  "check_vars": {
+    "WOUDC WMS - GetCaps - XML Parse": {
+      "probe_vars": "WOUDC WMS - GetCaps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    }
+  }
+}

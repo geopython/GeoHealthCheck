@@ -1,6 +1,7 @@
 # =================================================================
 #
-# Authors: Tom Kralidis <tomkralidis@gmail.com>
+# Authors: Tom Kralidis <tomkralidis@gmail.com>,
+# Just van den Broecke <justb4@gmail.com>
 #
 # Copyright (c) 2014 Tom Kralidis
 #
@@ -27,17 +28,26 @@
 #
 # =================================================================
 
-from datetime import datetime
+import json
 import logging
-
+import sys
+import os
+from datetime import datetime
 from sqlalchemy import func
 
+from sqlalchemy.orm import deferred
+
+import util
 from enums import RESOURCE_TYPES
+from factory import Factory
 from init import DB
 from notifications import notify
-import util
 
 LOGGER = logging.getLogger(__name__)
+
+# Needed to find Plugins
+GHC_HOME_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append('%s/..' % GHC_HOME_DIR)
 
 
 class Run(DB.Model):
@@ -53,16 +63,112 @@ class Run(DB.Model):
     response_time = DB.Column(DB.Float, nullable=False)
     message = DB.Column(DB.Text, default='OK')
 
-    def __init__(self, resource, success, response_time, message='OK',
+    # Make report 'deferred' as not to be included in all queries.
+    report = deferred(DB.Column(DB.Text, default={}))
+
+    def __init__(self, resource, result,
                  checked_datetime=datetime.utcnow()):
         self.resource = resource
-        self.success = success
-        self.response_time = response_time
+        self.success = result.success
+        self.response_time = result.response_time_str
         self.checked_datetime = checked_datetime
-        self.message = message
+        self.message = result.message
+        self.report = result.get_report()
+
+    # JSON string object specifying report for the Run
+    # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
+    _report = DB.Column("report", DB.Text, default={})
+
+    @property
+    def report(self):
+        return json.loads(self._report)
+
+    @report.setter
+    def report(self, report):
+        self._report = json.dumps(report)
 
     def __repr__(self):
         return '<Run %r>' % (self.identifier)
+
+
+class ProbeVars(DB.Model):
+    """
+    Identifies and parameterizes single Probe class. Probe
+    instance applies to single parent Resource.
+    """
+
+    identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
+    resource_identifier = DB.Column(DB.Integer,
+                                    DB.ForeignKey('resource.identifier'))
+    resource = DB.relationship(
+        'Resource', backref=DB.backref('probe_vars',
+                                       lazy='dynamic',
+                                       cascade="all, delete-orphan"))
+    probe_class = DB.Column(DB.Text, nullable=False)
+
+    # JSON string object specifying actual parameters for the Probe
+    # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
+    _parameters = DB.Column("parameters", DB.Text, default={})
+
+    def __init__(self, resource_obj, probe_class, parameters={}):
+        self.resource = resource_obj
+        self.probe_class = probe_class
+        self.parameters = parameters
+
+    @property
+    def parameters(self):
+        return json.loads(self._parameters)
+
+    @parameters.setter
+    def parameters(self, parameters):
+        self._parameters = json.dumps(parameters)
+
+    @property
+    def probe_instance(self):
+        return Factory.create_obj(self.probe_class)
+
+    @property
+    def name(self):
+        return self.probe_instance.NAME
+
+    @property
+    def probe_parameters(self):
+        return self.probe_instance.REQUEST_PARAMETERS
+
+    def __repr__(self):
+        return '<ProbeVars %r>' % self.identifier
+
+
+class CheckVars(DB.Model):
+    """Identifies and parameterizes check function, applies to single Probe"""
+
+    identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
+    probe_vars_identifier = DB.Column(
+        DB.Integer, DB.ForeignKey('probe_vars.identifier'))
+    probe_vars = DB.relationship(
+        'ProbeVars', backref=DB.backref(
+            'check_vars', cascade="all, delete-orphan"))
+    check_class = DB.Column(DB.Text, nullable=False)
+
+    # JSON string object specifying actual parameters for the Check
+    # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
+    _parameters = DB.Column("parameters", DB.Text, default={})
+
+    def __init__(self, probe_vars, check_class, parameters={}):
+        self.probe_vars = probe_vars
+        self.check_class = check_class
+        self.parameters = parameters
+
+    @property
+    def parameters(self):
+        return json.loads(self._parameters)
+
+    @parameters.setter
+    def parameters(self, parameters):
+        self._parameters = json.dumps(parameters)
+
+    def __repr__(self):
+        return '<CheckVars %r>' % self.identifier
 
 
 class Tag(DB.Model):
@@ -117,7 +223,8 @@ class Resource(DB.Model):
 
     @property
     def get_capabilities_url(self):
-        if self.resource_type.startswith('OGC:'):
+        if self.resource_type.startswith('OGC:') \
+                and self.resource_type != 'OGC:STA':
             url = '%s%s' % (self.url,
                             RESOURCE_TYPES[self.resource_type]['capabilities'])
         else:
@@ -126,45 +233,73 @@ class Resource(DB.Model):
 
     @property
     def all_response_times(self):
-        return [run.response_time for run in self.runs]
+        result = 0
+        if self.runs.count() > 0:
+            result = [run.response_time for run in self.runs]
+        return result
 
     @property
     def first_run(self):
         return self.runs.order_by(
-                Run.checked_datetime.asc()).first()
+            Run.checked_datetime.asc()).first()
 
     @property
     def last_run(self):
         return self.runs.order_by(
-                Run.checked_datetime.desc()).first()
+            Run.checked_datetime.desc()).first()
 
     @property
     def average_response_time(self):
-        query = [run.response_time for run in self.runs]
-        return util.average(query)
+        result = 0
+        if self.runs.count() > 0:
+            query = [run.response_time for run in self.runs]
+            result = util.average(query)
+        return result
 
     @property
     def min_response_time(self):
-        query = [run.response_time for run in self.runs]
-        return min(query)
+        result = 0
+        if self.runs.count() > 0:
+            query = [run.response_time for run in self.runs]
+            result = min(query)
+        return result
 
     @property
     def max_response_time(self):
-        query = [run.response_time for run in self.runs]
-        return max(query)
+        result = 0
+        if self.runs.count() > 0:
+            query = [run.response_time for run in self.runs]
+            result = max(query)
+        return result
 
     @property
     def reliability(self):
-        total_runs = self.runs.count()
-        success_runs = self.runs.filter_by(success=True).count()
-        return util.percentage(success_runs, total_runs)
+        result = 0
+        if self.runs.count() > 0:
+            total_runs = self.runs.count()
+            success_runs = self.runs.filter_by(success=True).count()
+            result = util.percentage(success_runs, total_runs)
+        return result
 
     @property
     def tags2csv(self):
         return ','.join([t.name for t in self.tags])
 
     def snippet(self):
-        return util.get_python_snippet(self)
+        if not self.last_run:
+            return 'No Runs yet'
+
+        report = '''
+        - time: %s <br/>
+        - success: %s <br/>
+        - message: %s <br/>
+        - response_time: %s
+        ''' % (self.last_run.checked_datetime,
+               self.last_run.success,
+               self.last_run.message,
+               self.last_run.response_time)
+
+        return report
 
     def runs_to_json(self):
         runs = []
@@ -234,25 +369,108 @@ def get_tag_counts():
 
     query = DB.session.query(Tag.name,
                              DB.func.count(Resource.identifier)).join(
-                             Resource.tags).group_by(Tag.id)
+        Resource.tags).group_by(Tag.id)
     return dict(query)
+
+
+def load_data(file_path):
+    # Beware!
+    DB.drop_all()
+    db_commit()
+
+    # In particular for Postgres to drop connections
+    DB.session.close()
+
+    DB.create_all()
+
+    with open(file_path) as ff:
+        objects = json.load(ff)
+
+    # add users, keeping track of DB objects
+    users = {}
+    for user_name in objects['users']:
+        user = objects['users'][user_name]
+        user = User(user['username'],
+                    user['password'],
+                    user['email'],
+                    user['role'])
+        users[user_name] = user
+        DB.session.add(user)
+
+    # add tags, keeping track of DB objects
+    tags = {}
+    for tag_str in objects['tags']:
+        tag = objects['tags'][tag_str]
+
+        tag = Tag(tag)
+        tags[tag_str] = tag
+        DB.session.add(tag)
+
+    # add Resources, keeping track of DB objects
+    resources = {}
+    for resource_name in objects['resources']:
+        resource = objects['resources'][resource_name]
+
+        resource_tags = []
+        for tag_str in resource['tags']:
+            resource_tags.append(tags[tag_str])
+
+        resource = Resource(users[resource['owner']],
+                            resource['resource_type'],
+                            resource['title'],
+                            resource['url'],
+                            resource_tags)
+
+        resources[resource_name] = resource
+        DB.session.add(resource)
+
+    # add Probes, keeping track of DB objects
+    probes = {}
+    for probe_name in objects['probe_vars']:
+        probe = objects['probe_vars'][probe_name]
+
+        probe = ProbeVars(resources[probe['resource']],
+                          probe['probe_class'],
+                          probe['parameters'],
+                          )
+
+        probes[probe_name] = probe
+        DB.session.add(probe)
+
+    # add Checks, keeping track of DB objects
+    checks = {}
+    for check_name in objects['check_vars']:
+        check = objects['check_vars'][check_name]
+
+        check = CheckVars(probes[check['probe_vars']],
+                          check['check_class'],
+                          check['parameters'],
+                          )
+
+        checks[check_name] = check
+        DB.session.add(check)
+
+    db_commit()
+    DB.session.close()
+
+
+# commit or rollback shorthand
+def db_commit():
+    try:
+        DB.session.commit()
+    except Exception as err:
+        DB.session.rollback()
+        msg = str(err)
+        print(msg)
 
 
 if __name__ == '__main__':
     import sys
     from flask import Flask
+
     APP = Flask(__name__)
     APP.config.from_pyfile('config_main.py')
     APP.config.from_pyfile('../instance/config_site.py')
-
-    # commit or rollback shorthand
-    def db_commit():
-        try:
-            DB.session.commit()
-        except Exception as err:
-            DB.session.rollback()
-            msg = str(err)
-            print(msg)
 
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
@@ -282,29 +500,53 @@ if __name__ == '__main__':
             print('Dropping database objects')
             DB.drop_all()
             db_commit()
+        elif sys.argv[1] == 'load':
+            print('Load database from JSON file (e.g. tests/fixtures.json)')
+            if len(sys.argv) > 2:
+                file_path = sys.argv[2]
+                yesno = 'n'
+                if len(sys.argv) == 3:
+                    print('WARNING: all DB data will be lost! Proceed?')
+                    yesno = raw_input(
+                        'Enter y (proceed) or n (abort): ').strip()
+                elif len(sys.argv) == 4:
+                    yesno = sys.argv[3]
+                else:
+                    sys.exit(0)
+
+                if yesno == 'y':
+                    print('Loading data....')
+                    load_data(file_path)
+                    print('Data loaded')
+                else:
+                    print('Aborted')
+            else:
+                print('Provide path to JSON file, e.g. tests/fixtures.json')
+
         elif sys.argv[1] == 'run':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
             from healthcheck import run_test_resource
-            for res in Resource.query.all():  # run all tests
-                print('Testing %s %s' % (res.resource_type, res.url))
+
+            for resource in Resource.query.all():  # run all tests
+                print('Testing %s %s' %
+                      (resource.resource_type, resource.url))
 
                 # Get the status of the last run,
                 # assume success if there is none
                 last_run_success = True
-                last_run = res.last_run
+                last_run = resource.last_run
                 if last_run:
                     last_run_success = last_run.success
 
                 # Run test
-                run_to_add = run_test_resource(
-                        APP.config, res.resource_type, res.url)
+                result = run_test_resource(resource)
 
-                run1 = Run(res, run_to_add[1], run_to_add[2],
-                           run_to_add[3], run_to_add[4])
+                run1 = Run(resource, result)
 
                 print('Adding Run: success=%s, response_time=%ss\n'
                       % (str(run1.success), run1.response_time))
+
                 DB.session.add(run1)
                 # commit or rollback each run to avoid long-lived transactions
                 # see https://github.com/geopython/GeoHealthCheck/issues/14
@@ -313,7 +555,7 @@ if __name__ == '__main__':
                 if APP.config['GHC_NOTIFICATIONS']:
                     # Attempt notification
                     try:
-                        notify(APP.config, res, run1, last_run_success)
+                        notify(APP.config, resource, run1, last_run_success)
                     except Exception as err:
                         # Don't bail out on failure in order to commit the Run
                         msg = str(err)

@@ -7,15 +7,19 @@
 
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <h1 class="page-header"><span id="resource_title_h1">{{ resource.title }}</span>
-        {% if g.user.is_authenticated() %} 
+    <h1 class="page-header"><span id="resource_title_h1">{{ resource.title }}</span>    </h1>
+        <h1 class="page-header">{% if g.user.is_authenticated() %}
         <a href="{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
         {% endif %}
         {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
+        <a href="{{ url_for('edit_resource', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Edit') }}</button></a>
         <a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
+
         {% endif %}
-    </h1>
+        </h1>
+    {% if resource.first_run %}
     <h3 class="page-header">{{ _('Monitoring Period') }}: {{ resource.first_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
+    {% endif %}
     <div class="table-responsive col-md-4">
         <table class="table">
             <tr>
@@ -47,6 +51,16 @@
                 </td>
             </tr>
             <tr>
+                <th>Probes</th>
+
+                <td>
+                    {% for probe_var in resource.probe_vars %}
+                    - {{ probe_var.name }}  <br/>
+                    {% endfor %}
+                </td>
+
+            </tr>
+            <tr>
                 <th>{{ _('Response Times (seconds)') }}</th>
                 <td>
                     <ul>
@@ -56,15 +70,6 @@
                     </ul>
                 </td>
             </tr>
-            {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
-            <tr>
-                <th>
-                    <button id="title_edit" type="button" class="btn btn-default btn-sm">{{ _('Edit') }}</button>
-                </th>
-                <td id="actions">
-                </td>
-            </tr>
-            {% endif %}
             <tr>
                 <th>{{ _('Reliability') }}</th>
                 <td>
@@ -78,9 +83,18 @@
             <div id="resource-map" class="resource-map"></div>
         </div>
         <div class="col-lg-4 col-md-4">
-            <pre>
-{{ resource.snippet() }}
-            </pre>
+            <h4>Last Run Result</h4>
+             {% if resource.last_run %}
+                <ul>
+                    <li>{{ _('Last Check') }} : {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} </li>
+                    <li>{{ _('Success') }}: {{ resource.last_run.success }} </li>
+                    <li>{{ _('Message') }}: {{ resource.last_run.message }} </li>
+                    <li>{{ _('Response Time') }}: {{ resource.last_run.response_time|round(2) }} </li>
+                </ul>
+            {% else %}
+                <p>No runs yet.</p>
+            {% endif %}
+            <h4>Last Run Summary</h4>
             <a class="btn btn-default btn-xs" href="{{ url_for('json-resource', identifier=resource.identifier) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv-resource', identifier=resource.identifier) }}"><span class="fa fa-download"></span> CSV</a>
         </div>
     </div>
