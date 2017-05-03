@@ -146,7 +146,7 @@ class WmtsGetCaps(OwsGetCaps):
 
     PARAM_DEFS = Plugin.merge(OwsGetCaps.PARAM_DEFS, {
         'service': {
-            'value': 'CSW'
+            'value': 'WMTS'
         },
         'version': {
             'default': '1.0.0',
