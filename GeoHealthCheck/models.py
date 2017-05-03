@@ -217,6 +217,8 @@ class Resource(DB.Model):
             self.latitude, self.longitude = util.geocode(url)
         except Exception as err:  # skip storage
             LOGGER.exception('Could not derive coordinates: %s', err)
+            self.latitude = 0.0
+            self.longitude = 0.0
 
     def __repr__(self):
         return '<Resource %r %r>' % (self.identifier, self.title)
