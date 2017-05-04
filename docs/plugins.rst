@@ -14,7 +14,7 @@ Two Plugin types exist that can be extended: the `Probe` and `Check` class.
 Concepts
 --------
 
-Starting with GHC v0.2.0 healthchecks are exclusively performed by Plugins. The basic concept
+GHC versions after May 1, 2017 perform healthchecks exclusively via Plugins (see :ref:`upgrade` how to upgrade from older versions). The basic concept
 is simple: each `Resource` (typically an OWS endpoint) has one or more `Probes`. During a
 GHC run (via `cron` or manually), GHC sequentually invokes the `Probes` for each `Resource`
 to determine the health (QoS) of the `Resource`.
