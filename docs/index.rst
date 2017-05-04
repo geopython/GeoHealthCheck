@@ -4,7 +4,7 @@ GeoHealthCheck
 Overview
 --------
 
-GeoHealthCheck is a Python application to support monitoring OGC services uptime,
+GeoHealthCheck (GHC) is a Python application to support monitoring OGC services uptime,
 availability and Quality of Service (QoS).
 
 It can be used to monitor overall health of OGC services like WMS, WFS, WCS, WMTS, SOS, CSW
@@ -27,12 +27,13 @@ Links
 
 - website: http://geohealthcheck.org
 - GitHub: https://github.com/geopython/geohealthcheck
-- Demo: http://demo.geohealthcheck.org (official demo)
-- DevDemo: http://dev.geohealthcheck.org (latest development demo)
+- Demo: http://demo.geohealthcheck.org (official demo, master branch)
+- DevDemo: http://dev.geohealthcheck.org (latest development demo, dev branch)
 - Presentation: http://geohealthcheck.org/presentation
 - Gitter Chat: https://gitter.im/geopython/GeoHealthCheck
 
-This is document version |release| generated on |today|.
+This document applies to GHC version |release| and was generated on |today|.
+The latest version is always available at http://docs.geohealthcheck.org.
 
 Contents:
 
