@@ -98,6 +98,8 @@ via `config_site.py` and need to be found on the Python-PATH of your app.
 The above may seem daunting at first. Examples below will hopefully make things clear
 as writing new `Probes` and `Checks` may sometimes be a matter of minutes!
 
+*TODO: may need VERSION variable class-attr to support upgrades*
+
 Examples
 --------
 
