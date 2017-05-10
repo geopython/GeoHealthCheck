@@ -21,12 +21,35 @@
                                  <td>
                                      {% set probe_param_val = probe.parameters[param] %}
                                      {% set probe_param_type = probe_info.PARAM_DEFS[param]['type']  %}
+                                     {% set probe_param_range = probe_info.PARAM_DEFS[param]['range']  %}
+                                     {% set probe_param_default = probe_info.PARAM_DEFS[param]['default']  %}
 
                                      {% if probe_param_type == 'bbox' or probe_param_type == 'stringlist' %}
                                         {% set probe_param_type = 'list'  %}
                                         {% set probe_param_val = probe_param_val|join(',') %}
                                      {% endif %}
+                                     <!-- parameters: use select box when range defined, else regular input box -->
+                                     {% if probe_param_range %}
+                                     <select class="form-control" data-probe-param="{{ param }}" data-probe-param-type="{{ probe_param_type }}">
+                                         <!-- select box for range: select value if defined else use default value if defined -->
+                                         {% for probe_param_range_val in probe_param_range %}
+                                           {% set selected = '' %}
 
+                                           {% if probe_param_val %}
+                                             {% if probe_param_val == probe_param_range_val %}
+                                               {% set selected = 'selected' %}
+                                             {% endif %}
+                                           {% elif  probe_param_default %}
+                                             {% if probe_param_default == probe_param_range_val %}
+                                               {% set selected = 'selected' %}
+                                             {% endif %}
+                                           {% endif %}
+                                         <option value="{{ probe_param_range_val }}" {{ selected }}>{{ probe_param_range_val }}</option>
+                                         {% endfor %}
+                                     </select>
+
+                                     {% else %}
+                                     <!-- regular input box: set readonly if fixed value defined -->
                                      <input data-probe-param="{{ param }}" data-probe-param-type="{{ probe_param_type }}" type="text"
                                             value="{{ probe_param_val }}"
                                             style="width: 100%;"
@@ -34,6 +57,8 @@
                                         readonly="true"
                                       {% endif %}
                                       />
+                                     {% endif %}
+
                                  </td>
                              </tr>
                          </table>

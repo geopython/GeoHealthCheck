@@ -27,20 +27,44 @@
                                             <td>
                                                 {% set check_param_val = check.parameters[param] %}
                                                 {% set check_param_type = check_info.PARAM_DEFS[param]['type'] %}
+                                                {% set check_param_range = check_info.PARAM_DEFS[param]['range']  %}
+                                                {% set check_param_default = check_info.PARAM_DEFS[param]['default']  %}
 
                                                 {% if check_param_type == 'bbox' or check_param_type == 'stringlist' %}
                                                 {% set check_param_type = 'list' %}
                                                 {% set check_param_val = check_param_val|join(',') %}
                                                 {% endif %}
-
-                                                <input data-check-param="{{ param }}"
-                                                       data-check-param-type="{{ check_param_type }}" type="text"
+                                                <!-- parameters: use select box when range defined, else regular input box -->
+                                                {% if check_param_range %}
+                                                <select class="form-control" data-check-param="{{ param }}"
+                                                        data-check-param-type="{{ check_param_type }}">
+                                                    <!-- select box for range: select value if defined else use default value if defined -->
+                                                    {% for check_param_range_val in check_param_range %}
+                                                      {% set selected = '' %}
+           
+                                                      {% if check_param_val %}
+                                                        {% if check_param_val == check_param_range_val %}
+                                                          {% set selected = 'selected' %}
+                                                        {% endif %}
+                                                      {% elif  check_param_default %}
+                                                        {% if check_param_default == check_param_range_val %}
+                                                          {% set selected = 'selected' %}
+                                                        {% endif %}
+                                                      {% endif %}
+                                                    <option value="{{ check_param_range_val }}" {{ selected }}>{{ check_param_range_val }}</option>
+                                                    {% endfor %}
+                                                </select>
+           
+                                                {% else %}
+                                                <!-- regular input box: set readonly if fixed value defined -->
+                                                <input data-check-param="{{ param }}" data-check-param-type="{{ check_param_type }}" type="text"
                                                        value="{{ check_param_val }}"
                                                        style="width: 100%;"
-                                                       {% if 'value' in check_info.PARAM_DEFS[param] %}
-                                                readonly="true"
+                                                {% if 'value' in check_info.PARAM_DEFS[param] %}
+                                                   readonly="true"
+                                                 {% endif %}
+                                                 />
                                                 {% endif %}
-                                                />
                                             </td>
                                         </tr>
                                         {% endfor %}

@@ -194,9 +194,10 @@
                 'checks': []
             };
 
-            // Collect this Probe's parameters from input elements
+            // Collect this Probe's parameters from
+            // input and select (range values) elements
             var parameters = {};
-            $('input[data-probe-param]', table).each(function (key, input) {
+            $('input[data-probe-param],select[data-probe-param]', table).each(function (key, input) {
                 var param_name = $(input).attr('data-probe-param');
                 var param_val = $.trim($(input).val());
                 var param_type = $(input).attr('data-probe-param-type');
@@ -218,7 +219,7 @@
 
                 // Parameters from input elements
                 var parameters = {};
-                $('input[data-check-param]', check).each(function (key, input) {
+                $('input[data-check-param],select[data-check-param]', check).each(function (key, input) {
                     var param_name = $(input).attr('data-check-param');
                     var param_val = $.trim($(input).val());
                     var param_type = $(input).attr('data-check-param-type');
