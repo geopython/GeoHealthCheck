@@ -53,26 +53,28 @@ Plugin authors should provide for derived `Probes` or `Checks` are:
 * `AUTHOR`:  Plugin author or team.
 * `NAME`:     Short name of Plugin.
 * `DESCRIPTION`: Longer description of Plugin.
-* `PARAM_DEFS`: Plugin Parameter definitions
+* `PARAM_DEFS`: Plugin Parameter definitions (see next)
 
-`PARAM_DEFS`, a Python `dict` defines the parameter definitions for the Probe/Check that a user can configure via the UI.
-Each parameter (name) is a `dict` entry key that with value a `dict` with the following key/value pairs:
+`PARAM_DEFS`, a Python `dict` defines the parameter definitions for the `Probe` or `Check` that
+a user can configure via the UI.
+Each parameter (name) is itself a `dict` entry key that with the following key/value pairs:
 
-* `type`: the parameter type, e.g. 'string',
+* `type`: the parameter type, value: 'string', 'stringlist' (comma-separated strings) or 'bbox' (lowerX, lowerY, upperX, upperY),
 * `description`: description of the parameter,
-* `default`: its default value,
+* `default`: parameter default value,
 * `required`: is parameter required?,
-* `range`: range of possible parameter values (array)
+* `range`: range of possible parameter values (array of strings), results in UI &lt;select&gt; box
 
 A `Probe` should supply these additional class-attributes:
 
-* `RESOURCE_TYPE` : GHC Resource type this Probe applies to
+* `RESOURCE_TYPE` : GHC Resource type this Probe applies to, e.g. `OGC:WMS`, `*:*` (any Resource Type), see `enums.py` for range
 * `REQUEST_METHOD` : HTTP request method capitalized, 'GET' (default) or 'POST'.
 * `REQUEST_HEADERS` : `dict` of optional HTTP request headers
 * `REQUEST_TEMPLATE`: template in standard Python `str.format(*args)` to be substituted with actual parameters from `PARAM_DEFS`
 * `CHECKS_AVAIL` : available Check (classes) for this Probe.
 
-Note: `CHECKS_AVAIL` denotes all possible `Checks` that can be assigned, by default or via UI, to an instance of this `Probe`.
+Note: `CHECKS_AVAIL` denotes all possible `Checks` that can be assigned, by default or via UI,
+to an instance of this `Probe`.
 
 A `Check` has no additional class-attributes.
 
