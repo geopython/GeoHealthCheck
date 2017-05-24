@@ -53,10 +53,10 @@
                                      <input data-probe-param="{{ param }}" data-probe-param-type="{{ probe_param_type }}" type="text"
                                             value="{{ probe_param_val }}"
                                             style="width: 100%;"
-                                     {% if 'value' in probe_info.PARAM_DEFS[param] %}
+                                       {% if 'value' in probe_info.PARAM_DEFS[param] %}
                                         readonly="true"
-                                      {% endif %}
-                                      />
+                                       {% endif %}
+                                       />
                                      {% endif %}
 
                                  </td>
@@ -72,13 +72,21 @@
                      <td class="resource-probe-checks check-edit-forms">
                          <strong>Probe Checks</strong>
                          {% if not probe.check_vars %}
+                         <!-- Get default Checks with values for Probe -->
+
+                             <!--{% for check_info in probe_info.CHECKS_AVAIL %}-->
+                                <!--{% if check_info.PARAM_DEFS['default'] %}-->
+                                    <!--{% include 'includes/check_edit_form.html' %}-->
+                                <!--{% endif %}-->
+                             <!--{% endfor %}-->
+
                          <br/><span>This Probe has no Checks yet (or none avail).</span>
                          {% else %}
 
-                         {% for check in probe.check_vars %}
-                         {% set check_info = probe_info.CHECKS_AVAIL[check.check_class] %}
-                            {% include 'includes/check_edit_form.html' %}
-                         {% endfor %}
+                             {% for check in probe.check_vars %}
+                                {% set check_info = probe_info.CHECKS_AVAIL[check.check_class] %}
+                                {% include 'includes/check_edit_form.html' %}
+                             {% endfor %}
                          {% endif %}
                      </td>
                  </tr>

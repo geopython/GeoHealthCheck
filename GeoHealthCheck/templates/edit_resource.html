@@ -139,6 +139,8 @@
         var probe_class = $(probe_entry).attr('data-probe-class');
         $.get('/probe/' + probe_class + '/edit_form', function(result) {
             $('#probe-edit-forms').append(result);
+        }).fail(function() {
+            $('#probe-edit-forms').append('<br/><strong>Error getting Probe form for ' + probe_class + '</strong>');
         });
         return false;
     });
@@ -166,6 +168,8 @@
         $.get('/check/' + check_class + '/edit_form', function(result) {
             // $(button).closest('.check-entry');
             $('.check-edit-forms').append(result);
+        }).fail(function() {
+            $('.check-edit-forms').append('<br/><strong>Error getting Check form for ' + check_class + '</strong>');
         });
         return false;
     });

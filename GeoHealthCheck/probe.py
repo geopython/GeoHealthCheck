@@ -125,6 +125,18 @@ class Probe(Plugin):
             checks_avail[check_class] = check_vars
         return checks_avail
 
+    def get_checks_info_defaults(self):
+        checks_avail = self.get_checks_info()
+        checks_avail_default = {}
+        for check_class in checks_avail:
+            check_avail = checks_avail[check_class]
+
+            # Only include default Checks if specified
+            if 'default' in check_avail and check_avail['default']:
+                checks_avail_default[check_class] = check_avail
+
+        return checks_avail_default
+
     def get_checks_info(self):
         return Plugin.copy(Plugin.get_plugin_vars(self))['CHECKS_AVAIL']
 
