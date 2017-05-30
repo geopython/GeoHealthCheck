@@ -26,13 +26,13 @@ geohealthcheck-cron-hourly:
     io.ghc-cron-hourly: 'true'
     
 jobber:
-  image: blacklabelops/cron-cloud
+  image: blacklabelops/jobber:docker.v1.1
   environment:
     JOB_NAME1: ghc-cron-hourly
     JOB_COMMAND1: docker start $$(docker ps -a -f label=io.ghc-cron-hourly=true --format="{{.ID}}")
-    JOB_TIME1: 0 * */1 * * *
+    JOB_TIME1: 0 0 *
     JOB_NAME2: ghc-cron-daily
     JOB_COMMAND2: docker start $$(docker ps -a -f label=io.ghc-cron-daily=true --format="{{.ID}}")
-    JOB_TIME2: 0 * * */1 * *
+    JOB_TIME2: 0 45 0 *
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
