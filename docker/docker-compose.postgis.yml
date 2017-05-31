@@ -1,0 +1,43 @@
+# Overrides default docker-compose.yml
+# To run specify both files:
+# sudo docker-compose -f docker-compose.yml -f docker-compose.postgis.yml up [-d]
+
+version: "3"
+
+services:
+  geohealthcheck:
+    links:
+      - postgis_ghc
+    depends_on:
+      - postgis_ghc
+    environment:
+      - SQLALCHEMY_DATABASE_URI=postgresql://ghc:ghc@postgis_ghc:5432/ghc
+
+  geohealthcheck-cron-daily:
+    links:
+      - postgis_ghc
+    environment:
+      - SQLALCHEMY_DATABASE_URI=postgresql://ghc:ghc@postgis_ghc:5432/ghc
+
+  geohealthcheck-cron-hourly:
+    links:
+      - postgis_ghc
+    environment:
+      - SQLALCHEMY_DATABASE_URI=postgresql://ghc:ghc@postgis_ghc:5432/ghc
+
+  postgis_ghc:
+    image: mdillon/postgis:9.6-alpine
+    volumes:
+      - ghc_pgdb:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=ghc
+      - POSTGRES_PASSWORD=ghc
+      - POSTGRES_DB=ghc
+
+# docker-compose v2+ needs separate volumes section
+volumes:
+  ghc_pgdb:
