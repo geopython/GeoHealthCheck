@@ -30,11 +30,14 @@ import os
 
 DEBUG = False
 SQLALCHEMY_ECHO = False
+
+# Use Env vars via os.environ() from Dockerfile:
+# makes it easier to override via Docker "environment"
+# settings on running GHC Containers.
 SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
 
 # Replace None with 'your secret key string' in quotes
 SECRET_KEY = os.environ['SECRET_KEY']
-
 
 GHC_RETENTION_DAYS = os.environ['GHC_RETENTION_DAYS']
 GHC_RUN_FREQUENCY = os.environ['GHC_RUN_FREQUENCY']
@@ -54,6 +57,8 @@ GHC_SMTP = {
     'username': os.environ['GHC_SMTP_USERNAME'],
     'password': os.environ['GHC_SMTP_PASSWORD']
 }
+
+# TODO: provide for GHC Plugins
 
 GHC_RELIABILITY_MATRIX = {
     'red': {

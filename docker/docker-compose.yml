@@ -1,15 +1,16 @@
+# Default Compose config: runs GHC with SQLite DB and the cronjobs
 version: "3"
 
 services:
   geohealthcheck:
-    image: yjacolin/geohealthcheck:latest
+    image: geopython/geohealthcheck:latest
     ports:
       - 8083:80
     volumes:
       - ghc_sqlitedb:/GeoHealthCheck/DB
 
   geohealthcheck-cron-hourly:
-    image: yjacolin/geohealthcheck:latest
+    image: geopython/geohealthcheck:latest
     depends_on:
       - geohealthcheck
     entrypoint:
@@ -21,7 +22,7 @@ services:
       io.ghc-cron-hourly: 'true'
 
   geohealthcheck-cron-daily:
-    image: yjacolin/geohealthcheck:latest
+    image: geopython/geohealthcheck:latest
     depends_on:
       - geohealthcheck
     entrypoint:

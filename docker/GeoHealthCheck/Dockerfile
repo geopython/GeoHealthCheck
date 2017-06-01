@@ -1,6 +1,9 @@
 FROM debian:jessie
 # TODO: use Alpine for smaller image
-MAINTAINER yjacolin <yves.jacolin@camptocamp.com>
+
+# Credits to yjacolin for providing first versions
+LABEL original_developer "yjacolin <yves.jacolin@camptocamp.com>"
+LABEL maintainer "Just van den Broecke <justb4@gmail.com>"
 
 # These are default values,
 # Override when running container via docker(-compose)
@@ -26,6 +29,7 @@ ENV GHC_SMTP_TLS False
 ENV GHC_SMTP_SSL False
 ENV GHC_SMTP_USERNAME None
 ENV GHC_SMTP_PASSWORD None
+# TODO: provide ENVs for GHC Plugins
 
 RUN apt-get update && \
     apt-get install -qqy virtualenv git python-pip python-dev vim libpq-dev postgresql-client && \
@@ -37,11 +41,14 @@ ADD entrypoint.sh /entrypoint.sh
 ADD config_site.py /config_site.py
 RUN bash install.sh
 
+# Alternative Entrypoints to run GHC jobs
+# Override default Entrypoint with these on Containers
 ADD cron-jobs-daily.sh /cron-jobs-daily.sh
 ADD cron-jobs-hourly.sh /cron-jobs-hourly.sh
 RUN chmod a+x /cron-jobs-daily.sh
 RUN chmod a+x /cron-jobs-hourly.sh
 
+# For SQLite
 VOLUME ["/GeoHealthCheck/DB/"]
 
 EXPOSE ${PORT}

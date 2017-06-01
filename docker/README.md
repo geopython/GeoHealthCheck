@@ -1,33 +1,52 @@
-# Running GHC with Docker
+# GHC with Docker
+
+[Docker](https://www.docker.com/) is the fastest/recommended way to get GHC up and running. 
+GHC Docker images are hosted at [Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck) 
+In the best case an install/run of GHC is a matter of minutes!
 
 ## Requirements
 
-Docker installed and daemon running. 
+Docker installed and Docker daemon running.
+[Docker Compose](https://docs.docker.com/compose/install) is separate install.
+
+For installing Docker on Ubuntu there
+is a  [bash helper script](install-docker-ubuntu.sh).
+
 NB: The ``docker`` commands below may need to be prepended with ``sudo``, dependent on your login rights.
 
-Note: `yjacolin/geohealthcheck` will become `geopython/geohealthcheck` available from Docker Hub very soon!
-
 ## Build
+
+This step is not neccessary as Docker images are available from [Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck).
+Only in cases where you have local changes, this step is required.
 
 Go to the subdir ``docker/GeoHealthCheck``, 
 where the [Dockerfile](GeoHealthCheck/Dockerfile) resides, and issue:
 
 ```
-docker build -t yjacolin/geohealthcheck .
+docker build -t geopython/geohealthcheck .
 ````
 
 ## Run
 
 ```
-docker run -d --name GeoHealthCheck -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB yjacolin/geohealthcheck
+docker run -d --name GeoHealthCheck -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 ```
 
-go to http://localhost:8083
+go to http://localhost:8083.
+
+NB this runs GHC standalone with a `SQLite` DB, but without the cron-jobs that perform the healthchecks.
+You may schedule the cron-jobs using the local cron system with the 
+[cron-jobs-hourly](GeoHealthCheck/cron-jobs-hourly.sh) and
+[cron-jobs-daily](GeoHealthCheck/cron-jobs-daily.sh) Docker Entrypoints.
+
+But the most optimal way to run GHC with cronjobs and optionally Postgres backend DB,
+is to use [Docker Compose](https://docs.docker.com/compose), see below.
 
 ## Using docker-compose
 
 This allows a complete Docker setup, including cron-jobs and optionally using 
-Postgres/PostGIS as database (recommended).  See the [Docker Compose Documentation](https://docs.docker.com/compose)
+Postgres/PostGIS as database (recommended).  
+See the [Docker Compose Documentation](https://docs.docker.com/compose)
 for more info.
 
 ### Using sqlite DB (default)
