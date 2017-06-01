@@ -3,11 +3,36 @@
 Installation
 ============
 
-Quick and Dirty
----------------
+Easiest and quickest way is to use Docker/Docker Compose with the GHC images hosted on
+[Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck).
+See the [GHC Docker Readme](https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md) for a full guide.
+
+Requirements
+------------
+
+GeoHealthCheck is built on the awesome Flask microframework and uses
+Flask-SQLAlchemy for database interaction and Flask-Login for authorization.
+Flask-Migrate with Alembic and Flask-Script support is used for database upgrades.
+
+OWSLib is used to interact with OGC Web Services.
+
+These dependencies are automatically installed (see below). Paver is used
+for installation and management. `Cron` is used for scheduling the actual healthchecks.
+
+Install
+-------
+
+.. note::
+
+  it is strongly recommended to install in a Python ``virtualenv``.
+  a ``virtualenv`` is self-contained and provides the flexibility to install /
+  tear down / whatever packages without affecting system wide packages or
+  settings.
+
+- Download a GeoHealthCheck release from
+  https://github.com/geopython/GeoHealthCheck/releases, or clone manually from GitHub.
 
 .. code-block:: bash
-
 
   virtualenv ghc && cd ghc
   . bin/activate
@@ -42,29 +67,15 @@ Quick and Dirty
   # start server
   python GeoHealthCheck/app.py  # http://localhost:8000/
 
+Schedule the cronjobs.
 
+.. code-block:: bash
 
-Requirements
-------------
+  # edit local paths to scripts
+  vi jobs.cron
 
-GeoHealthCheck is built on the awesome Flask microframework and uses
-Flask-SQLAlchemy for database interaction and Flask-Login for authorization.
-Flask-Migrate with Alembic and Flask-Script support is used for database upgrades.
-
-OWSLib is used to interact with OGC Web Services.
-
-Install
--------
-
-.. note::
-
-  it is strongly recommended to install in a Python ``virtualenv``.
-  a ``virtualenv`` is self-contained and provides the flexibility to install /
-  tear down / whatever packages without affecting system wide packages or
-  settings.
-
-- Download GeoHealthCheck (releases can be found at
-  https://github.com/geopython/GeoHealthCheck/releases)
+  # enable cron
+  crontab jobs.cron
 
 .. _upgrade:
 
