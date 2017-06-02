@@ -4,6 +4,9 @@
 GHC Docker images are hosted at [Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck) 
 In the best case an install/run of GHC is a matter of minutes!
 
+If you are reading this from Docker Hub, local links will not work. 
+In that case use the [Docker Readme at GHC GitHub](https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md).
+
 ## Requirements
 
 Docker installed and Docker daemon running.
@@ -16,7 +19,8 @@ NB: The ``docker`` commands below may need to be prepended with ``sudo``, depend
 
 ## Build
 
-This step is not neccessary as Docker images are available from [Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck).
+This step is not necessary as GHC Docker images are available 
+from [Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck).
 Only in cases where you have local changes, this step is required.
 
 Go to the subdir ``docker/GeoHealthCheck``, 
@@ -96,6 +100,42 @@ psql -h postgis_ghc -U ghc ghc
 The PG DB data is kept in a Docker volume usually located at  
 `/var/lib/docker/volumes/docker_ghc_pgdb/_data`. 
  
+## Configuration
+
+The default GHC configuration is specified within the [Dockerfile](GeoHealthCheck/Dockerfile).
+This allows overriding these `ENV` vars during deployment (as opposed to having to build
+your own GHC Docker Image). Docker (`-e` options) and Docker Compose (`environment` section)
+allow setting Environment variables.  
+
+For example, to enable sending email notifications
+in Dutch witin the GHC hourly job, specify the `environment` like:
+
+```
+   geohealthcheck-cron-hourly:
+     image: geopython/geohealthcheck:latest
+     depends_on:
+       - geohealthcheck
+ 
+     # Override settings to enable email notifications
+     environment:
+       LC_ALL: "nl_NL.UTF-8"
+       LANG: "nl_NL.UTF-8"
+       LANGUAGE: "nl_NL.UTF-8"
+       GHC_NOTIFICATIONS: 'true'
+       GHC_NOTIFICATIONS_VERBOSITY: 'true'
+       GHC_ADMIN_EMAIL: 'us@gmail.com'
+       GHC_NOTIFICATIONS_EMAIL: 'us@gmail.com,them@domain.com'
+       GHC_SMTP_SERVER: 'smtp.gmail.com'
+       GHC_SMTP_PORT: 587
+       GHC_SMTP_TLS: 'true'
+       GHC_SMTP_SSL: 'false'
+       GHC_SMTP_USERNAME: 'us@gmail.com'
+       GHC_SMTP_PASSWORD: 'the_passw'
+       .
+       .
+
+```
+
 ## Other tasks
 
 You can always `bash` into the GHC container to run maintenance tasks.

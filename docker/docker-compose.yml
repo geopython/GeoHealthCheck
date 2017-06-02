@@ -1,4 +1,4 @@
-# Default Compose config: runs GHC with SQLite DB and the cronjobs
+# Default Compose config: runs GHC with SQLite backend and cronjobs
 version: "3"
 
 services:
@@ -13,6 +13,23 @@ services:
     image: geopython/geohealthcheck:latest
     depends_on:
       - geohealthcheck
+
+    # Override settings to enable email notifications
+#    environment:
+#      LC_ALL: "nl_NL.UTF-8"
+#      LANG: "nl_NL.UTF-8"
+#      LANGUAGE: "nl_NL.UTF-8"
+#      GHC_NOTIFICATIONS: 'true'
+#      GHC_NOTIFICATIONS_VERBOSITY: 'true'
+#      GHC_ADMIN_EMAIL: 'us@gmail.com'
+#      GHC_NOTIFICATIONS_EMAIL: 'us@gmail.com,them@domain.com'
+#      GHC_SMTP_SERVER: 'smtp.gmail.com'
+#      GHC_SMTP_PORT: 587
+#      GHC_SMTP_TLS: 'true'
+#      GHC_SMTP_SSL: 'false'
+#      GHC_SMTP_USERNAME: 'us@gmail.com'
+#      GHC_SMTP_PASSWORD: 'the_passw'
+
     entrypoint:
       - bash
       - /cron-jobs-hourly.sh
