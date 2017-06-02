@@ -7,6 +7,13 @@ LABEL maintainer "Just van den Broecke <justb4@gmail.com>"
 
 # These are default values,
 # Override when running container via docker(-compose)
+
+# General ENV settings
+ENV LC_ALL "en_US.UTF-8"
+ENV LANG "en_US.UTF-8"
+ENV LANGUAGE "en_US.UTF-8"
+
+# GHC ENV settings
 ENV ADMIN_NAME admin
 ENV ADMIN_PWD admin
 ENV ADMIN_EMAIL admin.istrator@mydomain.com
@@ -21,7 +28,8 @@ ENV GHC_NOTIFICATIONS False
 ENV GHC_NOTIFICATIONS_VERBOSITY True
 ENV GHC_WWW_LINK_EXCEPTION_CHECK False
 ENV GHC_ADMIN_EMAIL 'you@example.com'
-ENV GHC_SITE_TITLE 'GeoHealthCheck Demonstration'
+ENV GHC_NOTIFICATIONS_EMAIL 'you2@example.com,them@example.com'
+ENV GHC_SITE_TITLE 'GeoHealthCheck'
 ENV GHC_SITE_URL 'http://localhost'
 ENV GHC_SMTP_SERVER None
 ENV GHC_SMTP_PORT None
