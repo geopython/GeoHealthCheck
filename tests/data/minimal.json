@@ -10,17 +10,17 @@
   "tags": {
   },
   "resources": {
-    "WOUDC WMS": {
+    "PDOK BAG WMS": {
       "owner": "admin",
       "resource_type": "OGC:WMS",
-      "title": "WOUDC Web Map Service",
-      "url": "http://geo.woudc.org/ows",
+      "title": "PDOK BAG Web Map Service",
+      "url": "http://geodata.nationaalgeoregister.nl/bag/wms",
       "tags": []
     }
   },
   "probe_vars": {
-    "WOUDC WMS - GetCaps": {
-      "resource": "WOUDC WMS",
+    "PDOK BAG WMS - GetCaps": {
+      "resource": "PDOK BAG WMS",
       "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps",
       "parameters": {
         "service": "WMS",
@@ -29,8 +29,8 @@
     }
   },
   "check_vars": {
-    "WOUDC WMS - GetCaps - XML Parse": {
-      "probe_vars": "WOUDC WMS - GetCaps",
+    "PDOK BAG WMS - GetCaps - XML Parse": {
+      "probe_vars": "PDOK BAG WMS - GetCaps",
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
       "parameters": {}
     }
