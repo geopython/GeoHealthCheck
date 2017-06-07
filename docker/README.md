@@ -131,6 +131,7 @@ in Dutch witin the GHC hourly job, specify the `environment` like:
        GHC_SMTP_SSL: 'false'
        GHC_SMTP_USERNAME: 'us@gmail.com'
        GHC_SMTP_PASSWORD: 'the_passw'
+       GHC_USER_PLUGINS: 'GeoHealthCheck.plugins.user.myplugins'
        .
        .
 

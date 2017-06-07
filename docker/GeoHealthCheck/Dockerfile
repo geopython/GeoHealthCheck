@@ -5,6 +5,9 @@ FROM debian:jessie
 LABEL original_developer "yjacolin <yves.jacolin@camptocamp.com>"
 LABEL maintainer "Just van den Broecke <justb4@gmail.com>"
 
+# May specify any GHC Git Repo/branch as build arg, default is master
+ARG GHC_GIT_REPO="https://github.com/geopython/GeoHealthCheck.git"
+
 # These are default values,
 # Override when running container via docker(-compose)
 
@@ -37,7 +40,16 @@ ENV GHC_SMTP_TLS False
 ENV GHC_SMTP_SSL False
 ENV GHC_SMTP_USERNAME None
 ENV GHC_SMTP_PASSWORD None
-# TODO: provide ENVs for GHC Plugins
+
+# GHC Core Plugins modules annd/or classes, seldom needed to set:
+# if not specified here or in Container environment
+# all GHC built-in Plugins will be active.
+#ENV GHC_PLUGINS 'GeoHealthCheck.plugins.probe.owsgetcaps,\
+#        GeoHealthCheck.plugins.probe.wms, ...., ...\
+#        GeoHealthCheck.plugins.check.checks'
+
+# GHC User Plugins, best be overridden via Container environment
+ENV GHC_USER_PLUGINS ''
 
 RUN apt-get update && \
     apt-get install -qqy virtualenv git python-pip python-dev vim libpq-dev postgresql-client && \
@@ -47,6 +59,12 @@ RUN apt-get update && \
 ADD install.sh /install.sh
 ADD entrypoint.sh /entrypoint.sh
 ADD config_site.py /config_site.py
+# Add Source Code TODO (need to move Dockerfile to root dir)
+# ADD . /GeoHealthCheck
+
+# Add/override Plugins
+ADD plugins /plugins
+
 RUN bash install.sh
 
 # Alternative Entrypoints to run GHC jobs
