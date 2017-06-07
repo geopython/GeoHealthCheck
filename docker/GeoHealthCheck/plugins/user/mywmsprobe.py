@@ -7,8 +7,8 @@ class MyWMSProbe(Probe):
     """
     Example Probe for WMS Probe user plugin. This is a free-form Probe
     that overrides perform_request with custom checks.
-    
-    To configure a probe, use Docker Container ENV 
+
+    To configure a probe, use Docker Container ENV
     GHC_USER_PLUGINS='GeoHealthCheck.plugins.user.mywmsprobe,...'.
     Note that GeoHealthCheck.plugins package prefix is required as
     Plugins are placed in GHC app tree there.
