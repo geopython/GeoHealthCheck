@@ -29,7 +29,9 @@ The following steps:
 
 - place your Plugins within this directory (or any other dir on your host)
 - make a Docker Volume mapping from this dir to the Container internal dir `/plugins`
-
+- specify your Plugins via Container Environment as `GHC_USER_PLUGINS: (comma-separated string of modules and/or classes)`
+- within `GHC_USER_PLUGINS` the Python package `GeoHealthCheck.plugins` is needed as prefix
+ 
 Example via [docker-compose.yml](../docker-compose.yml):
 
 ```

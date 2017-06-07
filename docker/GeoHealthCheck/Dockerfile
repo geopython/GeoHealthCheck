@@ -6,8 +6,9 @@ LABEL original_developer "yjacolin <yves.jacolin@camptocamp.com>"
 LABEL maintainer "Just van den Broecke <justb4@gmail.com>"
 
 # May specify any GHC Git Repo/branch as build arg, default is master
+# e.g. https://github.com/geopython/GeoHealthCheck.git
 ARG GHC_GIT_REPO="https://github.com/geopython/GeoHealthCheck.git"
-
+ARG GHC_GIT_BRANCH="master"
 # These are default values,
 # Override when running container via docker(-compose)
 

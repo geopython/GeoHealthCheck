@@ -277,14 +277,19 @@ Writing custom Probes is only limited by your imagination!
 Configuration
 -------------
 
-Plugins available to a GHC installation are configured via `config_site.py`.
+Plugins available to a GHC installation are configured via `config_main.py` and overridden in `config_site.py`.
+By default all built-in Plugins are available.
 
-- **GHC_PLUGINS**: `list` of Plugin classes and/or modules available on installation
+- **GHC_PLUGINS**: `list` of built-in/core Plugin classes and/or modules available on installation
 - **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
+- **GHC_USER_PLUGINS**: `list` of your Plugin classes and/or modules available on installation
 
-See an example for both below from `config_main.py`: ::
+To add your Plugins, you need to configure **GHC_USER_PLUGINS**. In most cases you don't need to bother
+with **GHC_PLUGINS** and **GHC_PROBE_DEFAULTS**.
 
-   GHC_PLUGINS = {
+See an example for both below from `config_main.py` for **GHC_PLUGINS** and **GHC_PROBE_DEFAULTS**: ::
+
+   GHC_PLUGINS = [
        # Probes
        'GeoHealthCheck.plugins.probe.owsgetcaps',
        'GeoHealthCheck.plugins.probe.wms',
@@ -296,7 +301,7 @@ See an example for both below from `config_main.py`: ::
 
        # Checks
        'GeoHealthCheck.plugins.check.checks',
-   }
+   ]
 
    # Default Probe to assign on "add" per Resource-type
    GHC_PROBE_DEFAULTS = {
@@ -338,9 +343,24 @@ See an example for both below from `config_main.py`: ::
        }
    }
 
-On upgrades always check `config_main.py` on any new `Probe and/or Check` classes and add them
-to your instance `config_site.py`.
+To add your User Plugins these steps are needed:
 
+- place your Plugin in any directory
+- specify your Plugin in `config_site.py` in **GHC_USER_PLUGINS** var
+- your Plugin module needs to be available in the `PYTHONPATH` of the GHC app
+
+Let's say your Plugin is in file `/plugins/ext/myplugin.py`. Example `config_site.py` ::
+
+   GHC_USER_PLUGINS='ext.myplugin'
+
+Then you need to add the path ``/plugins` to the `PYTHONPATH` such that your Plugin is found.
+
+User Plugins via Docker
+-----------------------
+
+The easiest way to add your Plugins (and running GHC in general!) is by using
+`GHC Docker <https://github.com/geopython/GeoHealthCheck/tree/master/docker>`_.
+See more info in the `GHC Docker Plugins README <https://github.com/geopython/GeoHealthCheck/blob/master/docker/GeoHealthCheck/plugins/README.md>`_.
 
 Plugin API Docs
 ---------------

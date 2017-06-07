@@ -17,7 +17,7 @@ such that they can be found in the app's `PYTHONPATH`.
 
 ## Via Docker
 
-When using Docker, Plugins need to be available under `/userplugins` within the 
+When using Docker, Plugins need to be available under `/plugins` within the 
 GHC Docker Image or Container. When the Container starts it will copy all content under
 `/userplugins` to the internal dir `/GeoHealthCheck/GeoHealthCheck/plugins/user`. 
                    

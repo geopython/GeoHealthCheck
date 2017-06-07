@@ -58,7 +58,7 @@ if os.environ.get('GHC_PLUGINS'):
 # Optional ENV set for GHC_USER_PLUGINS
 # if not set none applies
 if os.environ.get('GHC_USER_PLUGINS'):
-    GHC_PLUGINS = os.environ['GHC_USER_PLUGINS']
+    GHC_USER_PLUGINS = os.environ['GHC_USER_PLUGINS']
 
 GHC_SMTP = {
     'server': os.environ['GHC_SMTP_SERVER'],
