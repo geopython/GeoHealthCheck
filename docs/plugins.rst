@@ -353,7 +353,7 @@ Let's say your Plugin is in file `/plugins/ext/myplugin.py`. Example `config_sit
 
    GHC_USER_PLUGINS='ext.myplugin'
 
-Then you need to add the path ``/plugins` to the `PYTHONPATH` such that your Plugin is found.
+Then you need to add the path `/plugins` to the `PYTHONPATH` such that your Plugin is found.
 
 User Plugins via Docker
 -----------------------

@@ -1,5 +1,7 @@
-FROM debian:jessie
-# TODO: use Alpine for smaller image
+FROM python:2.7.13-alpine
+
+# Thanks to http://www.sandtable.com/reduce-docker-image-sizes-using-alpine
+# FROM debian:jessie
 
 # Credits to yjacolin for providing first versions
 LABEL original_developer "yjacolin <yves.jacolin@camptocamp.com>"
@@ -52,28 +54,29 @@ ENV GHC_SMTP_PASSWORD None
 # GHC User Plugins, best be overridden via Container environment
 ENV GHC_USER_PLUGINS ''
 
-RUN apt-get update && \
-    apt-get install -qqy virtualenv git python-pip python-dev vim libpq-dev postgresql-client && \
-    apt-get autoremove -y ; apt-get clean ; \
-    rm -rf /var/lib/apt/lists/partial/* /tmp/* /var/tmp/*
+RUN apk add --no-cache --virtual .build-deps git gcc build-base linux-headers postgresql-dev \
+    && apk add --no-cache bash vim postgresql-client \
+    && pip install virtualenv \
+    && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
-ADD install.sh /install.sh
-ADD entrypoint.sh /entrypoint.sh
-ADD config_site.py /config_site.py
+# Old: for debian:jessie, now using alpine linux
+#RUN apt-get update && \
+#    apt-get install -qqy virtualenv git python-pip python-dev vim libpq-dev postgresql-client && \
+#    apt-get autoremove -y ; apt-get clean ; \
+#    rm -rf /var/lib/apt/lists/partial/* /tmp/* /var/tmp/*
+
+# Add standard files and Add/override Plugins
+# Alternative Entrypoints to run GHC jobs
+# Override default Entrypoint with these on Containers
+ADD install.sh entrypoint.sh config_site.py cron-jobs-daily.sh cron-jobs-hourly.sh plugins /  
+RUN	chmod a+x /cron-jobs-*.sh
+
 # Add Source Code TODO (need to move Dockerfile to root dir)
 # ADD . /GeoHealthCheck
 
-# Add/override Plugins
-ADD plugins /plugins
-
-RUN bash install.sh
-
-# Alternative Entrypoints to run GHC jobs
-# Override default Entrypoint with these on Containers
-ADD cron-jobs-daily.sh /cron-jobs-daily.sh
-ADD cron-jobs-hourly.sh /cron-jobs-hourly.sh
-RUN chmod a+x /cron-jobs-daily.sh
-RUN chmod a+x /cron-jobs-hourly.sh
+# Install and Remove build-related packages for smaller image size
+RUN bash install.sh  \
+	&& apk del .build-deps
 
 # For SQLite
 VOLUME ["/GeoHealthCheck/DB/"]
