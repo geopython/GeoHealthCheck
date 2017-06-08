@@ -79,13 +79,13 @@ GHC_MAP = {
     'subdomains': 1234,
 }
 
-
+# GHC Core Plugins
 # Each GHC Plugin should derive from GeoHealthCheck.plugin.Plugin,
 # and should be findable in sys/PYTHONPATH.
 # An entry may be a Python classname or module.
 # The latter will include all classes derived from GeoHealthCheck.plugin.Plugin
 # in the module file.
-GHC_PLUGINS = {
+GHC_PLUGINS = [
     # Probes
     'GeoHealthCheck.plugins.probe.owsgetcaps',
     'GeoHealthCheck.plugins.probe.wms',
@@ -97,7 +97,13 @@ GHC_PLUGINS = {
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
-}
+]
+
+# Entry for User Plugins: will be added to default core GHC_PLUGINS
+# This makes it easier for users to just configure their Plugins
+# and always get the latest core GHC_PLUGINS without having to upgrade
+# their config.
+GHC_USER_PLUGINS = []
 
 # Default Probe to assign on "add" per Resource-type
 GHC_PROBE_DEFAULTS = {

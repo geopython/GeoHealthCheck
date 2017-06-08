@@ -28,7 +28,25 @@ where the [Dockerfile](GeoHealthCheck/Dockerfile) resides, and issue:
 
 ```
 docker build -t geopython/geohealthcheck .
-````
+```
+
+### Build Arguments
+
+These are the build args with defaults:
+
+```
+ARG GHC_GIT_REPO="https://github.com/geopython/GeoHealthCheck.git"
+ARG GHC_GIT_BRANCH="master"
+```
+
+So with no args the GHC master branch is built. You can build from a
+specific GitHub repo and/or branch, e.g.
+
+```
+sudo docker build --build-arg GHC_GIT_BRANCH=dev -t geopython/geohealthcheck:dev .
+```
+
+This is mainly for development purposes.
 
 ## Run
 
@@ -131,6 +149,7 @@ in Dutch witin the GHC hourly job, specify the `environment` like:
        GHC_SMTP_SSL: 'false'
        GHC_SMTP_USERNAME: 'us@gmail.com'
        GHC_SMTP_PASSWORD: 'the_passw'
+       GHC_USER_PLUGINS: 'GeoHealthCheck.plugins.user.myplugins'
        .
        .
 

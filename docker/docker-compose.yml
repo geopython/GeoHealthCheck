@@ -6,15 +6,20 @@ services:
     image: geopython/geohealthcheck:latest
     ports:
       - 8083:80
+#    environment:
+#       GHC_USER_PLUGINS: 'GeoHealthCheck.plugins.user.mywmsprobe,GeoHealthCheck.plugins.user.mywmsprobe2'
     volumes:
       - ghc_sqlitedb:/GeoHealthCheck/DB
+      # Optional Plugins, Path on the host, relative to the Compose file
+      # See https://docs.docker.com/compose/compose-file/#volumes
+      # - ./GeoHealthCheck/plugins:/plugins:ro
 
   geohealthcheck-cron-hourly:
     image: geopython/geohealthcheck:latest
     depends_on:
       - geohealthcheck
 
-    # Override settings to enable email notifications
+    # Override settings to enable email notifications and user Plugins
 #    environment:
 #      LC_ALL: "nl_NL.UTF-8"
 #      LANG: "nl_NL.UTF-8"
@@ -29,12 +34,16 @@ services:
 #      GHC_SMTP_SSL: 'false'
 #      GHC_SMTP_USERNAME: 'us@gmail.com'
 #      GHC_SMTP_PASSWORD: 'the_passw'
+#      GHC_USER_PLUGINS: 'GeoHealthCheck.plugins.user.mywmsprobe,GeoHealthCheck.plugins.user.mywmsprobe2'
 
     entrypoint:
       - bash
       - /cron-jobs-hourly.sh
     volumes:
       - ghc_sqlitedb:/GeoHealthCheck/DB
+      # Optional Plugins, Path on the host, relative to the Compose file
+      # See https://docs.docker.com/compose/compose-file/#volumes
+      # - ./GeoHealthCheck/plugins:/plugins:ro
     labels:
       io.ghc-cron-hourly: 'true'
 
