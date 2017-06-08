@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/geopython/GeoHealthCheck.png)](https://travis-ci.org/geopython/GeoHealthCheck)
 [![Join the chat at https://gitter.im/geopython/GeoHealthCheck](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/geopython/GeoHealthCheck) 
+[![Docker Build](https://img.shields.io/docker/automated/geopython/geohealthcheck.svg)](https://hub.docker.com/r/geopython/geohealthcheck)
+
 GeoHealthCheck
 ==============
 
