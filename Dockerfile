@@ -7,10 +7,6 @@ FROM python:2.7.13-alpine
 LABEL original_developer "yjacolin <yves.jacolin@camptocamp.com>"
 LABEL maintainer "Just van den Broecke <justb4@gmail.com>"
 
-# May specify any GHC Git Repo/branch as build arg, default is master
-# e.g. https://github.com/geopython/GeoHealthCheck.git
-ARG GHC_GIT_REPO="https://github.com/geopython/GeoHealthCheck.git"
-ARG GHC_GIT_BRANCH="master"
 # These are default values,
 # Override when running container via docker(-compose)
 
@@ -54,25 +50,19 @@ ENV GHC_SMTP_PASSWORD None
 # GHC User Plugins, best be overridden via Container environment
 ENV GHC_USER_PLUGINS ''
 
-RUN apk add --no-cache --virtual .build-deps git gcc build-base linux-headers postgresql-dev \
+RUN apk add --no-cache --virtual .build-deps gcc build-base linux-headers postgresql-dev \
     && apk add --no-cache bash vim postgresql-client \
     && pip install virtualenv \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
-# Old: for debian:jessie, now using alpine linux
-#RUN apt-get update && \
-#    apt-get install -qqy virtualenv git python-pip python-dev vim libpq-dev postgresql-client && \
-#    apt-get autoremove -y ; apt-get clean ; \
-#    rm -rf /var/lib/apt/lists/partial/* /tmp/* /var/tmp/*
-
 # Add standard files and Add/override Plugins
 # Alternative Entrypoints to run GHC jobs
 # Override default Entrypoint with these on Containers
-ADD install.sh entrypoint.sh config_site.py cron-jobs-daily.sh cron-jobs-hourly.sh plugins /  
+ADD docker/install.sh docker/entrypoint.sh docker/config_site.py docker/cron-jobs-daily.sh docker/cron-jobs-hourly.sh docker/plugins /
 RUN	chmod a+x /cron-jobs-*.sh
 
-# Add Source Code TODO (need to move Dockerfile to root dir)
-# ADD . /GeoHealthCheck
+# Add Source Code
+ADD . /GeoHealthCheck
 
 # Install and Remove build-related packages for smaller image size
 RUN bash install.sh  \

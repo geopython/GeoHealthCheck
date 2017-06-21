@@ -359,8 +359,8 @@ User Plugins via Docker
 -----------------------
 
 The easiest way to add your Plugins (and running GHC in general!) is by using
-`GHC Docker <https://github.com/geopython/GeoHealthCheck/tree/master/docker>`_.
-See more info in the `GHC Docker Plugins README <https://github.com/geopython/GeoHealthCheck/blob/master/docker/GeoHealthCheck/plugins/README.md>`_.
+`GHC Docker <https://github.com/geopython/GeoHealthCheck/tree/master/docker/README.md>`_.
+See more info in the `GHC Docker Plugins README <https://github.com/geopython/GeoHealthCheck/blob/master/docker/plugins/README.md>`_.
 
 Plugin API Docs
 ---------------
