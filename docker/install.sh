@@ -4,10 +4,6 @@ cd /
 virtualenv venv && cd $_
 . bin/activate
 
-# To be Removed as to enable local and versioned (tagged) images builds
-cd /
-git clone -b ${GHC_GIT_BRANCH} ${GHC_GIT_REPO} GeoHealthCheck
-
 # GHC Source was ADDed in Dockerfile
 cd /GeoHealthCheck
 pip install Paver

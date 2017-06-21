@@ -12,7 +12,7 @@ services:
       - ghc_sqlitedb:/GeoHealthCheck/DB
       # Optional Plugins, Path on the host, relative to the Compose file
       # See https://docs.docker.com/compose/compose-file/#volumes
-      # - ./GeoHealthCheck/plugins:/plugins:ro
+      # - ./../GeoHealthCheck/plugins:/plugins:ro
 
   geohealthcheck-cron-hourly:
     image: geopython/geohealthcheck:latest
@@ -43,7 +43,7 @@ services:
       - ghc_sqlitedb:/GeoHealthCheck/DB
       # Optional Plugins, Path on the host, relative to the Compose file
       # See https://docs.docker.com/compose/compose-file/#volumes
-      # - ./GeoHealthCheck/plugins:/plugins:ro
+      # - ./../GeoHealthCheck/plugins:/plugins:ro
     labels:
       io.ghc-cron-hourly: 'true'
 

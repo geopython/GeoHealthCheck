@@ -23,30 +23,12 @@ This step is not necessary as GHC Docker images are available
 from [Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck).
 Only in cases where you have local changes, this step is required.
 
-Go to the subdir ``docker/GeoHealthCheck``, 
-where the [Dockerfile](GeoHealthCheck/Dockerfile) resides, and issue:
+Go to the GHC source root dir, 
+where the [Dockerfile](../Dockerfile) resides, and issue:
 
 ```
 docker build -t geopython/geohealthcheck .
 ```
-
-### Build Arguments
-
-These are the build args with defaults:
-
-```
-ARG GHC_GIT_REPO="https://github.com/geopython/GeoHealthCheck.git"
-ARG GHC_GIT_BRANCH="master"
-```
-
-So with no args the GHC master branch is built. You can build from a
-specific GitHub repo and/or branch, e.g.
-
-```
-sudo docker build --build-arg GHC_GIT_BRANCH=dev -t geopython/geohealthcheck:dev .
-```
-
-This is mainly for development purposes.
 
 ## Run
 
@@ -58,8 +40,8 @@ go to http://localhost:8083.
 
 NB this runs GHC standalone with a `SQLite` DB, but without the cron-jobs that perform the healthchecks.
 You may schedule the cron-jobs using the local cron system with the 
-[cron-jobs-hourly](GeoHealthCheck/cron-jobs-hourly.sh) and
-[cron-jobs-daily](GeoHealthCheck/cron-jobs-daily.sh) Docker Entrypoints.
+[cron-jobs-hourly](cron-jobs-hourly.sh) and
+[cron-jobs-daily](cron-jobs-daily.sh) Docker Entrypoints.
 
 But the most optimal way to run GHC with cronjobs and optionally Postgres backend DB,
 is to use [Docker Compose](https://docs.docker.com/compose), see below.
@@ -73,7 +55,7 @@ for more info.
 
 ### Using sqlite DB (default)
 
-Using the default [docker-compose.yml](docker-compose.yml) will run GHC with a SQLite DB.
+Using the default [docker-compose.yml](compose/docker-compose.yml) will run GHC with a SQLite DB.
 Cronjobs are scheduled using [Jobber Cron](https://github.com/blacklabelops/jobber-cron/) as
 regular Unix `cron` does not play nice with Docker.
 
@@ -86,14 +68,15 @@ docker-compose -f docker-compose.yml up  [-d]
   
 ### Using PostGIS DB
 
-The file [docker-compose.postgis.yml](docker-compose.postgis.yml) 
-extends/overrides the default [docker-compose.yml](docker-compose.yml) to use Postgres with PostGIS
+The file [docker-compose.postgis.yml](compose/docker-compose.postgis.yml) 
+extends/overrides the default [docker-compose.yml](compose/docker-compose.yml) to use Postgres with PostGIS
 as database.
 
 To run, specify both `.yml` files:
 
 
 ```
+cd docker/compose
 docker-compose -f docker-compose.yml -f docker-compose.postgis.yml up [-d]
 
 ```
@@ -120,7 +103,7 @@ The PG DB data is kept in a Docker volume usually located at
  
 ## Configuration
 
-The default GHC configuration is specified within the [Dockerfile](GeoHealthCheck/Dockerfile).
+The default GHC configuration is specified within the [Dockerfile](../Dockerfile).
 This allows overriding these `ENV` vars during deployment (as opposed to having to build
 your own GHC Docker Image). Docker (`-e` options) and Docker Compose (`environment` section)
 allow setting Environment variables.  

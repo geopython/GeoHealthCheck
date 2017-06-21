@@ -16,7 +16,7 @@ Plugin-modules and classes need to be configured in the GHC `GHC_USER_PLUGINS` E
 
 The following steps:
 
-- place your Plugins within this directory
+- place your Plugins within the sub-directory `user`
 - do regular Docker build `docker build -t geopython/geohealthcheck .`
 
 During the build Docker will `ADD` (copy) this dir to `/plugins` within the GHC Docker Image.
@@ -32,7 +32,7 @@ The following steps:
 - specify your Plugins via Container Environment as `GHC_USER_PLUGINS: (comma-separated string of modules and/or classes)`
 - within `GHC_USER_PLUGINS` the Python package `GeoHealthCheck.plugins` is needed as prefix
  
-Example via [docker-compose.yml](../docker-compose.yml):
+Example via [docker-compose.yml](../compose/docker-compose.yml):
 
 ```
 services:
@@ -48,7 +48,7 @@ services:
     volumes:
       - ghc_sqlitedb:/GeoHealthCheck/DB
       - Path on the host, relative to the Compose file
-      - ./GeoHealthCheck/plugins:/plugins:ro
+      - ./../plugins:/plugins:ro
 ```
 
 Or if you run the Image via `docker run` :
@@ -57,7 +57,7 @@ Or if you run the Image via `docker run` :
 ```
 docker run -d --name GeoHealthCheck -p 8083:80 \
          -v ghc_sqlitedb:/GeoHealthCheck/DB \
-         -v ./GeoHealthCheck/plugins:/plugins:ro \
+         -v ./plugins:/plugins:ro \
          -e 'GHC_USER_PLUGINS=GeoHealthCheck.plugins.user.myplugins'
          geopython/geohealthcheck:latest
 ```
