@@ -103,7 +103,7 @@
             <h3>- Geoecologist (GIS, Soil) and DEM Scientist</h3>
             <h3>- Contributor to GHC and other OSS</h3>
             <h3>- Long Term user of ArcInfo, QGIS, GDAL, Python, pyWPS</h3>
-            <h3>- Working in the <a href="http://ec.europa.eu/eurostat/web/gisco">GISCO Team</a></h3>
+            <h3>- Working in the <a href="http://ec.europa.eu/eurostat/web/gisco" target="_blank">GISCO Team</a></h3>
         </section>    
 
         <!-- Intro: About OGC OWS -->
@@ -352,6 +352,15 @@
             <h3>&nbsp;&nbsp;&nbsp; for DB upgrades</h3>
         </section>
 
+        <!-- Setup - Docker-->
+        <section style="text-align: left;">
+            <h2>Use Docker!</h2>
+            <h3>- <a href="https://hub.docker.com/r/geopython/geohealthcheck/" target="blank">Versioned GHC Images on DockerHub</a></h3>
+            <h3>- <a href="https://docs.docker.com/compose" target="blank">Docker Compose support: complete GHC stack+jobs</a></h3>
+            <h3>- <a href="https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md" target="blank">Documentation</a></h3>
+            <h3>- Have GHC up &amp; Running in minutes!!</h3>
+        </section>
+
         <!-- Setup -->
         <section style="text-align: left;">
             <h2>Settings</h2>
@@ -370,7 +379,8 @@ GHC_SITE_URL = 'http://host'
 GHC_SMTP = (email settings)
 GHC_RELIABILITY_MATRIX = (when to show green/orange/red)
 GHC_MAP = (map setup)
-GHC_PLUGINS = (Probes and Checks, INCLUDING YOURS!)
+GHC_PLUGINS = (Built-in Probes and Checks)
+GHC_USER_PLUGINS = (Probes and Checks, YOURS!)
 GHC_PROBE_DEFAULTS = (Default Probe per Resource Type)
             </code>
             </pre>
@@ -411,9 +421,10 @@ GHC_PROBE_DEFAULTS = (Default Probe per Resource Type)
         <section style="text-align: left;">
             <h2>Plugin Model</h2>
             <h3>- Probes and Checks are Plugins</h3>
-            <h3>- Plugin class and/or modules conf: GHC_PLUGINS</h3>
-            <h3>- Standard Probes &amp; Checks</h3>
-            <h3>- User/Your Probes &amp; Checks</h3>
+            <h3>- Plugin class and/or modules in config</h3>
+            <h3>&nbsp;&nbsp;&nbsp;&nbsp;* Built-in Plugins: GHC_PLUGINS=</h3>
+            <h3>&nbsp;&nbsp;&nbsp;&nbsp;* Your Plugins: GHC_USER_PLUGINS=</h3>
+            <h3>- Must be in $PYTHONPATH</h3>
         </section>
 
         <!-- Plugin model -->
@@ -481,11 +492,12 @@ GHC_PROBE_DEFAULTS = (Default Probe per Resource Type)
 
         <!-- Project -->
         <section style="text-align: left;">
-            <h2>Current Status (May 9, 2017)</h2>
-            <h3>- first <a href="https://github.com/geopython/GeoHealthCheck/releases">alpha release: v0.1.0</a></h3>
+            <h2>Current Status (June 23, 2017)</h2>
+            <h3>- Second <a href="https://github.com/geopython/GeoHealthCheck/releases">alpha release: v0.2.0</a></h3>
             <h3>- Tags and Plugins (Probes &amp; Checks)</h3>
             <h3>- Demo <a href="http://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h3>
             <h3>- Dev <a href="http://dev.geohealthcheck.org">dev.geohealthcheck.org</a></h3>
+            <h3>- Docker: <a href="https://hub.docker.com/r/geopython/geohealthcheck" target="blank">Images on DockerHub</a></h3>
         </section>
 
         <!-- Project -->
