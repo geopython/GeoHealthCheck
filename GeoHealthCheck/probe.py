@@ -171,9 +171,11 @@ class Probe(Plugin):
         request_string = None
         if self.REQUEST_TEMPLATE:
             request_string = self.REQUEST_TEMPLATE
+            if '?' in url_base and self.REQUEST_TEMPLATE[0] == '?':
+                self.REQUEST_TEMPLATE = '&' + self.REQUEST_TEMPLATE[1:]
 
-            if self._probe_vars.parameters:
-                request_parms = self._probe_vars.parameters
+            if self._parameters:
+                request_parms = self._parameters
                 param_defs = self.get_param_defs()
 
                 # Expand string list array to comma separated string
