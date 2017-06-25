@@ -70,6 +70,11 @@ class Probe(Plugin):
     def __init__(self):
         Plugin.__init__(self)
 
+    #
+    # Lifecycle : optionally expand params from Resource metadata
+    def expand_params(self, resource):
+        pass
+
     # Lifecycle
     def init(self, resource, probe_vars):
         """
@@ -81,9 +86,11 @@ class Probe(Plugin):
         :return: None
         """
         self._resource = resource
+
         self._probe_vars = probe_vars
         self._parameters = probe_vars.parameters
         self._check_vars = probe_vars.check_vars
+
         self.response = None
 
         # Create ProbeResult object that gathers all results for single Probe
