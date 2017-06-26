@@ -36,7 +36,7 @@
       "owner": "admin",
       "resource_type": "OGC:WFS",
       "title": "PDOK BAG Web Feature Service",
-      "url": "https://geodata.nationaalgeoregister.nl/bag/wfs",
+      "url": "http://geodata.nationaalgeoregister.nl/bag/wfs",
       "tags": [
         "ows",
         "pdok"
@@ -108,10 +108,11 @@
         "layers": ["*"],
         "styles": "",
         "format": "image/png",
+        "width": "256",
         "height": "256",
         "srs": "EPSG:28992",
         "bbox": ["180635", "455870", "180961", "456050"],
-        "exceptions": "application/vnd.ogc.se_xml", "width": "256"
+        "exceptions": "application/vnd.ogc.se_xml"
       }
     },
     "PDOK BAG WMS - Drilldown": {
@@ -133,10 +134,20 @@
       "resource": "PDOK BAG WFS",
       "probe_class": "GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox",
       "parameters": {
-        "type_name": "verblijfsobject:verblijfsobject",
-        "type_ns_prefix": "verblijfsobject",
+        "type_name": "bag:verblijfsobject",
+        "type_ns_prefix": "bag",
         "type_ns_uri": "http://bag.geonovum.nl",
-        "geom_property_name": "geometrie",
+        "srs": "EPSG:28992",
+        "bbox": ["180635", "455870", "180961", "456050"]
+      }
+    },
+    "PDOK BAG WFS - GetFeature All": {
+      "resource": "PDOK BAG WFS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBboxAll",
+      "parameters": {
+        "type_name": "all 5 featuretypes",
+        "type_ns_prefix": "bag",
+        "type_ns_uri": "http://bag.geonovum.nl",
         "srs": "EPSG:28992",
         "bbox": ["180635", "455870", "180961", "456050"]
       }
@@ -221,7 +232,26 @@
       "probe_vars": "PDOK BAG WFS - GetFeature",
       "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
       "parameters": {
-        "strings": ["FeatureCollection>"]
+        "strings": ["FeatureCollection"]
+      }
+    },
+    "PDOK BAG WFS - GetFeature All - XML Parse": {
+      "probe_vars": "PDOK BAG WFS - GetFeature All",
+      "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "PDOK BAG WFS - GetFeature All - No Exception": {
+      "probe_vars": "PDOK BAG WFS - GetFeature All",
+      "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
+      "parameters": {
+        "strings": ["ExceptionReport>", "ServiceException>"]
+      }
+    },
+    "PDOK BAG WFS - GetFeature All - FeatureCollection": {
+      "probe_vars": "PDOK BAG WFS - GetFeature All",
+      "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
+      "parameters": {
+        "strings": ["FeatureCollection"]
       }
     },
     "WOUDC CSW - GetCaps - XML Parse": {

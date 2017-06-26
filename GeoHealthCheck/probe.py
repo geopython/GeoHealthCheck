@@ -73,6 +73,12 @@ class Probe(Plugin):
     #
     # Lifecycle : optionally expand params from Resource metadata
     def expand_params(self, resource):
+        """
+        Called after creation. Use to expand PARAM_DEFS, e.g. from Resource
+        metadata like WMS Capabilities. See e.g. WmsGetMapV1 class.
+        :param resource:
+        :return: None
+        """
         pass
 
     # Lifecycle

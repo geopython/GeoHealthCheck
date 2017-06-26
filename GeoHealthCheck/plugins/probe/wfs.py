@@ -8,9 +8,9 @@ class WfsGetFeatureBbox(Probe):
     do WFS GetFeature in BBOX
     """
 
-    NAME = 'WFS GetFeature in BBOX'
+    NAME = "WFS GetFeature in BBOX for SINGLE FeatureType"
     DESCRIPTION = """
-        Do WFS GetFeature request in BBOX with user-specified parameters
+        WFS GetFeature in BBOX for SINGLE FeatureType.
         """
     RESOURCE_TYPE = 'OGC:WFS'
 
@@ -39,10 +39,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   </wfs:Query>
 </wfs:GetFeature>
     """
-
-    def __init__(self):
-        Probe.__init__(self)
-
     PARAM_DEFS = {
         'type_name': {
             'type': 'string',
@@ -105,7 +101,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                     'description': """
                         Has FeatureCollection element in response doc
                         """,
-                    'value': ['FeatureCollection>']
+                    'value': ['FeatureCollection']
                 }
             }
         }
@@ -116,15 +112,21 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     e.g. with specific `value` or even `name`.
     """
 
-    # Overridden: expand param-ranges from WMS metadata
+    def __init__(self):
+        Probe.__init__(self)
+        self.layer_count = 0
+
+    # Overridden: expand param-ranges from WFS metadata
     def expand_params(self, resource):
 
-        # Use WMS Capabilities doc to get metadata for
+        # Use WFS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
             wfs = WebFeatureService(resource.url, version="1.1.0")
             feature_types = wfs.contents
             feature_type_names = list(feature_types.keys())
+            self.layer_count = len(feature_type_names)
+
             ft_namespaces = set([name.split(':')[0] if ':' in name else None
                                  for name in feature_type_names])
             ft_namespaces = filter(None, list(ft_namespaces))
@@ -178,3 +180,63 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             # self.PARAM_DEFS['exceptions']['range'] = wfs.exceptions
         except Exception as err:
             raise err
+
+
+class WfsGetFeatureBboxAll(WfsGetFeatureBbox):
+    """
+    Do WFS GetFeature for each FeatureType in WFS.
+    """
+
+    NAME = "WFS GetFeature in BBOX for ALL FeatureTypes"
+    DESCRIPTION = """
+        WFS GetFeature in BBOX for ALL FeatureTypes.
+        """
+
+    def __init__(self):
+        WfsGetFeatureBbox.__init__(self)
+
+    # Overridden: expand param-ranges from WFS metadata
+    # from single-layer GetFeature parent Probe and set layers
+    # fixed to *
+    def expand_params(self, resource):
+        WfsGetFeatureBbox.expand_params(self, resource)
+        val = 'all %d feature types' % self.layer_count
+
+        self.PARAM_DEFS['type_name']['range'] = [val]
+        self.PARAM_DEFS['type_name']['value'] = val
+        self.PARAM_DEFS['type_name']['default'] = val
+
+    def perform_request(self):
+        """ Perform actual request to service, overridden from base class"""
+
+        # Get capabilities doc to get all layers
+        try:
+            wfs = WebFeatureService(self._resource.url, version='1.1.0')
+            feature_types = wfs.contents.keys()
+        except Exception as err:
+            self.result.set(False, str(err))
+            return
+
+        results_failed_total = []
+        for feature_type in feature_types:
+            self._parameters['type_name'] = feature_type
+
+            # Let the templated parent perform
+            Probe.perform_request(self)
+            self.run_checks()
+
+            # Only keep failed feature_type results
+            # otherwise with 100s of FTs the report grows out of hand...
+            results_failed = self.result.results_failed
+            if len(results_failed) > 0:
+                # We have a failed feature_type: add to result message
+                for result in results_failed:
+                    result.message = 'feature_type %s: %s' % \
+                                     (feature_type, result.message)
+
+                results_failed_total += results_failed
+                self.result.results_failed = []
+
+            self.result.results = []
+
+        self.result.results_failed = results_failed_total

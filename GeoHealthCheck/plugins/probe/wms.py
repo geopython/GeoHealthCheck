@@ -138,7 +138,7 @@ class WmsGetMapV1(Probe):
 
             self.PARAM_DEFS['exceptions']['range'] = wms.exceptions
         except Exception as err:
-            self.result.set(False, str(err))
+            raise err
 
 
 class WmsGetMapV1All(WmsGetMapV1):
@@ -177,6 +177,7 @@ class WmsGetMapV1All(WmsGetMapV1):
             self.result.set(False, str(err))
             return
 
+        results_failed_total = []
         for layer in layers:
             self._parameters['layers'] = [layer]
 
@@ -184,11 +185,17 @@ class WmsGetMapV1All(WmsGetMapV1):
             Probe.perform_request(self)
             self.run_checks()
 
-            # Only keep failed layer results
+            # Only keep failed Layer results
+            # otherwise with 100s of Layers the report grows out of hand...
             results_failed = self.result.results_failed
             if len(results_failed) > 0:
                 # We have a failed layer: add to result message
                 for result in results_failed:
-                    result.message = 'layer %s: ' % layer + result.message
-            else:
-                self.result.results = []
+                    result.message = 'layer %s: %s' % (layer, result.message)
+
+                results_failed_total += results_failed
+                self.result.results_failed = []
+
+            self.result.results = []
+
+        self.result.results_failed = results_failed_total
