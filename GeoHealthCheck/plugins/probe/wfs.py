@@ -23,7 +23,7 @@ service="WFS"
 version="1.1.0"
 outputFormat="GML2"
 xsi:schemaLocation="http://www.opengis.net/wfs
-http://schemas.opengis.net/wfs/1.1.0/wfs.xsd" 
+http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <wfs:Query typeName="{type_name}" srsName="{srs}"
         xmlns:{type_ns_prefix}="{type_ns_uri}">
@@ -124,20 +124,26 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             wfs = WebFeatureService(resource.url, version="1.1.0")
             feature_types = wfs.contents
             feature_type_names = list(feature_types.keys())
-            ft_namespaces = list(set([name.split(':')[0] if ':' in name else None for name in feature_type_names]))
-            ft_namespaces = filter(None, ft_namespaces)
+            ft_namespaces = set([name.split(':')[0] if ':' in name else None
+                                 for name in feature_type_names])
+            ft_namespaces = filter(None, list(ft_namespaces))
+
+            # In some cases default NS is used: no FT NSs
             if len(ft_namespaces) > 0:
                 nsmap = wfs._capabilities.nsmap
             else:
+                # Just use dummy NS, to satisfy REQUEST_TEMPLATE
                 ft_namespaces = ['notapplicable']
                 nsmap = {ft_namespaces[0]: 'http://not.appli.cable/'}
                 self.PARAM_DEFS['type_ns_prefix']['value'] = ft_namespaces[0]
-                self.PARAM_DEFS['type_ns_uri']['value'] = nsmap[ft_namespaces[0]]
+                self.PARAM_DEFS['type_ns_uri']['value'] = \
+                    nsmap[ft_namespaces[0]]
 
-            # Layers to select
+            # FeatureTypes to select
             self.PARAM_DEFS['type_name']['range'] = feature_type_names
             self.PARAM_DEFS['type_ns_prefix']['range'] = ft_namespaces
-            self.PARAM_DEFS['type_ns_uri']['range'] = [nsmap[ns] for ns in ft_namespaces]
+            self.PARAM_DEFS['type_ns_uri']['range'] = \
+                [nsmap[ns] for ns in ft_namespaces]
 
             # Image Format
             # for oper in wfs.operations:
