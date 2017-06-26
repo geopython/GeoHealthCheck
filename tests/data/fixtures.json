@@ -88,6 +88,32 @@
         "version": "1.0.0"
       }
     },
+    "PDOK BAG WMS - GetMap Single": {
+      "resource": "PDOK BAG WMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wms.WmsGetMapV1",
+      "parameters": {
+        "layers": ["ligplaats"],
+        "styles": "",
+        "format": "image/png",
+        "height": "256",
+        "srs": "EPSG:28992",
+        "bbox": ["180635", "455870", "180961", "456050"],
+        "exceptions": "application/vnd.ogc.se_xml", "width": "256"
+      }
+    },
+    "PDOK BAG WMS - GetMap All": {
+      "resource": "PDOK BAG WMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wms.WmsGetMapV1All",
+      "parameters": {
+        "layers": ["*"],
+        "styles": "",
+        "format": "image/png",
+        "height": "256",
+        "srs": "EPSG:28992",
+        "bbox": ["180635", "455870", "180961", "456050"],
+        "exceptions": "application/vnd.ogc.se_xml", "width": "256"
+      }
+    },
     "PDOK BAG WMS - Drilldown": {
       "resource": "PDOK BAG WMS",
       "probe_class": "GeoHealthCheck.plugins.probe.wmsdrilldown.WmsDrilldown",
@@ -162,6 +188,16 @@
     "PDOK BAG WMS - GetCaps - XML Parse": {
       "probe_vars": "PDOK BAG WMS - GetCaps",
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
+      "parameters": {}
+    },
+    "PDOK BAG WMS - GetMap Single - Has Image": {
+      "probe_vars": "PDOK BAG WMS - GetMap Single",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
+      "parameters": {}
+    },
+    "PDOK BAG WMS - GetMap All - Has Image": {
+      "probe_vars": "PDOK BAG WMS - GetMap All",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     },
     "WOUDC WFS - GetCaps - XML Parse": {

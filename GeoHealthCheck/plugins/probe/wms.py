@@ -1,5 +1,4 @@
 from GeoHealthCheck.probe import Probe
-# from GeoHealthCheck.util import transform_bbox
 from owslib.wms import WebMapService
 
 
@@ -9,10 +8,10 @@ class WmsGetMapV1(Probe):
     for single Layer.
     """
 
-    NAME = 'WMS GetMap WMS v1.1.1. operation (single Layer)'
+    NAME = 'WMS GetMap WMS v1.1.1. operation on SINGLE Layer'
     DESCRIPTION = """
     Do WMS GetMap v1.1.1 request with user-specified parameters
-    for single Layer. Ranges and defaults from WMS Capabilities.
+    for single Layer.
     """
     RESOURCE_TYPE = 'OGC:WMS'
 
@@ -95,6 +94,10 @@ class WmsGetMapV1(Probe):
     e.g. with specific `value` or even `name`.
     """
 
+    def __init__(self):
+        Probe.__init__(self)
+        self.layer_count = 0
+
     # Overridden: expand param-ranges from WMS metadata
     def expand_params(self, resource):
 
@@ -103,6 +106,7 @@ class WmsGetMapV1(Probe):
         try:
             wms = WebMapService(resource.url)
             layers = wms.contents
+            self.layer_count = len(layers)
 
             # Layers to select
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
@@ -130,8 +134,61 @@ class WmsGetMapV1(Probe):
             #     bbox = transform_bbox('EPSG:4326', bbox_srs, bbox[:-1])
 
             self.PARAM_DEFS['bbox']['default'] = \
-                ['{:.2f}'.format(x) for x in bbox[:-1]]
+                [str(x) for x in bbox[:-1]]
 
             self.PARAM_DEFS['exceptions']['range'] = wms.exceptions
         except Exception as err:
             self.result.set(False, str(err))
+
+
+class WmsGetMapV1All(WmsGetMapV1):
+    """
+    Get WMS map image for each Layer using the WMS GetMap operation.
+    """
+
+    NAME = 'WMS GetMap WMS v1.1.1. operation on ALL Layers'
+    DESCRIPTION = """
+    Do WMS GetMap v1.1.1 request for all Layers with
+    user-specified parameters.
+    """
+
+    def __init__(self):
+        WmsGetMapV1.__init__(self)
+
+    # Overridden: expand param-ranges from WMS metadata
+    # from single-layer GetMap parent Probe and set layers
+    # fixed to *
+    def expand_params(self, resource):
+        WmsGetMapV1.expand_params(self, resource)
+        val = 'all %d layers' % self.layer_count
+
+        self.PARAM_DEFS['layers']['range'] = [val]
+        self.PARAM_DEFS['layers']['value'] = val
+        self.PARAM_DEFS['layers']['default'] = val
+
+    def perform_request(self):
+        """ Perform actual request to service, overridden from base class"""
+
+        # Get capabilities doc to get all layers
+        try:
+            wms = WebMapService(self._resource.url)
+            layers = wms.contents.keys()
+        except Exception as err:
+            self.result.set(False, str(err))
+            return
+
+        for layer in layers:
+            self._parameters['layers'] = [layer]
+
+            # Let the templated parent perform
+            Probe.perform_request(self)
+            self.run_checks()
+
+            # Only keep failed layer results
+            results_failed = self.result.results_failed
+            if len(results_failed) > 0:
+                # We have a failed layer: add to result message
+                for result in results_failed:
+                    result.message = 'layer %s: ' % layer + result.message
+            else:
+                self.result.results = []
