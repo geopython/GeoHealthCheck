@@ -84,7 +84,7 @@ def sniff_test_resource(config, resource_type, url):
         elif resource_type == 'OSGeo:TMS':
             ows = TileMapService(url)
         elif resource_type == 'OGC:WFS':
-            ows = WebFeatureService(url)
+            ows = WebFeatureService(url, version='1.1.0')
         elif resource_type == 'OGC:WCS':
             ows = WebCoverageService(url, version='1.0.0')
         elif resource_type == 'OGC:WPS':
