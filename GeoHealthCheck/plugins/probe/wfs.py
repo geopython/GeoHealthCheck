@@ -1,4 +1,5 @@
 from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.util import transform_bbox
 from owslib.wfs import WebFeatureService
 
 
@@ -21,7 +22,7 @@ class WfsGetFeatureBbox(Probe):
 xmlns:wfs="http://www.opengis.net/wfs"
 service="WFS"
 version="1.1.0"
-outputFormat="GML2"
+outputFormat="text/xml; subtype=gml/3.1.1"
 xsi:schemaLocation="http://www.opengis.net/wfs
 http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -159,12 +160,20 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             crs_list = feature_type_entry.crsOptions
             srs_range = ['EPSG:%s' % crs.code for crs in crs_list]
             self.PARAM_DEFS['srs']['range'] = srs_range
+            default_srs = srs_range[0]
+            self.PARAM_DEFS['srs']['default'] = default_srs
 
-            # bbox list: 0-3 is bbox, 4 is SRS
+            # bbox as list: 0-3 is bbox llx, lly, ulx, uly
             bbox = feature_type_entry.boundingBoxWGS84
-            self.PARAM_DEFS['srs']['default'] = srs_range[0]
+
+            # It looks like the first SRS is the default
+            # if it is not EPSG:4326 we need to transform bbox
+            if default_srs != 'EPSG:4326':
+                bbox = transform_bbox('EPSG:4326', srs_range[0], bbox)
+
+            # Convert bbox floats to str
             self.PARAM_DEFS['bbox']['default'] = \
-                ['{:.2f}'.format(x) for x in bbox]
+                [str(f) for f in bbox]
 
             # self.PARAM_DEFS['exceptions']['range'] = wfs.exceptions
         except Exception as err:
