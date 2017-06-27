@@ -111,7 +111,8 @@ class TmsGetTile(Probe):
             self.layer_count = len(layers)
 
             # Determine Layers and Extensions
-            layer_list = [layer_name.split('1.0.0/')[-1] for layer_name in layers]
+            layer_list = [layer_name.split('1.0.0/')[-1]
+                          for layer_name in layers]
             self.PARAM_DEFS['layer']['range'] = layer_list
 
             # Make a set of all extensions
