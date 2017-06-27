@@ -1,4 +1,5 @@
 from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugin import Plugin
 from owslib.wms import WebMapService
 
 
@@ -151,6 +152,8 @@ class WmsGetMapV1All(WmsGetMapV1):
     Do WMS GetMap v1.1.1 request for all Layers with
     user-specified parameters.
     """
+    # Copy all PARAM_DEFS from parent to have own instance
+    PARAM_DEFS = Plugin.merge(WmsGetMapV1.PARAM_DEFS, {})
 
     def __init__(self):
         WmsGetMapV1.__init__(self)

@@ -1,4 +1,5 @@
 from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.util import transform_bbox
 from owslib.wfs import WebFeatureService
 
@@ -191,6 +192,8 @@ class WfsGetFeatureBboxAll(WfsGetFeatureBbox):
     DESCRIPTION = """
         WFS GetFeature in BBOX for ALL FeatureTypes.
         """
+    # Copy all PARAM_DEFS from parent to have own instance
+    PARAM_DEFS = Plugin.merge(WfsGetFeatureBbox.PARAM_DEFS, {})
 
     def __init__(self):
         WfsGetFeatureBbox.__init__(self)
