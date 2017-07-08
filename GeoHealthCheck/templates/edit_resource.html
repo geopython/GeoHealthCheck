@@ -137,7 +137,13 @@
     $(".button-probes-avail-add").click(function(){
         var probe_entry = get_probe_detail(this);
         var probe_class = $(probe_entry).attr('data-probe-class');
-        $.get('/probe/' + probe_class + '/edit_form', function(result) {
+
+        // Issue #128: must use generated URL, but we do not yet have Probe class.
+        // use dummy name and later substitute actual probe class
+        var url = "{{ url_for('get_probe_edit_form', probe_class='dummy') }}";
+        url = url.replace('dummy', probe_class);
+
+        $.get(url, function(result) {
             $('#probe-edit-forms').append(result);
         }).fail(function() {
             $('#probe-edit-forms').append('<br/><strong>Error getting Probe form for ' + probe_class + '</strong>');
@@ -165,7 +171,12 @@
     $(document).on('click','.button-checks-avail-add',function(){
         var check_class = $(this).attr('data-check-class');
         var button = this;
-        $.get('/check/' + check_class + '/edit_form', function(result) {
+        // Issue #128: must use generated URL, but we do not yet have Probe class.
+        // use dummy name and later substitute actual probe class
+        var url = "{{ url_for('get_check_edit_form', check_class='dummy') }}";
+        url = url.replace('dummy', check_class);
+
+        $.get(url, function(result) {
             // $(button).closest('.check-entry');
             $('.check-edit-forms').append(result);
         }).fail(function() {
