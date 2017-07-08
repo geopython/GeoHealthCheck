@@ -136,6 +136,8 @@ class TmsGetTileAll(TmsGetTile):
 
     def __init__(self):
         TmsGetTile.__init__(self)
+        self.tms = None
+        self.layers = None
 
     # Overridden: expand param-ranges from TMS metadata
     # from single-layer GetTile parent Probe and set layers
@@ -153,22 +155,29 @@ class TmsGetTileAll(TmsGetTile):
         self.PARAM_DEFS['extension']['value'] = extension_val
         self.PARAM_DEFS['extension']['default'] = extension_val
 
-    def perform_request(self):
+    def before_request(self):
         """ Perform actual request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
         try:
-            tms = TileMapService(self._resource.url, version='1.0.0')
-            layers = tms.contents
+            self.tms = TileMapService(self._resource.url, version='1.0.0')
+            self.layers = self.tms.contents
         except Exception as err:
             self.result.set(False, str(err))
-            return
 
+    def perform_request(self):
+        """ Perform actual request to service, overridden from base class"""
+
+        if not self.layers:
+            self.result.set(False, 'Found no TMS Layers')
+            return
+        
+        self.result.start()
         results_failed_total = []
-        for layer_name in layers.keys():
+        for layer_name in self.layers.keys():
             # Layer name is last part of full URL
             self._parameters['layer'] = layer_name.split('1.0.0/')[-1]
-            self._parameters['extension'] = layers[layer_name].extension
+            self._parameters['extension'] = self.layers[layer_name].extension
 
             # Let the templated parent perform
             Probe.perform_request(self)

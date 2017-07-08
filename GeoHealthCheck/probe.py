@@ -222,11 +222,11 @@ class Probe(Plugin):
     def run_request(self):
         """ Run actual request to service"""
         try:
-            self.result.start()
             self.before_request()
+            self.result.start()
             self.perform_request()
-            self.after_request()
             self.result.stop()
+            self.after_request()
         except:
             # We must never bailout because of Exception
             # in Probe.

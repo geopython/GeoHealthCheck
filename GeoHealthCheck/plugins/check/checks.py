@@ -2,6 +2,10 @@ import sys
 from owslib.etree import etree
 from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.check import Check
+try:
+    from html import escape  # python 3.x
+except ImportError:
+    from cgi import escape  # python 2.x
 
 
 """ Contains basic Check classes for a Probe object."""
@@ -112,14 +116,19 @@ class HttpHasImageContentType(Check):
         result = True
         msg = 'OK'
         name = 'content-type'
-        headers = self.probe.response.headers
+        response = self.probe.response
+        headers = response.headers
         if name not in headers:
             result = False
             msg = 'HTTP response has no header %s' % name
         elif 'image/' not in headers[name]:
             result = False
             msg = 'HTTP response header %s is not image type' % name
-
+            if type(response.content) is str:
+                rsp_str = response.content
+                if len(rsp_str) > 256:
+                    rsp_str = rsp_str[-256:]
+                msg += ' - error: ' + escape(rsp_str)
         self.set_result(result, msg)
 
 
