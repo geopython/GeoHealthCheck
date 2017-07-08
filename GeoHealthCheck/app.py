@@ -665,7 +665,7 @@ def edit_resource(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    probes_avail = views.get_probes_avail(resource.resource_type)
+    probes_avail = views.get_probes_avail(resource.resource_type, resource)
 
     return render_template('edit_resource.html', lang=g.current_lang,
                            resource=resource, probes_avail=probes_avail)
@@ -709,6 +709,7 @@ def get_probe_edit_form(probe_class):
     """get the form to edit a Probe"""
 
     probe_obj = Factory.create_obj(probe_class)
+
     probe_info = probe_obj.get_plugin_vars()
     probe_vars = ProbeVars(
         None, probe_class, probe_obj.get_default_parameter_values())

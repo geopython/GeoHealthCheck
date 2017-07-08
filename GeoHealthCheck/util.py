@@ -165,3 +165,18 @@ def geocode(value, spatial_keyword_type='hostname'):
             LOGGER.exception(msg)
             raise ValueError(msg)
     return []
+
+
+def transform_bbox(epsg1, epsg2, bbox):
+    """
+    convenience function to transform a bbox array
+    """
+
+    import pyproj
+
+    p1 = pyproj.Proj(init=epsg1)
+    p2 = pyproj.Proj(init=epsg2)
+    ll = pyproj.transform(p1, p2, bbox[0], bbox[1])
+    ul = pyproj.transform(p1, p2, bbox[2], bbox[3])
+
+    return list(ll) + list(ul)

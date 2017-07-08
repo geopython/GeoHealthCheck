@@ -89,7 +89,7 @@ GHC_PLUGINS = [
     # Probes
     'GeoHealthCheck.plugins.probe.owsgetcaps',
     'GeoHealthCheck.plugins.probe.wms',
-    'GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox',
+    'GeoHealthCheck.plugins.probe.wfs',
     'GeoHealthCheck.plugins.probe.tms',
     'GeoHealthCheck.plugins.probe.http',
     'GeoHealthCheck.plugins.probe.sta',

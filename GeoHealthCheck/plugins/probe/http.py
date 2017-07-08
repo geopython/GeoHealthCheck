@@ -17,6 +17,7 @@ class HttpGet(Probe):
         },
         'GeoHealthCheck.plugins.check.checks.ContainsStrings': {},
         'GeoHealthCheck.plugins.check.checks.NotContainsStrings': {},
+        'GeoHealthCheck.plugins.check.checks.HttpHasContentType': {}
     }
     """Checks avail"""
 

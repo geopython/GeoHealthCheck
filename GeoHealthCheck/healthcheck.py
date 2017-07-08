@@ -64,7 +64,7 @@ def run_test_resource(resource):
 
 
 def sniff_test_resource(config, resource_type, url):
-    """tests a service and provides run metrics"""
+    """tests a Resource endpoint for general compliance"""
 
     if resource_type not in RESOURCE_TYPES.keys():
         msg = gettext('Invalid resource type')
@@ -84,7 +84,7 @@ def sniff_test_resource(config, resource_type, url):
         elif resource_type == 'OSGeo:TMS':
             ows = TileMapService(url)
         elif resource_type == 'OGC:WFS':
-            ows = WebFeatureService(url)
+            ows = WebFeatureService(url, version='1.1.0')
         elif resource_type == 'OGC:WCS':
             ows = WebCoverageService(url, version='1.0.0')
         elif resource_type == 'OGC:WPS':

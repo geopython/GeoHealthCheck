@@ -147,10 +147,11 @@ def get_query_field_term(query):
     return [field, term]
 
 
-def get_probes_avail(resource_type=None):
+def get_probes_avail(resource_type=None, resource=None):
     """
     Get all available Probes with their attributes.
     :param resource_type: optional resource type e.g. OGC:WMS
+    :param resource: optional Resource instance
     :return:
     """
 
@@ -165,6 +166,8 @@ def get_probes_avail(resource_type=None):
     result = dict()
     for probe_class in probe_classes:
         probe = Factory.create_obj(probe_class)
+        if resource:
+            probe.expand_params(resource)
         result[probe_class] = probe.get_plugin_vars()
 
     return result

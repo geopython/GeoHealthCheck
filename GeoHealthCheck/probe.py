@@ -70,6 +70,17 @@ class Probe(Plugin):
     def __init__(self):
         Plugin.__init__(self)
 
+    #
+    # Lifecycle : optionally expand params from Resource metadata
+    def expand_params(self, resource):
+        """
+        Called after creation. Use to expand PARAM_DEFS, e.g. from Resource
+        metadata like WMS Capabilities. See e.g. WmsGetMapV1 class.
+        :param resource:
+        :return: None
+        """
+        pass
+
     # Lifecycle
     def init(self, resource, probe_vars):
         """
@@ -81,9 +92,11 @@ class Probe(Plugin):
         :return: None
         """
         self._resource = resource
+
         self._probe_vars = probe_vars
         self._parameters = probe_vars.parameters
         self._check_vars = probe_vars.check_vars
+
         self.response = None
 
         # Create ProbeResult object that gathers all results for single Probe
@@ -171,9 +184,11 @@ class Probe(Plugin):
         request_string = None
         if self.REQUEST_TEMPLATE:
             request_string = self.REQUEST_TEMPLATE
+            if '?' in url_base and self.REQUEST_TEMPLATE[0] == '?':
+                self.REQUEST_TEMPLATE = '&' + self.REQUEST_TEMPLATE[1:]
 
-            if self._probe_vars.parameters:
-                request_parms = self._probe_vars.parameters
+            if self._parameters:
+                request_parms = self._parameters
                 param_defs = self.get_param_defs()
 
                 # Expand string list array to comma separated string
@@ -207,11 +222,11 @@ class Probe(Plugin):
     def run_request(self):
         """ Run actual request to service"""
         try:
-            self.result.start()
             self.before_request()
+            self.result.start()
             self.perform_request()
-            self.after_request()
             self.result.stop()
+            self.after_request()
         except:
             # We must never bailout because of Exception
             # in Probe.
