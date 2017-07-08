@@ -197,6 +197,8 @@ class WfsGetFeatureBboxAll(WfsGetFeatureBbox):
 
     def __init__(self):
         WfsGetFeatureBbox.__init__(self)
+        self.wfs = None
+        self.feature_types = None
 
     # Overridden: expand param-ranges from WFS metadata
     # from single-layer GetFeature parent Probe and set layers
@@ -209,19 +211,27 @@ class WfsGetFeatureBboxAll(WfsGetFeatureBbox):
         self.PARAM_DEFS['type_name']['value'] = val
         self.PARAM_DEFS['type_name']['default'] = val
 
-    def perform_request(self):
-        """ Perform actual request to service, overridden from base class"""
+    def before_request(self):
+        """ Before request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
         try:
-            wfs = WebFeatureService(self._resource.url, version='1.1.0')
-            feature_types = wfs.contents.keys()
+            self.wfs = WebFeatureService(self._resource.url, version='1.1.0')
+            self.feature_types = self.wfs.contents.keys()
         except Exception as err:
             self.result.set(False, str(err))
+
+    def perform_request(self):
+        """ Perform actual request to service, overridden from base class"""
+
+        if not self.feature_types:
+            self.result.set(False, 'Found no WFS Feature Types')
             return
 
+        self.result.start()
+
         results_failed_total = []
-        for feature_type in feature_types:
+        for feature_type in self.feature_types:
             self._parameters['type_name'] = feature_type
 
             # Let the templated parent perform

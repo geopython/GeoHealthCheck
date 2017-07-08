@@ -156,7 +156,7 @@ class TmsGetTileAll(TmsGetTile):
         self.PARAM_DEFS['extension']['default'] = extension_val
 
     def before_request(self):
-        """ Perform actual request to service, overridden from base class"""
+        """ Before request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
         try:
@@ -171,8 +171,9 @@ class TmsGetTileAll(TmsGetTile):
         if not self.layers:
             self.result.set(False, 'Found no TMS Layers')
             return
-        
+
         self.result.start()
+
         results_failed_total = []
         for layer_name in self.layers.keys():
             # Layer name is last part of full URL

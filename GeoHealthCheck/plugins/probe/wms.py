@@ -157,6 +157,8 @@ class WmsGetMapV1All(WmsGetMapV1):
 
     def __init__(self):
         WmsGetMapV1.__init__(self)
+        self.wms = None
+        self.layers = None
 
     # Overridden: expand param-ranges from WMS metadata
     # from single-layer GetMap parent Probe and set layers
@@ -169,19 +171,27 @@ class WmsGetMapV1All(WmsGetMapV1):
         self.PARAM_DEFS['layers']['value'] = val
         self.PARAM_DEFS['layers']['default'] = val
 
-    def perform_request(self):
-        """ Perform actual request to service, overridden from base class"""
+    def before_request(self):
+        """ Before request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
         try:
-            wms = WebMapService(self._resource.url)
-            layers = wms.contents.keys()
+            self.wms = WebMapService(self._resource.url)
+            self.layers = self.wms.contents.keys()
         except Exception as err:
             self.result.set(False, str(err))
+
+    def perform_request(self):
+        """ Perform actual request to service, overridden from base class"""
+
+        if not self.layers:
+            self.result.set(False, 'Found no WMS Layers')
             return
 
+        self.result.start()
+
         results_failed_total = []
-        for layer in layers:
+        for layer in self.layers:
             self._parameters['layers'] = [layer]
 
             # Let the templated parent perform
