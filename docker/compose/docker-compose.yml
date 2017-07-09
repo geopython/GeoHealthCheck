@@ -65,6 +65,7 @@ services:
       - geohealthcheck-cron-hourly
       - geohealthcheck-cron-daily
     environment:
+      # May see warnings, see https://github.com/blacklabelops/rsnapshot/issues/2 but ok.
       JOB_NAME1: ghc-cron-hourly
       JOB_COMMAND1: docker start $$(docker ps -a -f label=io.ghc-cron-hourly=true --format="{{.ID}}")
       JOB_TIME1: 0 0 *
