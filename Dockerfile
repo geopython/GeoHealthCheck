@@ -20,8 +20,6 @@ ENV ADMIN_NAME admin
 ENV ADMIN_PWD admin
 ENV ADMIN_EMAIL admin.istrator@mydomain.com
 ENV SQLALCHEMY_DATABASE_URI 'sqlite:////GeoHealthCheck/DB/data.db'
-ENV HOST 0.0.0.0
-ENV PORT 80
 ENV SECRET_KEY 'd544ccc37dc3ad214c09b1b7faaa64c60351d5c8bb48b342'
 ENV GHC_RETENTION_DAYS 30
 ENV GHC_RUN_FREQUENCY 'hourly'
@@ -39,6 +37,13 @@ ENV GHC_SMTP_TLS False
 ENV GHC_SMTP_SSL False
 ENV GHC_SMTP_USERNAME None
 ENV GHC_SMTP_PASSWORD None
+
+# WSGI server settings, assumed is gunicorn
+ENV HOST 0.0.0.0
+ENV PORT 80
+ENV WSGI_WORKERS 4
+ENV WSGI_WORKER_TIMEOUT 6000
+ENV WSGI_WORKER_CLASS 'eventlet'
 
 # GHC Core Plugins modules annd/or classes, seldom needed to set:
 # if not specified here or in Container environment
@@ -58,8 +63,9 @@ RUN apk add --no-cache --virtual .build-deps gcc build-base linux-headers postgr
 # Add standard files and Add/override Plugins
 # Alternative Entrypoints to run GHC jobs
 # Override default Entrypoint with these on Containers
-ADD docker/install.sh docker/entrypoint.sh docker/config_site.py docker/cron-jobs-daily.sh docker/cron-jobs-hourly.sh docker/plugins /
-RUN	chmod a+x /cron-jobs-*.sh
+ADD docker/install.sh docker/configure.sh docker/run.sh \
+	docker/config_site.py docker/cron-jobs-daily.sh docker/cron-jobs-hourly.sh docker/plugins /
+RUN	chmod a+x /*.sh
 
 # Add Source Code
 ADD . /GeoHealthCheck
@@ -73,4 +79,4 @@ VOLUME ["/GeoHealthCheck/DB/"]
 
 EXPOSE ${PORT}
 
-ENTRYPOINT /entrypoint.sh
+ENTRYPOINT /configure.sh && /run.sh

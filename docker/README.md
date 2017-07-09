@@ -30,13 +30,16 @@ where the [Dockerfile](../Dockerfile) resides, and issue:
 docker build -t geopython/geohealthcheck .
 ```
 
+At this point you may override several files that are copied into the Docker image.
+For example [run.sh](run.sh) which launches GHC using the robust `gunicorn` WSGI server.
+
 ## Run
 
 ```
 docker run -d --name GeoHealthCheck -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 ```
 
-go to http://localhost:8083.
+go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host).
 
 NB this runs GHC standalone with a `SQLite` DB, but without the cron-jobs that perform the healthchecks.
 You may schedule the cron-jobs using the local cron system with the 
@@ -62,7 +65,10 @@ regular Unix `cron` does not play nice with Docker.
 To run (`-d` allows running in background):
 
 ```
+cd docker/compose
 docker-compose -f docker-compose.yml up  [-d]
+
+# go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host)
 
 ```
   
@@ -78,6 +84,9 @@ To run, specify both `.yml` files:
 ```
 cd docker/compose
 docker-compose -f docker-compose.yml -f docker-compose.postgis.yml up [-d]
+
+# go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host)
+
 
 ```
 
@@ -100,7 +109,81 @@ psql -h postgis_ghc -U ghc ghc
 
 The PG DB data is kept in a Docker volume usually located at  
 `/var/lib/docker/volumes/docker_ghc_pgdb/_data`. 
- 
+
+## Cronjobs
+
+Cronjobs via `docker-compose` are scheduled using [Jobber Cron](https://github.com/blacklabelops/jobber-cron/).
+See this snippet from the  [docker-compose.yml](compose/docker-compose.yml):
+
+```
+jobber:
+	image: blacklabelops/jobber:docker.v1.1
+	depends_on:
+	  - geohealthcheck-cron-hourly
+	  - geohealthcheck-cron-daily
+	environment:
+	  # May see warnings, see https://github.com/blacklabelops/rsnapshot/issues/2 but ok.
+	  JOB_NAME1: ghc-cron-hourly
+	  JOB_COMMAND1: docker start $$(docker ps -a -f label=io.ghc-cron-hourly=true --format="{{.ID}}")
+	  JOB_TIME1: 0 0 *
+	  JOB_NAME2: ghc-cron-daily
+	  JOB_COMMAND2: docker start $$(docker ps -a -f label=io.ghc-cron-daily=true --format="{{.ID}}")
+	  JOB_TIME2: 0 45 0 *
+	volumes:
+	  - /var/run/docker.sock:/var/run/docker.sock
+
+```
+
+This configures two jobs `geohealthcheck-cron-hourly` (every whole hour) and
+`geohealthcheck-cron-daily` (every night at 00:45). Both run the GHC Docker image with different
+containers and entrypoints. You may want to setup additional jobs e.g. to backup the database.
+For example the daily cron-job entry looks like:
+
+```
+geohealthcheck-cron-daily:
+	image: geopython/geohealthcheck:latest
+	depends_on:
+	  - geohealthcheck
+	entrypoint:
+	  - bash
+	  - /cron-jobs-daily.sh
+	volumes:
+	  - ghc_sqlitedb:/GeoHealthCheck/DB
+	labels:
+	  io.ghc-cron-daily: 'true'
+```
+
+NB: the Jobber entries are run when docker-compose runs, there may be an error when the DB
+is not yet setup in the main GHC Docker Container, you can ignore this.
+
+NB you may see these Jobber warnings:
+
+```
+Failed to load jobs for open /dev/null/.jobber: not a directory: sshd
+Failed to load jobs for open /dev/null/.jobber: not a directory: guest
+
+```
+
+These are not errors, see [this Jobber issue](https://github.com/blacklabelops/rsnapshot/issues/2).
+Make sure your jobs are scheduled, via:
+
+
+```
+# Enter the container:
+$ docker exec -it compose_jobber_1 bash
+# List Jobber Jobs:
+$ jobber list
+
+NAME             STATUS  SEC/MIN/HR/MDAY/MTH/WDAY  NEXT RUN TIME         NOTIFY ON ERR  NOTIFY ON FAIL  ERR HANDLER
+ghc-cron-hourly  Good    0 0 * * * *               Jul  9 14:00:00 2017  false          false           Continue
+ghc-cron-daily   Good    0 45 0 * * *              Jul 10 00:45:00 2017  false          false           Continue
+
+# Test job execution:
+$ jobber test ghc-cron-hourly
+$ jobber test ghc-cron-daily
+
+```
+
 ## Configuration
 
 The default GHC configuration is specified within the [Dockerfile](../Dockerfile).
