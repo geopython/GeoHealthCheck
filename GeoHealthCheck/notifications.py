@@ -32,7 +32,7 @@ import email.utils
 import logging
 import smtplib
 
-from flask.ext.babel import gettext
+from flask_babel import gettext
 from util import render_template2
 
 LOGGER = logging.getLogger(__name__)

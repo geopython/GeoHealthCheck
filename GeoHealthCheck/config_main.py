@@ -29,6 +29,7 @@
 
 DEBUG = False
 SQLALCHEMY_ECHO = False
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
 # Alternative configuration for PostgreSQL database
 # SQLALCHEMY_DATABASE_URI = 'postgresql://user:password@host:port/database'
