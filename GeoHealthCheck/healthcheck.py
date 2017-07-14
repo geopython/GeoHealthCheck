@@ -41,7 +41,7 @@ from owslib.wps import WebProcessingService
 from owslib.csw import CatalogueServiceWeb
 from owslib.sos import SensorObservationService
 
-from flask.ext.babel import gettext
+from flask_babel import gettext
 from enums import RESOURCE_TYPES
 from probe import Probe
 from result import ResourceResult

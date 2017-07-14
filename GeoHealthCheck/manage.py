@@ -37,8 +37,8 @@
 # optional arguments:
 #   -h, --help  show this help message and exit
 
-from flask.ext.script import Manager
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 from init import DB, APP
 
 migrate = Migrate(APP, DB)

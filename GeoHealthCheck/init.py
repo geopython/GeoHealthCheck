@@ -29,7 +29,7 @@
 
 from flask import Flask
 
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 # from flask_sqlalchemy import SQLAlchemy
 
 APP = Flask(__name__)
