@@ -185,7 +185,7 @@ class WmsGetMapV1All(WmsGetMapV1):
 
         # Get capabilities doc to get all layers
         try:
-            self.wms = self.get_metadata_cached(self._resource.url,
+            self.wms = self.get_metadata_cached(self._resource,
                                                 version='1.1.1')
             self.layers = self.wms.contents.keys()
         except Exception as err:

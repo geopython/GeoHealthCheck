@@ -225,7 +225,7 @@ class WfsGetFeatureBboxAll(WfsGetFeatureBbox):
 
         # Get capabilities doc to get all layers
         try:
-            self.wfs = self.get_metadata_cached(self._resource.url,
+            self.wfs = self.get_metadata_cached(self._resource,
                                                 version='1.1.0')
             self.feature_types = self.wfs.contents.keys()
         except Exception as err:
