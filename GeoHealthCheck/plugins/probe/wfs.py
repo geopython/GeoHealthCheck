@@ -117,13 +117,22 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         Probe.__init__(self)
         self.layer_count = 0
 
+    def get_metadata(self, resource, version='1.1.0'):
+        """
+        Get metadata, specific per Resource type.
+        :param resource:
+        :param version:
+        :return: Metadata object
+        """
+        return WebFeatureService(resource.url, version=version)
+
     # Overridden: expand param-ranges from WFS metadata
     def expand_params(self, resource):
 
         # Use WFS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
-            wfs = WebFeatureService(resource.url, version="1.1.0")
+            wfs = self.get_metadata_cached(resource, version='1.1.0')
             feature_types = wfs.contents
             feature_type_names = list(feature_types.keys())
             self.layer_count = len(feature_type_names)
@@ -216,7 +225,8 @@ class WfsGetFeatureBboxAll(WfsGetFeatureBbox):
 
         # Get capabilities doc to get all layers
         try:
-            self.wfs = WebFeatureService(self._resource.url, version='1.1.0')
+            self.wfs = self.get_metadata_cached(self._resource.url,
+                                                version='1.1.0')
             self.feature_types = self.wfs.contents.keys()
         except Exception as err:
             self.result.set(False, str(err))

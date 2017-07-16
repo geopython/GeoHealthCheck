@@ -100,13 +100,23 @@ class TmsGetTile(Probe):
         Probe.__init__(self)
         self.layer_count = 0
 
+    def get_metadata(self, resource, version='1.0.0'):
+        """
+        Get metadata, specific per Resource type.
+        :param resource:
+        :param version:
+        :return: Metadata object
+        """
+        return TileMapService(resource.url, version=version)
+
     # Overridden: expand param-ranges from WMS metadata
     def expand_params(self, resource):
 
         # Use WMS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
-            tms = TileMapService(resource.url, version='1.0.0')
+            tms = self.get_metadata_cached(resource, version='1.0.0')
+
             layers = tms.contents
             self.layer_count = len(layers)
 
@@ -160,7 +170,8 @@ class TmsGetTileAll(TmsGetTile):
 
         # Get capabilities doc to get all layers
         try:
-            self.tms = TileMapService(self._resource.url, version='1.0.0')
+            self.tms = self.get_metadata_cached(self._resource,
+                                                version='1.0.0')
             self.layers = self.tms.contents
         except Exception as err:
             self.result.set(False, str(err))

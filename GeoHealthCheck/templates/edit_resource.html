@@ -140,7 +140,7 @@
 
         // Issue #128: must use generated URL, but we do not yet have Probe class.
         // use dummy name and later substitute actual probe class
-        var url = "{{ url_for('get_probe_edit_form', probe_class='dummy') }}";
+        var url = "{{ url_for('get_probe_edit_form', probe_class='dummy', resource_identifier=resource.identifier) }}";
         url = url.replace('dummy', probe_class);
 
         $.get(url, function(result) {
