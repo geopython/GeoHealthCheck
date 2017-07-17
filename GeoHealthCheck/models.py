@@ -380,9 +380,6 @@ def load_data(file_path):
     DB.drop_all()
     db_commit()
 
-    # In particular for Postgres to drop connections
-    DB.session.close()
-
     DB.create_all()
 
     with open(file_path) as ff:
@@ -453,7 +450,6 @@ def load_data(file_path):
         DB.session.add(check)
 
     db_commit()
-    DB.session.close()
 
 
 # commit or rollback shorthand
@@ -550,6 +546,7 @@ if __name__ == '__main__':
                       % (str(run1.success), run1.response_time))
 
                 DB.session.add(run1)
+
                 # commit or rollback each run to avoid long-lived transactions
                 # see https://github.com/geopython/GeoHealthCheck/issues/14
                 db_commit()
@@ -562,6 +559,7 @@ if __name__ == '__main__':
                         # Don't bail out on failure in order to commit the Run
                         msg = str(err)
                         print('error notifying: %s' % msg)
+
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
         elif sys.argv[1] == 'flush':
@@ -574,3 +572,5 @@ if __name__ == '__main__':
                     print('Run older than %d days. Deleting' % days_old)
                     DB.session.delete(run1)
             db_commit()
+
+        DB.session.remove()

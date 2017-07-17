@@ -93,6 +93,11 @@ def before_request():
         g.current_lang = 'en'
 
 
+@APP.teardown_appcontext
+def shutdown_session(exception=None):
+    DB.session.remove()
+
+
 @BABEL.localeselector
 def get_locale():
     return g.get('current_lang', 'en')
