@@ -380,9 +380,6 @@ def load_data(file_path):
     DB.drop_all()
     db_commit()
 
-    # In particular for Postgres to drop connections
-    DB.session.close()
-
     DB.create_all()
 
     with open(file_path) as ff:
@@ -453,7 +450,6 @@ def load_data(file_path):
         DB.session.add(check)
 
     db_commit()
-    DB.session.close()
 
 
 # commit or rollback shorthand
@@ -464,6 +460,8 @@ def db_commit():
         DB.session.rollback()
         msg = str(err)
         print(msg)
+    finally:
+        DB.session.remove()
 
 
 if __name__ == '__main__':
