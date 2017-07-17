@@ -703,12 +703,17 @@ def delete(resource_identifier):
         return redirect(url_for(request.referrer))
 
 
+@APP.route('/probe/<string:probe_class>/<int:resource_identifier>/edit_form')
 @APP.route('/probe/<string:probe_class>/edit_form')
 @login_required
-def get_probe_edit_form(probe_class):
+def get_probe_edit_form(probe_class, resource_identifier=None):
     """get the form to edit a Probe"""
 
     probe_obj = Factory.create_obj(probe_class)
+    if resource_identifier:
+        resource = views.get_resource_by_id(resource_identifier)
+        if resource:
+            probe_obj.expand_params(resource)
 
     probe_info = probe_obj.get_plugin_vars()
     probe_vars = ProbeVars(
@@ -818,13 +823,18 @@ def recover():
 
 @APP.route('/api/v1.0/probes-avail/')
 @APP.route('/api/v1.0/probes-avail/<resource_type>')
-def api_probes_avail(resource_type=None):
+@APP.route('/api/v1.0/probes-avail/<resource_type>/<int:resource_id>')
+def api_probes_avail(resource_type=None, resource_id=None):
     """
     Get available (configured) Probes for this
     installation, optional for resource type
     """
+    resource = None
+    if resource_id:
+        resource = views.get_resource_by_id(resource_id)
 
-    probes = views.get_probes_avail(resource_type)
+    probes = views.get_probes_avail(resource_type=resource_type,
+                                    resource=resource)
     return jsonify(probes)
 
 

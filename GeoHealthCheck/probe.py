@@ -1,4 +1,5 @@
 import sys
+import datetime
 import logging
 import requests
 from plugin import Plugin
@@ -67,6 +68,13 @@ class Probe(Plugin):
     should be added to Probe on creation.
     """
 
+    METADATA_CACHE = {}
+    """
+    Cache for metadata, like capabilities documents or OWSLib Service
+    instances. Saves doing multiple requests/responses. In particular for
+    endpoints with 50+ Layers.
+    """
+
     def __init__(self):
         Plugin.__init__(self)
 
@@ -80,6 +88,52 @@ class Probe(Plugin):
         :return: None
         """
         pass
+
+    def get_metadata(self, resource, version='any'):
+        """
+        Get metadata, specific per Resource type.
+        :param resource:
+        :param version:
+        :return: Metadata object
+        """
+        return 'md'
+
+    def get_metadata_cached(self, resource, version='any'):
+        """
+        Get metadata, specific per Resource type, get from cache
+        if cached.
+        :param resource:
+        :param version:
+        :return: Metadata object
+        """
+
+        key = '%s_%s_%s' % (resource.url, resource.resource_type,
+                            version)
+
+        metadata = None
+        if key in Probe.METADATA_CACHE:
+            entry = Probe.METADATA_CACHE[key]
+            delta = datetime.datetime.utcnow() - entry['time']
+            metadata = entry['metadata']
+
+            # Don't keep cache forever, refresh every 2 hours
+            if delta.seconds > 7200:
+                entry = Probe.METADATA_CACHE.pop(key)
+                del entry
+                metadata = None
+
+        if not metadata:
+            # Get actual metadata, Resource-type specifc
+            metadata = self.get_metadata(resource, version)
+            if metadata:
+                # Store entry with time, for expiry later
+                entry = {
+                    "metadata": metadata,
+                    "time": datetime.datetime.utcnow()
+                }
+                Probe.METADATA_CACHE[key] = entry
+
+        return metadata
 
     # Lifecycle
     def init(self, resource, probe_vars):

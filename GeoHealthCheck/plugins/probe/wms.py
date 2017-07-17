@@ -99,13 +99,22 @@ class WmsGetMapV1(Probe):
         Probe.__init__(self)
         self.layer_count = 0
 
+    def get_metadata(self, resource, version='1.1.1'):
+        """
+        Get metadata, specific per Resource type.
+        :param resource:
+        :param version:
+        :return: Metadata object
+        """
+        return WebMapService(resource.url, version=version)
+
     # Overridden: expand param-ranges from WMS metadata
     def expand_params(self, resource):
 
         # Use WMS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
-            wms = WebMapService(resource.url)
+            wms = self.get_metadata_cached(resource, version='1.1.1')
             layers = wms.contents
             self.layer_count = len(layers)
 
@@ -176,7 +185,8 @@ class WmsGetMapV1All(WmsGetMapV1):
 
         # Get capabilities doc to get all layers
         try:
-            self.wms = WebMapService(self._resource.url)
+            self.wms = self.get_metadata_cached(self._resource,
+                                                version='1.1.1')
             self.layers = self.wms.contents.keys()
         except Exception as err:
             self.result.set(False, str(err))

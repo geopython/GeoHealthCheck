@@ -12,7 +12,7 @@
         <a href="{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
         {% endif %}
         {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
-        <a href="{{ url_for('edit_resource', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Edit') }}</button></a>
+        <a href="{{ url_for('edit_resource', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="resource_edit" type="button" class="btn btn-primary btn-sm">{{ _('Edit') }}</button></a>
         <a href="{{ url_for('delete', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button id="confirm-delete" type="button" class="btn btn-danger btn-sm">{{ _('Delete') }}</button></a>
 
         {% endif %}
@@ -131,14 +131,18 @@
 {% block extrafoot %}
 <script type="text/javascript">
 
-    var all_tags = {{ tags.keys()|tojson }};
-
     {% if g.user.is_authenticated() %}
     $('#confirm-delete').click(function() {
         if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
             return false;
         }
     });
+
+    $('#resource_edit').click(function() {
+        // $('#flashed_message').append('<br/><strong>Getting metadata for Resource...</strong>');
+        return true;
+    });
+
     {% endif %}
 
     $('#resource-table').dataTable({
@@ -146,50 +150,6 @@
         'ordering': false,
         'searching': false,
         'lengthChange': false
-    });
-
-    $('#title_edit').click(function() {
-        var title_value = $('#resource_title').html();
-        // catch/stop recursive display
-        if (title_value.search('<input') > -1) {
-            return false;
-        }
-        var html_text = '<input type="text" id="input_resource_title" name="resource_title_value" value="' + title_value + '"/>';
-        var html_text2 = '<button id="title_save" type="button" class="btn btn-default btn-sm">{{ _('Save') }}</button>';
-        html_text2 += '<button id="title_cancel" type="button" class="btn btn-default btn-sm">{{ _('Cancel') }}</button>';
-
-        $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
-
-        $('#resource_title').html(html_text);
-        $('#actions').html(html_text2);
-
-        $('#title_cancel').click(function() {
-            $('#resource_title').html(title_value);
-            $('#resource_tags').attr('disabled', true);
-            $('#actions').empty();
-            return false;
-        });
-
-        $('#title_save').click(function() {
-            var new_title = $('input[name="resource_title_value"]').val();
-            var new_tags = $('#resource_tags').val();
-            $('#resource_title').html(new_title);
-            $('#resource_title_h1').html(new_title);
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
-                data: JSON.stringify({ title: new_title, tags: new_tags }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(data){alert(data);},
-                failure: function(errMsg) {
-                    alert(errMsg);
-                }
-            });
-            $('#resource_tags').attr('disabled', true);
-            $('#actions').empty();
-            return false;
-        });
     });
 
     var run_data = {{ resource.runs_to_json()|safe }};
