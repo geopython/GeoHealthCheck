@@ -3,9 +3,18 @@
 Installation
 ============
 
-Easiest and quickest way is to use Docker/Docker Compose with the GHC images hosted on
-[Docker Hub](https://hub.docker.com/r/geopython/geohealthcheck).
-See the [GHC Docker Readme](https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md) for a full guide.
+Below are installation notes for GeoHealthCheck (GHC).
+
+Docker
+------
+
+Easiest and quickest install/run
+for GHC is with Docker/Docker Compose using the GHC images hosted on
+`Docker Hub <https://hub.docker.com/r/geopython/geohealthcheck>`_.
+
+See the
+`GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
+for a full guide.
 
 Requirements
 ------------
@@ -16,8 +25,9 @@ Flask-Migrate with Alembic and Flask-Script support is used for database upgrade
 
 OWSLib is used to interact with OGC Web Services.
 
-These dependencies are automatically installed (see below). Paver is used
-for installation and management. `Cron` is used for scheduling the actual healthchecks.
+These dependencies are automatically installed (see below). ``Paver`` is used
+for installation and management. ``Cron`` is used for scheduling the actual
+healthchecks.
 
 Install
 -------
