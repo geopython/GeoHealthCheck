@@ -27,10 +27,13 @@
 #
 # =================================================================
 
+import logging
 import models
 import util
 from plugin import Plugin
 from factory import Factory
+
+LOGGER = logging.getLogger(__name__)
 
 
 def list_resources(resource_type=None, query=None, tag=None):
@@ -166,8 +169,14 @@ def get_probes_avail(resource_type=None, resource=None):
     result = dict()
     for probe_class in probe_classes:
         probe = Factory.create_obj(probe_class)
-        if resource:
-            probe.expand_params(resource)
-        result[probe_class] = probe.get_plugin_vars()
+        if resource and probe:
+            try:
+                probe.expand_params(resource)
+            except Exception as err:
+                msg = 'Cannot expand plugin vars for %s err=%s' \
+                      % (probe_class, str(err))
+                LOGGER.warning(msg)
+            else:
+                result[probe_class] = probe.get_plugin_vars()
 
     return result

@@ -30,6 +30,7 @@
 # =================================================================
 
 import csv
+import logging
 from datetime import datetime, timedelta
 from StringIO import StringIO
 
@@ -49,6 +50,7 @@ from factory import Factory
 from util import render_template2, send_email
 import views
 
+LOGGER = logging.getLogger(__name__)
 APP = Flask(__name__)
 BABEL = Babel(APP)
 APP.config.from_pyfile('config_main.py')
@@ -481,9 +483,10 @@ def add():
         APP.config, resource_type, url)
 
     if not success:
+        LOGGER.exception(message)
         flash(message, 'danger')
-        return redirect(url_for('add', lang=g.current_lang,
-                                resource_type=resource_type))
+        # return redirect(url_for('add', lang=g.current_lang,
+        #                         resource_type=resource_type))
 
     if tags:
         for tag in tags:

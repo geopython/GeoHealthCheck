@@ -47,6 +47,7 @@ GHC_ADMIN_EMAIL = 'you@example.com'
 GHC_NOTIFICATIONS_EMAIL = ['you2@example.com']
 GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
 GHC_SITE_URL = 'http://host'
+GHC_METADATA_CACHE_SECS = 7200
 
 GHC_SMTP = {
     'server': None,

@@ -78,7 +78,13 @@ def sniff_test_resource(config, resource_type, url):
 
     try:
         if resource_type == 'OGC:WMS':
-            ows = WebMapService(url)
+            try:
+                LOGGER.debug('Trying a WMS 1.3.0 GetCapabilities request')
+                ows = WebMapService(url, version='1.3.0')
+            except Exception as err:
+                LOGGER.warning('WMS 1.3.0 support not found: %s', err)
+                LOGGER.debug('Trying a WMS 1.1.1 GetCapabilities req...')
+                ows = WebMapService(url, version='1.1.1')
         elif resource_type == 'OGC:WMTS':
             ows = WebMapTileService(url)
         elif resource_type == 'OSGeo:TMS':
@@ -142,7 +148,8 @@ def sniff_test_resource(config, resource_type, url):
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
     except Exception as err:
-        msg = str(err)
+        title = 'Untitled'
+        msg = 'Getting metadata failed: %s' % str(err)
         LOGGER.exception(msg)
         message = msg
         success = False
