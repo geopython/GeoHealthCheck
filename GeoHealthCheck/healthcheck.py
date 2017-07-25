@@ -148,7 +148,6 @@ def sniff_test_resource(config, resource_type, url):
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
 
-        # Issue
         title = title.decode('utf-8')
     except Exception as err:
         title = 'Untitled'

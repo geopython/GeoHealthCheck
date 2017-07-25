@@ -485,8 +485,6 @@ def add():
     if not success:
         LOGGER.exception(message)
         flash(message, 'danger')
-        # return redirect(url_for('add', lang=g.current_lang,
-        #                         resource_type=resource_type))
 
     if tags:
         for tag in tags:
