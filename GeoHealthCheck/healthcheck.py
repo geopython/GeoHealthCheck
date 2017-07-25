@@ -147,6 +147,8 @@ def sniff_test_resource(config, resource_type, url):
                 title = ows.identification.title
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
+        # Issue 
+        title = title.decode('utf-8')
     except Exception as err:
         title = 'Untitled'
         msg = 'Getting metadata failed: %s' % str(err)
@@ -158,7 +160,6 @@ def sniff_test_resource(config, resource_type, url):
 
     delta = end_time - start_time
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
-
     return [title, success, response_time, message, start_time]
 
 
