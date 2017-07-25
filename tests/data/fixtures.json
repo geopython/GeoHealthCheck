@@ -72,7 +72,7 @@
       "owner": "admin",
       "resource_type": "OSGeo:TMS",
       "title": "Tile Map Service",
-      "url": "http://geodata.nationaalgeoregister.nl/tms/1.0.0",
+      "url": "http://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0",
       "tags": [
         "tiling",
         "pdok"
