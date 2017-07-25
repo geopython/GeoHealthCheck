@@ -165,9 +165,10 @@ def sniff_test_resource(config, resource_type, url):
 
 if __name__ == '__main__':
     import sys
+    from init import App
     if len(sys.argv) < 3:
         print('Usage: %s <resource_type> <url>' % sys.argv[0])
         sys.exit(1)
 
     # TODO: need APP.config here, None for now
-    print(sniff_test_resource(None, sys.argv[1], sys.argv[2]))
+    print(sniff_test_resource(App.get_config(), sys.argv[1], sys.argv[2]))

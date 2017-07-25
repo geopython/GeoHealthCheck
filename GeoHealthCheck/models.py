@@ -30,8 +30,6 @@
 
 import json
 import logging
-import sys
-import os
 from datetime import datetime
 from sqlalchemy import func
 
@@ -40,14 +38,11 @@ from sqlalchemy.orm import deferred
 import util
 from enums import RESOURCE_TYPES
 from factory import Factory
-from init import DB
+from init import App
 from notifications import notify
 
+DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
-
-# Needed to find Plugins
-GHC_HOME_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append('%s/..' % GHC_HOME_DIR)
 
 
 class Run(DB.Model):
@@ -464,11 +459,8 @@ def db_commit():
 
 if __name__ == '__main__':
     import sys
-    from flask import Flask
 
-    APP = Flask(__name__)
-    APP.config.from_pyfile('config_main.py')
-    APP.config.from_pyfile('../instance/config_site.py')
+    APP = App.get_app()
 
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':

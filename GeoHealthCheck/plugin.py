@@ -3,6 +3,7 @@ from factory import Factory
 import inspect
 import collections
 import copy
+from init import App
 
 
 class Plugin(object):
@@ -139,27 +140,6 @@ class Plugin(object):
         e.g. `filters=[('RESOURCE_TYPE', 'OGC:*'),
         ('RESOURCE_TYPE', 'OGC:WMS')]`.
         """
-        from GeoHealthCheck.init import APP
-
-        # Plugins (via Docker ENV) must be list, but may have been
-        # specified as comma-separated string, or older set notation
-        def to_list(obj):
-            obj_type = type(obj)
-            if obj_type is str:
-                return obj.replace(' ', '').split(',')
-            elif obj_type is list:
-                return obj
-            elif obj_type is set:
-                return list(obj)
-            else:
-                raise TypeError('unknown type for Plugin: %s' + str(obj_type))
-
-        APP.config['GHC_PLUGINS'] = to_list(APP.config['GHC_PLUGINS'])
-        APP.config['GHC_USER_PLUGINS'] = \
-            to_list(APP.config['GHC_USER_PLUGINS'])
-
-        # Concatenate core and user Plugins
-        plugins = APP.config['GHC_PLUGINS'] + APP.config['GHC_USER_PLUGINS']
 
         result = []
         baseclass = Factory.create_class(baseclass)
@@ -174,6 +154,7 @@ class Plugin(object):
                         result.append(plugin_name)
                         break
 
+        plugins = App.get_plugins()
         for plugin_name in plugins:
             try:
 
