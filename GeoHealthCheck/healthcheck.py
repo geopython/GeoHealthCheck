@@ -147,7 +147,8 @@ def sniff_test_resource(config, resource_type, url):
                 title = ows.identification.title
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
-        # Issue 
+
+        # Issue
         title = title.decode('utf-8')
     except Exception as err:
         title = 'Untitled'
