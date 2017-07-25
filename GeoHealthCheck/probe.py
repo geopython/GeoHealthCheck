@@ -116,8 +116,8 @@ class Probe(Plugin):
             delta = datetime.datetime.utcnow() - entry['time']
             metadata = entry['metadata']
 
-            # Don't keep cache forever, refresh every 2 hours
-            if delta.seconds > 7200:
+            # Don't keep cache forever, refresh every N mins
+            if delta.seconds > 900:
                 entry = Probe.METADATA_CACHE.pop(key)
                 del entry
                 metadata = None
