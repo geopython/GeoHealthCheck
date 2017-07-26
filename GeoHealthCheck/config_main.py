@@ -48,6 +48,11 @@ GHC_NOTIFICATIONS_EMAIL = ['you2@example.com']
 GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
 GHC_SITE_URL = 'http://host'
 
+# Some GetCaps docs are huge. This allows
+# caching them for N seconds. Set to -1 to
+# disable caching.
+GHC_METADATA_CACHE_SECS = 900
+
 GHC_SMTP = {
     'server': None,
     'port': None,

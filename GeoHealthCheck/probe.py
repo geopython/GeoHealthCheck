@@ -3,6 +3,7 @@ import datetime
 import logging
 import requests
 from plugin import Plugin
+from init import App
 
 from factory import Factory
 from result import ProbeResult
@@ -116,8 +117,8 @@ class Probe(Plugin):
             delta = datetime.datetime.utcnow() - entry['time']
             metadata = entry['metadata']
 
-            # Don't keep cache forever, refresh every 2 hours
-            if delta.seconds > 7200:
+            # Don't keep cache forever, refresh every N mins
+            if delta.seconds > App.get_config()['GHC_METADATA_CACHE_SECS']:
                 entry = Probe.METADATA_CACHE.pop(key)
                 del entry
                 metadata = None
@@ -125,7 +126,7 @@ class Probe(Plugin):
         if not metadata:
             # Get actual metadata, Resource-type specifc
             metadata = self.get_metadata(resource, version)
-            if metadata:
+            if metadata and App.get_config()['GHC_METADATA_CACHE_SECS'] > 0:
                 # Store entry with time, for expiry later
                 entry = {
                     "metadata": metadata,

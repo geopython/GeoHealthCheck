@@ -23,8 +23,10 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_SITE_URL**: url of the installation / deployment
 - **GHC_SMTP**:  configure SMTP settings if **GHC_NOTIFICATIONS** is enabled
 - **GHC_RELIABILITY_MATRIX**: classification scheme for grading resource
-- **GHC_PLUGINS**: list of Plugin classes or modules available on installation
+- **GHC_PLUGINS**: list of Core/built-in Plugin classes or modules available on installation
+- **GHC_USER_PLUGINS**: list of Plugin classes or modules provided by user (you)
 - **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
+- **GHC_METADATA_CACHE_SECS**: metadata, "Capabilities Docs", cache expiry time, default 900 secs, -1 to disable
 - **GHC_MAP**: default map settings
 
   - **url**: URL of TileLayer
@@ -32,6 +34,7 @@ You can override these settings in ``instance/config_site.py``:
   - **centre_long**: Centre longitude for homepage map
   - **maxzoom**: maximum zoom level
   - **subdomains**: available subdomains to help with parallel requests
+
 
 Enabling or disabling languages
 -------------------------------

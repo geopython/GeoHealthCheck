@@ -37,6 +37,7 @@ ENV GHC_SMTP_TLS False
 ENV GHC_SMTP_SSL False
 ENV GHC_SMTP_USERNAME None
 ENV GHC_SMTP_PASSWORD None
+ENV GHC_METADATA_CACHE_SECS 900
 
 # WSGI server settings, assumed is gunicorn
 ENV HOST 0.0.0.0
@@ -45,7 +46,7 @@ ENV WSGI_WORKERS 4
 ENV WSGI_WORKER_TIMEOUT 6000
 ENV WSGI_WORKER_CLASS 'eventlet'
 
-# GHC Core Plugins modules annd/or classes, seldom needed to set:
+# GHC Core Plugins modules and/or classes, seldom needed to set:
 # if not specified here or in Container environment
 # all GHC built-in Plugins will be active.
 #ENV GHC_PLUGINS 'GeoHealthCheck.plugins.probe.owsgetcaps,\

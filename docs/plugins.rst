@@ -14,7 +14,8 @@ Two Plugin types exist that can be extended: the `Probe` and `Check` class.
 Concepts
 --------
 
-GHC versions after May 1, 2017 perform healthchecks exclusively via Plugins (see :ref:`upgrade` how to upgrade from older versions). The basic concept
+GHC versions after May 1, 2017 perform healthchecks exclusively via Plugins
+(see :ref:`upgrade` how to upgrade from older versions). The basic concept
 is simple: each `Resource` (typically an OWS endpoint) has one or more `Probes`. During a
 GHC run (via `cron` or manually), GHC sequentually invokes the `Probes` for each `Resource`
 to determine the health (QoS) of the `Resource`.
@@ -22,7 +23,7 @@ to determine the health (QoS) of the `Resource`.
 A `Probe` typically
 implements a single request like a `WMS GetMap`. A `Probe` contains and applies one or more `Checks` (the other Plugin class).
 A `Check` implements typically a single check on the HTTP Response object of its parent `Probe`, for example
-if the HTTP response has no errors or if a `WMS GetMap` actually returns an image (content-type).
+if the HTTP response has no errors or if a `WMS GetMap` actually returns an image (content-type check).
 Each `Check` will supply a `CheckResult` to its parent `Probe`. The list of `CheckResults` will then ultimately
 determine the `ProbeResult`. The `Probe` will in turn supply the `ProbeResult` to its parent `ResourceResult`.
 The GHC healthchecker will then determine the final outcome of the `Run` (fail/success) for the `Resource`, adding
@@ -63,7 +64,7 @@ Each parameter (name) is itself a `dict` entry key that with the following key/v
 * `description`: description of the parameter,
 * `default`: parameter default value,
 * `required`: is parameter required?,
-* `range`: range of possible parameter values (array of strings), results in UI &lt;select&gt; box
+* `range`: range of possible parameter values (array of strings), results in UI dropdown selector
 
 A `Probe` should supply these additional class-attributes:
 

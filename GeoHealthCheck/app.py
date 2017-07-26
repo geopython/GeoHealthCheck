@@ -30,37 +30,37 @@
 # =================================================================
 
 import csv
+import logging
 from datetime import datetime, timedelta
 from StringIO import StringIO
 
-from flask import (flash, Flask, g, jsonify, redirect,
+from flask import (flash, g, jsonify, redirect,
                    render_template, request, url_for)
-from flask_babel import Babel, gettext
+from flask_babel import gettext
 from flask_login import (LoginManager, login_user, logout_user,
                          current_user, login_required)
 from flask_migrate import Migrate
 
 from __init__ import __version__
 from healthcheck import sniff_test_resource, run_test_resource
-from init import DB
+from init import App
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User
 from factory import Factory
 from util import render_template2, send_email
 import views
 
-APP = Flask(__name__)
-BABEL = Babel(APP)
-APP.config.from_pyfile('config_main.py')
-APP.config.from_pyfile('../instance/config_site.py')
-APP.secret_key = APP.config['SECRET_KEY']
+# Module globals for convenience
+LOGGER = logging.getLogger(__name__)
+APP = App.get_app()
+CONFIG = App.get_config()
+DB = App.get_db()
+BABEL = App.get_babel()
 
 MIGRATE = Migrate(APP, DB)
 
 LOGIN_MANAGER = LoginManager()
 LOGIN_MANAGER.init_app(APP)
-
-GHC_SITE_URL = APP.config['GHC_SITE_URL'].rstrip('/')
 
 LANGUAGES = (
     ('en', 'English'),
@@ -124,7 +124,7 @@ def next_page_refresh():
 
     now = datetime.now()
 
-    frequency = APP.config['GHC_RUN_FREQUENCY']
+    frequency = CONFIG['GHC_RUN_FREQUENCY']
 
     if frequency == 'hourly':  # get next hour
         now2 = now.replace(minute=0, second=0, microsecond=0)
@@ -154,16 +154,16 @@ def cssize_reliability(value, css_type=None):
 
     number = int(value)
 
-    if APP.config['GHC_RELIABILITY_MATRIX']['red']['min'] <= number <= \
-            APP.config['GHC_RELIABILITY_MATRIX']['red']['max']:
+    if CONFIG['GHC_RELIABILITY_MATRIX']['red']['min'] <= number <= \
+            CONFIG['GHC_RELIABILITY_MATRIX']['red']['max']:
         score = 'danger'
         panel = 'red'
-    elif (APP.config['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
-            APP.config['GHC_RELIABILITY_MATRIX']['orange']['max']):
+    elif (CONFIG['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
+            CONFIG['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
         panel = 'yellow'
-    elif (APP.config['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
-            APP.config['GHC_RELIABILITY_MATRIX']['green']['max']):
+    elif (CONFIG['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
+            CONFIG['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
         panel = 'green'
     else:  # should never really get here
@@ -243,7 +243,7 @@ def export():
     if request.url_rule.rule == '/json':
         json_dict = {'total': response['total'], 'resources': []}
         for r in response['resources']:
-            ghc_url = '%s/resource/%s' % (GHC_SITE_URL, r.identifier)
+            ghc_url = '%s/resource/%s' % (CONFIG['GHC_SITE_URL'], r.identifier)
             json_dict['resources'].append({
                 'resource_type': r.resource_type,
                 'title': r.title,
@@ -273,7 +273,7 @@ def export():
         ]
         writer.writerow(header)
         for r in response['resources']:
-            ghc_url = '%s%s' % (GHC_SITE_URL,
+            ghc_url = '%s%s' % (CONFIG['GHC_SITE_URL'],
                                 url_for('get_resource_by_id',
                                         identifier=r.identifier))
             writer.writerow([
@@ -310,9 +310,9 @@ def export_resource(identifier):
 
     resource = views.get_resource_by_id(identifier)
 
-    history_csv = '%s/resource/%s/history/csv' % (GHC_SITE_URL,
+    history_csv = '%s/resource/%s/history/csv' % (CONFIG['GHC_SITE_URL'],
                                                   resource.identifier)
-    history_json = '%s/resource/%s/history/json' % (GHC_SITE_URL,
+    history_json = '%s/resource/%s/history/json' % (CONFIG['GHC_SITE_URL'],
                                                     resource.identifier)
     if 'json' in request.url_rule.rule:
         json_dict = {
@@ -429,11 +429,11 @@ def get_resource_by_id(identifier):
 @APP.route('/register', methods=['GET', 'POST'])
 def register():
     """register a new user"""
-    if not APP.config['GHC_SELF_REGISTER']:
+    if not CONFIG['GHC_SELF_REGISTER']:
         msg1 = gettext('This site is not configured for self-registration')
         msg2 = gettext('Please contact')
         msg = '%s.  %s %s' % (msg1, msg2,
-                              APP.config['GHC_ADMIN_EMAIL'])
+                              CONFIG['GHC_ADMIN_EMAIL'])
         return render_template('register.html', errmsg=msg)
     if request.method == 'GET':
         return render_template('register.html')
@@ -478,12 +478,11 @@ def add():
         return redirect(url_for('add', lang=g.current_lang))
 
     [title, success, response_time, message, start_time] = sniff_test_resource(
-        APP.config, resource_type, url)
+        CONFIG, resource_type, url)
 
     if not success:
+        LOGGER.exception(message)
         flash(message, 'danger')
-        return redirect(url_for('add', lang=g.current_lang,
-                                resource_type=resource_type))
 
     if tags:
         for tag in tags:
@@ -502,8 +501,8 @@ def add():
     checks_to_add = []
 
     # Always add a default Probe and Check(s)  from the GHC_PROBE_DEFAULTS conf
-    if resource_type in APP.config['GHC_PROBE_DEFAULTS']:
-        resource_settings = APP.config['GHC_PROBE_DEFAULTS'][resource_type]
+    if resource_type in CONFIG['GHC_PROBE_DEFAULTS']:
+        resource_settings = CONFIG['GHC_PROBE_DEFAULTS'][resource_type]
         probe_class = resource_settings['probe_class']
         if probe_class:
             # Add the default Probe
@@ -802,17 +801,17 @@ def recover():
         flash(gettext('Invalid username'), 'danger')
         return redirect(url_for('recover', lang=g.current_lang))
 
-    fromaddr = '%s <%s>' % (APP.config['GHC_SITE_TITLE'],
-                            APP.config['GHC_ADMIN_EMAIL'])
+    fromaddr = '%s <%s>' % (CONFIG['GHC_SITE_TITLE'],
+                            CONFIG['GHC_ADMIN_EMAIL'])
     toaddr = registered_user.email
 
     template_vars = {
-        'config': APP.config,
+        'config': CONFIG,
         'password': registered_user.password
     }
     msg = render_template2('recover_password_email.txt', template_vars)
 
-    send_email(APP.config['GHC_SMTP'], fromaddr, toaddr, msg)
+    send_email(CONFIG['GHC_SMTP'], fromaddr, toaddr, msg)
 
     flash(gettext('Password sent via email'), 'success')
 
