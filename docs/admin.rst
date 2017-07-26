@@ -91,16 +91,17 @@ Open the resource details by clicking its name in the resources list at the Dash
 Editing Resources
 -----------------
 
-Open the resource details by clicking its name in the resources list at the Dashboard page. Under the resource title is a blue Edit button.
+Open the resource details by clicking its name in the resources list at the Dashboard page.
+Under the resource title is a blue Edit button.
 
 The following aspects of a `Resource` can be edited:
 
 - Resource name
 - Resource Tags
-- Resource Probes
+- Resource Probes, select from "Probes Available"
 - For each Probe: Probe parameters
-- For each Probe: Probe Checks
-- For each Check: Probe parameters (TODO)
+- For each Probe: Probe Checks, select from "Checks Available"
+- For each Check: Checks parameters
 
 Scheduling Runs
 ---------------
