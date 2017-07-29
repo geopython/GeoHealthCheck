@@ -78,12 +78,12 @@
                             <ul class="nav nav-second-level">
                                 {% for rt in resource_types_counts %}
                                 {% if request.args.get('resource_type') == rt[0] %}
-                                <li><a class="active" href="{{ url_for('home', lang=g.current_lang, resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
+                                <li><a class="active" href="{{ url_for('resources', lang=g.current_lang, resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                 {% else %}
-                                <li><a href="{{ url_for('home', lang=g.current_lang, resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
+                                <li><a href="{{ url_for('resources', lang=g.current_lang, resource_type=rt[0]) }}">{{ resource_types[rt[0]]['label'] }} ({{ rt[1] }})</a></li>
                                 {% endif %}
                                 {% endfor %}
-                                <li><i><a href="{{ url_for('home', lang=g.current_lang) }}">{{ _('Show All') }}</a></i></li>
+                                <li><i><a href="{{ url_for('resources', lang=g.current_lang) }}">{{ _('Show All') }}</a></i></li>
                             </ul>
                         </li>
                     </ul>
@@ -93,12 +93,12 @@
                             <ul class="nav nav-second-level">
                                 {% for tag, count in tags.items() %}
                                 {% if request.args.get('tag') == tag %}
-                                <li><a class="active" href="{{ url_for('home', lang=g.current_lang, tag=tag) }}">{{ tag }} ({{ count }})</a></li>
+                                <li><a class="active" href="{{ url_for('resources', lang=g.current_lang, tag=tag) }}">{{ tag }} ({{ count }})</a></li>
                                 {% else %}
-                                <li><a href="{{ url_for('home', lang=g.current_lang, tag=tag) }}">{{ tag }} ({{ count }})</a></li>
+                                <li><a href="{{ url_for('resources', lang=g.current_lang, tag=tag) }}">{{ tag }} ({{ count }})</a></li>
                                 {% endif %}
                                 {% endfor %}
-                                <li><i><a href="{{ url_for('home', lang=g.current_lang) }}">{{ _('Show All') }}</a></i></li>
+                                <li><i><a href="{{ url_for('resources', lang=g.current_lang) }}">{{ _('Show All') }}</a></i></li>
                             </ul>
                         </li>
                     </ul>
@@ -123,6 +123,8 @@
                 {% endwith %}
                 </div>
                 {% block body %}
+                {% endblock %}
+                {% block extrabody %}
                 {% endblock %}
             </div>
         </div>

@@ -418,6 +418,23 @@ def settings():
     pass
 
 
+@APP.route('/resources')
+def resources():
+    """lists resources with optional filter"""
+
+    resource_type = None
+
+    if request.args.get('resource_type') in RESOURCE_TYPES.keys():
+        resource_type = request.args['resource_type']
+
+    tag = request.args.get('tag')
+
+    query = request.args.get('q')
+
+    response = views.list_resources(resource_type, query, tag)
+    return render_template('resources.html', response=response)
+
+
 @APP.route('/resource/<identifier>')
 def get_resource_by_id(identifier):
     """show resource"""
