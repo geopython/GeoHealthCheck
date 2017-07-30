@@ -213,16 +213,7 @@ def context_processors():
 def home():
     """homepage"""
 
-    resource_type = None
-
-    if request.args.get('resource_type') in RESOURCE_TYPES.keys():
-        resource_type = request.args['resource_type']
-
-    tag = request.args.get('tag')
-
-    query = request.args.get('q')
-
-    response = views.list_resources(resource_type, query, tag)
+    response = views.get_health_summary()
     return render_template('home.html', response=response)
 
 

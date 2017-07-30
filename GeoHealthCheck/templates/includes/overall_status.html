@@ -11,7 +11,7 @@
                             <i class="fa fa-check fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">{{ response['success']['percentage']|int }}%</div>
+                            <div class="huge">{{ response['success']['percentage'] }}%</div>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                             <i class="fa fa-link fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">{{ response['reliability']|round2 }}%</div>
+                            <div class="huge">{{ response['reliability']|int }}%</div>
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                             <i class="fa fa-times fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">{{ response['fail']['percentage']|int }}%</div>
+                            <div class="huge">{{ response['fail']['percentage'] }}%</div>
                         </div>
                     </div>
                 </div>

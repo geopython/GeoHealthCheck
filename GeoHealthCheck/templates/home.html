@@ -11,13 +11,20 @@
 {% endblock %}
 
 {% block extrabody %}
-<h2>{{ _('Resources') }}</h2>
-<p>
-    Select a link on the left to view Resources by resource-type or tag.
-</p>
+    <p>
+        {{ _('Select a link on the left to view Resources.') }}
+    </p>
+    <h2>{{ _('Failing Resources') }}</h2>
+    {% set resources = response['failed_resources'] %}
+    <div>
+    {% include 'includes/resources_list.html' %}
+    </div>
+
 </div>
 {% endblock %}
 
 {% block extrafoot %}
+<script type="text/javascript" src="{{ url_for('static', filename='lib/jspark.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='site/js/resources_list.js') }}"></script>
 
 {% endblock %}
