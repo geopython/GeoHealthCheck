@@ -98,7 +98,7 @@ def list_resources(resource_type=None, query=None, tag=None):
     response['success']['percentage'] = int(round(util.percentage(
         response['success']['number'], response['total'])))
     response['fail']['percentage'] = 100 - response['success']['percentage']
-    response['reliability'] = util.average(reliability_values)
+    response['reliability'] = round(util.average(reliability_values), 1)
 
     return response
 
@@ -155,7 +155,7 @@ def get_health_summary():
         },
         'first_run': models.get_first_run(),
         'last_run': models.get_last_run(),
-        'reliability': util.percentage(success_runs, total_runs),
+        'reliability': round(util.percentage(success_runs, total_runs), 1),
         'failed_resources': failed_resources
     }
 
