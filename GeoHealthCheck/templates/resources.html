@@ -39,7 +39,7 @@
             subdomains: '{{ config['GHC_MAP']['subdomains'] }}',
         }
     ));
-    {% for resource in resources %}
+    {% for resource in  response['resources']  %}
     L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map).bindPopup('{{ resource.title }}');
     lat_long_points.push([{{ resource.latitude }}, {{ resource.longitude }}]);
     {% endfor %}
