@@ -156,7 +156,7 @@ def get_health_summary():
         'first_run': models.get_first_run(),
         'last_run': models.get_last_run(),
         'reliability': util.percentage(success_runs, total_runs),
-        'failed_resources' : failed_resources
+        'failed_resources': failed_resources
     }
 
     return response
