@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block extrahead %}
+        <link rel="alternate" type="application/json" href="{{ url_for('json') }}"/>
+        <link rel="alternate" type="text/csv" href="{{ url_for('csv') }}"/>
+{% endblock %}
+
+{% block body %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    {% include 'includes/overall_status.html' %}
+{% endblock %}
+    
+{% block extrabody %}
+
+    <h2 id="all-resources">{{ _('Resources') }} <a class="btn btn-default btn-xs" href="{{ url_for('json', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> CSV</a></h2>
+
+    <div class="form-inline">
+        <input id="filter" type="text" class="form-control input-small" placeholder="{{ _('Search...') }}"> (foo, site:.org, title:foo, type:wms, url:example.org)
+    </div>
+        <span id="resources-table-num-results">{{ response['total'] }} {{ _('results') }}</span>
+
+    <div>
+        {% set resources = response['resources'] %}
+        {% include 'includes/resources_list.html' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extrafoot %}
+<script type="text/javascript" src="{{ url_for('static', filename='lib/jspark.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='site/js/resources_list.js') }}"></script>
+<script type="text/javascript">
+    var lat_long_points = [];
+    var map = L.map('all-resources-map').setView([{{ config['GHC_MAP']['centre_lat'] }}, {{ config['GHC_MAP']['centre_long']}}], 1);
+
+    map.addLayer(new L.TileLayer(
+        '{{ config['GHC_MAP']['url'] }}', {
+            maxZoom: {{ config['GHC_MAP']['maxzoom'] }},
+            subdomains: '{{ config['GHC_MAP']['subdomains'] }}',
+        }
+    ));
+    {% for resource in  response['resources']  %}
+    L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map).bindPopup('{{ resource.title }}');
+    lat_long_points.push([{{ resource.latitude }}, {{ resource.longitude }}]);
+    {% endfor %}
+
+</script>
+{% endblock %}

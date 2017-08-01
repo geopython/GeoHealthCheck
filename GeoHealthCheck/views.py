@@ -95,11 +95,10 @@ def list_resources(resource_type=None, query=None, tag=None):
 
             reliability_values.append(resource.reliability)
 
-    response['success']['percentage'] = util.percentage(
-        response['success']['number'], response['total'])
-    response['fail']['percentage'] = util.percentage(
-        response['fail']['number'], response['total'])
-    response['reliability'] = util.average(reliability_values)
+    response['success']['percentage'] = int(round(util.percentage(
+        response['success']['number'], response['total'])))
+    response['fail']['percentage'] = 100 - response['success']['percentage']
+    response['reliability'] = round(util.average(reliability_values), 1)
 
     return response
 
@@ -118,6 +117,49 @@ def get_resource_types_counts():
         'counts': mrt[0],
         'total': mrt[1]
     }
+
+
+def get_health_summary():
+    """return summary of all runs"""
+
+    # For overall reliability
+    total_runs = models.get_runs_count()
+    failed_runs = models.get_runs_status_count(False)
+    success_runs = total_runs - failed_runs
+
+    # Resources status derived from last N runs
+    total_resources = models.get_resources_count()
+    last_runs = models.get_last_runs(total_resources)
+    failed = 0
+    failed_resources = []
+    for run in last_runs:
+        if not run.success:
+            failed_resources.append(run.resource)
+            failed += 1
+
+    success = total_resources - failed
+
+    failed_percentage = int(round(
+        util.percentage(failed, total_resources)))
+    success_percentage = 100 - failed_percentage
+
+    response = {
+        'total': total_resources,
+        'success': {
+            'number': success,
+            'percentage': success_percentage
+        },
+        'fail': {
+            'number': failed,
+            'percentage': failed_percentage
+        },
+        'first_run': models.get_first_run(),
+        'last_run': models.get_last_run(),
+        'reliability': round(util.percentage(success_runs, total_runs), 1),
+        'failed_resources': failed_resources
+    }
+
+    return response
 
 
 def get_tag_counts():

@@ -361,6 +361,41 @@ def get_resource_types_counts():
     ]
 
 
+def get_resources_count():
+    """return number of rows for Resource"""
+    return DB.session.query(func.count(Resource.identifier)).scalar()
+
+
+def get_runs_count():
+    """return number of rows for Run"""
+    return DB.session.query(func.count(Run.identifier)).scalar()
+
+
+def get_runs_status_count(success=True):
+    """return number of rows for Run with given run status"""
+    return DB.session.query(Run.success).filter(Run.success == success).count()
+
+
+def get_first_run():
+    """return last Run"""
+    return DB.session.query(Run).filter(
+        Run.identifier == DB.session.query(func.min(Run.identifier))).first()
+
+
+def get_last_run():
+    """return last Run"""
+    return DB.session.query(Run).filter(
+        Run.identifier == DB.session.query(func.max(Run.identifier))).first()
+
+
+def get_last_runs(count):
+    """return last N Runs"""
+    last_id = DB.session.query(func.max(Run.identifier)).first()[0]
+    rsc_count = get_resources_count()
+    return DB.session.query(Run).filter(
+        Run.identifier > (last_id - rsc_count)).limit(count).all()
+
+
 def get_tag_counts():
     """return counts of all tags"""
 

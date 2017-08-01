@@ -1,0 +1,69 @@
+    <h1 class="page-header">{{ _('Dashboard') }}</h1>
+    {% if response['first_run'].checked_datetime and response['last_run'].checked_datetime %}
+    <h3 class="page-header">{{ _('Monitoring Period') }}: {{ response['first_run'].checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ response['last_run'].checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
+    {% endif %}
+    <div class="row col-md-offset-0">
+     <div class="col-lg-3 col-md-6">
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-check fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{ response['success']['percentage'] }}%</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-right">{{ _('Operational') }} ({{ response['success']['number'] }}/{{ response['total'] }})</span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-{{ response['reliability']|cssize_reliability2 }}">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-link fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{ response['reliability'] }}%</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-right">{{ _('Reliable') }}</span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% if response['fail']['number'] > 0 %}
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-times fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{ response['fail']['percentage'] }}%</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-right">{{ _('Broken') }} ({{ response['fail']['number'] }}/{{ response['total'] }})</span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-lg-3 col-md-6" id="all-resources-map"></div>
+    </div>

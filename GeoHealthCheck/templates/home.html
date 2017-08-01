@@ -7,258 +7,28 @@
 
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <h1 class="page-header">{{ _('Dashboard') }}</h1>
-    {% if response['first_run'].checked_datetime and response['last_run'].checked_datetime %}
-    <h3 class="page-header">{{ _('Monitoring Period') }}: {{ response['first_run'].checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} - {{ response['last_run'].checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</h3>
-    {% endif %}
-    <div class="row col-md-offset-0">
-<!--
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-link fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">{{ response['total'] }}</div>
-                            <div>{{ _('Resources') }}</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-left"><a href="#all-resources">{{ _('View Details') }}</a></span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
--->
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panel-green">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-check fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">{{ response['success']['percentage']|int }}%</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-right">{{ _('Operational') }} ({{ response['success']['number'] }}/{{ response['total'] }})</span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panel-{{ response['reliability']|cssize_reliability2 }}">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-link fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">{{ response['reliability']|round2 }}%</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-right">{{ _('Reliable') }}</span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        {% if response['fail']['number'] > 0 %}
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panel-red">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-times fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">{{ response['fail']['percentage']|int }}%</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-right">{{ _('Broken') }} ({{ response['fail']['number'] }}/{{ response['total'] }})</span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        {% endif %}
-        <div class="col-lg-3 col-md-6" id="all-resources-map"></div>
-<!--
-        <div class="col-lg-3 col-md-6">
-            <div class="panel">
-                <div class="panel-footer">
-                    <div class="row">
-                            <div id="totals-chart" class="totals-chart"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
--->
-    </div>
-    <h2 id="all-resources">{{ _('Resources') }} <a class="btn btn-default btn-xs" href="{{ url_for('json', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> JSON</a> <a class="btn btn-default btn-xs" href="{{ url_for('csv', q=request.args.get('q'), resource_type=request.args.get('resource_type')) }}"><span class="fa fa-download"></span> CSV</a></h2>
+    {% include 'includes/overall_status.html' %}
+{% endblock %}
 
-    <div class="form-inline">
-        <input id="filter" type="text" class="form-control input-small" placeholder="{{ _('Search...') }}"> (foo, site:.org, title:foo, type:wms, url:example.org)
-    </div>
-        <span id="resources-table-num-results">{{ response['total'] }} {{ _('results') }}</span>
-
+{% block extrabody %}
+    <p>
+        {{ _('Select a link on the left to view Resources.') }}
+    </p>
+    <h2>{{ _('Failing Resources') }}</h2>
+    {% set resources = response['failed_resources'] %}
     <div>
-        <table id="resources-table" class="table table-striped table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>{{ _('Type') }}</th>
-                    <th>{{ _('Name') }}</th>
-                    <th>{{ _('Last Check') }}</th>
-                    <th>{{ _('Status') }}</th>
-                    <th>{{ _('Response Times (seconds)') }}</th>
-                    <th class="col-md-1">{{ _('Reliability') }}</th>
-                </tr>
-            </thead>
-            <tbody class="searchable">
-            {% for resource in response['resources'] %}
-                <tr>
-                    <td class="facet-type">{{ resource_types[resource.resource_type]['label'] }}</td>
-                    <td class="facet-name">
-                        <a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a>
-                        <br>
-                        {% if resource.tags %}
-                        <select id="resource_tags" multiple="multiple" style="width: 100%;">
-                        {% for tag in resource.tags %}
-                        {% if tag.name != '' %}
-                            <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
-                        {% endif %}
-                        {% endfor %}
-                        </select>
-                        {% endif %}
-                    </td>
-                    {% if resource.last_run %}
-                    <td>
-                         <ul>
-                             <li>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</li>
-                             <li>{{ resource.last_run.response_time|round(2) }} {{ _('seconds') }}</li>
-                         </ul>
-                     </td>
-                     {% if resource.last_run.success %}
-                     <td><button type="button" class="btn btn-success btn-circle btn nohover"><i class="fa fa-check"></i></button></td>
-                     {% else %}
-                     <td><span title="{{ resource.last_run.message }}" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></span></td>
-                     {% endif %}
-                     <td>
-                         <ul>
-                             <li>Min: {{ resource.min_response_time|round(2) }}</li>
-                             <li>Average: {{ resource.average_response_time|round(2) }}</li>
-                             <li>Max: {{ resource.max_response_time|round(2) }}</li>
-                         </ul>
-                         <span style="display: none; color: green" class="sparkline col-md-10">{{ resource.all_response_times }}</span>
-                     </td>
-                     <td class="text-right"><button type="button" class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block nohover">{{ resource.reliability|round2 }}%</button></td>
-                    {% else %}
-                    <td><span>No runs yet</span></td>
-                    <td><span>0</span></td>
-                    <td><span>0</span></td>
-                    <td><span>0</span></td>
-                    {% endif %}
-               </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    {% if resources|length > 0 %}
+    {% include 'includes/resources_list.html' %}
+    {% else %}
+    {{ _('None') }}!
+    {% endif %}
     </div>
+
 </div>
 {% endblock %}
 
 {% block extrafoot %}
 <script type="text/javascript" src="{{ url_for('static', filename='lib/jspark.js') }}"></script>
-<script type="text/javascript">
-    $('#resources-table').dataTable({
-        'paging': false,
-        'sDom': ''//false // no search box
-    });
-//    Morris.Donut({
-//        element: 'totals-chart',
-//        colors: ['#5CB85C', '#D9534F'],
-//        data: [
-//            {label: 'Working', value: {{ response['success']['number']|safe }} },
-//            {label: 'Broken', value: {{ response['fail']['number']|safe }} },
-//        ],
-//        resize: true
-//    });
+<script type="text/javascript" src="{{ url_for('static', filename='site/js/resources_list.js') }}"></script>
 
-    var lat_long_points = [];
-    var map = L.map('all-resources-map').setView([{{ config['GHC_MAP']['centre_lat'] }}, {{ config['GHC_MAP']['centre_long']}}], 1);
-
-    map.addLayer(new L.TileLayer(
-        '{{ config['GHC_MAP']['url'] }}', {
-            maxZoom: {{ config['GHC_MAP']['maxzoom'] }},
-            subdomains: '{{ config['GHC_MAP']['subdomains'] }}',
-        }
-    ));
-    {% for resource in response['resources'] %}
-    L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map).bindPopup('{{ resource.title }}');
-    lat_long_points.push([{{ resource.latitude }}, {{ resource.longitude }}]);
-    {% endfor %}
-
-
-    // rudimentary table filter
-    $('#filter').keyup(function () {
-        //var selector = '.searchable tr';
-        var selector = 'td.facet-name';
-        var term = $(this).val();
-        var tokens = [];
-        var td_text = null;
-        var facet = null;
-        var num_results = 0;
-
-        if (term.match('^site:|title:|type:|url:')) {
-            if (term.match('^title:')) {
-                selector = 'td.facet-name';
-            }
-            else if (term.match('^type:')) {
-                selector = 'td.facet-type';
-            }
-            else if (term.match('^url:|site:')) {
-                selector = 'a.facet-url';
-            }
-            tokens = term.split(':');
-            facet = tokens[0];
-            term = tokens[1];
-        }
-
-        var rex = new RegExp(term, 'i');
-        $('.searchable tr').hide(); // hide all rows
-
-        $(selector).each(function() {
-            if (facet === 'url') {
-                td_text = $(this).attr('title');
-            }
-            if (facet === 'site') {
-                td_text = $(this).attr('title').split('/')[2];
-            }
-            else {
-                td_text = $(this).text();
-            }
-            if (rex.test(td_text)) {
-                $(this).closest('tr').show();
-                num_results += 1;
-            }
-        });
-        $('#resources-table-num-results').html(num_results + ' result' + (num_results === 1 ? '' : 's'));
-    });
-    $('select').select2({disabled: true, tags: true});
-</script>
 {% endblock %}
