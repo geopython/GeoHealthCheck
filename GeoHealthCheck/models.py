@@ -391,6 +391,9 @@ def get_last_run():
 def get_last_runs(count):
     """return last N Runs"""
     last_id = DB.session.query(func.max(Run.identifier)).first()[0]
+    if not last_id:
+        return []
+
     rsc_count = get_resources_count()
     return DB.session.query(Run).filter(
         Run.identifier > (last_id - rsc_count)).limit(count).all()
