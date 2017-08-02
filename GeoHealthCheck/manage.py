@@ -39,7 +39,10 @@
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from init import DB, APP
+from init import App
+
+DB = App.get_db()
+APP = App.get_app()
 
 migrate = Migrate(APP, DB)
 
