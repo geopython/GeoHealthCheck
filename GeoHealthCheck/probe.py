@@ -255,42 +255,59 @@ class Probe(Plugin):
 
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
 
-        if self.REQUEST_METHOD == 'GET':
-            # Default is plain URL, e.g. for WWW:LINK
-            url = url_base
-            if request_string:
-                # Query String: mainly OWS:* resources
-                url = "%s%s" % (url, request_string)
+        try:
+            headers = self.get_request_headers()
+            if self.REQUEST_METHOD == 'GET':
+                # Default is plain URL, e.g. for WWW:LINK
+                url = url_base
+                if request_string:
+                    # Query String: mainly OWS:* resources
+                    url = "%s%s" % (url, request_string)
 
-            self.response = requests.get(url,
-                                         headers=self.get_request_headers())
-        elif self.REQUEST_METHOD == 'POST':
-            self.response = requests.post(url_base,
-                                          data=request_string,
-                                          headers=self.get_request_headers())
+                self.response = requests.get(url,
+                                             headers=headers)
+            elif self.REQUEST_METHOD == 'POST':
+                self.response = requests.post(url_base,
+                                              data=request_string,
+                                              headers=headers)
+        except requests.exceptions.RequestException as e:
+            msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
+            self.result.set(False, msg)
 
-        self.log('response: status=%d' % self.response.status_code)
+        if self.response:
+            self.log('response: status=%d' % self.response.status_code)
 
-        if self.response.status_code / 100 in [4, 5]:
-            self.log('Error response: %s' % (str(self.response.text)))
+            if self.response.status_code / 100 in [4, 5]:
+                self.log('Error response: %s' % (str(self.response.text)))
 
     def run_request(self):
         """ Run actual request to service"""
         try:
             self.before_request()
             self.result.start()
-            self.perform_request()
+
+            try:
+                self.perform_request()
+            except Exception as e:
+                msg = "Perform_request Err: %s %s" % \
+                      (e.__class__.__name__, str(e))
+                self.result.set(False, msg)
+
             self.result.stop()
             self.after_request()
-        except:
+        except Exception as e:
             # We must never bailout because of Exception
             # in Probe.
-            msg = "Probe Err: %s" % str(sys.exc_info())
+            msg = "Probe Err: %s %s" % (e.__class__.__name__, str(e))
             LOGGER.error(msg)
             self.result.set(False, msg)
 
     def run_checks(self):
         """ Do the checks on the response from request"""
+
+        # Do not run Checks if Probe already failed
+        if not self.result.success:
+            return
 
         # Config also determines which actual checks are performed
         # from possible Checks in Probe. Checks are performed
