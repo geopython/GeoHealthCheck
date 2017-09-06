@@ -33,6 +33,7 @@ import csv
 import logging
 from datetime import datetime, timedelta
 from StringIO import StringIO
+from itertools import chain
 
 from flask import (flash, g, jsonify, redirect,
                    render_template, request, url_for)
@@ -468,95 +469,109 @@ def add():
         return render_template('add.html')
     if request.method == 'GET':
         return render_template('add.html')
-
-    tag_list = []
-
     resource_type = request.form['resource_type']
     tags = request.form.getlist('tags')
     url = request.form['url'].strip()
-    resource = Resource.query.filter_by(resource_type=resource_type,
-                                        url=url).first()
-    if resource is not None:
-        msg = gettext('Service already registered')
-        flash('%s (%s, %s)' % (msg, resource_type, url), 'danger')
-        if 'resource_type' in request.args:
-            rtype = request.args.get('resource_type')
-            return redirect(url_for('add', lang=g.current_lang,
-                                    resource_type=rtype))
-        return redirect(url_for('add', lang=g.current_lang))
+    resources_to_add = []
 
-    [title, success, response_time, message, start_time] = sniff_test_resource(
-        CONFIG, resource_type, url)
+    sniffed_resources = sniff_test_resource(CONFIG, resource_type, url)
 
-    if not success:
-        LOGGER.exception(message)
+    if not sniffed_resources:
+        LOGGER.exception(gettext("No resources detected"))
         flash(message, 'danger')
 
-    if tags:
-        for tag in tags:
-            tag_found = False
-            for tag_obj in Tag.query.all():
-                if tag == tag_obj.name:  # use existing
-                    tag_found = True
-                    tag_list.append(tag_obj)
-            if not tag_found:  # add new
-                tag_list.append(Tag(name=tag))
+    for resource_type, resource_url, title, success, response_time, message, start_time, resource_tags in sniffed_resources:
+        if not success:
+            LOGGER.error(message)
+            flash(message, 'danger')
+            continue
 
-    resource_to_add = Resource(current_user, resource_type, title, url,
-                               tags=tag_list)
+        # sniffed_resources may return list of resource types different from initial one
+        # so we need to test each row separately
+        resource = Resource.query.filter_by(resource_type=resource_type,
+                                            url=url).first()
+        if resource is not None:
+            msg = gettext('Service already registered')
+            flash('%s (%s, %s)' % (msg, resource_type, url), 'danger')
+            
+            if len(sniffed_resources) == 1 and 'resource_type' in request.args:
+                rtype = request.args.get('resource_type')
+                return redirect(url_for('add', lang=g.current_lang))
 
-    probe_to_add = None
-    checks_to_add = []
 
-    # Always add a default Probe and Check(s)  from the GHC_PROBE_DEFAULTS conf
-    if resource_type in CONFIG['GHC_PROBE_DEFAULTS']:
-        resource_settings = CONFIG['GHC_PROBE_DEFAULTS'][resource_type]
-        probe_class = resource_settings['probe_class']
-        if probe_class:
-            # Add the default Probe
-            probe_obj = Factory.create_obj(probe_class)
-            probe_to_add = ProbeVars(
-                resource_to_add, probe_class,
-                probe_obj.get_default_parameter_values())
+        tags_to_add = []
+        for tag in chain(tags, resource_tags):
+            tag_obj = tag
+            if not isinstance(tag, Tag):
+                tag_obj = Tag.query.filter_by(name=tag).first()
+                if tag_obj is None:
+                    tag_obj = Tag(name=tag)
+            tags_to_add.append(tag_obj)
 
-            # Add optional default (parameterized) Checks to add to this Probe
-            checks_info = probe_obj.get_checks_info()
-            checks_param_info = probe_obj.get_plugin_vars()['CHECKS_AVAIL']
-            for check_class in checks_info:
-                check_param_info = checks_param_info[check_class]
-                if 'default' in checks_info[check_class]:
-                    if checks_info[check_class]['default']:
-                        # Filter out params for Check with fixed values
-                        param_defs = check_param_info['PARAM_DEFS']
-                        param_vals = {}
-                        for param in param_defs:
-                            if param_defs[param]['value']:
-                                param_vals[param] = param_defs[param]['value']
-                        check_vars = CheckVars(
-                            probe_to_add, check_class, param_vals)
-                        checks_to_add.append(check_vars)
+        resource_to_add = Resource(current_user,
+                                   resource_type,
+                                   title,
+                                   resource_url,
+                                   tags=tags_to_add)
 
-    result = run_test_resource(resource_to_add)
+        resources_to_add.append(resource_to_add)
+        probe_to_add = None
+        checks_to_add = []
 
-    run_to_add = Run(resource_to_add, result)
+        # Always add a default Probe and Check(s)  from the GHC_PROBE_DEFAULTS conf
+        if resource_type in CONFIG['GHC_PROBE_DEFAULTS']:
+            resource_settings = CONFIG['GHC_PROBE_DEFAULTS'][resource_type]
+            probe_class = resource_settings['probe_class']
+            if probe_class:
+                # Add the default Probe
+                probe_obj = Factory.create_obj(probe_class)
+                probe_to_add = ProbeVars(
+                    resource_to_add, probe_class,
+                    probe_obj.get_default_parameter_values())
 
-    DB.session.add(resource_to_add)
-    if probe_to_add:
-        DB.session.add(probe_to_add)
-    for check_to_add in checks_to_add:
-        DB.session.add(check_to_add)
-    DB.session.add(run_to_add)
+                # Add optional default (parameterized) Checks to add to this Probe
+                checks_info = probe_obj.get_checks_info()
+                checks_param_info = probe_obj.get_plugin_vars()['CHECKS_AVAIL']
+                for check_class in checks_info:
+                    check_param_info = checks_param_info[check_class]
+                    if 'default' in checks_info[check_class]:
+                        if checks_info[check_class]['default']:
+                            # Filter out params for Check with fixed values
+                            param_defs = check_param_info['PARAM_DEFS']
+                            param_vals = {}
+                            for param in param_defs:
+                                if param_defs[param]['value']:
+                                    param_vals[param] = param_defs[param]['value']
+                            check_vars = CheckVars(
+                                probe_to_add, check_class, param_vals)
+                            checks_to_add.append(check_vars)
+
+        result = run_test_resource(resource_to_add)
+
+        run_to_add = Run(resource_to_add, result)
+
+        DB.session.add(resource_to_add)
+        if probe_to_add:
+            DB.session.add(probe_to_add)
+        for check_to_add in checks_to_add:
+            DB.session.add(check_to_add)
+        DB.session.add(run_to_add)
+
 
     try:
         DB.session.commit()
-        msg = gettext('Service registered')
+        msg = gettext('Services registered')
         flash('%s (%s, %s)' % (msg, resource_type, url), 'success')
     except Exception as err:
         DB.session.rollback()
         flash(str(err), 'danger')
+        
         return redirect(url_for('home', lang=g.current_lang))
-    else:
-        return edit_resource(resource_to_add.identifier)
+    if len(resources_to_add) == 1:
+        return edit_resource(resources_to_add[0].identifier)
+    return redirect(url_for('home', lang=g.current_lang))
+
+
 
 
 @APP.route('/resource/<int:resource_identifier>/update', methods=['POST'])
@@ -852,7 +867,7 @@ def api_probes_avail(resource_type=None, resource_id=None):
 
 if __name__ == '__main__':  # run locally, for fun
     import sys
-
+    logging.basicConfig()
     HOST = '0.0.0.0'
     PORT = 8000
     if len(sys.argv) > 1:

@@ -31,6 +31,7 @@ import datetime
 import logging
 from urllib2 import urlopen
 from urlparse import urlparse
+from functools import partial
 
 from owslib.wms import WebMapService
 from owslib.wmts import WebMapTileService
@@ -45,6 +46,9 @@ from flask_babel import gettext
 from enums import RESOURCE_TYPES
 from probe import Probe
 from result import ResourceResult
+from plugins.probe.geonode import (get_ows_endpoints as geonode_get_ows, 
+                                   make_default_tags as geonode_make_tags,
+                                   )
 
 LOGGER = logging.getLogger(__name__)
 
@@ -66,6 +70,8 @@ def run_test_resource(resource):
 def sniff_test_resource(config, resource_type, url):
     """tests a Resource endpoint for general compliance"""
 
+    out = []
+    tag_list = []
     if resource_type not in RESOURCE_TYPES.keys():
         msg = gettext('Invalid resource type')
         msg2 = '%s: %s' % (msg, resource_type)
@@ -75,70 +81,87 @@ def sniff_test_resource(config, resource_type, url):
     title = None
     start_time = datetime.datetime.utcnow()
     message = None
-
+    resource_type_map = {'OGC:WMS': [partial(WebMapService, version='1.3.0'),
+                                     partial(WebMapService, version='1.1.1')],
+                         'OGC:WMTS': [WebMapTileService],
+                         'OSGeo:TMS': [TileMapService],
+                         'OGC:WFS': [WebFeatureService],
+                         'OGC:WCS': [WebCoverageService],
+                         'OGC:WPS': [WebProcessingService],
+                         'OGC:CSW': [CatalogueServiceWeb],
+                         'OGC:SOS': [SensorObservationService],
+                         'OGC:STA': [urlopen],
+                         'WWW:LINK': [urlopen],
+                         'FTP': [urlopen],
+                         'Custom:GeoNode': [geonode_get_ows],
+                         }
     try:
-        if resource_type == 'OGC:WMS':
+        ows = None
+        try:
+            ows_handlers = resource_type_map[resource_type]
+        except KeyError:
+            LOGGER.error("No hanlder for %s type", resource_type)
+            raise
+        for ows_handler in ows_handlers:
             try:
-                LOGGER.debug('Trying a WMS 1.3.0 GetCapabilities request')
-                ows = WebMapService(url, version='1.3.0')
-            except Exception as err:
-                LOGGER.warning('WMS 1.3.0 support not found: %s', err)
-                LOGGER.debug('Trying a WMS 1.1.1 GetCapabilities req...')
-                ows = WebMapService(url, version='1.1.1')
-        elif resource_type == 'OGC:WMTS':
-            ows = WebMapTileService(url)
-        elif resource_type == 'OSGeo:TMS':
-            ows = TileMapService(url)
-        elif resource_type == 'OGC:WFS':
-            ows = WebFeatureService(url, version='1.1.0')
-        elif resource_type == 'OGC:WCS':
-            ows = WebCoverageService(url, version='1.0.0')
-        elif resource_type == 'OGC:WPS':
-            ows = WebProcessingService(url)
-        elif resource_type == 'OGC:CSW':
-            ows = CatalogueServiceWeb(url)
-        elif resource_type == 'OGC:SOS':
-            ows = SensorObservationService(url)
-        elif resource_type == 'OGC:STA':
-            ows = urlopen(url)
-        elif resource_type in ['WWW:LINK', 'urn:geoss:waf']:
-            ows = urlopen(url)
-            if resource_type == 'WWW:LINK':
-                content_type = ows.info().getheader('Content-Type')
+                ows = ows_handler(url)
+                break
+            except Exception, err:
+                LOGGER.warning("Cannot use %s on %s: %s", ows_handler, url, err, exc_info=err)
+        if ows is None:
+            raise ValueError("Cannot get {} service instance for {}".format(resource_type, url))
 
-                # Check content if the response is not an image
-                if 'image/' not in content_type:
-                    content = ows.read()
-                    import re
+        if resource_type == 'WWW:LINK':
+            content_type = ows.info().getheader('Content-Type')
+
+            # Check content if the response is not an image
+            if 'image/' not in content_type:
+                content = ows.read()
+                import re
+                try:
+                    title_re = re.compile("<title>(.+?)</title>")
+                    title = title_re.search(content).group(1)
+                except:
+                    title = url
+
+                # Optional check for any OGC-Exceptions in Response
+                if config and config['GHC_WWW_LINK_EXCEPTION_CHECK']:
+                    exception_text = None
                     try:
-                        title_re = re.compile("<title>(.+?)</title>")
-                        title = title_re.search(content).group(1)
+                        except_re = re.compile(
+                            "ServiceException>|ExceptionReport>")
+                        exception_text = except_re.search(content).group(0)
                     except:
-                        title = url
+                        # No Exception in Response text
+                        pass
 
-                    # Optional check for any OGC-Exceptions in Response
-                    if config and config['GHC_WWW_LINK_EXCEPTION_CHECK']:
-                        exception_text = None
-                        try:
-                            except_re = re.compile(
-                                "ServiceException>|ExceptionReport>")
-                            exception_text = except_re.search(content).group(0)
-                        except:
-                            # No Exception in Response text
-                            pass
+                    if exception_text:
+                        # Found OGC-Exception in Response text
+                        raise Exception(
+                            "Exception in response: %s" % exception_text)
 
-                        if exception_text:
-                            # Found OGC-Exception in Response text
-                            raise Exception(
-                                "Exception in response: %s" % exception_text)
+                del content
 
-                    del content
-
-            elif resource_type == 'urn:geoss:waf':
-                title = 'WAF %s %s' % (gettext('for'), urlparse(url).hostname)
+        elif resource_type == 'urn:geoss:waf':
+            title = 'WAF %s %s' % (gettext('for'), urlparse(url).hostname)
         elif resource_type == 'FTP':
-            ows = urlopen(url)
             title = urlparse(url).hostname
+        elif resource_type == 'Custom:GeoNode':
+            endpoints = ows
+            end_time = datetime.datetime.utcnow()
+            delta = end_time - start_time
+            response_time = '%s.%s' % (delta.seconds, delta.microseconds)
+            base_tags = geonode_make_tags(url)
+
+            for epoint in endpoints:
+                print('got epoint', epoint)
+                row = sniff_test_resource(config, epoint['type'], epoint['url'])
+                if row:
+                    _tags = row[0][-1]
+                    _tags.extend(base_tags)
+                    row[0][-1] = _tags
+                    out.append(row[0])
+
         success = True
         if resource_type.startswith(('OGC:', 'OSGeo')):
             if resource_type == 'OGC:STA':
@@ -152,7 +175,7 @@ def sniff_test_resource(config, resource_type, url):
     except Exception as err:
         title = 'Untitled'
         msg = 'Getting metadata failed: %s' % str(err)
-        LOGGER.exception(msg)
+        LOGGER.error(msg, exc_info=err)
         message = msg
         success = False
 
@@ -160,7 +183,10 @@ def sniff_test_resource(config, resource_type, url):
 
     delta = end_time - start_time
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
-    return [title, success, response_time, message, start_time]
+    # if out is not populated yet, that means it should be populated now
+    if not out:
+        out.append([resource_type, url, title, success, response_time, message, start_time, tag_list])
+    return out
 
 
 if __name__ == '__main__':
