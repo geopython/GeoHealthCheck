@@ -157,7 +157,6 @@ def sniff_test_resource(config, resource_type, url):
             base_tags = geonode_make_tags(url)
 
             for epoint in endpoints:
-                print('got epoint', epoint)
                 row = sniff_test_resource(config,
                                           epoint['type'],
                                           epoint['url'])
