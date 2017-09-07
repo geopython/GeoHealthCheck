@@ -46,7 +46,7 @@ from flask_babel import gettext
 from enums import RESOURCE_TYPES
 from probe import Probe
 from result import ResourceResult
-from plugins.probe.geonode import (get_ows_endpoints as geonode_get_ows, 
+from plugins.probe.geonode import (get_ows_endpoints as geonode_get_ows,
                                    make_default_tags as geonode_make_tags,
                                    )
 
@@ -107,9 +107,12 @@ def sniff_test_resource(config, resource_type, url):
                 ows = ows_handler(url)
                 break
             except Exception, err:
-                LOGGER.warning("Cannot use %s on %s: %s", ows_handler, url, err, exc_info=err)
+                LOGGER.warning("Cannot use %s on %s: %s",
+                               ows_handler, url, err, exc_info=err)
         if ows is None:
-            raise ValueError("Cannot get {} service instance for {}".format(resource_type, url))
+            msg = "Cannot get {} service instance for {}".format(resource_type,
+                                                                 url)
+            raise ValueError(msg)
 
         if resource_type == 'WWW:LINK':
             content_type = ows.info().getheader('Content-Type')
@@ -155,7 +158,9 @@ def sniff_test_resource(config, resource_type, url):
 
             for epoint in endpoints:
                 print('got epoint', epoint)
-                row = sniff_test_resource(config, epoint['type'], epoint['url'])
+                row = sniff_test_resource(config,
+                                          epoint['type'],
+                                          epoint['url'])
                 if row:
                     _tags = row[0][-1]
                     _tags.extend(base_tags)
@@ -185,7 +190,14 @@ def sniff_test_resource(config, resource_type, url):
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
     # if out is not populated yet, that means it should be populated now
     if not out:
-        out.append([resource_type, url, title, success, response_time, message, start_time, tag_list])
+        out.append([resource_type,
+                    url,
+                    title,
+                    success,
+                    response_time,
+                    message,
+                    start_time,
+                    tag_list])
     return out
 
 

@@ -81,6 +81,7 @@ The folowing resource types are available:
 - Web Accessible Folder (WAF)
 - Sensor Observation Service (SOS)
 - `SensorThings API <http://docs.opengeospatial.org/is/15-078r6/15-078r6.html>`_ (STA)
+- GeoNode autodiscovery
 
 
 Deleting Resources
@@ -125,6 +126,11 @@ Build Documentation
 Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``.
 In there, type ''make html'' plus ENTER and the documentation should be build locally.
 
+GeoNode Resource type notes
+---------------------------
 
+*GeoNode* Resource is a virtual resource. It represents one GeoNode instance, but underneath it's trying autodiscovery of OWS endpoints available in that instance. Note, that OWS autodiscovery feature is optional, and you should check if GeoNode instance has this feature enabled.
 
+When adding *GeoNode instance* Resource, you have to enter url to instance's home page. GeoHealthCheck will construct url to target OWS endpoints listing and create relevant Resources (WMS, WFS, WMTS, OWC Resources). It will check all endpoints provided by GeoNode API, and will reject those which responded with error.
 
+All resources added in this way will have at least one tag, which is constructed with template: *GeoNode _hostname_*, where *_hostname_* is a host name from url provided. For example, let's assume you add GeoNode instance that is served from `demo.geonode.org`. All resources created in this way will have *GeoNode demo.geonode.org* tag.

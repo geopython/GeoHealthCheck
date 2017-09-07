@@ -477,27 +477,30 @@ def add():
     sniffed_resources = sniff_test_resource(CONFIG, resource_type, url)
 
     if not sniffed_resources:
-        LOGGER.exception(gettext("No resources detected"))
-        flash(message, 'danger')
+        msg = gettext("No resources detected")
+        LOGGER.exception()
+        flash(msg, 'danger')
 
-    for resource_type, resource_url, title, success, response_time, message, start_time, resource_tags in sniffed_resources:
+    for (resource_type, resource_url,
+         title, success, response_time,
+         message, start_time, resource_tags,) in sniffed_resources:
+
         if not success:
             LOGGER.error(message)
             flash(message, 'danger')
             continue
 
-        # sniffed_resources may return list of resource types different from initial one
+        # sniffed_resources may return list of resource
+        # types different from initial one
         # so we need to test each row separately
         resource = Resource.query.filter_by(resource_type=resource_type,
                                             url=url).first()
         if resource is not None:
             msg = gettext('Service already registered')
             flash('%s (%s, %s)' % (msg, resource_type, url), 'danger')
-            
-            if len(sniffed_resources) == 1 and 'resource_type' in request.args:
-                rtype = request.args.get('resource_type')
-                return redirect(url_for('add', lang=g.current_lang))
 
+            if len(sniffed_resources) == 1 and 'resource_type' in request.args:
+                return redirect(url_for('add', lang=g.current_lang))
 
         tags_to_add = []
         for tag in chain(tags, resource_tags):
@@ -518,7 +521,8 @@ def add():
         probe_to_add = None
         checks_to_add = []
 
-        # Always add a default Probe and Check(s)  from the GHC_PROBE_DEFAULTS conf
+        # Always add a default Probe and Check(s)
+        # from the GHC_PROBE_DEFAULTS conf
         if resource_type in CONFIG['GHC_PROBE_DEFAULTS']:
             resource_settings = CONFIG['GHC_PROBE_DEFAULTS'][resource_type]
             probe_class = resource_settings['probe_class']
@@ -529,7 +533,8 @@ def add():
                     resource_to_add, probe_class,
                     probe_obj.get_default_parameter_values())
 
-                # Add optional default (parameterized) Checks to add to this Probe
+                # Add optional default (parameterized)
+                # Checks to add to this Probe
                 checks_info = probe_obj.get_checks_info()
                 checks_param_info = probe_obj.get_plugin_vars()['CHECKS_AVAIL']
                 for check_class in checks_info:
@@ -541,7 +546,8 @@ def add():
                             param_vals = {}
                             for param in param_defs:
                                 if param_defs[param]['value']:
-                                    param_vals[param] = param_defs[param]['value']
+                                    param_vals[param] =\
+                                        param_defs[param]['value']
                             check_vars = CheckVars(
                                 probe_to_add, check_class, param_vals)
                             checks_to_add.append(check_vars)
@@ -555,8 +561,7 @@ def add():
             DB.session.add(probe_to_add)
         for check_to_add in checks_to_add:
             DB.session.add(check_to_add)
-        DB.session.add(run_to_add)
-
+            DB.session.add(run_to_add)
 
     try:
         DB.session.commit()
@@ -565,13 +570,11 @@ def add():
     except Exception as err:
         DB.session.rollback()
         flash(str(err), 'danger')
-        
         return redirect(url_for('home', lang=g.current_lang))
+
     if len(resources_to_add) == 1:
         return edit_resource(resources_to_add[0].identifier)
     return redirect(url_for('home', lang=g.current_lang))
-
-
 
 
 @APP.route('/resource/<int:resource_identifier>/update', methods=['POST'])
