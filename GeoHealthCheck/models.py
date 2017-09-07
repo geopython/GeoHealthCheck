@@ -191,6 +191,7 @@ class Resource(DB.Model):
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_type = DB.Column(DB.Text, nullable=False)
+    active = DB.Column(DB.Boolean, nullable=False, default=True)
     title = DB.Column(DB.Text, nullable=False)
     url = DB.Column(DB.Text, nullable=False)
     latitude = DB.Column(DB.Float)
@@ -202,6 +203,7 @@ class Resource(DB.Model):
 
     def __init__(self, owner, resource_type, title, url, tags):
         self.resource_type = resource_type
+        self.active = True
         self.title = title
         self.url = url
         self.owner = owner
@@ -559,6 +561,10 @@ if __name__ == '__main__':
             for resource in Resource.query.all():  # run all tests
                 print('Testing %s %s' %
                       (resource.resource_type, resource.url))
+
+                if not resource.active:
+                    print('Resource is not active. Skipping')
+                    continue
 
                 # Get the status of the last run,
                 # assume success if there is none
