@@ -13,6 +13,7 @@
     "PDOK BAG WMS": {
       "owner": "admin",
       "resource_type": "OGC:WMS",
+      "active": true,
       "title": "PDOK BAG Web Map Service",
       "url": "http://geodata.nationaalgeoregister.nl/bag/wms",
       "tags": []

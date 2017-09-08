@@ -58,3 +58,9 @@ Changes:
 
 * create two new tables: `probe_vars` and `check_vars`
 * add column `report` to `run` table
+
+### 2638c2a40625 - Add resource.active column
+
+Changes:
+
+* add column `active` to `resource` table

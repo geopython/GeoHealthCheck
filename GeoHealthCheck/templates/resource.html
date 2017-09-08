@@ -27,6 +27,10 @@
                 <td>{{ resource_types[resource.resource_type]['label'] }}</td>
             </tr>
             <tr>
+                <th>{{ _('Active') }}</th>
+                <td>{{ resource.active }}</td>
+            </tr>
+            <tr>
                 <th>{{ _('Owner') }}</th>
                 <td>{{ resource.owner.username }}</td>
             </tr>
