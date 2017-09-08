@@ -7,6 +7,8 @@ Create Date: 2017-09-08 10:48:19.596099
 """
 from alembic import op
 import sqlalchemy as sa
+import imp
+import os
 
 
 # revision identifiers, used by Alembic.
@@ -16,16 +18,14 @@ branch_labels = None
 depends_on = None
 
 alembic_helpers = imp.load_source('alembic_helpers', (
-os.getcwd() + '/' + op.get_context().script.dir + '/alembic_helpers.py'))
+    os.getcwd() + '/' + op.get_context().script.dir + '/alembic_helpers.py'))
+
 
 def upgrade():
     if not alembic_helpers.table_has_column('resource', 'active'):
-        from sqlalchemy.sql import table, column
         print('Column active not present in resource table, will create')
-        op.add_column(u'resource', sa.Column('active', sa.Boolean, nullable=True, default=True))
-        resource = table('resource', column('active'))
-        op.execute(resource.update().values(active=True))
-        op.alter_column('resource', 'active', nullable=False)
+        op.add_column(u'resource', sa.Column('active', sa.Boolean(),
+                      nullable=False, default=1, server_default='True'))
     else:
         print('Column active already present in resource table')
 
