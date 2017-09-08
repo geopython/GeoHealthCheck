@@ -11,6 +11,14 @@
                 <td>{{ resource_types[resource.resource_type]['label'] }}</td>
             </tr>
             <tr>
+                <th>
+                    {{ _('Active') }}
+                </th>
+                <td>
+                    <input type="checkbox" id="input_resource_active" name="resource_active_value" {{ 'checked' if resource.active == true else '' }}/>
+                </td>
+            </tr>
+            <tr>
                 <th>{{ _('Owner') }}</th>
                 <td>{{ resource.owner.username }}</td>
             </tr>
@@ -197,6 +205,9 @@
         // Collect tags
         var new_tags = $('#resource_tags').val();
 
+        // Collect active
+        var new_active = $('#input_resource_active').prop('checked');
+
         // Collect Probes with parameters and contained Checks
         // also with parameters
         var new_probes = [];
@@ -257,6 +268,7 @@
             url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
             data: JSON.stringify({
                 title: new_title,
+                active: new_active,
                 tags: new_tags,
                 probes: new_probes
             }),
