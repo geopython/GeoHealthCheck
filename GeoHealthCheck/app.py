@@ -656,7 +656,10 @@ def test(resource_identifier):
         resource)
 
     if request.method == 'GET':
-        if result.message not in ['OK', None, 'None']:
+        if result.message == 'Skipped':
+            msg = gettext('INFO')
+            flash('%s: %s' % (msg, result.message), 'info')
+        elif result.message not in ['OK', None, 'None']:
             msg = gettext('ERROR')
             flash('%s: %s' % (msg, result.message), 'danger')
         else:

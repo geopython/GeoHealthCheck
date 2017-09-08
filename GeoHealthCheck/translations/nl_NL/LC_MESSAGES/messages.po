@@ -343,3 +343,6 @@ msgstr ""
 
 msgid "Enter tags"
 msgstr ""
+
+msgid "Active"
+msgstr ""
