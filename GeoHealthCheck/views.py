@@ -68,7 +68,8 @@ def list_resources(resource_type=None, query=None, tag=None):
         filters = filters + (field.ilike(term),)
 
     if tag is not None:
-        filters = filters + (models.Resource.tags.any(models.Tag.name.in_([tag])),)
+        tag_filter = (models.Resource.tags.any(models.Tag.name.in_([tag])),)
+        filters = filters + tag_filter
 
     response['resources'] = models.Resource.query.filter(*filters).all()
 
