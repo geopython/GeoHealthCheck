@@ -58,22 +58,19 @@ def list_resources(resource_type=None, query=None, tag=None):
         'reliability': 0
     }
 
+    filters = ()
+
     if resource_type is not None:
-        response['resources'] = models.Resource.query.filter_by(
-            resource_type=resource_type).all()
+        filters = filters + ('resource_type = "' + resource_type + '"',)
 
     if query is not None:
         field, term = get_query_field_term(query)
-        response['resources'] = models.Resource.query.filter(
-            field.ilike(term)).all()
+        filters = filters + (field.ilike(term),)
 
     if tag is not None:
-        response['resources'] = models.Resource.query.filter(
-            models.Resource.tags.any(models.Tag.name.in_([tag]))).all()
+        filters = filters + (models.Resource.tags.any(models.Tag.name.in_([tag])),)
 
-    if 'resources' not in response:
-        # No query nor resource_type provided: fetch all resources
-        response['resources'] = models.Resource.query.all()
+    response['resources'] = models.Resource.query.filter(*filters).all()
 
     response['total'] = len(response['resources'])
     response['success']['percentage'] = 0
