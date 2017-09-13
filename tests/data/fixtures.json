@@ -16,6 +16,7 @@
     "PDOK BAG WMS": {
       "owner": "admin",
       "resource_type": "OGC:WMS",
+      "active": true,
       "title": "PDOK BAG Web Map Service",
       "url": "http://geodata.nationaalgeoregister.nl/bag/wms",
       "tags": [
@@ -26,6 +27,7 @@
     "WOUDC WFS": {
       "owner": "admin",
       "resource_type": "OGC:WFS",
+      "active": true,
       "title": "WOUDC Web Feature Service",
       "url": "http://geo.woudc.org/ows",
       "tags": [
@@ -35,6 +37,7 @@
     "PDOK BAG WFS": {
       "owner": "admin",
       "resource_type": "OGC:WFS",
+      "active": true,
       "title": "PDOK BAG Web Feature Service",
       "url": "http://geodata.nationaalgeoregister.nl/bag/wfs",
       "tags": [
@@ -45,6 +48,7 @@
     "WOUDC CSW": {
       "owner": "admin",
       "resource_type": "OGC:CSW",
+      "active": true,
       "title": "WOUDC Catalogue Service",
       "url": "http://geo.woudc.org/csw",
       "tags": [
@@ -54,6 +58,7 @@
     "WOUDC WMTS": {
       "owner": "admin",
       "resource_type": "OGC:WMTS",
+      "active": true,
       "title": "NASA Global Imagery Browse Services for EOSDIS",
       "url": "http://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
       "tags": [
@@ -64,6 +69,7 @@
     "WOUDC LINK": {
       "owner": "admin",
       "resource_type": "WWW:LINK",
+      "active": true,
       "title": "WOUDC Definitions Service",
       "url": "http://geo.woudc.org/def",
       "tags": []
@@ -71,6 +77,7 @@
     "PDOK TMS": {
       "owner": "admin",
       "resource_type": "OSGeo:TMS",
+      "active": true,
       "title": "Tile Map Service",
       "url": "http://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0",
       "tags": [

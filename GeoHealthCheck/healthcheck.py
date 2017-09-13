@@ -57,6 +57,9 @@ def run_test_resource(resource):
     """tests a service and provides run metrics"""
 
     result = ResourceResult(resource)
+    if not resource.active:
+        result.message = 'Skipped'
+        return result
     result.start()
     probes = resource.probe_vars
     for probe in probes:
