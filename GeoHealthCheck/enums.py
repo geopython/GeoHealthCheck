@@ -80,7 +80,7 @@ RESOURCE_TYPES = {
     'FTP': {
         'label': 'File Transfer Protocol (FTP)'
     },
-    'Custom:GeoNode': {
+    'OSGeo:GeoNode': {
         'label': 'GeoNode instance'
         }
 }

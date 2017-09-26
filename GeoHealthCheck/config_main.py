@@ -149,7 +149,7 @@ GHC_PROBE_DEFAULTS = {
     'FTP': {
         'probe_class': None
     },
-    'Custom:GeoNode': {
+    'OSGeo:GeoNode': {
         'probe_class': None
         }
 }

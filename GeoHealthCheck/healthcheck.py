@@ -96,7 +96,7 @@ def sniff_test_resource(config, resource_type, url):
                          'OGC:STA': [urlopen],
                          'WWW:LINK': [urlopen],
                          'FTP': [urlopen],
-                         'Custom:GeoNode': [geonode_get_ows],
+                         'OSGeo:GeoNode': [geonode_get_ows],
                          }
     try:
         ows = None
@@ -152,7 +152,7 @@ def sniff_test_resource(config, resource_type, url):
             title = 'WAF %s %s' % (gettext('for'), urlparse(url).hostname)
         elif resource_type == 'FTP':
             title = urlparse(url).hostname
-        elif resource_type == 'Custom:GeoNode':
+        elif resource_type == 'OSGeo:GeoNode':
             endpoints = ows
             end_time = datetime.datetime.utcnow()
             delta = end_time - start_time

@@ -3,20 +3,19 @@
 # Alejo C. Marcelo, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: GeoHealthCheck\n"
+"Project-Id-Version:  GeoHealthCheck\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
-"POT-Creation-Date: 2016-06-10 19:00-0400\n"
+"POT-Creation-Date: 2015-10-18 19:37-0400\n"
 "PO-Revision-Date: 2016-06-13 19:01-0400\n"
 "Last-Translator: Alejo C. Marcelo\n"
-"Language-Team: Español (Bolivia) <https://github.com/geopython/"
-"GeoHealthCheck>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
 "Language: es_BO\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.10\n"
+"Language-Team: Español (Bolivia) "
+"<https://github.com/geopython/GeoHealthCheck>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.0\n"
 
 #: GeoHealthCheck/app.py:394
 msgid "This site is not configured for self-registration"
@@ -114,22 +113,6 @@ msgstr "malo"
 msgid "Submit"
 msgstr "Enviar"
 
-#: GeoHealthCheck/templates/add.html:32
-msgid "Resource title"
-msgstr "Título del recurso"
-
-#: GeoHealthCheck/templates/add.html:34
-msgid "Title"
-msgstr "Título  "
-
-#: GeoHealthCheck/templates/add.html:39
-msgid "Add email to notify a problem"
-msgstr "Adicione los correos para la notificación de problemas"
-
-#: GeoHealthCheck/templates/add.html:41
-msgid "Notify email"
-msgstr "Correo de notificación"
-
 #: GeoHealthCheck/templates/home.html:10
 msgid "Dashboard"
 msgstr "Tablero de control"
@@ -139,8 +122,7 @@ msgstr "Tablero de control"
 msgid "Monitoring Period"
 msgstr "Periodo de monitoreo"
 
-#: GeoHealthCheck/templates/home.html:25
-#: GeoHealthCheck/templates/home.html:114
+#: GeoHealthCheck/templates/home.html:25 GeoHealthCheck/templates/home.html:114
 msgid "Resources"
 msgstr "Recurso"
 
@@ -205,14 +187,6 @@ msgstr "segundos"
 #: GeoHealthCheck/templates/layout.html:41
 msgid "Add"
 msgstr "Agregar"
-
-#: GeoHealthCheck/templates/layout.html:52
-msgid "Logout"
-msgstr "Salir"
-
-#: GeoHealthCheck/templates/layout.html:52
-msgid "Language"
-msgstr "Idioma"
 
 #: GeoHealthCheck/templates/layout.html:56
 #: GeoHealthCheck/templates/login.html:5
@@ -374,3 +348,22 @@ msgstr ""
 
 msgid "Active"
 msgstr ""
+
+#~ msgid "Resource title"
+#~ msgstr "Título del recurso"
+
+#~ msgid "Title"
+#~ msgstr "Título  "
+
+#~ msgid "Add email to notify a problem"
+#~ msgstr "Adicione los correos para la notificación de problemas"
+
+#~ msgid "Notify email"
+#~ msgstr "Correo de notificación"
+
+#~ msgid "Logout"
+#~ msgstr "Salir"
+
+#~ msgid "Language"
+#~ msgstr "Idioma"
+
