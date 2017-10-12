@@ -61,7 +61,7 @@ def list_resources(resource_type=None, query=None, tag=None):
     filters = ()
 
     if resource_type is not None:
-        filters = filters + ('resource_type = "' + resource_type + '"',)
+        filters = filters + ("resource_type = '%s'" % resource_type,)
 
     if query is not None:
         field, term = get_query_field_term(query)
