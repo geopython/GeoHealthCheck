@@ -31,9 +31,10 @@
 import unittest
 import sys
 import os
-from GeoHealthCheck.models import DB, load_data
+from GeoHealthCheck.models import DB, load_data, Resource
 from GeoHealthCheck.views import get_probes_avail
 from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.factory import Factory
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -150,8 +151,78 @@ class GeoHealthCheckTest(unittest.TestCase):
             'PARAM_DEFS.strings[0] should be ExceptionReport>')
 
     def testProbeViews(self):
-        probes = get_probes_avail('OGC:WMS')
+        # All Probes available
+        probes = get_probes_avail()
+        total_probes_count = len(probes)
         self.assertIsNotNone(probes)
+        self.assertGreater(
+            total_probes_count, 0,
+            'zero Probes found in app')
+
+        for probe in probes:
+            plugin_obj = Factory.create_obj(probe)
+            self.assertIsNotNone(plugin_obj,
+                                 'Probe create err: %s' % probe)
+
+        # Probes per Resource Type
+        resource_types = ['OGC:WMS', 'OGC:WFS', 'OGC:CSW', 'OGC:SOS']
+        for resource_type in resource_types:
+
+            probes = get_probes_avail(resource_type)
+            self.assertIsNotNone(probes)
+            self.assertGreater(
+                len(probes), 0,
+                'zero Probes for resource type %s' % resource_type)
+
+            self.assertGreater(
+                total_probes_count, len(probes),
+                'total Probes must be greater than for  %s' % resource_type)
+
+            for probe in probes:
+                plugin_obj = Factory.create_obj(probe)
+                self.assertIsNotNone(plugin_obj,
+                                     'cannot create Probe for %s' % probe)
+
+        # Probes per Resource instance
+        resources = Resource.query.all()
+        for resource in resources:
+
+            probes = get_probes_avail(resource.resource_type, resource)
+            self.assertIsNotNone(probes)
+            self.assertGreater(
+                len(probes), 0,
+                'zero Probes for resource %s' % resource)
+
+            for probe in probes:
+                plugin_obj = Factory.create_obj(probe)
+                self.assertIsNotNone(plugin_obj,
+                                     'Probe create err: %s' % resource.url)
+
+    def testProbeMetadata(self):
+        # Some probes cache metadata
+        probe_class = 'GeoHealthCheck.plugins.probe.wms.WmsGetMapV1'
+        plugin_obj = Factory.create_obj(probe_class)
+        self.assertIsNotNone(plugin_obj)
+        self.assertEquals(
+            plugin_obj.layer_count, 0,
+            'non-zero layer_count %s' % probe_class)
+
+        # Probes per Resource instance
+        resources = Resource.query.all()
+        for resource in resources:
+            if resource.resource_type == 'OGC:WMS':
+                md = plugin_obj.get_metadata(resource)
+                md_c1 = plugin_obj.get_metadata_cached(resource,
+                                                       version='1.1.1')
+                self.assertNotEquals(md, md_c1)
+                md_c2 = plugin_obj.get_metadata_cached(resource,
+                                                       version='1.1.1')
+                self.assertEquals(md_c1, md_c2)
+                plugin_obj.expand_params(resource)
+
+        for key in Probe.METADATA_CACHE:
+            entry = Probe.METADATA_CACHE[key]
+            self.assertIsNotNone(entry)
 
 
 if __name__ == '__main__':

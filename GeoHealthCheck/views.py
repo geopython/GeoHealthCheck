@@ -209,14 +209,15 @@ def get_probes_avail(resource_type=None, resource=None):
     result = dict()
     for probe_class in probe_classes:
         probe = Factory.create_obj(probe_class)
-        if resource and probe:
-            try:
-                probe.expand_params(resource)
-            except Exception as err:
-                msg = 'Cannot expand plugin vars for %s err=%s' \
-                      % (probe_class, str(err))
-                LOGGER.warning(msg)
-            else:
-                result[probe_class] = probe.get_plugin_vars()
+        if probe:
+            if resource:
+                try:
+                    probe.expand_params(resource)
+                except Exception as err:
+                    msg = 'Cannot expand plugin vars for %s err=%s' \
+                          % (probe_class, str(err))
+                    LOGGER.warning(msg)
+
+            result[probe_class] = probe.get_plugin_vars()
 
     return result
