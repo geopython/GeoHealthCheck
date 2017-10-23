@@ -45,7 +45,7 @@ options(
         home=path(BASEDIR),
         docs=path('%s/docs' % BASEDIR),
         instance=path('%s/instance' % BASEDIR),
-        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' %
+        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.pot' %
                  BASEDIR),
         static_docs=path('%s/GeoHealthCheck/static/docs' % BASEDIR),
         static_lib=path('%s/GeoHealthCheck/static/lib' % BASEDIR),
