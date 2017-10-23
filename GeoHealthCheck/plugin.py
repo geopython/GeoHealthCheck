@@ -168,14 +168,14 @@ class Plugin(object):
                         and baseclass in inspect.getmro(class_obj) and \
                             baseclass != class_obj:
                         add_result('%s.%s' % (plugin_name, name), class_obj)
-            except:
+            except Exception:
                 # Try for full classname
                 try:
                     class_obj = Factory.create_class(plugin_name)
                     if baseclass in inspect.getmro(class_obj) \
                             and baseclass != class_obj:
                         add_result(plugin_name, class_obj)
-                except:
+                except Exception:
                     print('cannot create obj class=%s' % plugin_name)
 
         return result
