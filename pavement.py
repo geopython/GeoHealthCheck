@@ -45,7 +45,7 @@ options(
         home=path(BASEDIR),
         docs=path('%s/docs' % BASEDIR),
         instance=path('%s/instance' % BASEDIR),
-        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.pot' %
+        pot=path('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' %
                  BASEDIR),
         static_docs=path('%s/GeoHealthCheck/static/docs' % BASEDIR),
         static_lib=path('%s/GeoHealthCheck/static/lib' % BASEDIR),
@@ -279,7 +279,7 @@ def update_translations():
     """update language strings"""
 
     call_task('extract_translations')
-    sh('pybabel update -i %s -d %s' % (
+    sh('pybabel update -i %st -d %s' % (
         options.base.pot, options.base.translations))
 
 
