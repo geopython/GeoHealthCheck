@@ -27,6 +27,12 @@
         "service": "WMS",
         "version": "1.0.0"
       }
+    },
+    "PDOK BAG WMS - GetMap Single": {
+      "resource": "PDOK BAG WMS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wms.WmsGetMapV1",
+      "parameters": {
+      }
     }
   },
   "check_vars": {

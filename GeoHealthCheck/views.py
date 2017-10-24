@@ -58,22 +58,20 @@ def list_resources(resource_type=None, query=None, tag=None):
         'reliability': 0
     }
 
+    filters = ()
+
     if resource_type is not None:
-        response['resources'] = models.Resource.query.filter_by(
-            resource_type=resource_type).all()
+        filters = filters + ("resource_type = '%s'" % resource_type,)
 
     if query is not None:
         field, term = get_query_field_term(query)
-        response['resources'] = models.Resource.query.filter(
-            field.ilike(term)).all()
+        filters = filters + (field.ilike(term),)
 
     if tag is not None:
-        response['resources'] = models.Resource.query.filter(
-            models.Resource.tags.any(models.Tag.name.in_([tag]))).all()
+        tag_filter = (models.Resource.tags.any(models.Tag.name.in_([tag])),)
+        filters = filters + tag_filter
 
-    if 'resources' not in response:
-        # No query nor resource_type provided: fetch all resources
-        response['resources'] = models.Resource.query.all()
+    response['resources'] = models.Resource.query.filter(*filters).all()
 
     response['total'] = len(response['resources'])
     response['success']['percentage'] = 0
@@ -211,14 +209,15 @@ def get_probes_avail(resource_type=None, resource=None):
     result = dict()
     for probe_class in probe_classes:
         probe = Factory.create_obj(probe_class)
-        if resource and probe:
-            try:
-                probe.expand_params(resource)
-            except Exception as err:
-                msg = 'Cannot expand plugin vars for %s err=%s' \
-                      % (probe_class, str(err))
-                LOGGER.warning(msg)
-            else:
-                result[probe_class] = probe.get_plugin_vars()
+        if probe:
+            if resource:
+                try:
+                    probe.expand_params(resource)
+                except Exception as err:
+                    msg = 'Cannot expand plugin vars for %s err=%s' \
+                          % (probe_class, str(err))
+                    LOGGER.warning(msg)
+
+            result[probe_class] = probe.get_plugin_vars()
 
     return result

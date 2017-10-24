@@ -165,8 +165,10 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             #             oper.formatOptions
             #         break
 
-            # Take first feature_type to determine generic attrs
-            feature_type_name, feature_type_entry = feature_types.popitem()
+            # Take random feature_type to determine generic attrs
+            for feature_type_name in feature_types:
+                feature_type_entry = feature_types[feature_type_name]
+                break
 
             # SRS
             crs_list = feature_type_entry.crsOptions
