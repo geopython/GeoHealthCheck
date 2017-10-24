@@ -146,7 +146,7 @@ class XmlParse(Check):
     def perform(self):
         try:
             etree.fromstring(self.probe.response.content)
-        except:
+        except Exception:
             self.set_result(False, str(sys.exc_info()))
 
 
@@ -165,7 +165,7 @@ class JsonParse(Check):
         import json
         try:
             json.loads(self.probe.response.content)
-        except:
+        except Exception:
             self.set_result(False, str(sys.exc_info()))
 
 
@@ -203,7 +203,7 @@ class ContainsStrings(Check):
                 if result is False:
                     msg = '%s not in response text' % text
                     break
-            except:
+            except Exception:
                 result = False
                 msg = str(sys.exc_info())
                 break
@@ -247,7 +247,7 @@ class NotContainsStrings(ContainsStrings):
                 if result is False:
                     msg = '%s in response text' % text
                     break
-            except:
+            except Exception:
                 result = False
                 msg = str(sys.exc_info())
                 break
