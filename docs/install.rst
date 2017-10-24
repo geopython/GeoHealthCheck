@@ -111,6 +111,9 @@ Notes:
   - adapt your `config_site.py` to Plugin settings from `config_main.py`
   - assign `Probes` and `Checks` to each `Resource` via the UI
 
+When running with Docker see the
+`GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
+how to run `paver upgrade` within your Docker Container.
 
 Running
 -------
