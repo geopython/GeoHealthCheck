@@ -317,7 +317,7 @@ class Probe(Plugin):
             try:
                 check_class = check_var.check_class
                 check = Factory.create_obj(check_class)
-            except:
+            except Exception:
                 LOGGER.error("Cannot create Check class: %s %s"
                              % (check_class, str(sys.exc_info())))
 
@@ -327,7 +327,7 @@ class Probe(Plugin):
             try:
                 check.init(self, check_var)
                 check.perform()
-            except:
+            except Exception:
                 msg = "Check Err: %s" % str(sys.exc_info())
                 LOGGER.error(msg)
                 check.set_result(False, msg)
@@ -354,7 +354,7 @@ class Probe(Plugin):
         try:
             # Create Probe instance from module.class string
             probe = Factory.create_obj(probe_vars.probe_class)
-        except:
+        except Exception:
             LOGGER.error("Cannot create Probe class: %s %s"
                          % (probe_vars.probe_class, str(sys.exc_info())))
 

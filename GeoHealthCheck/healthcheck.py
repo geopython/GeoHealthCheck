@@ -116,7 +116,7 @@ def sniff_test_resource(config, resource_type, url):
                     try:
                         title_re = re.compile("<title>(.+?)</title>")
                         title = title_re.search(content).group(1)
-                    except:
+                    except Exception:
                         title = url
 
                     # Optional check for any OGC-Exceptions in Response
@@ -126,7 +126,7 @@ def sniff_test_resource(config, resource_type, url):
                             except_re = re.compile(
                                 "ServiceException>|ExceptionReport>")
                             exception_text = except_re.search(content).group(0)
-                        except:
+                        except Exception:
                             # No Exception in Response text
                             pass
 
