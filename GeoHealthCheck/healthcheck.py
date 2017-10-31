@@ -29,9 +29,11 @@
 
 import datetime
 import logging
+import json
 from urllib2 import urlopen
 from urlparse import urlparse
 from functools import partial
+from pprint import pprint
 
 from owslib.wms import WebMapService
 from owslib.wmts import WebMapTileService
@@ -46,9 +48,6 @@ from flask_babel import gettext
 from enums import RESOURCE_TYPES
 from probe import Probe
 from result import ResourceResult
-from plugins.probe.geonode import (get_ows_endpoints as geonode_get_ows,
-                                   make_default_tags as geonode_make_tags,
-                                   )
 
 LOGGER = logging.getLogger(__name__)
 
@@ -113,9 +112,9 @@ def sniff_test_resource(config, resource_type, url):
                 LOGGER.warning("Cannot use %s on %s: %s",
                                ows_handler, url, err, exc_info=err)
         if ows is None:
-            msg = "Cannot get {} service instance for {}".format(resource_type,
+            message = "Cannot get {} service instance for {}".format(resource_type,
                                                                  url)
-            raise ValueError(msg)
+            raise ValueError(message)
 
         if resource_type == 'WWW:LINK':
             content_type = ows.info().getheader('Content-Type')
@@ -169,16 +168,15 @@ def sniff_test_resource(config, resource_type, url):
                     row[0][-1] = _tags
                     out.append(row[0])
 
-        success = True
-        if resource_type.startswith(('OGC:', 'OSGeo')):
+        elif resource_type.startswith(('OGC:', 'OSGeo')):
             if resource_type == 'OGC:STA':
                 title = 'OGC STA'
             else:
                 title = ows.identification.title
         if title is None:
             title = '%s %s %s' % (resource_type, gettext('for'), url)
-
         title = title.decode('utf-8')
+        success = True
     except Exception as err:
         title = 'Untitled'
         msg = 'Getting metadata failed: %s' % str(err)
@@ -203,12 +201,46 @@ def sniff_test_resource(config, resource_type, url):
     return out
 
 
+
+GEONODE_OWS_API = '/api/ows_endpoints/'
+
+def geonode_get_ows(base_url):
+    r = urlopen('{}{}'.format(base_url.rstrip('/'), GEONODE_OWS_API))
+    url = urlparse(base_url)
+    base_name = 'GeoNode {}: {{}}'.format(url.hostname)
+    status_code = r.getcode()
+    if status_code != 200:
+        msg = "Errorous response from GeoNode at {}: {}".format(base_url,
+                                                                r.text)
+        raise ValueError(msg)
+
+    try:
+        data = json.load(r)
+    except (TypeError, ValueError,), err:
+        msg = "Cannot decode response from GeoNode at {}: {}".format(base_url,
+                                                                     err)
+        raise ValueError(msg)
+
+    def update(val):
+        val['title'] = base_name.format(val['type'])
+        return val
+
+    return [update(d) for d in data['data']]
+
+
+def geonode_make_tags(base_url):
+    url = urlparse(base_url)
+    tag_name = 'GeoNode: {}'.format(url.hostname)
+    return [tag_name]
+
+
 if __name__ == '__main__':
     import sys
+    logging.basicConfig(level=logging.INFO)
     from init import App
     if len(sys.argv) < 3:
         print('Usage: %s <resource_type> <url>' % sys.argv[0])
         sys.exit(1)
 
     # TODO: need APP.config here, None for now
-    print(sniff_test_resource(App.get_config(), sys.argv[1], sys.argv[2]))
+    pprint(sniff_test_resource(App.get_config(), sys.argv[1], sys.argv[2]))

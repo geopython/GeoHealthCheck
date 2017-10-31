@@ -485,11 +485,6 @@ def add():
          title, success, response_time,
          message, start_time, resource_tags,) in sniffed_resources:
 
-        if not success:
-            LOGGER.error(message)
-            flash(message, 'danger')
-            continue
-
         # sniffed_resources may return list of resource
         # types different from initial one
         # so we need to test each row separately

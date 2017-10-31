@@ -128,8 +128,10 @@ class WmsGetMapV1(Probe):
                         oper.formatOptions
                     break
 
-            # Take first layer to determine generic attrs
-            layer_name, layer_entry = layers.popitem()
+            # Take random layer to determine generic attrs
+            for layer_name in layers:
+                layer_entry = layers[layer_name]
+                break
 
             # SRS
             srs_range = layer_entry.crsOptions

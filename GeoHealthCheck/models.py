@@ -599,14 +599,15 @@ if __name__ == '__main__':
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
         elif sys.argv[1] == 'flush':
+            retention_days = int(APP.config['GHC_RETENTION_DAYS'])
             print('Flushing runs older than %d days' %
-                  int(APP.config['GHC_RETENTION_DAYS']))
-            for run1 in Run.query.all():
-                here_and_now = datetime.utcnow()
-                days_old = (here_and_now - run1.checked_datetime).days
-                if days_old > APP.config['GHC_RETENTION_DAYS']:
+                  retention_days)
+            all_runs = Run.query.all()
+            for run in all_runs:
+                days_old = (datetime.utcnow() - run.checked_datetime).days
+                if days_old > retention_days:
                     print('Run older than %d days. Deleting' % days_old)
-                    DB.session.delete(run1)
+                    DB.session.delete(run)
             db_commit()
 
         DB.session.remove()

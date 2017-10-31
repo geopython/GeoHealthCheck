@@ -6,4 +6,3 @@ Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
 OWSLib
 Sphinx
-requests
