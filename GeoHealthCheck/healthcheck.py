@@ -112,8 +112,8 @@ def sniff_test_resource(config, resource_type, url):
                 LOGGER.warning("Cannot use %s on %s: %s",
                                ows_handler, url, err, exc_info=err)
         if ows is None:
-            message = "Cannot get {} service instance for {}".format(resource_type,
-                                                                 url)
+            message = ("Cannot get {} service instance "
+                       "for {}".format(resource_type, url))
             raise ValueError(message)
 
         if resource_type == 'WWW:LINK':
@@ -201,8 +201,8 @@ def sniff_test_resource(config, resource_type, url):
     return out
 
 
-
 GEONODE_OWS_API = '/api/ows_endpoints/'
+
 
 def geonode_get_ows(base_url):
     r = urlopen('{}{}'.format(base_url.rstrip('/'), GEONODE_OWS_API))
