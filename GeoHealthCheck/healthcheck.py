@@ -102,7 +102,7 @@ def sniff_test_resource(config, resource_type, url):
         try:
             ows_handlers = resource_type_map[resource_type]
         except KeyError:
-            LOGGER.error("No hanlder for %s type", resource_type)
+            LOGGER.error("No handler for %s type", resource_type)
             raise
         for ows_handler in ows_handlers:
             try:
