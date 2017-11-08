@@ -79,5 +79,8 @@ RESOURCE_TYPES = {
     },
     'FTP': {
         'label': 'File Transfer Protocol (FTP)'
-    }
+    },
+    'OSGeo:GeoNode': {
+        'label': 'GeoNode instance'
+        }
 }

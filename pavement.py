@@ -279,7 +279,7 @@ def update_translations():
     """update language strings"""
 
     call_task('extract_translations')
-    sh('pybabel update -i %s -d %s' % (
+    sh('pybabel update -i %st -d %s' % (
         options.base.pot, options.base.translations))
 
 
