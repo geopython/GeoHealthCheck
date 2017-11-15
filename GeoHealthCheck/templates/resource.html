@@ -80,6 +80,12 @@
                     <button class="btn btn-{{ resource.reliability| cssize_reliability }} btn-sm nohover">{{ resource.reliability|round2 }}%</button>
                 </td>
             </tr>
+            <tr>
+              <th>{{ _('Test frenquency (minutes)') }}</th>
+              <td>
+              {{ resource.test_frequency }}
+              </td>
+            </tr>
         </table>
     </div>
     <div class="row">

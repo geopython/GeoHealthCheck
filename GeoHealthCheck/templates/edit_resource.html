@@ -45,6 +45,12 @@
                 </td>
             </tr>
             <tr>
+                <th>Test frenqucy</th>
+                <td>
+                    <input type="number" id="input_resource_frequency" name="resource_frenquency_value" value="{{ resource.test_frequency }}" style="width: 100%;"/>
+                </td>
+            </tr>
+            <tr>
                 <th>Probes</th>
 
                 <td id="probe-edit-forms">
@@ -204,7 +210,10 @@
 
         // Collect tags
         var new_tags = $('#resource_tags').val();
-
+        
+        // Collect test_frequency
+        var new_frequency = $('input[name="resource_frenquency_value"]').val();
+        
         // Collect active
         var new_active = $('#input_resource_active').prop('checked');
 
@@ -270,6 +279,7 @@
                 title: new_title,
                 active: new_active,
                 tags: new_tags,
+                test_frequency:new_frequency,
                 probes: new_probes
             }),
             contentType: "application/json; charset=utf-8",
