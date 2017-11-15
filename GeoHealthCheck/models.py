@@ -200,6 +200,7 @@ class Resource(DB.Model):
     owner = DB.relationship('User',
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
+    test_frequency = DB.Column(DB.Integer)
 
     def __init__(self, owner, resource_type, title, url, tags):
         self.resource_type = resource_type
