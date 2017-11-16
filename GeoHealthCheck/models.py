@@ -497,6 +497,46 @@ def db_commit():
         msg = str(err)
         print(msg)
 
+# complete handle of resource test
+def run_resource(resourceid):
+    resource = Resource.query.filter_by(identifier=resourceid).first()
+    print resource
+    APP = App.get_app()
+    from healthcheck import run_test_resource
+    
+    if not resource.active:
+        # Exit test of resource if it's not active
+        return
+
+    # Get the status of the last run,
+    # assume success if there is none
+    last_run_success = True
+    last_run = resource.last_run
+    if last_run:
+        last_run_success = last_run.success
+        
+    # Run test
+    result = run_test_resource(resource)
+    
+    run1 = Run(resource, result)
+    
+    print('Adding Run: success=%s, response_time=%ss\n'
+    % (str(run1.success), run1.response_time))
+    
+    DB.session.add(run1)
+    
+    # commit or rollback each run to avoid long-lived transactions
+    # see https://github.com/geopython/GeoHealthCheck/issues/14
+    db_commit()
+    
+    if APP.config['GHC_NOTIFICATIONS']:
+        # Attempt notification
+        try:
+            notify(APP.config, resource, run1, last_run_success)
+        except Exception as err:
+            # Don't bail out on failure in order to commit the Run
+            msg = str(err)
+            print('error notifying: %s' % msg)
 
 if __name__ == '__main__':
     import sys
@@ -557,45 +597,10 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'run':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
-            from healthcheck import run_test_resource
+            
 
             for resource in Resource.query.all():  # run all tests
-                print('Testing %s %s' %
-                      (resource.resource_type, resource.url))
-
-                if not resource.active:
-                    print('Resource is not active. Skipping')
-                    continue
-
-                # Get the status of the last run,
-                # assume success if there is none
-                last_run_success = True
-                last_run = resource.last_run
-                if last_run:
-                    last_run_success = last_run.success
-
-                # Run test
-                result = run_test_resource(resource)
-
-                run1 = Run(resource, result)
-
-                print('Adding Run: success=%s, response_time=%ss\n'
-                      % (str(run1.success), run1.response_time))
-
-                DB.session.add(run1)
-
-                # commit or rollback each run to avoid long-lived transactions
-                # see https://github.com/geopython/GeoHealthCheck/issues/14
-                db_commit()
-
-                if APP.config['GHC_NOTIFICATIONS']:
-                    # Attempt notification
-                    try:
-                        notify(APP.config, resource, run1, last_run_success)
-                    except Exception as err:
-                        # Don't bail out on failure in order to commit the Run
-                        msg = str(err)
-                        print('error notifying: %s' % msg)
+                run_resource(resource)
 
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())

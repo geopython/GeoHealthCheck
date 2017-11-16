@@ -29,6 +29,7 @@
 #
 # =================================================================
 
+from __future__ import print_function
 import csv
 import logging
 from datetime import datetime, timedelta
@@ -49,6 +50,15 @@ from models import Resource, Run, ProbeVars, CheckVars, Tag, User
 from factory import Factory
 from util import render_template2, send_email
 import views
+import atexit
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from models import run_resource
+
+
+scheduler = BackgroundScheduler()
+
+
 
 # Module globals for convenience
 LOGGER = logging.getLogger(__name__)
@@ -82,7 +92,15 @@ def db_commit():
     # finally:
     #     DB.session.close()
     return err
-
+@APP.before_first_request
+def start_cron():
+    for resource in Resource.query.all():
+        scheduler.add_job(
+        run_resource,'interval',[resource.identifier], minutes=resource.test_frequency,
+        id=str(resource.identifier))
+    scheduler.start()
+    
+    atexit.register(lambda: scheduler.shutdown())
 
 @APP.before_request
 def before_request():
@@ -639,7 +657,17 @@ def update(resource_identifier):
         err = db_commit()
         if err:
             status = str(err)
-
+    #run_resource(resource.)
+    # Try to remove job from cron
+    try:
+        scheduler.remove_job(str(resource_identifier))
+    except:
+        pass
+    # Add jop to cron
+    scheduler.add_job(
+    run_resource,'interval',[resource.identifier], minutes=resource.test_frequency,
+    id=str(resource_identifier))
+    
     return jsonify({'status': status})
 
 
