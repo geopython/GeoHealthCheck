@@ -69,7 +69,6 @@ class Run(DB.Model):
         self.checked_datetime = checked_datetime
         self.message = result.message
         self.report = result.get_report()
-
     # JSON string object specifying report for the Run
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _report = DB.Column("report", DB.Text, default={})
@@ -500,7 +499,7 @@ def db_commit():
 # complete handle of resource test
 def run_resource(resourceid):
     resource = Resource.query.filter_by(identifier=resourceid).first()
-    print resource
+    
     APP = App.get_app()
     from healthcheck import run_test_resource
     
@@ -518,10 +517,7 @@ def run_resource(resourceid):
     # Run test
     result = run_test_resource(resource)
     
-    run1 = Run(resource, result)
-    
-    print('Adding Run: success=%s, response_time=%ss\n'
-    % (str(run1.success), run1.response_time))
+    run1 = Run(resource, result,datetime.utcnow())
     
     DB.session.add(run1)
     
@@ -537,7 +533,7 @@ def run_resource(resourceid):
             # Don't bail out on failure in order to commit the Run
             msg = str(err)
             print('error notifying: %s' % msg)
-
+    DB.session.remove()
 if __name__ == '__main__':
     import sys
 

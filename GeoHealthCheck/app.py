@@ -55,9 +55,8 @@ import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from models import run_resource
 
-
+# Create scheduler
 scheduler = BackgroundScheduler()
-
 
 
 # Module globals for convenience
@@ -92,8 +91,7 @@ def db_commit():
     # finally:
     #     DB.session.close()
     return err
-@APP.before_first_request
-def start_cron():
+def start_crons():
     for resource in Resource.query.all():
         scheduler.add_job(
         run_resource,'interval',[resource.identifier], minutes=resource.test_frequency,
@@ -101,6 +99,8 @@ def start_cron():
     scheduler.start()
     
     atexit.register(lambda: scheduler.shutdown())
+# Start scheduler
+start_crons()
 
 @APP.before_request
 def before_request():
