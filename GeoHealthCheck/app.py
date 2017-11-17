@@ -98,8 +98,16 @@ def start_crons():
         scheduler.add_job(
         run_resource,'interval',[resource.identifier], minutes=resource.test_frequency,
         id=str(resource.identifier))
-    scheduler.start()
+    
+    # change configuration
+    scheduler.configure( job_defaults={
+        'coalesce': False,
+        'max_instances': 100000
+        })
+        
     scheduler.add_job(flush_runs, 'interval', minutes=1)
+    
+    scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
 # Start scheduler
 start_crons()
@@ -737,7 +745,13 @@ def delete(resource_identifier):
         DB.session.delete(run)
 
     DB.session.delete(resource)
-
+    
+    # Delete cron job associated with this resource
+    try:
+        scheduler.remove_job(str(resource_identifier))
+    except:
+        pass
+    
     try:
         DB.session.commit()
         flash(gettext('Resource deleted'), 'success')
