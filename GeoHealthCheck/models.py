@@ -537,7 +537,7 @@ def run_resource(resourceid):
     
 # Complete handle of old runs deletion
 def flush_runs():
-    retention_time = timedelta(0,0,0,0,0,1) #datetime(APP.config['GHC_RETENTION_DAYS'])
+    retention_time = timedelta(*APP.config['GHC_RETENTION_DAYS']) 
     all_runs = Run.query.all()
     for run in all_runs:
         how_old = (datetime.utcnow() - run.checked_datetime)
