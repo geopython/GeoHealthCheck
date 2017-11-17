@@ -53,7 +53,7 @@ import views
 import atexit
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from models import run_resource
+from models import run_resource,flush_runs
 
 # Create scheduler
 scheduler = BackgroundScheduler()
@@ -91,13 +91,15 @@ def db_commit():
     # finally:
     #     DB.session.close()
     return err
+    
 def start_crons():
+    # Cold start evry cron of evry ressource
     for resource in Resource.query.all():
         scheduler.add_job(
         run_resource,'interval',[resource.identifier], minutes=resource.test_frequency,
         id=str(resource.identifier))
     scheduler.start()
-    
+    scheduler.add_job(flush_runs, 'interval', minutes=1)
     atexit.register(lambda: scheduler.shutdown())
 # Start scheduler
 start_crons()

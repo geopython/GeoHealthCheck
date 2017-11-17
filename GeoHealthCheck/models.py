@@ -30,7 +30,7 @@
 
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import func
 
 from sqlalchemy.orm import deferred
@@ -533,6 +533,18 @@ def run_resource(resourceid):
             # Don't bail out on failure in order to commit the Run
             msg = str(err)
             print('error notifying: %s' % msg)
+    DB.session.remove()
+    
+# Complete handle of old runs deletion
+def flush_runs():
+    retention_time = timedelta(0,0,0,0,0,1) #datetime(APP.config['GHC_RETENTION_DAYS'])
+    all_runs = Run.query.all()
+    for run in all_runs:
+        how_old = (datetime.utcnow() - run.checked_datetime)
+        if how_old > retention_time:
+            DB.session.delete(run)
+    db_commit()
+            
     DB.session.remove()
 if __name__ == '__main__':
     import sys
