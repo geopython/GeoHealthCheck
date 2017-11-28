@@ -534,7 +534,8 @@ def run_resource(resourceid):
             # Don't bail out on failure in order to commit the Run
             msg = str(err)
             print('error notifying: %s' % msg)
-    DB.session.remove()
+    if not __name__ == '__main__':
+        DB.session.remove()
 
 
 # Complete handle of old runs deletion
@@ -612,12 +613,12 @@ if __name__ == '__main__':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
 
+            print(Resource.query.all())
             for resource in Resource.query.all():  # run all tests
                 run_resource(resource.identifier)
 
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
-            return 0
         elif sys.argv[1] == 'flush':
             flush_runs()
 
