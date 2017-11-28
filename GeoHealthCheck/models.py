@@ -610,7 +610,7 @@ if __name__ == '__main__':
             
 
             for resource in Resource.query.all():  # run all tests
-                run_resource(resource)
+                run_resource(resource.identifier)
 
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
