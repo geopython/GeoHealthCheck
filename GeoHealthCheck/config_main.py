@@ -38,7 +38,7 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
 SECRET_KEY = None
 
 # days, seconds, microseconds, milliseconds, minutes, hours, weeks
-GHC_RETENTION_DAYS = (30, 0, 0, 0, 0, 0, 0) 
+GHC_RETENTION_DAYS = (30, 0, 0, 0, 0, 0, 0)
 GHC_RUN_FREQUENCY = 'hourly'
 GHC_SELF_REGISTER = False
 GHC_NOTIFICATIONS = False

@@ -548,7 +548,7 @@ def flush_runs():
         if how_old > retention_time:
             DB.session.delete(run)
     db_commit()
- 
+
     DB.session.remove()
 
 

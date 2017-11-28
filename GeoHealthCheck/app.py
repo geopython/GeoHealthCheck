@@ -98,7 +98,7 @@ def start_crons():
     # Cold start evry cron of evry ressource
     for resource in Resource.query.all():
         scheduler.add_job(
-                          run_resource,'interval', [resource.identifier],
+                          run_resource, 'interval', [resource.identifier],
                           minutes=resource.test_frequency,
                           id=str(resource.identifier))
 
