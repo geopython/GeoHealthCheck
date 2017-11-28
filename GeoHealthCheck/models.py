@@ -617,6 +617,7 @@ if __name__ == '__main__':
 
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
+            return 0
         elif sys.argv[1] == 'flush':
             flush_runs()
 
