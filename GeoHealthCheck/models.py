@@ -496,13 +496,14 @@ def db_commit():
         msg = str(err)
         print(msg)
 
+
 # complete handle of resource test
 def run_resource(resourceid):
     resource = Resource.query.filter_by(identifier=resourceid).first()
-    
+
     APP = App.get_app()
     from healthcheck import run_test_resource
-    
+
     if not resource.active:
         # Exit test of resource if it's not active
         return
@@ -513,18 +514,18 @@ def run_resource(resourceid):
     last_run = resource.last_run
     if last_run:
         last_run_success = last_run.success
-        
+
     # Run test
     result = run_test_resource(resource)
-    
-    run1 = Run(resource, result,datetime.utcnow())
-    
+
+    run1 = Run(resource, result, datetime.utcnow())
+
     DB.session.add(run1)
-    
+
     # commit or rollback each run to avoid long-lived transactions
     # see https://github.com/geopython/GeoHealthCheck/issues/14
     db_commit()
-    
+
     if APP.config['GHC_NOTIFICATIONS']:
         # Attempt notification
         try:
@@ -534,20 +535,23 @@ def run_resource(resourceid):
             msg = str(err)
             print('error notifying: %s' % msg)
     DB.session.remove()
-    
+
+
 # Complete handle of old runs deletion
 def flush_runs():
     APP = App.get_app()
-    retention_time = timedelta(*APP.config['GHC_RETENTION_DAYS']) 
-    
+    retention_time = timedelta(*APP.config['GHC_RETENTION_DAYS'])
+
     all_runs = Run.query.all()
     for run in all_runs:
         how_old = (datetime.utcnow() - run.checked_datetime)
         if how_old > retention_time:
             DB.session.delete(run)
     db_commit()
-            
+ 
     DB.session.remove()
+
+
 if __name__ == '__main__':
     import sys
 
@@ -607,7 +611,6 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'run':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
-            
 
             for resource in Resource.query.all():  # run all tests
                 run_resource(resource.identifier)

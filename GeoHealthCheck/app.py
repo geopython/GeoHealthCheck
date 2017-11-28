@@ -53,7 +53,8 @@ import views
 import atexit
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from models import run_resource,flush_runs
+from models import run_resource, flush_runs
+from apscheduler.jobstores.base import JobLookupError
 
 # Create scheduler
 scheduler = BackgroundScheduler()
@@ -91,26 +92,31 @@ def db_commit():
     # finally:
     #     DB.session.close()
     return err
-    
+
+
 def start_crons():
     # Cold start evry cron of evry ressource
     for resource in Resource.query.all():
         scheduler.add_job(
-        run_resource,'interval',[resource.identifier], minutes=resource.test_frequency,
-        id=str(resource.identifier))
-    
+                          run_resource,'interval', [resource.identifier],
+                          minutes=resource.test_frequency,
+                          id=str(resource.identifier))
+
     # change configuration
-    scheduler.configure( job_defaults={
+    scheduler.configure(job_defaults={
         'coalesce': False,
         'max_instances': 100000
         })
-        
+
     scheduler.add_job(flush_runs, 'interval', minutes=1)
-    
+
     scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
+
+
 # Start scheduler
 start_crons()
+
 
 @APP.before_request
 def before_request():
@@ -667,17 +673,18 @@ def update(resource_identifier):
         err = db_commit()
         if err:
             status = str(err)
-    #run_resource(resource.)
+
     # Try to remove job from cron
     try:
         scheduler.remove_job(str(resource_identifier))
-    except:
+    except JobLookupError:
         pass
     # Add jop to cron
     scheduler.add_job(
-    run_resource,'interval',[resource.identifier], minutes=resource.test_frequency,
-    id=str(resource_identifier))
-    
+                      run_resource, 'interval', [resource.identifier],
+                      minutes=resource.test_frequency,
+                      id=str(resource_identifier))
+
     return jsonify({'status': status})
 
 
@@ -745,13 +752,13 @@ def delete(resource_identifier):
         DB.session.delete(run)
 
     DB.session.delete(resource)
-    
+
     # Delete cron job associated with this resource
     try:
         scheduler.remove_job(str(resource_identifier))
-    except:
+    except JobLookupError:
         pass
-    
+
     try:
         DB.session.commit()
         flash(gettext('Resource deleted'), 'success')
