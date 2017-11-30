@@ -97,9 +97,12 @@ def db_commit():
 def start_crons():
     # Cold start evry cron of evry ressource
     for resource in Resource.query.all():
+        freq = resource.test_frequency
+        if freq is None:
+            freq = 60
         scheduler.add_job(
                           run_resource, 'interval', [resource.identifier],
-                          minutes=resource.test_frequency,
+                          minutes=freq,
                           id=str(resource.identifier))
 
     # change configuration
