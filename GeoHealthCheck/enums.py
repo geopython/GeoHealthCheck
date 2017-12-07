@@ -82,5 +82,5 @@ RESOURCE_TYPES = {
     },
     'OSGeo:GeoNode': {
         'label': 'GeoNode instance'
-        }
+    }
 }

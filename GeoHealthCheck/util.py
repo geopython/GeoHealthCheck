@@ -54,7 +54,7 @@ def percentage(number, total):
     if total == 0:  # no resources registered yet
         return 0.00
 
-    percentage_value = float((float(float(number)/float(total)))*100.0)
+    percentage_value = float((float(float(number) / float(total))) * 100.0)
     if percentage_value in [0.0, 100.0]:
         return int(percentage_value)
     return percentage_value
