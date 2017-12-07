@@ -1,5 +1,4 @@
 [flake8]
-ignore =
 max-line-length = 79
 exclude = .git,.cache,docs,docker,build,dist,GeoHealthCheck/migrations
-max-complexity = 38
+# max-complexity = 38
