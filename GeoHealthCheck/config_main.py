@@ -151,5 +151,5 @@ GHC_PROBE_DEFAULTS = {
     },
     'OSGeo:GeoNode': {
         'probe_class': None
-        }
+    }
 }

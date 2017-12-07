@@ -38,7 +38,7 @@ class OwsGetCaps(Probe):
     CHECKS_AVAIL = {
         'GeoHealthCheck.plugins.check.checks.XmlParse': {
             'default': True
-         },
+        },
         'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {
             'default': True
         },
