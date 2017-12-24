@@ -56,6 +56,9 @@ Postgres/PostGIS as database (recommended).
 See the [Docker Compose Documentation](https://docs.docker.com/compose)
 for more info.
 
+*Note that the `docker-compose` YAML files below are meant as examples to be adapted to your*
+*local deployment situation.* 
+
 ### Using sqlite DB (default)
 
 Using the default [docker-compose.yml](compose/docker-compose.yml) will run GHC with a SQLite DB.
@@ -109,6 +112,18 @@ psql -h postgis_ghc -U ghc ghc
 
 The PG DB data is kept in a Docker volume usually located at  
 `/var/lib/docker/volumes/docker_ghc_pgdb/_data`. 
+
+NB you may want to remove the port mapping `5432:5432` for the `postgis` container (it is not 
+required for GHC and may expose a security issue). 
+It is then still possible to access your database, like via psql, by figuring out
+the Docker host IP address on your Docker host as follows: 
+
+
+```                                       
+  export PGHOST=`sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' postgis`
+  psql -U ghc ghc
+
+```
 
 ## Cronjobs
 
