@@ -83,7 +83,9 @@ class HttpPost(HttpGet):
         via parameter substitution from content_type Parameter.
         """
 
-        content_type = {'post_content_type': self.content_type}
-        request_headers = self.REQUEST_HEADERS.format(**content_type)
-
-        return request_headers
+        # content_type =
+        # {'post_content_type': self._parameters['content_type']}
+        # request_headers =
+        #       self.REQUEST_HEADERS['content-type'].format(**content_type)
+        # Hmm seems simpler
+        return {'content-type': self._parameters['content_type']}
