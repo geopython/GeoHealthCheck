@@ -84,19 +84,25 @@ def notify(config, resource, run, last_run_success):
 
     # List of email addresses to notify, may be list or comma-separated str
     # "To" needs comma-separated list, while sendmail() requires list...
-    notifications_email = config['GHC_NOTIFICATIONS_EMAIL']
-    if type(notifications_email) is list:
-        notifications_email = ','.join(config['GHC_NOTIFICATIONS_EMAIL'])
+    #notifications_email = config['GHC_NOTIFICATIONS_EMAIL']
+    #if type(notifications_email) is list:
+    #    notifications_email = ','.join(config['GHC_NOTIFICATIONS_EMAIL'])
+#
+    #if type(config['GHC_NOTIFICATIONS_EMAIL']) is str:
+    #    config['GHC_NOTIFICATIONS_EMAIL'] = \
+    #        config['GHC_NOTIFICATIONS_EMAIL'].split(',')
 
-    if type(config['GHC_NOTIFICATIONS_EMAIL']) is str:
-        config['GHC_NOTIFICATIONS_EMAIL'] = \
-            config['GHC_NOTIFICATIONS_EMAIL'].split(',')
+    notifications_email = ','.join(resource.get_recipients('email'))
+    if not notifications_email:
+        LOGGER.warning("No emails for notification set for resource %s", resource.identifier)
+        return
 
     msg['To'] = notifications_email
 
     msg['Subject'] = '[%s] %s: %s' % (config['GHC_SITE_TITLE'],
                                       result, resource.title)
 
+    print(msg.as_string())
     server = smtplib.SMTP(config['GHC_SMTP']['server'],
                           config['GHC_SMTP']['port'])
 

@@ -31,6 +31,7 @@
 
 import csv
 import logging
+import json
 from datetime import datetime, timedelta
 from StringIO import StringIO
 from itertools import chain
@@ -46,7 +47,7 @@ from __init__ import __version__
 from healthcheck import sniff_test_resource, run_test_resource
 from init import App
 from enums import RESOURCE_TYPES
-from models import Resource, Run, ProbeVars, CheckVars, Tag, User
+from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
 from util import render_template2, send_email
 import views
@@ -552,6 +553,9 @@ def add():
         run_to_add = Run(resource_to_add, result)
 
         DB.session.add(resource_to_add)
+        # prepopulate notifications for current user
+        resource_to_add.set_recipients('email', [g.user.email])
+
         if probe_to_add:
             DB.session.add(probe_to_add)
         for check_to_add in checks_to_add:
@@ -635,13 +639,15 @@ def update(resource_identifier):
                     resource.probe_vars.append(probe_vars)
 
                 update_counter += 1
-
+            elif key == 'notify_emails':
+                resource.set_recipients('email', value)
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])
                 update_counter += 1
 
     except Exception as err:
+        LOGGER.error("Cannot update resource: %s", err, exc_info=err)
         DB.session.rollback()
         status = str(err)
         update_counter = 0
@@ -695,8 +701,13 @@ def edit_resource(resource_identifier):
 
     probes_avail = views.get_probes_avail(resource.resource_type, resource)
 
-    return render_template('edit_resource.html', lang=g.current_lang,
-                           resource=resource, probes_avail=probes_avail)
+    suggestions = json.dumps(Recipient.get_suggestions('email', g.user.username))
+
+    return render_template('edit_resource.html',
+                           lang=g.current_lang,
+                           resource=resource,
+                           suggestions=suggestions,
+                           probes_avail=probes_avail)
 
 
 @APP.route('/resource/<int:resource_identifier>/delete')

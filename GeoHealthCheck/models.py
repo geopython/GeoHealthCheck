@@ -30,16 +30,19 @@
 
 import json
 import logging
+from flask_babel import gettext as _
 from datetime import datetime
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from sqlalchemy.orm import deferred
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 import util
 from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
 from notifications import notify
+from wtforms.validators import ValidationError, Email
 
 DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
@@ -186,6 +189,94 @@ resource_tags = DB.Table('resource_tags',
                                    DB.ForeignKey('resource.identifier')))
 
 
+class Recipient(DB.Model):
+    """
+    Notification recipient
+    """
+    TYPE_EMAIL = 'email'
+    TYPES = (TYPE_EMAIL,)
+    __tablename__ = 'recipient'
+    VALIDATORS = {TYPE_EMAIL: [Email()]}
+
+    id = DB.Column(DB.Integer, primary_key=True)
+    # channel type. email for now, more may come later
+    channel = DB.Column(DB.Enum(*TYPES), default=TYPE_EMAIL, nullable=False)
+    # recipient's identification 
+    location = DB.Column(DB.Text, nullable=False)
+    resources = DB.relationship('Resource',
+                                secondary='resourcenotification',
+                                lazy='dynamic',
+                                backref=DB.backref('recipients', lazy='dynamic'))
+
+    def __init__(self, channel, location):
+        self.channel = channel
+        self.location = location
+
+    @classmethod
+    def validate(cls, channel, value):
+        """
+        Validate if provided value is correct for given channel
+        """
+        try:
+            validators = cls.VALIDATORS[channel]
+        except KeyError:
+            return
+
+        dummy_form = None
+
+        class dummy_value(object):
+            data = value
+            @staticmethod
+            def gettext(*args, **kwargs):
+                return _(*args, **kwargs)
+
+        for v in validators:
+            v(dummy_form, dummy_value())
+
+    def is_email(self):
+        return self.channel == self.TYPE_EMAIL
+   
+    @classmethod
+    def get_or_create(cls, channel, location):
+        cls.validate(channel, location)
+        try:
+            r = DB.session.query(cls).filter(and_(cls.channel==channel,
+                                                  cls.location==location)).one()
+        except (MultipleResultsFound, NoResultFound,):
+            r = cls(channel=channel, location=location)
+            DB.session.add(r)
+            DB.session.flush()
+        return r
+
+    @classmethod
+    def get_suggestions(cls, channel, for_user):
+        """
+        Return list of values to autocomplete for specific user
+        and channel.
+        """
+        Rcp = cls
+        Res = Resource
+        ResNot = ResourceNotification
+
+        q = DB.session.query(Rcp.location)\
+                      .join(ResNot, ResNot.recipient_id == Rcp.id)\
+                      .join(Res, Res.identifier == ResNot.resource_id)\
+                      .group_by(Rcp.location)\
+                      .filter(and_(Res.owner_identifier == for_user,
+                                   Rcp.channel == channel))
+        return [item[0] for item in q]
+
+class ResourceNotification(DB.Model):
+    """
+    m2m for Recipient <-> Resource
+    """
+    __tablename__ = 'resourcenotification'
+
+    resource_id = DB.Column(DB.Integer, DB.ForeignKey('resource.identifier'), primary_key=True)
+    recipient_id = DB.Column(DB.Integer, DB.ForeignKey('recipient.id'), primary_key=True)
+    resource = DB.relationship('Resource', lazy=False)
+    recipient = DB.relationship('Recipient', lazy=False)
+
 class Resource(DB.Model):
     """HTTP accessible resource"""
 
@@ -316,6 +407,33 @@ class Resource(DB.Model):
             else:
                 colors.append('#D9534F')  # red
         return colors
+
+    def get_recipients(self, channel):
+        q = self.recipients
+        return [item.location for item in q if item.channel == channel]
+
+    def set_recipients(self, channel, items):
+
+        # create new rcp
+        to_add = []
+        for item in items:
+            to_add.append(Recipient.get_or_create(channel, item.strip()))
+
+        # clear specific channel
+        to_delete = self.get_recipients(channel)
+        if to_delete:
+            to_delete_items = DB.session.query(ResourceNotification)\
+                                        .join(Recipient, Recipient.id == ResourceNotification.recipient_id)\
+                                        .filter(and_(ResourceNotification.resource_id == self.identifier,
+                                                     Recipient.location.in_(to_delete)))
+            for rcp_ntf in to_delete_items:
+                DB.session.delete(rcp_ntf)
+        DB.session.flush()
+
+        for r in to_add:
+            self.recipients.append(r)
+        DB.session.flush()
+        return self.get_recipients(channel)
 
 
 class User(DB.Model):
@@ -592,9 +710,7 @@ if __name__ == '__main__':
                     try:
                         notify(APP.config, resource, run1, last_run_success)
                     except Exception as err:
-                        # Don't bail out on failure in order to commit the Run
-                        msg = str(err)
-                        print('error notifying: %s' % msg)
+                        LOGGER.error("Cannot send notifications: %s", err, exc_info=err)
 
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())

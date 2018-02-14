@@ -19,6 +19,13 @@
                 </td>
             </tr>
             <tr>
+                <th>{{ _("Notify emails") }}</th>
+                <td>
+                    <input type="text" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}" style="width: 100%"/>
+                </td>
+
+            </tr>
+            <tr>
                 <th>{{ _('Owner') }}</th>
                 <td>{{ resource.owner.username }}</td>
             </tr>
@@ -98,6 +105,12 @@
 </div>
 {% endblock %}
 {% block extrafoot %}
+
+<script src="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.js') }}"></script>
+<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.structure.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.theme.css') }}" rel="stylesheet">
+
 <script type="text/javascript">
     var all_tags = {{ tags.keys()|tojson }};
     $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
@@ -207,6 +220,9 @@
 
         // Collect active
         var new_active = $('#input_resource_active').prop('checked');
+        
+        // Collect recipients
+        var new_notify_emails = $('#input_resource_notify_emails').val().split(',');
 
         // Collect Probes with parameters and contained Checks
         // also with parameters
@@ -270,7 +286,8 @@
                 title: new_title,
                 active: new_active,
                 tags: new_tags,
-                probes: new_probes
+                probes: new_probes,
+                notify_emails: new_notify_emails
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -330,6 +347,35 @@
         }
     });
 
+    // autocomplete for notifications
+    var emails = {{ suggestions|safe }};
+    var ac_source = function(request, response){
+        var val = request.term.trim().split(',').pop().trim();
+        if (val == ''){
+            response([]);
+        }
+        var search_for = new RegExp(val, 'i');
+
+        var found = [];
+        $.each(emails, function(idx, elm){
+            if (elm.search(search_for)> -1){
+                found.push(elm);
+            }
+        });
+        response(found);
+    }
+    var ac_select = function( event, ui ) {
+        var terms = this.value.trim().split(',');
+        terms.pop();
+        terms.push( ui.item.value );
+        this.value = terms.join( ", " );
+        return false;
+    };
+
+    var ac_params = {'source': ac_source,
+                     'select': ac_select,
+                     'focus': function(){return false}}
+    $('#input_resource_notify_emails').autocomplete(ac_params);
 
     {% endif %}
 

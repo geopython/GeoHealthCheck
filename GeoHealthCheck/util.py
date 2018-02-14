@@ -33,6 +33,7 @@ import os
 import smtplib
 from urllib2 import urlopen
 from urlparse import urlparse
+from gettext import translation
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -119,13 +120,12 @@ def get_python_snippet(resource):
 def render_template2(template, template_vars):
     """convenience function to render template in a non-Flask context"""
 
-    from gettext import translation
     loader_dir = os.path.join(os.path.dirname(__file__), 'templates')
     loader = FileSystemLoader(loader_dir)
 
     env = Environment(loader=loader, extensions=['jinja2.ext.i18n'])
     translations_dir = os.path.join(os.path.dirname(__file__), 'translations')
-    translations = translation('messages', translations_dir)
+    translations = translation('messages', translations_dir, fallback=True)
     env.install_gettext_translations(translations)
     template_obj = env.get_template(template)
 
