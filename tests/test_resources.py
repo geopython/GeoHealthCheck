@@ -32,7 +32,7 @@ import unittest
 import sys
 import os
 from GeoHealthCheck.models import (DB, Resource, Run, load_data,
-    ResourceNotification, Recipient)
+                                   Recipient)
 from GeoHealthCheck.healthcheck import run_test_resource
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -88,8 +88,6 @@ class GeoHealthCheckTest(unittest.TestCase):
                 (resource.url, str(resource.runs[0])))
 
     def testNotificationsApi(self):
-        R = Resource
-        RN = ResourceNotification
         Rcp = Recipient
         test_emails = ['test@test.com', 'other@test.com', 'unused@test.com']
         invalid_emails = ['invalid', None, object()]
@@ -103,15 +101,14 @@ class GeoHealthCheckTest(unittest.TestCase):
             Rcp.get_or_create('email', email)
         from_db = set(r[0] for r in DB.session.query(Rcp.location).all())
         self.assertEqual(from_db, set(test_emails))
-        
+
         r = Resource.query.first()
         r.set_recipients('email', test_emails[:2])
 
         # unused email should be removed
         self.assertEqual(set(r.get_recipients('email')), set(test_emails[:2]))
-        q = Rcp.query.filter(Rcp.location==test_emails[-1])
+        q = Rcp.query.filter(Rcp.location == test_emails[-1])
         self.assertEqual(q.count(), 0)
-
 
 
 if __name__ == '__main__':
