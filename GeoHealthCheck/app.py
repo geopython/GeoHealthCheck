@@ -701,7 +701,8 @@ def edit_resource(resource_identifier):
 
     probes_avail = views.get_probes_avail(resource.resource_type, resource)
 
-    suggestions = json.dumps(Recipient.get_suggestions('email', g.user.username))
+    suggestions = json.dumps(Recipient.get_suggestions('email',
+                                                       g.user.username))
 
     return render_template('edit_resource.html',
                            lang=g.current_lang,

@@ -82,19 +82,10 @@ def notify(config, resource, run, last_run_success):
     msg['From'] = email.utils.formataddr((config['GHC_SITE_TITLE'],
                                           config['GHC_ADMIN_EMAIL']))
 
-    # List of email addresses to notify, may be list or comma-separated str
-    # "To" needs comma-separated list, while sendmail() requires list...
-    #notifications_email = config['GHC_NOTIFICATIONS_EMAIL']
-    #if type(notifications_email) is list:
-    #    notifications_email = ','.join(config['GHC_NOTIFICATIONS_EMAIL'])
-#
-    #if type(config['GHC_NOTIFICATIONS_EMAIL']) is str:
-    #    config['GHC_NOTIFICATIONS_EMAIL'] = \
-    #        config['GHC_NOTIFICATIONS_EMAIL'].split(',')
-
     notifications_email = ','.join(resource.get_recipients('email'))
     if not notifications_email:
-        LOGGER.warning("No emails for notification set for resource %s", resource.identifier)
+        LOGGER.warning("No emails for notification set for resource %s",
+                       resource.identifier)
         return
 
     msg['To'] = notifications_email

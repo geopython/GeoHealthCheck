@@ -42,7 +42,7 @@ from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
 from notifications import notify
-from wtforms.validators import ValidationError, Email
+from wtforms.validators import Email
 
 DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
@@ -201,12 +201,13 @@ class Recipient(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     # channel type. email for now, more may come later
     channel = DB.Column(DB.Enum(*TYPES), default=TYPE_EMAIL, nullable=False)
-    # recipient's identification 
+    # recipient's identification
     location = DB.Column(DB.Text, nullable=False)
     resources = DB.relationship('Resource',
                                 secondary='resourcenotification',
                                 lazy='dynamic',
-                                backref=DB.backref('recipients', lazy='dynamic'))
+                                backref=DB.backref('recipients',
+                                                   lazy='dynamic'))
 
     def __init__(self, channel, location):
         self.channel = channel
@@ -226,6 +227,7 @@ class Recipient(DB.Model):
 
         class dummy_value(object):
             data = value
+
             @staticmethod
             def gettext(*args, **kwargs):
                 return _(*args, **kwargs)
@@ -235,13 +237,15 @@ class Recipient(DB.Model):
 
     def is_email(self):
         return self.channel == self.TYPE_EMAIL
-   
+
     @classmethod
     def get_or_create(cls, channel, location):
         cls.validate(channel, location)
         try:
-            r = DB.session.query(cls).filter(and_(cls.channel==channel,
-                                                  cls.location==location)).one()
+            r = DB.session.query(cls)\
+                          .filter(and_(cls.channel == channel,
+                                       cls.location == location))\
+                          .one()
         except (MultipleResultsFound, NoResultFound,):
             r = cls(channel=channel, location=location)
             DB.session.add(r)
@@ -266,16 +270,22 @@ class Recipient(DB.Model):
                                    Rcp.channel == channel))
         return [item[0] for item in q]
 
+
 class ResourceNotification(DB.Model):
     """
     m2m for Recipient <-> Resource
     """
     __tablename__ = 'resourcenotification'
 
-    resource_id = DB.Column(DB.Integer, DB.ForeignKey('resource.identifier'), primary_key=True)
-    recipient_id = DB.Column(DB.Integer, DB.ForeignKey('recipient.id'), primary_key=True)
+    resource_id = DB.Column(DB.Integer,
+                            DB.ForeignKey('resource.identifier'),
+                            primary_key=True)
+    recipient_id = DB.Column(DB.Integer,
+                             DB.ForeignKey('recipient.id'),
+                             primary_key=True)
     resource = DB.relationship('Resource', lazy=False)
     recipient = DB.relationship('Recipient', lazy=False)
+
 
 class Resource(DB.Model):
     """HTTP accessible resource"""
@@ -419,14 +429,19 @@ class Resource(DB.Model):
         for item in items:
             to_add.append(Recipient.get_or_create(channel, item.strip()))
 
+        RN = ResourceNotification
+        Rcp = Recipient
         # clear specific channel
         to_delete = self.get_recipients(channel)
         if to_delete:
-            to_delete_items = DB.session.query(ResourceNotification)\
-                                        .join(Recipient, Recipient.id == ResourceNotification.recipient_id)\
-                                        .filter(and_(ResourceNotification.resource_id == self.identifier,
-                                                     Recipient.location.in_(to_delete)))
-            for rcp_ntf in to_delete_items:
+            to_del_rcp = DB.session.query(RN)\
+                                   .join(Rcp,
+                                         Rcp.id == RN.recipient_id)\
+                                   .filter(
+                                        and_(RN.resource_id == self.identifier,
+                                             Rcp.location.in_(to_delete))
+                                          )
+            for rcp_ntf in to_del_rcp:
                 DB.session.delete(rcp_ntf)
         DB.session.flush()
 
@@ -710,7 +725,9 @@ if __name__ == '__main__':
                     try:
                         notify(APP.config, resource, run1, last_run_success)
                     except Exception as err:
-                        LOGGER.error("Cannot send notifications: %s", err, exc_info=err)
+                        LOGGER.error("Cannot send notifications: %s",
+                                     err,
+                                     exc_info=err)
 
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
