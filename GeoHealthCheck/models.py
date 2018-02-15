@@ -494,6 +494,7 @@ class Resource(DB.Model):
             out[c] = self.get_recipients(c)
         return out
 
+
 class User(DB.Model):
     """user accounts"""
 
