@@ -21,6 +21,7 @@ Features
 - database agnostic: any SQLAlchemy supported backend
 - database upgrades: using Alembic with Flask-Migrate
 - extensible healthchecks via Plugins
+- per-resource notifications
 
 Links
 -----

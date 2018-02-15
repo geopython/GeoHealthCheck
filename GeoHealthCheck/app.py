@@ -253,7 +253,8 @@ def export():
                 'average_response_time': round(r.average_response_time, 2),
                 'max_response_time': round(r.max_response_time, 2),
                 'reliability': round(r.reliability, 2),
-                'last_report': r.last_run.report
+                'last_report': r.last_run.report,
+                'recipients': r.dump_recipients()
             })
         return jsonify(json_dict)
     elif request.url_rule.rule == '/csv':
@@ -262,13 +263,20 @@ def export():
         header = [
             'resource_type', 'title', 'url', 'ghc_url', 'ghc_json', 'ghc_csv',
             'first_run', 'last_run', 'status', 'min_response_time',
-            'average_response_time', 'max_response_time', 'reliability'
+            'average_response_time', 'max_response_time', 'reliability',
+            'recipients'
         ]
         writer.writerow(header)
         for r in response['resources']:
             ghc_url = '%s%s' % (CONFIG['GHC_SITE_URL'],
                                 url_for('get_resource_by_id',
                                         identifier=r.identifier))
+            # serialize recipients into a string
+            # channel1=location1|location2 channel2=location3|location4
+            recipients = ['{}={}'.format(key, '|'.join(value))
+                          for key, value in r.dump_recipients().items()]
+            recipients_str = ' '.join(recipients)
+
             writer.writerow([
                 r.resource_type,
                 r.title,
@@ -282,7 +290,8 @@ def export():
                     '%Y-%m-%dT%H:%M:%SZ'),
                 r.last_run.success,
                 round(r.average_response_time, 2),
-                round(r.reliability, 2)
+                round(r.reliability, 2),
+                recipients_str
             ])
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
@@ -325,7 +334,8 @@ def export_resource(identifier):
                 '%Y-%m-%dT%H:%M:%SZ'),
             'history_csv': history_csv,
             'history_json': history_json,
-            'last_report': resource.last_run.report
+            'last_report': resource.last_run.report,
+            'recipients': resource.dump_recipients()
         }
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:
@@ -335,8 +345,15 @@ def export_resource(identifier):
             'identifier', 'title', 'url', 'resource_type', 'owner',
             'min_response_time', 'average_response_time', 'max_response_tie',
             'reliability', 'status', 'first_run', 'last_run', 'history_csv',
-            'history_json'
+            'history_json', 'recipients',
         ]
+
+        # serialize recipients into a string
+        # channel1=location1|location2 channel2=location3|location4
+        recipients = ['{}={}'.format(key, '|'.join(value))
+                      for key, value in resource.dump_recipients().items()]
+        recipients_str = ' '.join(recipients)
+
         writer.writerow(header)
         writer.writerow([
             resource.identifier,
@@ -354,7 +371,8 @@ def export_resource(identifier):
             resource.last_run.checked_datetime.strftime(
                 '%Y-%m-%dT%H:%M:%SZ'),
             history_csv,
-            history_json
+            history_json,
+            recipients_str
         ])
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 

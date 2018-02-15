@@ -99,10 +99,13 @@ The following aspects of a `Resource` can be edited:
 
 - Resource name
 - Resource Tags
+- Notification recipients
 - Resource Probes, select from "Probes Available"
 - For each Probe: Probe parameters
 - For each Probe: Probe Checks, select from "Checks Available"
 - For each Check: Checks parameters
+
+By default, when resource is created, owner's email will be added to notifications, however, resource can have arbitrary number or emails to notify.
 
 Scheduling Runs
 ---------------

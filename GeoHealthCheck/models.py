@@ -485,6 +485,14 @@ class Resource(DB.Model):
         DB.session.flush()
         return self.get_recipients(channel)
 
+    def dump_recipients(self):
+        """
+        Return dictionary with channel ->recipients mapping
+        """
+        out = {}
+        for c in Recipient.TYPES:
+            out[c] = self.get_recipients(c)
+        return out
 
 class User(DB.Model):
     """user accounts"""
