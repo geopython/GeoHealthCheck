@@ -9,17 +9,13 @@ from alembic import op
 import sqlalchemy as sa
 import imp
 import os
-
+from GeoHealthCheck.migrations import alembic_helpers
 
 # revision identifiers, used by Alembic.
 revision = '2638c2a40625'
 down_revision = '992013af402f'
 branch_labels = None
 depends_on = None
-
-helpers_file = os.path.join(os.path.dirname(__file__), '..', 'alembic_helpers.py')
-alembic_helpers = imp.load_source('alembic_helpers', helpers_file)
-
 
 
 def upgrade():
