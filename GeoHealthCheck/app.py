@@ -730,7 +730,7 @@ def delete(resource_identifier):
 
     for run in runs:
         DB.session.delete(run)
-
+    resource.clear_recipients()
     DB.session.delete(resource)
 
     try:

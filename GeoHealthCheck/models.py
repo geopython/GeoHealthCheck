@@ -42,7 +42,7 @@ from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
 from notifications import notify
-from wtforms.validators import Email
+from wtforms.validators import Email, ValidationError
 
 DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
@@ -233,10 +233,24 @@ class Recipient(DB.Model):
                 return _(*args, **kwargs)
 
         for v in validators:
-            v(dummy_form, dummy_value())
+            try:
+                v(dummy_form, dummy_value())
+            except (ValidationError, TypeError), err:
+                raise ValueError("Bad value: {}".format(err), err)
 
     def is_email(self):
         return self.channel == self.TYPE_EMAIL
+
+    @classmethod
+    def burry_dead(cls):
+        RN = ResourceNotification
+        q = DB.session.query(cls)\
+                      .join(RN,
+                            RN.recipient_id == cls.id,
+                            isouter=True)\
+                      .filter(RN.recipient_id.is_(None))
+        for item in q:
+            DB.session.delete(item)
 
     @classmethod
     def get_or_create(cls, channel, location):
@@ -418,35 +432,56 @@ class Resource(DB.Model):
                 colors.append('#D9534F')  # red
         return colors
 
+    def clear_recipients(self, channel=None, burry_dead=True):
+        RN = ResourceNotification
+        Rcp = Recipient
+        if channel:
+            # clear specific channel
+            to_delete = self.get_recipients(channel)
+            if to_delete:
+                to_del_rcp = DB.session.query(RN)\
+                                       .join(Rcp,
+                                             Rcp.id == RN.recipient_id)\
+                                       .filter(
+                                            and_(RN.resource_id ==
+                                                 self.identifier,
+                                                 Rcp.channel == channel,
+                                                 Rcp.location.in_(to_delete))
+                                              )
+            else:
+                to_del_rcp = []
+        else:
+            # remove all m2m connections for Resource<->Recipient
+            to_del_rcp = DB.session.query(RN)\
+                                   .join(Rcp,
+                                         Rcp.id == RN.recipient_id)\
+                                   .filter(
+                                         RN.resource_id ==
+                                         self.identifier,
+                                          )
+        for rcp_ntf in to_del_rcp:
+            DB.session.delete(rcp_ntf)
+        if burry_dead:
+            Rcp.burry_dead()
+        DB.session.flush()
+
     def get_recipients(self, channel):
         q = self.recipients
         return [item.location for item in q if item.channel == channel]
 
     def set_recipients(self, channel, items):
 
-        # create new rcp
+        # create new rcp first
         to_add = []
         for item in items:
             to_add.append(Recipient.get_or_create(channel, item.strip()))
 
-        RN = ResourceNotification
-        Rcp = Recipient
-        # clear specific channel
-        to_delete = self.get_recipients(channel)
-        if to_delete:
-            to_del_rcp = DB.session.query(RN)\
-                                   .join(Rcp,
-                                         Rcp.id == RN.recipient_id)\
-                                   .filter(
-                                        and_(RN.resource_id == self.identifier,
-                                             Rcp.location.in_(to_delete))
-                                          )
-            for rcp_ntf in to_del_rcp:
-                DB.session.delete(rcp_ntf)
-        DB.session.flush()
+        self.clear_recipients(channel, burry_dead=False)
 
         for r in to_add:
             self.recipients.append(r)
+        DB.session.flush()
+        Recipient.burry_dead()
         DB.session.flush()
         return self.get_recipients(channel)
 
