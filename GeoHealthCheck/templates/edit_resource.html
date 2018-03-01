@@ -18,13 +18,43 @@
                     <input type="checkbox" id="input_resource_active" name="resource_active_value" {{ 'checked' if resource.active == true else '' }}/>
                 </td>
             </tr>
+            
             <tr>
                 <th>{{ _("Notify emails") }}</th>
                 <td>
-                    <input type="text" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}" style="width: 100%"/>
+                    <input type="text" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}"/>
+                </td>
+            </tr>
+
+            <tr>
+                <th>{{ _("Notify webhooks") }}</th>
+                <td class="webhook">
+                    <div class="container">
+                        {% for whook in resource.get_recipients('webhook') %}
+                        <div class="whook_container">
+                            <textarea name="resource_notify_webhooks_value">{{ whook }}</textarea>
+                            <span class="close glyphicon glyphicon-minus text-left"></span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="control-label">
+                        <label>{{ _("Enter url for webhook.")}}
+                               {{ _("Optionally, enter payload as list of key=value lines.") }}
+                        </label>
+                    </div>
+
+                    <div class="whook_container template">
+                        <textarea name="resource_notify_webhooks_value" style="width: auto"></textarea>
+                        <span class="hidden close glyphicon glyphicon-minus"></span>
+                    </div>
+                    <div class="text">
+                        <span class="add glyphicon glyphicon-plus"></span>
+                    </div>
                 </td>
 
             </tr>
+
             <tr>
                 <th>{{ _('Owner') }}</th>
                 <td>{{ resource.owner.username }}</td>
@@ -223,6 +253,15 @@
         
         // Collect recipients
         var new_notify_emails = $('#input_resource_notify_emails').val().split(',');
+        var new_notify_webhooks = [];
+
+        $('[name=resource_notify_webhooks_value').each(function(idx, elm){
+            // skip template elements
+            if ($(elm).parents('.whook_container.template').length> 0){
+                return;
+            }
+            new_notify_webhooks.push($(elm).val());
+        });
 
         // Collect Probes with parameters and contained Checks
         // also with parameters
@@ -287,7 +326,8 @@
                 active: new_active,
                 tags: new_tags,
                 probes: new_probes,
-                notify_emails: new_notify_emails
+                notify_emails: new_notify_emails,
+                notify_webhooks: new_notify_webhooks
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -346,6 +386,29 @@
             return false;
         }
     });
+
+    // webhook ui - remove entries, add new
+
+
+    var wh_remove_cb = function(ui){
+        $('span.close', ui).click(function(){
+            ui.remove();
+        });
+    }
+
+    var wh = $('td.webhook');
+    var whc = $('.container', wh);
+
+    $('span.add', wh).click(function(){
+        var new_item = $('.template', wh).clone().removeClass('template');
+        $('.hidden', new_item).removeClass('hidden');
+        whc.append(new_item);
+        wh_remove_cb(new_item);
+    });
+    $('.whook_container', wh).each(function(idx, elm){
+            wh_remove_cb($(elm));
+    });
+    
 
     // autocomplete for notifications
     var emails = {{ suggestions|safe }};

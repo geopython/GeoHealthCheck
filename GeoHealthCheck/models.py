@@ -188,20 +188,46 @@ resource_tags = DB.Table('resource_tags',
                          DB.Column('resource_identifier', DB.Integer,
                                    DB.ForeignKey('resource.identifier')))
 
+def _validate_webhook(value):
+    from GeoHealthCheck.notifications import _parse_webhook_location
+    try:
+        _parse_webhook_location(value)
+    except ValueError, err:
+        raise ValidationError('{}: {}'.format(value, err))
+    return value
+
+
+def _validate_email(value):
+    v = Email()
+
+    class dummy_value(object):
+        data = value
+
+        @staticmethod
+        def gettext(*args, **kwargs):
+            return _(*args, **kwargs)
+
+    dummy_form = None
+    v(dummy_form, dummy_value())
+
 
 class Recipient(DB.Model):
     """
     Notification recipient
     """
     TYPE_EMAIL = 'email'
-    TYPES = (TYPE_EMAIL,)
+    TYPE_WEBHOOK = 'webhook'
+    TYPE_SLACK = 'slack'
+    TYPES = (TYPE_EMAIL, TYPE_WEBHOOK, TYPE_SLACK)
     __tablename__ = 'recipient'
-    VALIDATORS = {TYPE_EMAIL: [Email()]}
+    VALIDATORS = {TYPE_EMAIL: [_validate_email],
+                  TYPE_WEBHOOK: [_validate_webhook]}
 
     id = DB.Column(DB.Integer, primary_key=True)
     # channel type. email for now, more may come later
     channel = DB.Column(DB.Enum(*TYPES), default=TYPE_EMAIL, nullable=False)
-    # recipient's identification
+    # recipient's identification, payload
+    # this can be url, or more rich configuration, depending on channel
     location = DB.Column(DB.Text, nullable=False)
     resources = DB.relationship('Resource',
                                 secondary='resourcenotification',
@@ -223,18 +249,9 @@ class Recipient(DB.Model):
         except KeyError:
             return
 
-        dummy_form = None
-
-        class dummy_value(object):
-            data = value
-
-            @staticmethod
-            def gettext(*args, **kwargs):
-                return _(*args, **kwargs)
-
         for v in validators:
             try:
-                v(dummy_form, dummy_value())
+                v(value)
             except (ValidationError, TypeError), err:
                 raise ValueError("Bad value: {}".format(err), err)
 

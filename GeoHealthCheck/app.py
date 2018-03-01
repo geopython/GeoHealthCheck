@@ -272,10 +272,7 @@ def export():
                                 url_for('get_resource_by_id',
                                         identifier=r.identifier))
             # serialize recipients into a string
-            # channel1=location1|location2 channel2=location3|location4
-            recipients = ['{}={}'.format(key, '|'.join(value))
-                          for key, value in r.dump_recipients().items()]
-            recipients_str = ' '.join(recipients)
+            recipients_str = json.dumps(recipients)
 
             writer.writerow([
                 r.resource_type,
@@ -349,10 +346,7 @@ def export_resource(identifier):
         ]
 
         # serialize recipients into a string
-        # channel1=location1|location2 channel2=location3|location4
-        recipients = ['{}={}'.format(key, '|'.join(value))
-                      for key, value in resource.dump_recipients().items()]
-        recipients_str = ' '.join(recipients)
+        recipients_str = json.dumps(recipients)
 
         writer.writerow(header)
         writer.writerow([
@@ -659,6 +653,8 @@ def update(resource_identifier):
                 update_counter += 1
             elif key == 'notify_emails':
                 resource.set_recipients('email', value)
+            elif key == 'notify_webhooks':
+                resource.set_recipients('webhook', value)
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])

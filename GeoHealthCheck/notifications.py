@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # =================================================================
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
@@ -28,14 +31,175 @@
 # =================================================================
 
 from email.mime.text import MIMEText
+import types
 import email.utils
 import logging
 import smtplib
+import json
 
+import requests
 from flask_babel import gettext
 from util import render_template2
 
 LOGGER = logging.getLogger(__name__)
+
+
+def do_email(config, resource, run, status_changed, result):
+    # List of global email addresses to notify, may be list or
+    # comma-separated str "To" needs comma-separated list,
+    # while sendmail() requires list...
+
+    if isinstance(config['GHC_NOTIFICATIONS_EMAIL'], types.StringTypes):
+        config['GHC_NOTIFICATIONS_EMAIL'] = \
+            config['GHC_NOTIFICATIONS_EMAIL'].split(',')
+
+    # this should always be a list
+    global_notifications = config['GHC_NOTIFICATIONS_EMAIL'] or []
+    if not isinstance(global_notifications, (list, tuple, set,)):
+        raise TypeError("Cannot use {} as list of emails".format(
+                                       type(global_notifications)))
+
+    notifications_email = global_notifications +\
+        resource.get_recipients('email')
+
+    if not notifications_email:
+        LOGGER.warning("No emails for notification set for resource %s",
+                       resource.identifier)
+        return
+
+    template_vars = {
+        'result': result,
+        'config': config,
+        'resource': resource,
+        'run': run
+    }
+
+    msgbody = render_template2('notification_email.txt', template_vars)
+    msg = MIMEText(msgbody)
+    msg['From'] = email.utils.formataddr((config['GHC_SITE_TITLE'],
+                                          config['GHC_ADMIN_EMAIL']))
+    msg['To'] = ','.join(notifications_email)
+    msg['Subject'] = '[%s] %s: %s' % (config['GHC_SITE_TITLE'],
+                                      result, resource.title)
+
+    if not config.get('GHC_SMTP'):
+        LOGGER.warning("No SMTP configuration. Not sending to %s",
+                       notifications_email)
+        print(msg.as_string())
+        return
+
+    server = smtplib.SMTP(config['GHC_SMTP']['server'],
+                          config['GHC_SMTP']['port'])
+
+    if config['DEBUG']:
+        server.set_debuglevel(True)
+
+    if config['GHC_SMTP']['tls']:
+        server.starttls()
+        server.login(config['GHC_SMTP']['username'],
+                     config['GHC_SMTP']['password'])
+    try:
+        server.sendmail(config['GHC_ADMIN_EMAIL'],
+                        config['GHC_NOTIFICATIONS_EMAIL'],
+                        msg.as_string())
+    except Exception as err:
+        LOGGER.exception(str(err), exc_info=err)
+    finally:
+        server.quit()
+
+
+def _parse_line(_line):
+    try:
+        k, v = _line.split('=', 1)
+        return {k:v}
+    except (IndexError, ValueError,):
+        raise ValueError("Invalid line: {}".format(_line))
+    
+
+def _parse_webhook_location(value):
+    """
+    Parse Recipient.location and returns tuple of url and params
+
+    location should be in form
+
+    URL
+
+    PAYLOAD
+
+    where PAYLOAD is a list of fields and values in form
+
+    FIELD_NAME=FIELD_VALUE
+
+    alternatively, it can be dictionary serialized as json
+    """
+    if not value.strip():
+        raise ValueError("No payload")
+    value = value.strip()
+    url = None
+    params = {}
+    lines = value.splitlines()
+
+
+    for idx, line in enumerate(lines):
+        if idx == 0:
+            url = line
+        elif idx == 1:
+            if line.strip():
+                raise ValueError("Second line should be empty")
+        elif idx == 2:
+            try:
+                params = json.loads('\n'.join(lines[2:]))
+                break
+            except (TypeError, ValueError,):
+                params.update(_parse_line(line))
+        else:
+            params.update(_parse_line(line))
+
+    if url is None:
+        raise ValueError("Cannot parse url")
+    return url, params,
+
+
+def do_webhook(config, resource, run, status_changed, result):
+    """
+    Process webhook recipients for resource
+
+    location should be in format:
+
+    URL
+    
+    [PAYLOAD]
+    
+    There's blank line between URL and PAYLOAD. PAYLOAD
+    should be either json or list of field=value items
+    in each line.
+
+    Webhook's request is POST send to url with payload containing
+    PAYLOAD
+    and fields:
+
+    ghc.result=(result of test)
+    ghc.resource.url=(url of resource)
+    ghc.resource.title=(title of resource)
+
+    """
+    recipients = resource.get_recipients('webhook')
+    if not recipients:
+        return
+    for rcp in recipients:
+        try:
+            url, params = _parse_webhook_location(rcp)
+        except ValueError, err:
+            LOGGER.warning("Cannot send to {}: {}"
+                           .format(rcp, err), exc_info=err)
+        
+        params['ghc.result'] = result
+        params['ghc.resource.url'] = resource.url
+        params['ghc.resource.title'] = resource.title
+        
+        r = requests.post(url, params)
+        LOGGER.info("webhook deployed, got {} as reposnse"
+                    .format(r))
 
 
 def notify(config, resource, run, last_run_success):
@@ -68,49 +232,5 @@ def notify(config, resource, run, last_run_success):
 
     print('Notifying: status changed: result=%s' % result)
 
-    template_vars = {
-        'result': result,
-        'config': config,
-        'resource': resource,
-        'run': run
-    }
-
-    msgbody = render_template2('notification_email.txt', template_vars)
-
-    msg = MIMEText(msgbody)
-
-    msg['From'] = email.utils.formataddr((config['GHC_SITE_TITLE'],
-                                          config['GHC_ADMIN_EMAIL']))
-
-    notifications_email = ','.join(resource.get_recipients('email'))
-    if not notifications_email:
-        LOGGER.warning("No emails for notification set for resource %s",
-                       resource.identifier)
-        return
-
-    msg['To'] = notifications_email
-
-    msg['Subject'] = '[%s] %s: %s' % (config['GHC_SITE_TITLE'],
-                                      result, resource.title)
-
-    print(msg.as_string())
-    server = smtplib.SMTP(config['GHC_SMTP']['server'],
-                          config['GHC_SMTP']['port'])
-
-    if config['DEBUG']:
-        server.set_debuglevel(True)
-
-    if config['GHC_SMTP']['tls']:
-        server.starttls()
-        server.login(config['GHC_SMTP']['username'],
-                     config['GHC_SMTP']['password'])
-    try:
-        server.sendmail(config['GHC_ADMIN_EMAIL'],
-                        config['GHC_NOTIFICATIONS_EMAIL'],
-                        msg.as_string())
-    except Exception as err:
-        LOGGER.exception(str(err))
-    finally:
-        server.quit()
-
-    return True
+    do_email(config, resource, run, status_changed, result)
+    do_webhook(config, resource, run, status_changed, result)

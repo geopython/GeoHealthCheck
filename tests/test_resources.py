@@ -31,9 +31,11 @@
 import unittest
 import sys
 import os
+
 from GeoHealthCheck.models import (DB, Resource, Run, load_data,
                                    Recipient)
 from GeoHealthCheck.healthcheck import run_test_resource
+from GeoHealthCheck.notifications import _parse_webhook_location
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -109,6 +111,29 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertEqual(set(r.get_recipients('email')), set(test_emails[:2]))
         q = Rcp.query.filter(Rcp.location == test_emails[-1])
         self.assertEqual(q.count(), 0)
+
+    def testWebhookNotifications(self):
+        Rcp = Recipient
+
+        r = Resource.query.first()
+
+        lhost = 'http://localhost:8000/'
+
+        # identifier, url,  params, no error
+        test_data = (('', None, None, False,),
+                     ('http://localhost:8000/', lhost, {}, True,),
+                     ('http://localhost:8000/\n\n', lhost, {}, True,),
+                     ('http://localhost:8000/\n\ntest=true', lhost, {'test': 'true'}, True,),
+                     )
+
+        for identifier, url, params, success in test_data:
+            try:
+                test_url, test_params = _parse_webhook_location(identifier)
+                self.assertTrue(success)
+                self.assertEqual(test_url, url)
+                self.assertEqual(test_params, params)
+            except Exception, err:
+                self.assertFalse(success, str(err))
 
 
 if __name__ == '__main__':
