@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
-"POT-Creation-Date: 2018-02-14 14:29+0100\n"
+"POT-Creation-Date: 2018-03-01 22:49+0100\n"
 "PO-Revision-Date: 2015-07-25 19:57+0200\n"
 "Last-Translator: Just van den Broecke <justb4@gmail.com>\n"
 "Language: nl_NL\n"
@@ -14,68 +14,68 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.4.0\n"
 
-#: GeoHealthCheck/app.py:442
+#: GeoHealthCheck/app.py:455
 msgid "This site is not configured for self-registration"
 msgstr "Deze site is niet geconfigureerd voor zelf-registratie"
 
-#: GeoHealthCheck/app.py:443
+#: GeoHealthCheck/app.py:456
 msgid "Please contact"
 msgstr "Contacteer"
 
-#: GeoHealthCheck/app.py:458
+#: GeoHealthCheck/app.py:471
 msgid "already registered"
 msgstr "reeds geregistreerd"
 
-#: GeoHealthCheck/app.py:480
+#: GeoHealthCheck/app.py:493
 msgid "No resources detected"
 msgstr ""
 
-#: GeoHealthCheck/app.py:494
+#: GeoHealthCheck/app.py:507
 msgid "Service already registered"
 msgstr "Service reeds geregistreerd"
 
-#: GeoHealthCheck/app.py:566
+#: GeoHealthCheck/app.py:579
 msgid "Services registered"
 msgstr ""
 
-#: GeoHealthCheck/app.py:670 GeoHealthCheck/app.py:698
-#: GeoHealthCheck/app.py:719
+#: GeoHealthCheck/app.py:685 GeoHealthCheck/app.py:713
+#: GeoHealthCheck/app.py:740
 msgid "Resource not found"
 msgstr "Bron niet gevonden"
 
-#: GeoHealthCheck/app.py:678
+#: GeoHealthCheck/app.py:693
 msgid "INFO"
 msgstr ""
 
-#: GeoHealthCheck/app.py:681 GeoHealthCheck/templates/edit_resource.html:294
+#: GeoHealthCheck/app.py:696 GeoHealthCheck/templates/edit_resource.html:340
 msgid "ERROR"
 msgstr "FOUT"
 
-#: GeoHealthCheck/app.py:684
+#: GeoHealthCheck/app.py:699
 msgid "Resource tested successfully"
 msgstr "Bron succesvol getest"
 
-#: GeoHealthCheck/app.py:713
+#: GeoHealthCheck/app.py:734
 msgid "You do not have access to delete this resource"
 msgstr "U heeft geen permissie om deze bron te verwijderen"
 
-#: GeoHealthCheck/app.py:731
+#: GeoHealthCheck/app.py:752
 msgid "Resource deleted"
 msgstr "Bron verwijderd"
 
-#: GeoHealthCheck/app.py:802
+#: GeoHealthCheck/app.py:823
 msgid "Invalid username and / or password"
 msgstr "Foutieve gebruikersnaam en / of wachtwoord"
 
-#: GeoHealthCheck/app.py:815
+#: GeoHealthCheck/app.py:836
 msgid "Logged out"
 msgstr "Uitgelogd"
 
-#: GeoHealthCheck/app.py:830
+#: GeoHealthCheck/app.py:851
 msgid "Invalid username"
 msgstr ""
 
-#: GeoHealthCheck/app.py:845
+#: GeoHealthCheck/app.py:866
 msgid "Password sent via email"
 msgstr ""
 
@@ -87,19 +87,19 @@ msgstr "Ongeldig bron type"
 msgid "for"
 msgstr "voor"
 
-#: GeoHealthCheck/notifications.py:49
+#: GeoHealthCheck/notifications.py:213
 msgid "Failing"
 msgstr "Falend"
 
-#: GeoHealthCheck/notifications.py:51
+#: GeoHealthCheck/notifications.py:215
 msgid "Fixed"
 msgstr "Gerepareerd"
 
-#: GeoHealthCheck/notifications.py:53 GeoHealthCheck/notifications.py:61
+#: GeoHealthCheck/notifications.py:217 GeoHealthCheck/notifications.py:225
 msgid "Still Failing"
 msgstr "Nog steeds falend"
 
-#: GeoHealthCheck/notifications.py:55 GeoHealthCheck/notifications.py:57
+#: GeoHealthCheck/notifications.py:219 GeoHealthCheck/notifications.py:221
 msgid "Passing"
 msgstr "Geslaagd"
 
@@ -148,58 +148,70 @@ msgstr "Type"
 msgid "Active"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:22
+#: GeoHealthCheck/templates/edit_resource.html:23
 msgid "Notify emails"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:29
+#: GeoHealthCheck/templates/edit_resource.html:30
+msgid "Notify webhooks"
+msgstr ""
+
+#: GeoHealthCheck/templates/edit_resource.html:42
+msgid "Enter url for webhook."
+msgstr ""
+
+#: GeoHealthCheck/templates/edit_resource.html:43
+msgid "Optionally, enter payload as list of key=value lines."
+msgstr ""
+
+#: GeoHealthCheck/templates/edit_resource.html:59
 #: GeoHealthCheck/templates/resource.html:34
 msgid "Owner"
 msgstr "Eigenaar"
 
-#: GeoHealthCheck/templates/edit_resource.html:34
+#: GeoHealthCheck/templates/edit_resource.html:64
 #: GeoHealthCheck/templates/includes/resources_list.html:5
 #: GeoHealthCheck/templates/resource.html:39
 msgid "Name"
 msgstr "Naam"
 
-#: GeoHealthCheck/templates/edit_resource.html:77
+#: GeoHealthCheck/templates/edit_resource.html:107
 #: GeoHealthCheck/templates/includes/resources_list.html:7
 #: GeoHealthCheck/templates/resource.html:115
 msgid "Status"
 msgstr "Status"
 
-#: GeoHealthCheck/templates/edit_resource.html:81
+#: GeoHealthCheck/templates/edit_resource.html:111
 #: GeoHealthCheck/templates/notification_email.txt:10
 #: GeoHealthCheck/templates/notification_email.txt:16
 msgid "Details"
 msgstr "Details"
 
-#: GeoHealthCheck/templates/edit_resource.html:91
-#: GeoHealthCheck/templates/edit_resource.html:275
-#: GeoHealthCheck/templates/edit_resource.html:290
+#: GeoHealthCheck/templates/edit_resource.html:121
+#: GeoHealthCheck/templates/edit_resource.html:320
+#: GeoHealthCheck/templates/edit_resource.html:336
 msgid "Save"
 msgstr "Bewaar"
 
-#: GeoHealthCheck/templates/edit_resource.html:92
-#: GeoHealthCheck/templates/edit_resource.html:303
-#: GeoHealthCheck/templates/edit_resource.html:311
-#: GeoHealthCheck/templates/edit_resource.html:318
+#: GeoHealthCheck/templates/edit_resource.html:122
+#: GeoHealthCheck/templates/edit_resource.html:349
+#: GeoHealthCheck/templates/edit_resource.html:357
+#: GeoHealthCheck/templates/edit_resource.html:364
 msgid "Test"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:93
+#: GeoHealthCheck/templates/edit_resource.html:123
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: GeoHealthCheck/templates/edit_resource.html:94
+#: GeoHealthCheck/templates/edit_resource.html:124
 #: GeoHealthCheck/templates/includes/check_edit_form.html:12
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:126
 #: GeoHealthCheck/templates/resource.html:16
 msgid "Delete"
 msgstr "Verwijder"
 
-#: GeoHealthCheck/templates/edit_resource.html:338
+#: GeoHealthCheck/templates/edit_resource.html:384
 #: GeoHealthCheck/templates/resource.html:140
 msgid "Delete resource"
 msgstr "Verwijder bron"
