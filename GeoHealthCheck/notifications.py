@@ -211,8 +211,6 @@ def do_webhook(config, resource, run, status_changed, result):
             LOGGER.warning("Cannot send to {}: {}"
                            .format(rcp, err), exc_info=err)
 
-
-
         resource_view = '{}/resource/{}'.format(
                                             config['GHC_SITE_URL'],
                                             resource.identifier)
@@ -222,7 +220,7 @@ def do_webhook(config, resource, run, status_changed, result):
         params['ghc.resource.title'] = resource.title
         params['ghc.resource.type'] = resource.resource_type
         params['ghc.resource.view'] = resource_view
-        
+
         try:
             r = requests.post(url, params)
             LOGGER.info("webhook deployed, got %s as reposnse",
@@ -268,4 +266,4 @@ def notify(config, resource, run, last_run_success):
             chann_handler(config, resource, run, status_changed, result)
         except Exception, err:
             LOGGER.warning("couldn't run notification for %s: %s",
-                            chann_handler.func_name, err, exc_info=err)
+                           chann_handler.func_name, err, exc_info=err)
