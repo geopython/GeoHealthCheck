@@ -113,9 +113,6 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertEqual(q.count(), 0)
 
     def testWebhookNotifications(self):
-        Rcp = Recipient
-
-        r = Resource.query.first()
 
         lhost = 'http://localhost:8000/'
 
@@ -123,7 +120,8 @@ class GeoHealthCheckTest(unittest.TestCase):
         test_data = (('', None, None, False,),
                      ('http://localhost:8000/', lhost, {}, True,),
                      ('http://localhost:8000/\n\n', lhost, {}, True,),
-                     ('http://localhost:8000/\n\ntest=true', lhost, {'test': 'true'}, True,),
+                     ('http://localhost:8000/\n\ntest=true', lhost,
+                      {'test': 'true'}, True,),
                      )
 
         for identifier, url, params, success in test_data:
