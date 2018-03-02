@@ -188,6 +188,7 @@ resource_tags = DB.Table('resource_tags',
                          DB.Column('resource_identifier', DB.Integer,
                                    DB.ForeignKey('resource.identifier')))
 
+
 def _validate_webhook(value):
     from GeoHealthCheck.notifications import _parse_webhook_location
     try:
@@ -217,8 +218,7 @@ class Recipient(DB.Model):
     """
     TYPE_EMAIL = 'email'
     TYPE_WEBHOOK = 'webhook'
-    TYPE_SLACK = 'slack'
-    TYPES = (TYPE_EMAIL, TYPE_WEBHOOK, TYPE_SLACK)
+    TYPES = (TYPE_EMAIL, TYPE_WEBHOOK,)
     __tablename__ = 'recipient'
     VALIDATORS = {TYPE_EMAIL: [_validate_email],
                   TYPE_WEBHOOK: [_validate_webhook]}

@@ -82,7 +82,12 @@ def do_email(config, resource, run, status_changed, result):
     msg['Subject'] = '[%s] %s: %s' % (config['GHC_SITE_TITLE'],
                                       result, resource.title)
 
-    if not config.get('GHC_SMTP'):
+    if not config.get('GHC_SMTP') or not\
+        (any([config['GHC_SMTP'][k] for k in ('port',
+                                              'server',
+                                              'username',
+                                              'password',)])):
+
         LOGGER.warning("No SMTP configuration. Not sending to %s",
                        notifications_email)
         print(msg.as_string())
@@ -94,10 +99,24 @@ def do_email(config, resource, run, status_changed, result):
     if config['DEBUG']:
         server.set_debuglevel(True)
 
-    if config['GHC_SMTP']['tls']:
-        server.starttls()
+    try:
+        if config['GHC_SMTP']['tls']:
+            server.starttls()
+        else:
+            server.connect()
+    except Exception, err:
+        LOGGER.exception("Cannot connect to smtp: %s[:%s]: %s",
+                         config['GHC_SMTP']['server'],
+                         config['GHC_SMTP']['port'],
+                         err,
+                         exc_info=err)
+        return
+    try:
         server.login(config['GHC_SMTP']['username'],
                      config['GHC_SMTP']['password'])
+    except Exception, err:
+        LOGGER.exception("Cannot log in to smtp: %s", err,
+                         exc_info=err)
     try:
         server.sendmail(config['GHC_ADMIN_EMAIL'],
                         config['GHC_NOTIFICATIONS_EMAIL'],
@@ -111,10 +130,10 @@ def do_email(config, resource, run, status_changed, result):
 def _parse_line(_line):
     try:
         k, v = _line.split('=', 1)
-        return {k:v}
+        return {k: v}
     except (IndexError, ValueError,):
         raise ValueError("Invalid line: {}".format(_line))
-    
+
 
 def _parse_webhook_location(value):
     """
@@ -138,7 +157,6 @@ def _parse_webhook_location(value):
     url = None
     params = {}
     lines = value.splitlines()
-
 
     for idx, line in enumerate(lines):
         if idx == 0:
@@ -167,9 +185,9 @@ def do_webhook(config, resource, run, status_changed, result):
     location should be in format:
 
     URL
-    
+
     [PAYLOAD]
-    
+
     There's blank line between URL and PAYLOAD. PAYLOAD
     should be either json or list of field=value items
     in each line.
@@ -192,14 +210,26 @@ def do_webhook(config, resource, run, status_changed, result):
         except ValueError, err:
             LOGGER.warning("Cannot send to {}: {}"
                            .format(rcp, err), exc_info=err)
-        
+
+
+
+        resource_view = '{}/resource/{}'.format(
+                                            config['GHC_SITE_URL'],
+                                            resource.identifier)
+
         params['ghc.result'] = result
         params['ghc.resource.url'] = resource.url
         params['ghc.resource.title'] = resource.title
+        params['ghc.resource.type'] = resource.resource_type
+        params['ghc.resource.view'] = resource_view
         
-        r = requests.post(url, params)
-        LOGGER.info("webhook deployed, got {} as reposnse"
-                    .format(r))
+        try:
+            r = requests.post(url, params)
+            LOGGER.info("webhook deployed, got %s as reposnse",
+                        r)
+        except requests.exceptions.RequestException, err:
+            LOGGER.warning("cannot deploy webhook %s: %s",
+                           rcp, err, exc_info=err)
 
 
 def notify(config, resource, run, last_run_success):
@@ -232,5 +262,10 @@ def notify(config, resource, run, last_run_success):
 
     print('Notifying: status changed: result=%s' % result)
 
-    do_email(config, resource, run, status_changed, result)
-    do_webhook(config, resource, run, status_changed, result)
+    # run all channels, actual recipients will be filtered there
+    for chann_handler in (do_email, do_webhook,):
+        try:
+            chann_handler(config, resource, run, status_changed, result)
+        except Exception, err:
+            LOGGER.warning("couldn't run notification for %s: %s",
+                            chann_handler.func_name, err, exc_info=err)

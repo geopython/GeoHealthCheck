@@ -272,6 +272,7 @@ def export():
                                 url_for('get_resource_by_id',
                                         identifier=r.identifier))
             # serialize recipients into a string
+            recipients = r.dump_recipients()
             recipients_str = json.dumps(recipients)
 
             writer.writerow([
@@ -346,6 +347,7 @@ def export_resource(identifier):
         ]
 
         # serialize recipients into a string
+        recipients = resource.dump_recipients()
         recipients_str = json.dumps(recipients)
 
         writer.writerow(header)

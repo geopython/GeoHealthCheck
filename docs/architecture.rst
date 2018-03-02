@@ -20,6 +20,10 @@ GeoHealthCheck is built with the following concepts in mind:
 - Each `Probe` invokes one or more `Checks` to determine `Run` result
 - `Probes` and `Checks` are extensible `Plugins` via respective `Probe` and `Check` classes
 - One or more `Tags` can be associated with a `Resource` to support grouping
+- One or more `Recipient` can be associated with a `Resource`. Each `Recipient` describes:
+
+  * communication channel
+  * target identifier
 
 Data Model
 ----------

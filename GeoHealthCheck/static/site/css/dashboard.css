@@ -156,3 +156,7 @@ table tbody th {
 table tbody th + td {
     width: 85%!important;
 }
+
+table input[type=text], table select {
+    width: 100%;
+}

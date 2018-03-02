@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+<div class="col-xs-9 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">[{{ _('Edit') }}] <span id="resource_title_h1">{{ resource.title }}</span></h1>
 
-    <div class="table-responsive col-md-4" style="width: 100%;">
+    <div class="table-responsive">
         <table class="table">
             <tr>
                 <th>{{ _('Type') }}</th>
@@ -29,27 +29,33 @@
             <tr>
                 <th>{{ _("Notify webhooks") }}</th>
                 <td class="webhook">
-                    <div class="container">
+                    <div class="container-fluid">
                         {% for whook in resource.get_recipients('webhook') %}
                         <div class="whook_container">
-                            <textarea name="resource_notify_webhooks_value">{{ whook }}</textarea>
-                            <span class="close glyphicon glyphicon-minus text-left"></span>
+                            <textarea cols="150" name="resource_notify_webhooks_value">{{ whook }}</textarea>
+                            <br/>
+                            <span title="remove webhook configuration" class="remove glyphicon glyphicon-minus text-left"></span>
                         </div>
                         {% endfor %}
                     </div>
 
                     <div class="control-label">
                         <label>{{ _("Enter url for webhook.")}}
-                               {{ _("Optionally, enter payload as list of key=value lines.") }}
+                               {{ _("Optionally, enter payload as list of key=value lines or JSON object.") }}
                         </label>
                     </div>
 
                     <div class="whook_container template">
-                        <textarea name="resource_notify_webhooks_value" style="width: auto"></textarea>
-                        <span class="hidden close glyphicon glyphicon-minus"></span>
+                        <textarea cols="150" name="resource_notify_webhooks_value" placeholder="http://url/path
+
+field_name=value
+or
+{'field_name': 'value'}
+"></textarea>
+                        <span class="hidden remove glyphicon glyphicon-minus"></span>
                     </div>
                     <div class="text">
-                        <span class="add glyphicon glyphicon-plus"></span>
+                        <span title="add webhook configuration" class="add glyphicon glyphicon-plus"></span>
                     </div>
                 </td>
 
@@ -64,7 +70,7 @@
                     {{ _('Name') }}
                 </th>
                 <td>
-                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" style="width: 100%;"/>
+                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" />
                 </td>
             </tr>
             <tr>
@@ -74,7 +80,7 @@
             <tr>
                 <th>Tags</th>
                 <td>
-                    <select id="resource_tags" multiple="multiple" style="width: 100%;">
+                    <select id="resource_tags" multiple="multiple">
                     {% for tag in resource.tags %}
                         <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
                     {% endfor %}
@@ -391,20 +397,23 @@
 
 
     var wh_remove_cb = function(ui){
-        $('span.close', ui).click(function(){
+        $('span.remove', ui).click(function(){
             ui.remove();
         });
     }
 
     var wh = $('td.webhook');
-    var whc = $('.container', wh);
+    var whc = $('.container-fluid', wh);
 
     $('span.add', wh).click(function(){
-        var new_item = $('.template', wh).clone().removeClass('template');
+        var template = $('.template', wh);
+        var new_item = template.clone().removeClass('template');
         $('.hidden', new_item).removeClass('hidden');
         whc.append(new_item);
+        template.find('textarea').val('');
         wh_remove_cb(new_item);
     });
+
     $('.whook_container', wh).each(function(idx, elm){
             wh_remove_cb($(elm));
     });
@@ -439,6 +448,30 @@
                      'select': ac_select,
                      'focus': function(){return false}}
     $('#input_resource_notify_emails').autocomplete(ac_params);
+
+    // quick'n'dirty autoheight for text fields, 
+    // https://stackoverflow.com/a/10080841/35735
+    // http://jsfiddle.net/SpYk3/m8Qk9/
+    $(function() {
+        //  changes mouse cursor when highlighting loawer right of box
+        $(document).on('mousemove', 'textarea', function(e) {
+            var a = $(this).offset().top + $(this).outerHeight() - 16,	//	top border of bottom-right-corner-box area
+                b = $(this).offset().left + $(this).outerWidth() - 16;	//	left border of bottom-right-corner-box area
+            $(this).css({
+                cursor: e.pageY > a && e.pageX > b ? 'nw-resize' : ''
+            });
+        })
+        //  the following simple make the textbox "Auto-Expand" as it is typed in
+        .on('keyup', 'textarea', function(e) {
+            //  the following will help the text expand as typing takes place
+            while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+                $(this).height($(this).height()+1);
+            };
+        });
+       $('textarea').trigger('keyup');
+    });
+
+
 
     {% endif %}
 
