@@ -232,7 +232,8 @@ class Recipient(DB.Model):
 
     id = DB.Column(DB.Integer, primary_key=True)
     # channel type. email for now, more may come later
-    channel = DB.Column(DB.Enum(*TYPES, name='recipient_channel_types'), default=TYPE_EMAIL, nullable=False)
+    channel = DB.Column(DB.Enum(*TYPES, name='recipient_channel_types'),
+                        default=TYPE_EMAIL, nullable=False)
     # recipient's identification, payload
     # this can be url, or more rich configuration, depending on channel
     location = DB.Column(DB.Text, nullable=False)
@@ -281,7 +282,6 @@ class Recipient(DB.Model):
 
     @classmethod
     def get_or_create(cls, channel, location):
-        
         try:
             cls.validate(channel, location)
         except ValidationError, err:
