@@ -96,7 +96,8 @@ Additionally, each resource can have arbitrary list of emails (filled in **Notif
 field in edit form). By default, when resource is created, owner's email is added to 
 the list. User can add any email address, even for users that are not registered in 
 GeoHealthCheck instance. When editing emails list for a resource, user will get address 
-suggestions based on emails added for other resources by that user.
+suggestions based on emails added for other resources by that user. Multiple emails should
+be separated with comma (`,`) char.
 
 =======
 Webhook

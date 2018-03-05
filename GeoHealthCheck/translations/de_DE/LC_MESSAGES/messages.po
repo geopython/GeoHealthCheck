@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  GeoHealthCheck\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
-"POT-Creation-Date: 2018-03-01 22:49+0100\n"
+"POT-Creation-Date: 2018-03-05 14:06+0100\n"
 "PO-Revision-Date: 2015-10-26 07:26+0000\n"
 "Last-Translator: Hannes I. Reuter\n"
 "Language: de_DE\n"
@@ -17,68 +17,68 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.4.0\n"
 
-#: GeoHealthCheck/app.py:455
+#: GeoHealthCheck/app.py:457
 msgid "This site is not configured for self-registration"
 msgstr "Diese Webseite unterstützt keine Selbstregistrierung"
 
-#: GeoHealthCheck/app.py:456
+#: GeoHealthCheck/app.py:458
 msgid "Please contact"
 msgstr "Bitte kontaktiere"
 
-#: GeoHealthCheck/app.py:471
+#: GeoHealthCheck/app.py:473
 msgid "already registered"
 msgstr "schon registriert"
 
-#: GeoHealthCheck/app.py:493
+#: GeoHealthCheck/app.py:495
 msgid "No resources detected"
 msgstr ""
 
-#: GeoHealthCheck/app.py:507
+#: GeoHealthCheck/app.py:509
 msgid "Service already registered"
 msgstr "Der Service ist schon registriert"
 
-#: GeoHealthCheck/app.py:579
+#: GeoHealthCheck/app.py:581
 msgid "Services registered"
 msgstr ""
 
-#: GeoHealthCheck/app.py:685 GeoHealthCheck/app.py:713
-#: GeoHealthCheck/app.py:740
+#: GeoHealthCheck/app.py:687 GeoHealthCheck/app.py:715
+#: GeoHealthCheck/app.py:742
 msgid "Resource not found"
 msgstr "Ressource wurde nicht gefunden"
 
-#: GeoHealthCheck/app.py:693
+#: GeoHealthCheck/app.py:695
 msgid "INFO"
 msgstr ""
 
-#: GeoHealthCheck/app.py:696 GeoHealthCheck/templates/edit_resource.html:340
+#: GeoHealthCheck/app.py:698 GeoHealthCheck/templates/edit_resource.html:348
 msgid "ERROR"
 msgstr "FEHLER"
 
-#: GeoHealthCheck/app.py:699
+#: GeoHealthCheck/app.py:701
 msgid "Resource tested successfully"
 msgstr "Ressource wurde erfolgreich getestet"
 
-#: GeoHealthCheck/app.py:734
+#: GeoHealthCheck/app.py:736
 msgid "You do not have access to delete this resource"
 msgstr "Du hast keine Rechte um die Ressource zu löschen"
 
-#: GeoHealthCheck/app.py:752
+#: GeoHealthCheck/app.py:754
 msgid "Resource deleted"
 msgstr "Ressource gelöscht"
 
-#: GeoHealthCheck/app.py:823
+#: GeoHealthCheck/app.py:825
 msgid "Invalid username and / or password"
 msgstr "Ungültiger Benutzer bzw. Passwort"
 
-#: GeoHealthCheck/app.py:836
+#: GeoHealthCheck/app.py:838
 msgid "Logged out"
 msgstr "Ausgelogged"
 
-#: GeoHealthCheck/app.py:851
+#: GeoHealthCheck/app.py:853
 msgid "Invalid username"
 msgstr ""
 
-#: GeoHealthCheck/app.py:866
+#: GeoHealthCheck/app.py:868
 msgid "Password sent via email"
 msgstr ""
 
@@ -90,19 +90,19 @@ msgstr "Ungültiger Ressourcetyp"
 msgid "for"
 msgstr "für"
 
-#: GeoHealthCheck/notifications.py:213
+#: GeoHealthCheck/notifications.py:241
 msgid "Failing"
 msgstr "Fehler"
 
-#: GeoHealthCheck/notifications.py:215
+#: GeoHealthCheck/notifications.py:243
 msgid "Fixed"
 msgstr "Nicht mehr fehlerhaft"
 
-#: GeoHealthCheck/notifications.py:217 GeoHealthCheck/notifications.py:225
+#: GeoHealthCheck/notifications.py:245 GeoHealthCheck/notifications.py:253
 msgid "Still Failing"
 msgstr "Immer noch fehlerhaft"
 
-#: GeoHealthCheck/notifications.py:219 GeoHealthCheck/notifications.py:221
+#: GeoHealthCheck/notifications.py:247 GeoHealthCheck/notifications.py:249
 msgid "Passing"
 msgstr "Jetzt geht's"
 
@@ -159,62 +159,66 @@ msgstr ""
 msgid "Notify webhooks"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:42
+#: GeoHealthCheck/templates/edit_resource.html:43
 msgid "Enter url for webhook."
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:43
-msgid "Optionally, enter payload as list of key=value lines."
+#: GeoHealthCheck/templates/edit_resource.html:44
+msgid "Optionally, enter payload as list of key=value lines or JSON object."
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:59
+#: GeoHealthCheck/templates/edit_resource.html:65
 #: GeoHealthCheck/templates/resource.html:34
 msgid "Owner"
 msgstr "Eigentümer"
 
-#: GeoHealthCheck/templates/edit_resource.html:64
+#: GeoHealthCheck/templates/edit_resource.html:70
 #: GeoHealthCheck/templates/includes/resources_list.html:5
 #: GeoHealthCheck/templates/resource.html:39
 msgid "Name"
 msgstr "Name"
 
-#: GeoHealthCheck/templates/edit_resource.html:107
+#: GeoHealthCheck/templates/edit_resource.html:73
+msgid "You can enter multiple emails separated with comma"
+msgstr ""
+
+#: GeoHealthCheck/templates/edit_resource.html:115
 #: GeoHealthCheck/templates/includes/resources_list.html:7
 #: GeoHealthCheck/templates/resource.html:115
 msgid "Status"
 msgstr "Status"
 
-#: GeoHealthCheck/templates/edit_resource.html:111
+#: GeoHealthCheck/templates/edit_resource.html:119
 #: GeoHealthCheck/templates/notification_email.txt:10
 #: GeoHealthCheck/templates/notification_email.txt:16
 msgid "Details"
 msgstr "Details"
 
-#: GeoHealthCheck/templates/edit_resource.html:121
-#: GeoHealthCheck/templates/edit_resource.html:320
-#: GeoHealthCheck/templates/edit_resource.html:336
+#: GeoHealthCheck/templates/edit_resource.html:129
+#: GeoHealthCheck/templates/edit_resource.html:328
+#: GeoHealthCheck/templates/edit_resource.html:344
 msgid "Save"
 msgstr "Speichern"
 
-#: GeoHealthCheck/templates/edit_resource.html:122
-#: GeoHealthCheck/templates/edit_resource.html:349
+#: GeoHealthCheck/templates/edit_resource.html:130
 #: GeoHealthCheck/templates/edit_resource.html:357
-#: GeoHealthCheck/templates/edit_resource.html:364
+#: GeoHealthCheck/templates/edit_resource.html:365
+#: GeoHealthCheck/templates/edit_resource.html:372
 msgid "Test"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:123
+#: GeoHealthCheck/templates/edit_resource.html:131
 msgid "Cancel"
 msgstr "Abbruch"
 
-#: GeoHealthCheck/templates/edit_resource.html:124
+#: GeoHealthCheck/templates/edit_resource.html:132
 #: GeoHealthCheck/templates/includes/check_edit_form.html:12
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:126
 #: GeoHealthCheck/templates/resource.html:16
 msgid "Delete"
 msgstr "Löschen"
 
-#: GeoHealthCheck/templates/edit_resource.html:384
+#: GeoHealthCheck/templates/edit_resource.html:392
 #: GeoHealthCheck/templates/resource.html:140
 msgid "Delete resource"
 msgstr "Eintrag löschen"
@@ -457,4 +461,10 @@ msgstr ""
 
 #~ msgid "View Details"
 #~ msgstr "Details ansehen"
+
+#~ msgid "Optionally, enter payload as list of key=value lines."
+#~ msgstr ""
+
+#~ msgid "You can enter multiple emails, separated with comma"
+#~ msgstr ""
 
