@@ -160,3 +160,10 @@ table tbody th + td {
 table input[type=text], table select {
     width: 100%;
 }
+
+span.glyphicon.add {
+    color: #3a3;
+}
+span.glyphicon.remove {
+    color: #a33;
+}

@@ -199,6 +199,14 @@ def _validate_webhook(value):
 
 
 def _validate_email(value):
+    if not value:
+        raise ValidationError("Email cannot be empty value")
+    try:
+        if not value.strip():
+            raise ValidationError("Email cannot be empty value")
+    except AttributeError:
+        raise ValidationError("Email cannot be empty value")
+
     v = Email()
 
     class dummy_value(object):
@@ -207,7 +215,6 @@ def _validate_email(value):
         @staticmethod
         def gettext(*args, **kwargs):
             return _(*args, **kwargs)
-
     dummy_form = None
     v(dummy_form, dummy_value())
 
@@ -225,7 +232,7 @@ class Recipient(DB.Model):
 
     id = DB.Column(DB.Integer, primary_key=True)
     # channel type. email for now, more may come later
-    channel = DB.Column(DB.Enum(*TYPES), default=TYPE_EMAIL, nullable=False)
+    channel = DB.Column(DB.Enum(*TYPES, name='recipient_channel_types'), default=TYPE_EMAIL, nullable=False)
     # recipient's identification, payload
     # this can be url, or more rich configuration, depending on channel
     location = DB.Column(DB.Text, nullable=False)
@@ -258,6 +265,9 @@ class Recipient(DB.Model):
     def is_email(self):
         return self.channel == self.TYPE_EMAIL
 
+    def is_webhook(self):
+        return self.channel == self.TYPE_WEBHOOK
+
     @classmethod
     def burry_dead(cls):
         RN = ResourceNotification
@@ -271,7 +281,12 @@ class Recipient(DB.Model):
 
     @classmethod
     def get_or_create(cls, channel, location):
-        cls.validate(channel, location)
+        
+        try:
+            cls.validate(channel, location)
+        except ValidationError, err:
+            raise ValueError("invalid value {}: {}".format(location, err))
+
         try:
             r = DB.session.query(cls)\
                           .filter(and_(cls.channel == channel,
@@ -491,7 +506,7 @@ class Resource(DB.Model):
         # create new rcp first
         to_add = []
         for item in items:
-            to_add.append(Recipient.get_or_create(channel, item.strip()))
+            to_add.append(Recipient.get_or_create(channel, item))
 
         self.clear_recipients(channel, burry_dead=False)
 
