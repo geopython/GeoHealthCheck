@@ -22,6 +22,7 @@
             <tr>
                 <th>{{ _("Notify emails") }}</th>
                 <td>
+                    <label>{{ _('You can enter multiple emails separated with comma') }}</label>
                     <input type="text" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}"/>
                 </td>
             </tr>
@@ -70,8 +71,6 @@ or
                     {{ _('Name') }}
                 </th>
                 <td>
-                    <label>{{ _('You can enter multiple emails separated with comma') }}</label>
-
                     <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" />
                 </td>
             </tr>
