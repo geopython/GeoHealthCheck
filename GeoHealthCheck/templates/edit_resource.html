@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+<div class="col-xs-9 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">[{{ _('Edit') }}] <span id="resource_title_h1">{{ resource.title }}</span></h1>
 
-    <div class="table-responsive col-md-4" style="width: 100%;">
+    <div class="table-responsive">
         <table class="table">
             <tr>
                 <th>{{ _('Type') }}</th>
@@ -18,6 +18,50 @@
                     <input type="checkbox" id="input_resource_active" name="resource_active_value" {{ 'checked' if resource.active == true else '' }}/>
                 </td>
             </tr>
+            
+            <tr>
+                <th>{{ _("Notify emails") }}</th>
+                <td>
+                    <label>{{ _('You can enter multiple emails separated with comma') }}</label>
+                    <input type="text" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}"/>
+                </td>
+            </tr>
+
+            <tr>
+                <th>{{ _("Notify webhooks") }}</th>
+                <td class="webhook">
+                    <div class="container-fluid">
+                        {% for whook in resource.get_recipients('webhook') %}
+                        <div class="whook_container">
+                            <textarea cols="150" name="resource_notify_webhooks_value">{{ whook }}</textarea>
+                            <br/>
+                            <span title="remove webhook configuration" class="remove glyphicon glyphicon-minus text-left"></span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="control-label">
+                        <label>{{ _("Enter url for webhook.")}}
+                               {{ _("Optionally, enter payload as list of key=value lines or JSON object.") }}
+                        </label>
+                    </div>
+
+                    <div class="whook_container template">
+                        <textarea cols="150" name="resource_notify_webhooks_value" placeholder="http://url/path
+
+field_name=value
+or
+{'field_name': 'value'}
+"></textarea>
+                        <span class="hidden remove glyphicon glyphicon-minus"></span>
+                    </div>
+                    <div class="text">
+                        <span title="add webhook configuration" class="add glyphicon glyphicon-plus"></span>
+                    </div>
+                </td>
+
+            </tr>
+
             <tr>
                 <th>{{ _('Owner') }}</th>
                 <td>{{ resource.owner.username }}</td>
@@ -27,7 +71,7 @@
                     {{ _('Name') }}
                 </th>
                 <td>
-                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" style="width: 100%;"/>
+                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" />
                 </td>
             </tr>
             <tr>
@@ -37,7 +81,7 @@
             <tr>
                 <th>Tags</th>
                 <td>
-                    <select id="resource_tags" multiple="multiple" style="width: 100%;">
+                    <select id="resource_tags" multiple="multiple">
                     {% for tag in resource.tags %}
                         <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
                     {% endfor %}
@@ -98,6 +142,12 @@
 </div>
 {% endblock %}
 {% block extrafoot %}
+
+<script src="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.js') }}"></script>
+<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.structure.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.theme.css') }}" rel="stylesheet">
+
 <script type="text/javascript">
     var all_tags = {{ tags.keys()|tojson }};
     $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
@@ -207,6 +257,18 @@
 
         // Collect active
         var new_active = $('#input_resource_active').prop('checked');
+        
+        // Collect recipients
+        var new_notify_emails = $('#input_resource_notify_emails').val().split(',');
+        var new_notify_webhooks = [];
+
+        $('[name=resource_notify_webhooks_value').each(function(idx, elm){
+            // skip template elements
+            if ($(elm).parents('.whook_container.template').length> 0){
+                return;
+            }
+            new_notify_webhooks.push($(elm).val());
+        });
 
         // Collect Probes with parameters and contained Checks
         // also with parameters
@@ -270,7 +332,9 @@
                 title: new_title,
                 active: new_active,
                 tags: new_tags,
-                probes: new_probes
+                probes: new_probes,
+                notify_emails: new_notify_emails,
+                notify_webhooks: new_notify_webhooks
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -329,6 +393,85 @@
             return false;
         }
     });
+
+    // webhook ui - remove entries, add new
+
+
+    var wh_remove_cb = function(ui){
+        $('span.remove', ui).click(function(){
+            ui.remove();
+        });
+    }
+
+    var wh = $('td.webhook');
+    var whc = $('.container-fluid', wh);
+
+    $('span.add', wh).click(function(){
+        var template = $('.template', wh);
+        var new_item = template.clone().removeClass('template');
+        $('.hidden', new_item).removeClass('hidden');
+        whc.append(new_item);
+        template.find('textarea').val('');
+        wh_remove_cb(new_item);
+    });
+
+    $('.whook_container', wh).each(function(idx, elm){
+            wh_remove_cb($(elm));
+    });
+    
+
+    // autocomplete for notifications
+    var emails = {{ suggestions|safe }};
+    var ac_source = function(request, response){
+        var val = request.term.trim().split(',').pop().trim();
+        if (val == ''){
+            response([]);
+        }
+        var search_for = new RegExp(val, 'i');
+
+        var found = [];
+        $.each(emails, function(idx, elm){
+            if (elm.search(search_for)> -1){
+                found.push(elm);
+            }
+        });
+        response(found);
+    }
+    var ac_select = function( event, ui ) {
+        var terms = this.value.trim().split(',');
+        terms.pop();
+        terms.push( ui.item.value );
+        this.value = terms.join( ", " );
+        return false;
+    };
+
+    var ac_params = {'source': ac_source,
+                     'select': ac_select,
+                     'focus': function(){return false}}
+    $('#input_resource_notify_emails').autocomplete(ac_params);
+
+    // quick'n'dirty autoheight for text fields, 
+    // https://stackoverflow.com/a/10080841/35735
+    // http://jsfiddle.net/SpYk3/m8Qk9/
+    $(function() {
+        //  changes mouse cursor when highlighting loawer right of box
+        $(document).on('mousemove', 'textarea', function(e) {
+            var a = $(this).offset().top + $(this).outerHeight() - 16,	//	top border of bottom-right-corner-box area
+                b = $(this).offset().left + $(this).outerWidth() - 16;	//	left border of bottom-right-corner-box area
+            $(this).css({
+                cursor: e.pageY > a && e.pageX > b ? 'nw-resize' : ''
+            });
+        })
+        //  the following simple make the textbox "Auto-Expand" as it is typed in
+        .on('keyup', 'textarea', function(e) {
+            //  the following will help the text expand as typing takes place
+            while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+                $(this).height($(this).height()+1);
+            };
+        });
+       $('textarea').trigger('keyup');
+    });
+
 
 
     {% endif %}

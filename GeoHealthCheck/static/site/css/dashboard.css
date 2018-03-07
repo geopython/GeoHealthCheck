@@ -149,3 +149,21 @@ input:read-only {
     border: 1px solid #aaa;
     background-color: #eee !important;
 }
+
+table tbody th {
+    width: 25%!important;
+}
+table tbody th + td {
+    width: 85%!important;
+}
+
+table input[type=text], table select {
+    width: 100%;
+}
+
+span.glyphicon.add {
+    color: #3a3;
+}
+span.glyphicon.remove {
+    color: #a33;
+}

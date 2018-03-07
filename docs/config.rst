@@ -18,7 +18,7 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)
 - **GHC_WWW_LINK_EXCEPTION_CHECK**: turn on checking for OGC Exceptions in ``WWW:LINK`` Resource responses (default ``False``)
 - **GHC_ADMIN_EMAIL**: email address of administrator / contact- notification emails will come from this address
-- **GHC_NOTIFICATIONS_EMAIL**: list of email addresses that notifications should come to. Use a different address to **GHC_ADMIN_EMAIL** if you have trouble receiving notification emails
+- **GHC_NOTIFICATIONS_EMAIL**: list of email addresses that notifications should come to. Use a different address to **GHC_ADMIN_EMAIL** if you have trouble receiving notification emails. Also, you can set separate notification emails to specific resources. Failing resource will send notification to emails from **GHC_NOTIFICATIONS_EMAIL** value and emails configured for that specific resource altogether.
 - **GHC_SITE_TITLE**: title used for installation / deployment
 - **GHC_SITE_URL**: url of the installation / deployment
 - **GHC_SMTP**:  configure SMTP settings if **GHC_NOTIFICATIONS** is enabled
@@ -69,4 +69,90 @@ follows:
 
 To adjust this matrix, edit **GHC_RELIABILITY_MATRIX** in
 ``instance/config_site.py``.
+
+
+Configuring notifications
+-------------------------
+
+GeoHealthCheck can send notifications to various channels, depending on resource.
+Notifications can be configured in edit form:
+
+.. figure:: _static/notifications_config.png
+    :align: center
+    :alt: GHC notifications configuration
+
+    *Figure - GHC notifications configuration*
+
+
+There are two channels implemented:
+
+=====
+Email
+=====
+
+Notifications can be send to designated emails. If set in config, GeoHealthCheck will 
+send notifications for all resources to emails defined in **GHC_NOTIFICATIONS_EMAIL**. 
+Additionally, each resource can have arbitrary list of emails (filled in **Notify emails** 
+field in edit form). By default, when resource is created, owner's email is added to 
+the list. User can add any email address, even for users that are not registered in 
+GeoHealthCheck instance. When editing emails list for a resource, user will get address 
+suggestions based on emails added for other resources by that user. Multiple emails should
+be separated with comma (`,`) char.
+
+=======
+Webhook
+=======
+
+Notifications can be also send as webhooks through `POST` request. Resource can have arbitrary 
+number of webhooks configured. 
+
+In edit form, user can add webhook configuration. Each webhook should be entered in separate field.
+Each webhook should contain at least URL to which `POST` request will be send. GeoHealthCheck will 
+send following fields with that request:
+
+.. csv-table::
+    :header: Form field,Field type,Description
+
+    ghc.result,string,Descriptive result of failed test
+    ghc.resource.url,URL,Resource's url
+    ghc.resource.title,string,Resource's title
+    ghc.resource.type,string,Resource's type name
+    ghc.resource.view,URL,URL to resource data in GeoHealthCheck
+
+
+Configuration can hold additional form payload that will be send along with GHC fields.
+Syntax for configuration:
+
+ * first line should be url to which webhook will be send
+ * second line should be empty
+ * third line (and subsequent) are used to store custom payload, and should contain either:
+   * each pair of field and value in separate lines (`field=value`)
+   * JSONified object, which properties will be used as form fields
+
+Configuration samples:
+
+* just an url
+
+.. code::
+
+    http://server/webhook/endpoint
+
+
+* url with fields as field-value pairs
+
+.. code::
+
+    http://server/webhook/endpoint
+
+    foo=bar
+    otherfield=someothervalue
+
+
+* url and payload as JSON:
+
+.. code::
+
+    http://server/webhook/endpoint
+
+    {"foo":"bar","otherfield":"someothervalue"}
 

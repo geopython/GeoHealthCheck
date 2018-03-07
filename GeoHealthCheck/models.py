@@ -30,16 +30,19 @@
 
 import json
 import logging
+from flask_babel import gettext as _
 from datetime import datetime
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from sqlalchemy.orm import deferred
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 import util
 from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
 from notifications import notify
+from wtforms.validators import Email, ValidationError
 
 DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
@@ -186,6 +189,150 @@ resource_tags = DB.Table('resource_tags',
                                    DB.ForeignKey('resource.identifier')))
 
 
+def _validate_webhook(value):
+    from GeoHealthCheck.notifications import _parse_webhook_location
+    try:
+        _parse_webhook_location(value)
+    except ValueError, err:
+        raise ValidationError('{}: {}'.format(value, err))
+    return value
+
+
+def _validate_email(value):
+    if not value:
+        raise ValidationError("Email cannot be empty value")
+    try:
+        if not value.strip():
+            raise ValidationError("Email cannot be empty value")
+    except AttributeError:
+        raise ValidationError("Email cannot be empty value")
+
+    v = Email()
+
+    class dummy_value(object):
+        data = value
+
+        @staticmethod
+        def gettext(*args, **kwargs):
+            return _(*args, **kwargs)
+    dummy_form = None
+    v(dummy_form, dummy_value())
+
+
+class Recipient(DB.Model):
+    """
+    Notification recipient
+    """
+    TYPE_EMAIL = 'email'
+    TYPE_WEBHOOK = 'webhook'
+    TYPES = (TYPE_EMAIL, TYPE_WEBHOOK,)
+    __tablename__ = 'recipient'
+    VALIDATORS = {TYPE_EMAIL: [_validate_email],
+                  TYPE_WEBHOOK: [_validate_webhook]}
+
+    id = DB.Column(DB.Integer, primary_key=True)
+    # channel type. email for now, more may come later
+    channel = DB.Column(DB.Enum(*TYPES, name='recipient_channel_types'),
+                        default=TYPE_EMAIL, nullable=False)
+    # recipient's identification, payload
+    # this can be url, or more rich configuration, depending on channel
+    location = DB.Column(DB.Text, nullable=False)
+    resources = DB.relationship('Resource',
+                                secondary='resourcenotification',
+                                lazy='dynamic',
+                                backref=DB.backref('recipients',
+                                                   lazy='dynamic'))
+
+    def __init__(self, channel, location):
+        self.channel = channel
+        self.location = location
+
+    @classmethod
+    def validate(cls, channel, value):
+        """
+        Validate if provided value is correct for given channel
+        """
+        try:
+            validators = cls.VALIDATORS[channel]
+        except KeyError:
+            return
+
+        for v in validators:
+            try:
+                v(value)
+            except (ValidationError, TypeError), err:
+                raise ValueError("Bad value: {}".format(err), err)
+
+    def is_email(self):
+        return self.channel == self.TYPE_EMAIL
+
+    def is_webhook(self):
+        return self.channel == self.TYPE_WEBHOOK
+
+    @classmethod
+    def burry_dead(cls):
+        RN = ResourceNotification
+        q = DB.session.query(cls)\
+                      .join(RN,
+                            RN.recipient_id == cls.id,
+                            isouter=True)\
+                      .filter(RN.recipient_id.is_(None))
+        for item in q:
+            DB.session.delete(item)
+
+    @classmethod
+    def get_or_create(cls, channel, location):
+        try:
+            cls.validate(channel, location)
+        except ValidationError, err:
+            raise ValueError("invalid value {}: {}".format(location, err))
+
+        try:
+            r = DB.session.query(cls)\
+                          .filter(and_(cls.channel == channel,
+                                       cls.location == location))\
+                          .one()
+        except (MultipleResultsFound, NoResultFound,):
+            r = cls(channel=channel, location=location)
+            DB.session.add(r)
+            DB.session.flush()
+        return r
+
+    @classmethod
+    def get_suggestions(cls, channel, for_user):
+        """
+        Return list of values to autocomplete for specific user
+        and channel.
+        """
+        Rcp = cls
+        Res = Resource
+        ResNot = ResourceNotification
+
+        q = DB.session.query(Rcp.location)\
+                      .join(ResNot, ResNot.recipient_id == Rcp.id)\
+                      .join(Res, Res.identifier == ResNot.resource_id)\
+                      .group_by(Rcp.location)\
+                      .filter(and_(Res.owner_identifier == for_user,
+                                   Rcp.channel == channel))
+        return [item[0] for item in q]
+
+
+class ResourceNotification(DB.Model):
+    """
+    m2m for Recipient <-> Resource
+    """
+    __tablename__ = 'resourcenotification'
+
+    resource_id = DB.Column(DB.Integer,
+                            DB.ForeignKey('resource.identifier'),
+                            primary_key=True)
+    recipient_id = DB.Column(DB.Integer,
+                             DB.ForeignKey('recipient.id'),
+                             primary_key=True)
+    resource = DB.relationship('Resource', lazy=False)
+    recipient = DB.relationship('Recipient', lazy=False)
+
+
 class Resource(DB.Model):
     """HTTP accessible resource"""
 
@@ -316,6 +463,68 @@ class Resource(DB.Model):
             else:
                 colors.append('#D9534F')  # red
         return colors
+
+    def clear_recipients(self, channel=None, burry_dead=True):
+        RN = ResourceNotification
+        Rcp = Recipient
+        if channel:
+            # clear specific channel
+            to_delete = self.get_recipients(channel)
+            if to_delete:
+                to_del_rcp = DB.session.query(RN)\
+                                       .join(Rcp,
+                                             Rcp.id == RN.recipient_id)\
+                                       .filter(
+                                            and_(RN.resource_id ==
+                                                 self.identifier,
+                                                 Rcp.channel == channel,
+                                                 Rcp.location.in_(to_delete))
+                                              )
+            else:
+                to_del_rcp = []
+        else:
+            # remove all m2m connections for Resource<->Recipient
+            to_del_rcp = DB.session.query(RN)\
+                                   .join(Rcp,
+                                         Rcp.id == RN.recipient_id)\
+                                   .filter(
+                                         RN.resource_id ==
+                                         self.identifier,
+                                          )
+        for rcp_ntf in to_del_rcp:
+            DB.session.delete(rcp_ntf)
+        if burry_dead:
+            Rcp.burry_dead()
+        DB.session.flush()
+
+    def get_recipients(self, channel):
+        q = self.recipients
+        return [item.location for item in q if item.channel == channel]
+
+    def set_recipients(self, channel, items):
+
+        # create new rcp first
+        to_add = []
+        for item in items:
+            to_add.append(Recipient.get_or_create(channel, item))
+
+        self.clear_recipients(channel, burry_dead=False)
+
+        for r in to_add:
+            self.recipients.append(r)
+        DB.session.flush()
+        Recipient.burry_dead()
+        DB.session.flush()
+        return self.get_recipients(channel)
+
+    def dump_recipients(self):
+        """
+        Return dictionary with channel ->recipients mapping
+        """
+        out = {}
+        for c in Recipient.TYPES:
+            out[c] = self.get_recipients(c)
+        return out
 
 
 class User(DB.Model):
@@ -592,9 +801,9 @@ if __name__ == '__main__':
                     try:
                         notify(APP.config, resource, run1, last_run_success)
                     except Exception as err:
-                        # Don't bail out on failure in order to commit the Run
-                        msg = str(err)
-                        print('error notifying: %s' % msg)
+                        LOGGER.error("Cannot send notifications: %s",
+                                     err,
+                                     exc_info=err)
 
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())

@@ -9,9 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 import imp
 import os
-
-alembic_helpers = imp.load_source('alembic_helpers', (
-    os.getcwd() + '/' + op.get_context().script.dir + '/alembic_helpers.py'))
+from GeoHealthCheck.migrations import alembic_helpers
 
 # revision identifiers, used by Alembic.
 revision = '496427d03f87'

@@ -31,6 +31,7 @@
 
 import csv
 import logging
+import json
 from datetime import datetime, timedelta
 from StringIO import StringIO
 from itertools import chain
@@ -46,7 +47,7 @@ from __init__ import __version__
 from healthcheck import sniff_test_resource, run_test_resource
 from init import App
 from enums import RESOURCE_TYPES
-from models import Resource, Run, ProbeVars, CheckVars, Tag, User
+from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
 from util import render_template2, send_email
 import views
@@ -252,7 +253,8 @@ def export():
                 'average_response_time': round(r.average_response_time, 2),
                 'max_response_time': round(r.max_response_time, 2),
                 'reliability': round(r.reliability, 2),
-                'last_report': r.last_run.report
+                'last_report': r.last_run.report,
+                'recipients': r.dump_recipients()
             })
         return jsonify(json_dict)
     elif request.url_rule.rule == '/csv':
@@ -261,13 +263,18 @@ def export():
         header = [
             'resource_type', 'title', 'url', 'ghc_url', 'ghc_json', 'ghc_csv',
             'first_run', 'last_run', 'status', 'min_response_time',
-            'average_response_time', 'max_response_time', 'reliability'
+            'average_response_time', 'max_response_time', 'reliability',
+            'recipients'
         ]
         writer.writerow(header)
         for r in response['resources']:
             ghc_url = '%s%s' % (CONFIG['GHC_SITE_URL'],
                                 url_for('get_resource_by_id',
                                         identifier=r.identifier))
+            # serialize recipients into a string
+            recipients = r.dump_recipients()
+            recipients_str = json.dumps(recipients)
+
             writer.writerow([
                 r.resource_type,
                 r.title,
@@ -281,7 +288,8 @@ def export():
                     '%Y-%m-%dT%H:%M:%SZ'),
                 r.last_run.success,
                 round(r.average_response_time, 2),
-                round(r.reliability, 2)
+                round(r.reliability, 2),
+                recipients_str
             ])
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
@@ -324,7 +332,8 @@ def export_resource(identifier):
                 '%Y-%m-%dT%H:%M:%SZ'),
             'history_csv': history_csv,
             'history_json': history_json,
-            'last_report': resource.last_run.report
+            'last_report': resource.last_run.report,
+            'recipients': resource.dump_recipients()
         }
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:
@@ -334,8 +343,13 @@ def export_resource(identifier):
             'identifier', 'title', 'url', 'resource_type', 'owner',
             'min_response_time', 'average_response_time', 'max_response_tie',
             'reliability', 'status', 'first_run', 'last_run', 'history_csv',
-            'history_json'
+            'history_json', 'recipients',
         ]
+
+        # serialize recipients into a string
+        recipients = resource.dump_recipients()
+        recipients_str = json.dumps(recipients)
+
         writer.writerow(header)
         writer.writerow([
             resource.identifier,
@@ -353,7 +367,8 @@ def export_resource(identifier):
             resource.last_run.checked_datetime.strftime(
                 '%Y-%m-%dT%H:%M:%SZ'),
             history_csv,
-            history_json
+            history_json,
+            recipients_str
         ])
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
@@ -552,6 +567,9 @@ def add():
         run_to_add = Run(resource_to_add, result)
 
         DB.session.add(resource_to_add)
+        # prepopulate notifications for current user
+        resource_to_add.set_recipients('email', [g.user.email])
+
         if probe_to_add:
             DB.session.add(probe_to_add)
         for check_to_add in checks_to_add:
@@ -635,13 +653,19 @@ def update(resource_identifier):
                     resource.probe_vars.append(probe_vars)
 
                 update_counter += 1
-
+            elif key == 'notify_emails':
+                resource.set_recipients('email',
+                                        [v for v in value if v.strip()])
+            elif key == 'notify_webhooks':
+                resource.set_recipients('webhook',
+                                        [v for v in value if v.strip()])
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])
                 update_counter += 1
 
     except Exception as err:
+        LOGGER.error("Cannot update resource: %s", err, exc_info=err)
         DB.session.rollback()
         status = str(err)
         update_counter = 0
@@ -695,8 +719,14 @@ def edit_resource(resource_identifier):
 
     probes_avail = views.get_probes_avail(resource.resource_type, resource)
 
-    return render_template('edit_resource.html', lang=g.current_lang,
-                           resource=resource, probes_avail=probes_avail)
+    suggestions = json.dumps(Recipient.get_suggestions('email',
+                                                       g.user.username))
+
+    return render_template('edit_resource.html',
+                           lang=g.current_lang,
+                           resource=resource,
+                           suggestions=suggestions,
+                           probes_avail=probes_avail)
 
 
 @APP.route('/resource/<int:resource_identifier>/delete')
@@ -718,7 +748,7 @@ def delete(resource_identifier):
 
     for run in runs:
         DB.session.delete(run)
-
+    resource.clear_recipients()
     DB.session.delete(resource)
 
     try:

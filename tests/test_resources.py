@@ -31,8 +31,11 @@
 import unittest
 import sys
 import os
-from GeoHealthCheck.models import DB, Resource, Run, load_data
+
+from GeoHealthCheck.models import (DB, Resource, Run, load_data,
+                                   Recipient)
 from GeoHealthCheck.healthcheck import run_test_resource
+from GeoHealthCheck.notifications import _parse_webhook_location
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -85,6 +88,50 @@ class GeoHealthCheckTest(unittest.TestCase):
                 resource.runs[0].success, True,
                 'Run should be success for %s report=%s' %
                 (resource.url, str(resource.runs[0])))
+
+    def testNotificationsApi(self):
+        Rcp = Recipient
+        test_emails = ['test@test.com', 'other@test.com', 'unused@test.com']
+        invalid_emails = ['invalid', None, object()]
+
+        # invalid values should raise exception
+        for email in invalid_emails:
+            with self.assertRaises(ValueError):
+                Rcp.get_or_create('email', email)
+
+        for email in test_emails:
+            Rcp.get_or_create('email', email)
+        from_db = set(r[0] for r in DB.session.query(Rcp.location).all())
+        self.assertEqual(from_db, set(test_emails))
+
+        r = Resource.query.first()
+        r.set_recipients('email', test_emails[:2])
+
+        # unused email should be removed
+        self.assertEqual(set(r.get_recipients('email')), set(test_emails[:2]))
+        q = Rcp.query.filter(Rcp.location == test_emails[-1])
+        self.assertEqual(q.count(), 0)
+
+    def testWebhookNotifications(self):
+
+        lhost = 'http://localhost:8000/'
+
+        # identifier, url,  params, no error
+        test_data = (('', None, None, False,),
+                     ('http://localhost:8000/', lhost, {}, True,),
+                     ('http://localhost:8000/\n\n', lhost, {}, True,),
+                     ('http://localhost:8000/\n\ntest=true', lhost,
+                      {'test': 'true'}, True,),
+                     )
+
+        for identifier, url, params, success in test_data:
+            try:
+                test_url, test_params = _parse_webhook_location(identifier)
+                self.assertTrue(success)
+                self.assertEqual(test_url, url)
+                self.assertEqual(test_params, params)
+            except Exception, err:
+                self.assertFalse(success, str(err))
 
 
 if __name__ == '__main__':
