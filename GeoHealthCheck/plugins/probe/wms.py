@@ -1,5 +1,6 @@
 from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.plugins.probe.http import HttpGet
 from owslib.wms import WebMapService
 
 
@@ -23,7 +24,7 @@ class WmsGetMapV1(Probe):
                        'WIDTH={width}&HEIGHT={height}&FORMAT={format}' + \
                        '&STYLES={styles}&EXCEPTIONS={exceptions}'
 
-    PARAM_DEFS = {
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {
         'layers': {
             'type': 'stringlist',
             'description': 'The WMS Layer, select one',
@@ -78,7 +79,7 @@ class WmsGetMapV1(Probe):
             'range': None
         }
 
-    }
+    })
     """Param defs"""
 
     CHECKS_AVAIL = {

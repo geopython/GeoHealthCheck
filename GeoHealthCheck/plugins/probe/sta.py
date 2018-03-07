@@ -1,4 +1,6 @@
 from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.plugins.probe.http import HttpGet
 
 
 class StaCaps(Probe):
@@ -12,6 +14,9 @@ class StaCaps(Probe):
 
     def __init__(self):
         Probe.__init__(self)
+
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {})
+    """Param defs"""
 
     CHECKS_AVAIL = {
         'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {
@@ -53,7 +58,7 @@ class StaGetEntities(Probe):
     def __init__(self):
         Probe.__init__(self)
 
-    PARAM_DEFS = {
+    PARAM_DEFS = Plugin.merge(StaCaps.PARAM_DEFS, {
         'entities': {
             'type': 'string',
             'description': 'The STA Entity collection type',
@@ -63,7 +68,7 @@ class StaGetEntities(Probe):
                       'Locations', 'Sensors', 'FeaturesOfInterest',
                       'ObservedProperties', 'HistoricalLocations']
         }
-    }
+    })
     """Param defs"""
 
     CHECKS_AVAIL = {

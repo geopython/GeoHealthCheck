@@ -1,3 +1,4 @@
+from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.probe import Probe
 
 
@@ -21,6 +22,21 @@ class HttpGet(Probe):
     }
     """Checks avail"""
 
+    PARAM_DEFS = {
+        'username': {
+            'type': 'string',
+            'description': 'HTTP-Basic-Authentication username',
+            'default': None,
+            'required': False
+        },
+        'password': {
+            'type': 'string',
+            'description': 'HTTP-Basic-Authentication password',
+            'default': None,
+            'required': False
+        }
+    }
+    """Param defs"""
 
 class HttpGetQuery(HttpGet):
     """
@@ -34,14 +50,14 @@ class HttpGetQuery(HttpGet):
         """
     REQUEST_TEMPLATE = '?{query}'
 
-    PARAM_DEFS = {
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {
         'query': {
             'type': 'string',
             'description': 'The query string to add to request (without ?)',
             'default': None,
             'required': True
         }
-    }
+    })
     """Param defs"""
 
 
@@ -61,7 +77,7 @@ class HttpPost(HttpGet):
     REQUEST_HEADERS = {'content-type': '{post_content_type}'}
     REQUEST_TEMPLATE = '{body}'
 
-    PARAM_DEFS = {
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {
         'body': {
             'type': 'string',
             'description': 'The post body to send',
@@ -74,7 +90,7 @@ class HttpPost(HttpGet):
             'default': 'text/xml;charset=UTF-8',
             'required': True
         }
-    }
+    })
     """Param defs"""
 
     def get_request_headers(self):

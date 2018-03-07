@@ -1,5 +1,6 @@
 from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.plugins.probe.http import HttpGet
 from GeoHealthCheck.util import transform_bbox
 from owslib.wfs import WebFeatureService
 
@@ -40,7 +41,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   </wfs:Query>
 </wfs:GetFeature>
     """
-    PARAM_DEFS = {
+    
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {
         'type_name': {
             'type': 'string',
             'description': 'The WFS FeatureType name',
@@ -84,7 +86,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             'required': True,
             'range': None
         }
-    }
+    })
     """Param defs"""
 
     CHECKS_AVAIL = {

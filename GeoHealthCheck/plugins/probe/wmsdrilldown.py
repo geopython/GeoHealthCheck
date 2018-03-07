@@ -1,6 +1,8 @@
 import random
 
 from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.plugins.probe.http import HttpGet
 from GeoHealthCheck.result import Result
 from owslib.wms import WebMapService
 
@@ -20,7 +22,7 @@ class WmsDrilldown(Probe):
 
     REQUEST_METHOD = 'GET'
 
-    PARAM_DEFS = {
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {
         'drilldown_level': {
             'type': 'string',
             'description': 'How heavy the drilldown should be.',
@@ -28,7 +30,7 @@ class WmsDrilldown(Probe):
             'required': True,
             'range': ['minor', 'moderate', 'full']
         }
-    }
+    })
     """Param defs"""
 
     def __init__(self):

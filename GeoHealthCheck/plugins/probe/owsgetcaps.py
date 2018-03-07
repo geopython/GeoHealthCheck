@@ -1,4 +1,5 @@
 from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.plugins.probe.http import HttpGet
 from GeoHealthCheck.probe import Probe
 
 
@@ -18,7 +19,7 @@ class OwsGetCaps(Probe):
     REQUEST_TEMPLATE = \
         '?SERVICE={service}&VERSION={version}&REQUEST=GetCapabilities'
 
-    PARAM_DEFS = {
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {
         'service': {
             'type': 'string',
             'description': 'The OWS service within resource endpoint',
@@ -32,7 +33,7 @@ class OwsGetCaps(Probe):
             'required': True,
             'range': None
         }
-    }
+    })
     """Param defs, to be specified in subclasses"""
 
     CHECKS_AVAIL = {

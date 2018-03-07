@@ -1,5 +1,6 @@
 from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.plugins.probe.http import HttpGet
 from owslib.tms import TileMapService
 
 
@@ -14,6 +15,9 @@ class TmsCaps(Probe):
 
     def __init__(self):
         Probe.__init__(self)
+
+    PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {})
+    """Param defs"""
 
     CHECKS_AVAIL = {
         'GeoHealthCheck.plugins.check.checks.XmlParse': {
@@ -50,7 +54,7 @@ class TmsGetTile(Probe):
     # brtachtergrondkaart/1/0/0.png
     REQUEST_TEMPLATE = '/{layer}/{zoom}/{x}/{y}.{extension}'
 
-    PARAM_DEFS = {
+    PARAM_DEFS = Plugin.merge(TmsCaps.PARAM_DEFS, {
         'layer': {
             'type': 'string',
             'description': 'The TMS Layer within resource endpoint',
@@ -86,7 +90,7 @@ class TmsGetTile(Probe):
             'required': True,
             'range': None
         }
-    }
+    })
     """Param defs"""
 
     CHECKS_AVAIL = {
