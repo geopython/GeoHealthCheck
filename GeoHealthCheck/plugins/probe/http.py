@@ -38,6 +38,7 @@ class HttpGet(Probe):
     }
     """Param defs"""
 
+
 class HttpGetQuery(HttpGet):
     """
     Do HTTP GET Request, to poll/ping any Resource bare url with query string.

@@ -41,7 +41,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   </wfs:Query>
 </wfs:GetFeature>
     """
-    
+
     PARAM_DEFS = Plugin.merge(HttpGet.PARAM_DEFS, {
         'type_name': {
             'type': 'string',

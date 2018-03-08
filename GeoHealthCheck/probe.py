@@ -231,7 +231,8 @@ class Probe(Plugin):
         headers = dict()
 
         if self._parameters['username'] and self._parameters['password']:
-            b64Val = base64.b64encode("%s:%s" % (self._parameters['username'], self._parameters['password']))
+            b64Val = base64.b64encode("%s:%s" % 
+                (self._parameters['username'], self._parameters['password']))
             headers.update({'Authorization': 'Basic %s' % b64Val})
 
         headers.update(self.REQUEST_HEADERS)
