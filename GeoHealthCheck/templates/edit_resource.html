@@ -18,7 +18,7 @@
                     <input type="checkbox" id="input_resource_active" name="resource_active_value" {{ 'checked' if resource.active == true else '' }}/>
                 </td>
             </tr>
-            
+
             <tr>
                 <th>{{ _("Notify emails") }}</th>
                 <td>
@@ -220,7 +220,7 @@ or
         // Find parent Check entry and the detail div therein
         return $(button).closest('.check-entry');
     }
-    
+
     $(document).on('click','.button-resource-probe-check-delete',function(){
         var entry = get_check_entry(this);
         $(entry).remove();
@@ -235,8 +235,11 @@ or
         url = url.replace('dummy', check_class);
 
         $.get(url, function(result) {
-            // $(button).closest('.check-entry');
-            $('.check-edit-forms').append(result);
+            // Find the active Checks element within the Probe form
+            // and append Check.
+            var probe_form = $(button).closest('.resource-probe-edit');
+            var check_edit_forms = $(probe_form).find('.check-edit-forms');
+            $(check_edit_forms).append(result);
         }).fail(function() {
             $('.check-edit-forms').append('<br/><strong>Error getting Check form for ' + check_class + '</strong>');
         });
@@ -257,7 +260,7 @@ or
 
         // Collect active
         var new_active = $('#input_resource_active').prop('checked');
-        
+
         // Collect recipients
         var new_notify_emails = $('#input_resource_notify_emails').val().split(',');
         var new_notify_webhooks = [];
@@ -418,7 +421,7 @@ or
     $('.whook_container', wh).each(function(idx, elm){
             wh_remove_cb($(elm));
     });
-    
+
 
     // autocomplete for notifications
     var emails = {{ suggestions|safe }};

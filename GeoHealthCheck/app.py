@@ -808,7 +808,7 @@ def get_check_edit_form(check_class):
     check_vars = CheckVars(
         None, check_class, check_obj.get_default_parameter_values())
 
-    print(str(check_info))
+    # print(str(check_info))
     return render_template('includes/check_edit_form.html',
                            lang=g.current_lang,
                            check=check_vars, check_info=check_info)
