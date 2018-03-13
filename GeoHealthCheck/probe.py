@@ -265,9 +265,11 @@ class Probe(Plugin):
                     url = "%s%s" % (url, request_string)
 
                 self.response = requests.get(url,
+                                             timeout=App.get_config()['GHC_RUN_PROBE_TIMEOUT'],
                                              headers=headers)
             elif self.REQUEST_METHOD == 'POST':
                 self.response = requests.post(url_base,
+                                              timeout=App.get_config()['GHC_RUN_PROBE_TIMEOUT'],
                                               data=request_string,
                                               headers=headers)
         except requests.exceptions.RequestException as e:
