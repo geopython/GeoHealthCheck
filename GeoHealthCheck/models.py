@@ -273,9 +273,8 @@ class Recipient(DB.Model):
     def burry_dead(cls):
         RN = ResourceNotification
         q = DB.session.query(cls)\
-                      .join(RN,
-                            RN.recipient_id == cls.id,
-                            isouter=True)\
+                      .outerjoin(RN,
+                            RN.recipient_id == cls.id)\
                       .filter(RN.recipient_id.is_(None))
         for item in q:
             DB.session.delete(item)
