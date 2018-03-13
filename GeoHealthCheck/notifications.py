@@ -102,8 +102,6 @@ def do_email(config, resource, run, status_changed, result):
     try:
         if config['GHC_SMTP']['tls']:
             server.starttls()
-        else:
-            server.connect()
     except Exception, err:
         LOGGER.exception("Cannot connect to smtp: %s[:%s]: %s",
                          config['GHC_SMTP']['server'],
