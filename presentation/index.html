@@ -311,20 +311,20 @@
 
         <!-- Setup -->
         <section style="text-align: left;">
-            <h2>Python Webapp</h2>
-            <h3>- WSGI - standard Python</h3>
+            <h2>Dashboard</h2>
             <h3>- Flask - web framework</h3>
-            <h3>- Run Standalone, or</h3>
-            <h3>- In http-server e.g Nginx or Apache2</h3>
+            <h3>- Standard Python WGSI</h3>
+            <h3>- Run w Nginx, Apache2, Gunicorn..</h3>
+            <h3>- Preferred: via Docker!</h3>
         </section>
 
         <!-- Setup -->
         <section style="text-align: left;">
             <h2>HealthCheck Runner</h2>
-            <h3>- Via cron-job</h3>
-            <h3>- Frequency and history retain configured</h3>
-            <h3>- Result reports</h3>
-            <h3>- Email Notification trigger (optional)</h3>
+            <h3>- Scheduled (cron)</h3>
+            <h3>- Run "Probes" and "Checks"</h3>
+            <h3>- Result reporting</h3>
+            <h3>- Notifications: email, webhook</h3>
         </section>
 
         <!-- Setup -->
@@ -340,8 +340,8 @@
         <section style="text-align: left;">
             <h2>Database</h2>
             <h3>- Entities: </h3>
-            <h3>&nbsp; &nbsp; &nbsp; Users, Resources, Runs,</h3>
-            <h3>&nbsp; &nbsp; &nbsp; Tags, ProbeVars, CheckVars</h3>
+            <h3>&nbsp; &nbsp; &nbsp; Users, Resources, Runs, Tags</h3>
+            <h3>&nbsp; &nbsp; &nbsp; ProbeVars, CheckVars, Recipients</h3>
             <h3>- Maintains history (Runs)</h3>
             <h3>- Multiple backends</h3>
             <h3>&nbsp;&nbsp;&nbsp; via SQLAlchemy: default SQLite</h3>
@@ -409,7 +409,7 @@ GHC_PROBE_DEFAULTS = (Default Probe per Resource Type)
         <!-- Data model -->
         <section style="text-align: left;">
             <h2>Data Model</h2>
-            <img src="media/datamodel.jpg" alt="datamodel"/>
+            <img src="media/datamodel.png" alt="datamodel"/>
         </section>
 
         <!-- Plugin model -->
