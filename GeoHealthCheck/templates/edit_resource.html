@@ -143,10 +143,10 @@ or
 {% endblock %}
 {% block extrafoot %}
 
-<script src="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.js') }}"></script>
-<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.css') }}" rel="stylesheet">
-<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.structure.css') }}" rel="stylesheet">
-<link href="{{ url_for('static', filename='lib/vendor/jqueryui/jquery-ui.theme.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='lib/jqueryui/jquery-ui.js') }}"></script>
+<link href="{{ url_for('static', filename='lib/jqueryui/jquery-ui.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='lib/jqueryui/jquery-ui.structure.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='lib/jqueryui/jquery-ui.theme.css') }}" rel="stylesheet">
 
 <script type="text/javascript">
     var all_tags = {{ tags.keys()|tojson }};
