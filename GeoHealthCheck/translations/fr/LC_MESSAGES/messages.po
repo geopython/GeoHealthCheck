@@ -21,7 +21,7 @@ msgstr "Ce site n'est pas configuré pour l'auto-inscription"
 
 #: GeoHealthCheck/app.py:458
 msgid "Please contact"
-msgstr "s'il-vous-plaît contactez"
+msgstr "S'il-vous-plaît contactez"
 
 #: GeoHealthCheck/app.py:473
 msgid "already registered"
@@ -29,7 +29,7 @@ msgstr "déjà inscrit"
 
 #: GeoHealthCheck/app.py:495
 msgid "No resources detected"
-msgstr ""
+msgstr "Pas de ressources détectées"
 
 #: GeoHealthCheck/app.py:509
 msgid "Service already registered"
@@ -37,16 +37,16 @@ msgstr "Service déjà enregistré"
 
 #: GeoHealthCheck/app.py:581
 msgid "Services registered"
-msgstr ""
+msgstr "Services enregistrés"
 
 #: GeoHealthCheck/app.py:687 GeoHealthCheck/app.py:715
 #: GeoHealthCheck/app.py:742
 msgid "Resource not found"
-msgstr "Introuvable"
+msgstr "Ressource introuvable"
 
 #: GeoHealthCheck/app.py:695
 msgid "INFO"
-msgstr ""
+msgstr "INFO"
 
 #: GeoHealthCheck/app.py:698 GeoHealthCheck/templates/edit_resource.html:348
 msgid "ERROR"
@@ -74,15 +74,15 @@ msgstr "Déconnecté"
 
 #: GeoHealthCheck/app.py:853
 msgid "Invalid username"
-msgstr ""
+msgstr "Nom d'utilisateur incorrect"
 
 #: GeoHealthCheck/app.py:868
 msgid "Password sent via email"
-msgstr ""
+msgstr "Mot de passe envoyé par mél"
 
 #: GeoHealthCheck/healthcheck.py:78
 msgid "Invalid resource type"
-msgstr "ressource non valide"
+msgstr "Type de ressource non valide"
 
 #: GeoHealthCheck/healthcheck.py:151 GeoHealthCheck/healthcheck.py:177
 msgid "for"
@@ -94,7 +94,7 @@ msgstr "Échec"
 
 #: GeoHealthCheck/notifications.py:243
 msgid "Fixed"
-msgstr "fixé"
+msgstr "Fixé"
 
 #: GeoHealthCheck/notifications.py:245 GeoHealthCheck/notifications.py:253
 msgid "Still Failing"
@@ -106,15 +106,15 @@ msgstr "Passe"
 
 #: GeoHealthCheck/templates/add.html:5
 msgid "Add Resource"
-msgstr "Ajouter une Ressource"
+msgstr "Ajoutez une ressource"
 
 #: GeoHealthCheck/templates/add.html:8
 msgid "Select Resource Type"
-msgstr "Sélectionner le type de ressource"
+msgstr "Sélectionnez le type de la ressource"
 
 #: GeoHealthCheck/templates/add.html:22
 msgid "Enter the URL without any query parameters"
-msgstr "Entrez l'URL sans aucun paramètre de requête"
+msgstr "Saisissez l'URL sans aucun paramètre de requête"
 
 #: GeoHealthCheck/templates/add.html:22
 msgid "good"
@@ -130,7 +130,7 @@ msgstr "Soumettre"
 
 #: GeoHealthCheck/templates/add.html:39
 msgid "Enter tags"
-msgstr ""
+msgstr "Saisissez les mots-clés"
 
 #: GeoHealthCheck/templates/edit_resource.html:5
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:125
@@ -147,91 +147,91 @@ msgstr "Type"
 #: GeoHealthCheck/templates/edit_resource.html:15
 #: GeoHealthCheck/templates/resource.html:30
 msgid "Active"
-msgstr ""
+msgstr "En activité"
 
 #: GeoHealthCheck/templates/edit_resource.html:23
 msgid "Notify emails"
-msgstr ""
+msgstr "Notifiez les emails"
 
-#: GeoHealthCheck/templates/edit_resource.html:30
+#: GeoHealthCheck/templates/edit_resource.html:25
+msgid "You can enter multiple emails separated with comma"
+msgstr "Vous pouvez saisir plusieurs emails séparés par des virgules"
+
+#: GeoHealthCheck/templates/edit_resource.html:31
 msgid "Notify webhooks"
-msgstr ""
-
-#: GeoHealthCheck/templates/edit_resource.html:43
-msgid "Enter url for webhook."
-msgstr ""
+msgstr "Notifiez les personnalisations"
 
 #: GeoHealthCheck/templates/edit_resource.html:44
-msgid "Optionally, enter payload as list of key=value lines or JSON object."
-msgstr ""
+msgid "Enter url for webhook."
+msgstr "Saisissez une URL de personnalisation."
 
-#: GeoHealthCheck/templates/edit_resource.html:65
+#: GeoHealthCheck/templates/edit_resource.html:45
+msgid "Optionally, enter payload as list of key=value lines or JSON object."
+msgstr "Optionnellement, saisissez en complément une liste de lignes clé=valeur ou un objet JSON."
+
+#: GeoHealthCheck/templates/edit_resource.html:66
 #: GeoHealthCheck/templates/resource.html:34
 msgid "Owner"
-msgstr "Responsable"
+msgstr "Propriétaire"
 
-#: GeoHealthCheck/templates/edit_resource.html:70
+#: GeoHealthCheck/templates/edit_resource.html:71
 #: GeoHealthCheck/templates/includes/resources_list.html:5
 #: GeoHealthCheck/templates/resource.html:39
 msgid "Name"
 msgstr "Nom"
 
-#: GeoHealthCheck/templates/edit_resource.html:73
-msgid "You can enter multiple emails separated with comma"
-msgstr ""
-
-#: GeoHealthCheck/templates/edit_resource.html:115
+#: GeoHealthCheck/templates/edit_resource.html:114
 #: GeoHealthCheck/templates/includes/resources_list.html:7
 #: GeoHealthCheck/templates/resource.html:115
 msgid "Status"
-msgstr "Statut"
+msgstr "Etat"
 
-#: GeoHealthCheck/templates/edit_resource.html:119
+#: GeoHealthCheck/templates/edit_resource.html:118
 #: GeoHealthCheck/templates/notification_email.txt:10
 #: GeoHealthCheck/templates/notification_email.txt:16
 msgid "Details"
 msgstr "Détails"
 
-#: GeoHealthCheck/templates/edit_resource.html:129
+#: GeoHealthCheck/templates/edit_resource.html:128
 #: GeoHealthCheck/templates/edit_resource.html:328
 #: GeoHealthCheck/templates/edit_resource.html:344
 msgid "Save"
 msgstr "Enregistrer"
 
-#: GeoHealthCheck/templates/edit_resource.html:130
+#: GeoHealthCheck/templates/edit_resource.html:129
 #: GeoHealthCheck/templates/edit_resource.html:357
 #: GeoHealthCheck/templates/edit_resource.html:365
 #: GeoHealthCheck/templates/edit_resource.html:372
 msgid "Test"
-msgstr ""
+msgstr "Tester"
 
-#: GeoHealthCheck/templates/edit_resource.html:131
+#: GeoHealthCheck/templates/edit_resource.html:130
 msgid "Cancel"
 msgstr "Annuler"
 
-#: GeoHealthCheck/templates/edit_resource.html:132
+#: GeoHealthCheck/templates/edit_resource.html:131
 #: GeoHealthCheck/templates/includes/check_edit_form.html:12
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:126
 #: GeoHealthCheck/templates/resource.html:16
 msgid "Delete"
 msgstr "Supprimer"
 
-#: GeoHealthCheck/templates/edit_resource.html:392
+#: GeoHealthCheck/templates/edit_resource.html:394
 #: GeoHealthCheck/templates/resource.html:140
 msgid "Delete resource"
 msgstr "Supprimer la ressource"
 
 #: GeoHealthCheck/templates/home.html:15
 msgid "Select a link on the left to view Resources."
-msgstr ""
+msgstr "Sélectionner un lien à gauche pour visualiser les ressources."
 
 #: GeoHealthCheck/templates/home.html:17
 msgid "Failing Resources"
-msgstr ""
+msgstr "Ressources en échec"
 
 #: GeoHealthCheck/templates/home.html:23
 msgid "None"
-msgstr ""
+msgstr "Rien"
 
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:109
 #: GeoHealthCheck/templates/includes/probe_info.html:95
@@ -246,7 +246,7 @@ msgstr "S'identifier"
 
 #: GeoHealthCheck/templates/layout.html:60
 msgid "Language"
-msgstr ""
+msgstr "Langue"
 
 #: GeoHealthCheck/templates/layout.html:67
 msgid "Help"
@@ -263,11 +263,11 @@ msgstr "Montrer tout"
 
 #: GeoHealthCheck/templates/layout.html:92
 msgid "Tags"
-msgstr ""
+msgstr "Mots-clés"
 
 #: GeoHealthCheck/templates/layout.html:107
 msgid "Settings"
-msgstr "paramètres"
+msgstr "Paramétrage"
 
 #: GeoHealthCheck/templates/layout.html:109
 #: GeoHealthCheck/templates/resource.html:108
@@ -285,7 +285,7 @@ msgstr "Fréquence d'essai"
 #: GeoHealthCheck/templates/layout.html:131
 #: GeoHealthCheck/templates/opensearch_description.xml:11
 msgid "Powered by"
-msgstr "mot de passe"
+msgstr "Motorisé par"
 
 #: GeoHealthCheck/templates/login.html:7
 #: GeoHealthCheck/templates/recover_password.html:7
@@ -297,7 +297,7 @@ msgstr "Nom d'utilisateur"
 #: GeoHealthCheck/templates/recover_password_email.txt:6
 #: GeoHealthCheck/templates/register.html:9
 msgid "Password"
-msgstr "mot de passe"
+msgstr "Mot de passe"
 
 #: GeoHealthCheck/templates/login.html:11
 msgid "Sign in"
@@ -310,17 +310,17 @@ msgstr "S'inscrire"
 
 #: GeoHealthCheck/templates/login.html:17
 msgid "Forgot password?"
-msgstr ""
+msgstr "Mot de passe oublié ?"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 #: GeoHealthCheck/templates/recover_password_email.txt:4
 msgid "Hi: this is an automated message from the"
-msgstr "Bonjour: il s'agit d'un message automatisé"
+msgstr "Bonjour : il s'agit d'un message automatisé de"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 #: GeoHealthCheck/templates/recover_password_email.txt:4
 msgid "service"
-msgstr "Service"
+msgstr "service"
 
 #: GeoHealthCheck/templates/notification_email.txt:6
 msgid "Resource"
@@ -328,7 +328,7 @@ msgstr "Ressource"
 
 #: GeoHealthCheck/templates/notification_email.txt:7
 msgid "Resource type"
-msgstr "Type de ressources"
+msgstr "Type de ressource"
 
 #: GeoHealthCheck/templates/notification_email.txt:8
 msgid "Resource URL"
@@ -346,11 +346,11 @@ msgstr "Message"
 
 #: GeoHealthCheck/templates/recover_password.html:5
 msgid "Recover Password"
-msgstr ""
+msgstr "Récupérer le mot de passe"
 
 #: GeoHealthCheck/templates/recover_password.html:10
 msgid "Recover password via email"
-msgstr ""
+msgstr "Récupérer le mot de passe par email"
 
 #: GeoHealthCheck/templates/recover_password_email.txt:1
 msgid "Subject"
@@ -358,11 +358,11 @@ msgstr "Sujet"
 
 #: GeoHealthCheck/templates/recover_password_email.txt:1
 msgid "recover password"
-msgstr ""
+msgstr "récupérer le mot de passe"
 
 #: GeoHealthCheck/templates/register.html:10
 msgid "Email"
-msgstr "Courriel"
+msgstr "Email"
 
 #: GeoHealthCheck/templates/register.html:13
 msgid "Signup"
@@ -406,7 +406,7 @@ msgstr "Dernière vérification"
 
 #: GeoHealthCheck/templates/resource.html:94
 msgid "Success"
-msgstr ""
+msgstr "Succès"
 
 #: GeoHealthCheck/templates/resource.html:96
 #: GeoHealthCheck/templates/resource.html:166
@@ -428,7 +428,7 @@ msgstr "Ressources"
 
 #: GeoHealthCheck/templates/resources.html:18
 msgid "Search..."
-msgstr "Chercher"
+msgstr "Recherche..."
 
 #: GeoHealthCheck/templates/resources.html:20
 msgid "results"
@@ -436,7 +436,7 @@ msgstr "résultats"
 
 #: GeoHealthCheck/templates/includes/overall_status.html:1
 msgid "Dashboard"
-msgstr ""
+msgstr "Tableau de bord"
 
 #: GeoHealthCheck/templates/includes/overall_status.html:20
 msgid "Operational"
@@ -452,7 +452,7 @@ msgstr "Défectueux"
 
 #: GeoHealthCheck/templates/includes/probe_info.html:92
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #~ msgid "Service registered"
 #~ msgstr "Service enregistré"
@@ -461,8 +461,7 @@ msgstr ""
 #~ msgstr "Voir les détails"
 
 #~ msgid "Optionally, enter payload as list of key=value lines."
-#~ msgstr ""
+#~ msgstr "Optionnellement, saisissez en complément une liste de lignes clé=valeur."
 
 #~ msgid "You can enter multiple emails, separated with comma"
-#~ msgstr ""
-
+#~ msgstr "Vous pouvez saisir plusieurs emails séparés par des virgules"
