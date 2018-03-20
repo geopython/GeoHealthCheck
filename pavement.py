@@ -283,6 +283,12 @@ def update_translations():
         options.base.pot, options.base.translations))
 
 
+@task
+def runner_daemon():
+    """Run the HealthCheck runner scheduler"""
+    sh('python GeoHealthCheck/scheduler.py')
+
+
 def sphinx_make():
     """return what command Sphinx is using for make"""
 
