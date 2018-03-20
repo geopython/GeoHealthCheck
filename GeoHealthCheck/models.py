@@ -41,7 +41,6 @@ import util
 from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
-from notifications import notify
 from wtforms.validators import Email, ValidationError
 
 DB = App.get_db()
@@ -824,46 +823,7 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'run':
             print('START - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
-            from healthcheck import run_test_resource
-
-            for resource in Resource.query.all():  # run all tests
-                print('Testing %s %s' %
-                      (resource.resource_type, resource.url))
-
-                if not resource.active:
-                    print('Resource is not active. Skipping')
-                    continue
-
-                # Get the status of the last run,
-                # assume success if there is none
-                last_run_success = True
-                last_run = resource.last_run
-                if last_run:
-                    last_run_success = last_run.success
-
-                # Run test
-                result = run_test_resource(resource)
-
-                run1 = Run(resource, result)
-
-                print('Adding Run: success=%s, response_time=%ss\n'
-                      % (str(run1.success), run1.response_time))
-
-                DB.session.add(run1)
-
-                # commit or rollback each run to avoid long-lived transactions
-                # see https://github.com/geopython/GeoHealthCheck/issues/14
-                db_commit()
-
-                if APP.config['GHC_NOTIFICATIONS']:
-                    # Attempt notification
-                    try:
-                        notify(APP.config, resource, run1, last_run_success)
-                    except Exception as err:
-                        LOGGER.error("Cannot send notifications: %s",
-                                     err,
-                                     exc_info=err)
-
+            # run_resources()
             print('END - Running health check tests on %s'
                   % datetime.utcnow().isoformat())
         elif sys.argv[1] == 'flush':

@@ -33,7 +33,6 @@ import json
 from urllib2 import urlopen
 from urlparse import urlparse
 from functools import partial
-from pprint import pprint
 from flask_babel import gettext
 
 from owslib.wms import WebMapService
@@ -67,6 +66,15 @@ def db_commit():
     # finally:
     #     DB.session.close()
     return err
+
+
+def run_resources():
+
+    for resource in Resource.query.all():  # run all tests
+        print('Testing %s %s' %
+              (resource.resource_type, resource.url))
+
+        run_resource(resource.identifier)
 
 
 # complete handle of resource test
@@ -290,12 +298,16 @@ def geonode_make_tags(base_url):
 
 
 if __name__ == '__main__':
-    import sys
     logging.basicConfig(level=logging.INFO)
-    from init import App
-    if len(sys.argv) < 3:
-        print('Usage: %s <resource_type> <url>' % sys.argv[0])
-        sys.exit(1)
-
-    # TODO: need APP.config here, None for now
-    pprint(sniff_test_resource(App.get_config(), sys.argv[1], sys.argv[2]))
+    print('START - Running health check tests on %s'
+          % datetime.utcnow().isoformat())
+    run_resources()
+    print('END - Running health check tests on %s'
+          % datetime.utcnow().isoformat())
+    # from init import App
+    # if len(sys.argv) < 3:
+    #     print('Usage: %s <resource_type> <url>' % sys.argv[0])
+    #     sys.exit(1)
+    #
+    # # TODO: need APP.config here, None for now
+    # pprint(sniff_test_resource(App.get_config(), sys.argv[1], sys.argv[2]))
