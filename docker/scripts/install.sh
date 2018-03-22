@@ -1,10 +1,10 @@
 #!/bin/bash
 
 cd /
-virtualenv venv && cd $_
+virtualenv venv && cd /venv
 . bin/activate
 
-# GHC Source was ADDed in Dockerfile
+# GHC Source was added in Dockerfile, install
 cd /GeoHealthCheck
 pip install Paver
 pip install sphinx
@@ -26,6 +26,7 @@ mv /config_site.py /GeoHealthCheck/instance/config_site.py
 if [ -d /plugins ]
 then
 	# Copy possible Plugins into app tree
+	echo "Installing Plugins..."
 	cp -ar /plugins/* GeoHealthCheck/plugins/
 
 	# Remove to allow later Volume mount of /plugins

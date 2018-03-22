@@ -56,6 +56,6 @@ apt-get install docker-ce
 # service docker start
 
 # Docker compose
-export dockerComposeVersion="1.13.0"
+export dockerComposeVersion="1.20.1"
 curl -L https://github.com/docker/compose/releases/download/${dockerComposeVersion}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose

@@ -3,7 +3,7 @@
 
 echo "START /configure.sh"
 
-cd /venv/ && . bin/activate
+source /venv/bin/activate .
 
 # Determine database type from DB URI
 DB_TYPE=$(echo ${SQLALCHEMY_DATABASE_URI} | cut -f1 -d:)

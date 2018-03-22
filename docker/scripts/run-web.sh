@@ -2,9 +2,15 @@
 
 # Runs the GHC app with gunicorn
 
-echo "START /run.sh"
+echo "START /run-web.sh"
 
-cd /venv/ && . bin/activate
+# Set the timezone.
+/set-timezone.sh
+
+# Configure: DB and plugins.
+/configure.sh
+
+source /venv/bin/activate .
 
 echo "Running GHC WSGI on ${HOST}:${PORT} with ${WSGI_WORKERS} workers"
 cd /GeoHealthCheck
@@ -18,4 +24,4 @@ gunicorn --workers ${WSGI_WORKERS} \
 # Built-in Flask server, deprecated
 # python /GeoHealthCheck/GeoHealthCheck/app.py ${HOST}:${PORT}
 
-echo "END /run.sh"
+echo "END /run-web.sh"

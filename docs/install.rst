@@ -19,11 +19,13 @@ for a full guide.
 Requirements
 ------------
 
-GeoHealthCheck is built on the awesome Flask microframework and uses
-Flask-SQLAlchemy for database interaction and Flask-Login for authorization.
-Flask-Migrate with Alembic and Flask-Script support is used for database upgrades.
+GeoHealthCheck is built on the awesome Flask micro-framework and uses
+`Flask-SQLAlchemy` for database interaction and Flask-Login for authorization.
+`Flask-Migrate` with `Alembic` and `Flask-Script` is used for database upgrades.
 
-OWSLib is used to interact with OGC Web Services.
+`OWSLib` is used to interact with OGC Web Services.
+
+`APScheduler` is used to run scheduled healthchecks.
 
 These dependencies are automatically installed (see below). ``Paver`` is used
 for installation and management. ``Cron`` is used for scheduling the actual
