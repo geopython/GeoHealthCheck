@@ -135,8 +135,8 @@ def render_template2(template, template_vars):
 def send_email(mail_config, fromaddr, toaddr, msg):
     """convenience function to send an email"""
 
-    print(mail_config)
-    print(msg)
+    LOGGER.debug(mail_config)
+    LOGGER.debug(msg)
     server = smtplib.SMTP('%s:%s' % (mail_config['server'],
                                      mail_config['port']))
 

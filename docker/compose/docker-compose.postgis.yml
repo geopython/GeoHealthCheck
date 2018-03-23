@@ -48,7 +48,7 @@ services:
       - postgis_ghc
 
     entrypoint:
-      - /run-scheduler.sh
+      - /run-runner.sh
 
     # volumes:
       # Optional Plugins, using Path on the host, relative to this Compose file

@@ -285,8 +285,14 @@ def update_translations():
 
 @task
 def runner_daemon():
-    """Run the HealthCheck runner scheduler"""
+    """Run the HealthCheck runner daemon scheduler"""
     sh('python GeoHealthCheck/scheduler.py')
+
+
+@task
+def run_healthchecks():
+    """Run all HealthChecks directly"""
+    sh('python GeoHealthCheck/healthcheck.py')
 
 
 def sphinx_make():

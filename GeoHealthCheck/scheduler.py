@@ -66,10 +66,12 @@ def run_job(resource_id, frequency):
 
     resource = Resource.query.filter_by(identifier=resource_id).first()
 
+    # Resource may have been deleted, cancel job
     if not resource:
         stop_job(resource_id)
         return
 
+    # Resource exists: try to obtain lock.
     lock = ResourceLock.query.filter_by(identifier=resource_id).first()
 
     if not lock:
@@ -121,6 +123,7 @@ def run_job(resource_id, frequency):
                             % resource_id)
                 return
 
+    # Run Resource healthchecks only if we have lock.
     if lock:
         try:
             run_resource(resource_id)
@@ -130,29 +133,38 @@ def run_job(resource_id, frequency):
 
 
 def start_schedule():
-    # Cold start every cron of every Resource
-    for resource in Resource.query.all():
-        add_job(resource)
 
-    # change configuration
+    LOGGER.info('Starting scheduler')
+
+    # Adapt configuration
     scheduler.configure(job_defaults={
         'coalesce': False,
         'max_instances': 100000
     })
 
-    scheduler.add_job(flush_runs, 'interval', minutes=60)
-    scheduler.add_job(check_schedule, 'interval', minutes=5)
-
+    # Start APScheduler
     scheduler.start()
     import atexit
     atexit.register(lambda: stop_schedule())
 
+    # Add GHC jobs, one for each Resource, plus
+    # maintenance jobs.
+
+    # Cold start every cron of every Resource
+    for resource in Resource.query.all():
+        add_job(resource)
+
+    # Start maintenance jobs
+    scheduler.add_job(flush_runs, 'interval', minutes=60)
+    scheduler.add_job(check_schedule, 'interval', minutes=5)
+
 
 def check_schedule():
     LOGGER.info('Checking Job schedules')
+
     # Check the schedule for changed jobs
     for resource in Resource.query.all():
-        job = scheduler.get_job(str(resource.identifier))
+        job = get_job(resource)
         if job is None:
             add_job(resource)
 
@@ -162,6 +174,10 @@ def check_schedule():
         if current_freq != resource.run_frequency:
             # Reschedule Job
             update_job(resource)
+
+
+def get_job(resource):
+    return scheduler.get_job(str(resource.identifier))
 
 
 def update_job(resource):

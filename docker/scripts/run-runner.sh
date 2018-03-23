@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "START /run-runner.sh"
+
 # Set the timezone.
 /set-timezone.sh
 
@@ -11,3 +13,5 @@
 source /venv/bin/activate .
 cd /GeoHealthCheck
 paver runner_daemon
+
+echo "END /run-runner.sh"

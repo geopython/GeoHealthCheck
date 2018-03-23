@@ -69,10 +69,9 @@ def db_commit():
 
 
 def run_resources():
-
     for resource in Resource.query.all():  # run all tests
-        print('Testing %s %s' %
-              (resource.resource_type, resource.url))
+        LOGGER.info('Testing %s %s' %
+                    (resource.resource_type, resource.url))
 
         run_resource(resource.identifier)
 
@@ -298,7 +297,6 @@ def geonode_make_tags(base_url):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     print('START - Running health check tests on %s'
           % datetime.utcnow().isoformat())
     run_resources()

@@ -28,7 +28,6 @@ vi instance/config_site.py
 # - SQLALCHEMY_DATABASE_URI
 # - SECRET_KEY  # from paver create_secret_key
 # - GHC_RETENTION_DAYS
-# - GHC_RUN_FREQUENCY
 # - GHC_SELF_REGISTER
 # - GHC_ADMIN_EMAIL
 # - GHC_SITE_TITLE

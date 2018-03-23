@@ -8,4 +8,4 @@ then
 	cp -ar /plugins/* /GeoHealthCheck/GeoHealthCheck/plugins/
 fi
 
-python /GeoHealthCheck/GeoHealthCheck/models.py run
+python /GeoHealthCheck/GeoHealthCheck/healthcheck.py

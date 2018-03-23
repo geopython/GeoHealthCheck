@@ -34,6 +34,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 
+LOGGER = logging.getLogger(__name__)
+
 
 def to_list(obj):
     obj_type = type(obj)
@@ -67,9 +69,9 @@ class App:
         app.config.from_pyfile('config_main.py')
         app.config.from_pyfile('../instance/config_site.py')
 
-        logging.basicConfig(level=logging.INFO)
-        if app.config['DEBUG'] is True:
-            logging.basicConfig(level=logging.DEBUG)
+        # Global Logging config
+        logging.basicConfig(level=int(app.config['GHC_LOG_LEVEL']),
+                            format=app.config['GHC_LOG_FORMAT'])
 
         app.config['GHC_SITE_URL'] = \
             app.config['GHC_SITE_URL'].rstrip('/')
@@ -96,7 +98,7 @@ class App:
         # Finally assign app-instance
         App.app_instance = app
         App.count += 1
-        logging.info("init.py: created GHC App instance #%d" % App.count)
+        LOGGER.info("created GHC App instance #%d" % App.count)
 
     @staticmethod
     def get_app():

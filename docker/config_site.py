@@ -39,8 +39,7 @@ SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
 # Replace None with 'your secret key string' in quotes
 SECRET_KEY = os.environ['SECRET_KEY']
 
-GHC_RETENTION_DAYS = os.environ['GHC_RETENTION_DAYS']
-GHC_RUN_FREQUENCY = os.environ['GHC_RUN_FREQUENCY']
+GHC_RETENTION_DAYS = int(os.environ['GHC_RETENTION_DAYS'])
 GHC_SELF_REGISTER = os.environ['GHC_SELF_REGISTER']
 GHC_NOTIFICATIONS = os.environ['GHC_NOTIFICATIONS']
 GHC_NOTIFICATIONS_VERBOSITY = os.environ['GHC_NOTIFICATIONS_VERBOSITY']
@@ -49,6 +48,9 @@ GHC_NOTIFICATIONS_EMAIL = os.environ['GHC_NOTIFICATIONS_EMAIL']
 GHC_ADMIN_EMAIL = os.environ['GHC_ADMIN_EMAIL']
 GHC_SITE_TITLE = os.environ['GHC_SITE_TITLE']
 GHC_SITE_URL = os.environ['GHC_SITE_URL']
+GHC_RUNNER_IN_WEBAPP = bool(os.environ['GHC_RUNNER_IN_WEBAPP'])
+GHC_LOG_LEVEL = int(os.environ['GHC_LOG_LEVEL'])
+GHC_LOG_FORMAT = os.environ['GHC_LOG_FORMAT']
 
 # Optional ENV set for GHC_PLUGINS (internal/core Plugins)
 # if not set default from config_main.py applies

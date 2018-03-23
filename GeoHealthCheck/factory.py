@@ -1,3 +1,8 @@
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
+
 class Factory:
     """
     Object, Function class Factory (Pattern).
@@ -18,9 +23,9 @@ class Factory:
 
             # class instance from class object with constructor args
             return class_obj()
-        except Exception, e:
-            print("cannot create object instance from class '%s' e=%s" %
-                  (class_string, str(e)))
+        except Exception as e:
+            LOGGER.error("cannot create object instance from class '%s' e=%s" %
+                         (class_string, str(e)))
             raise e
 
     @staticmethod
@@ -41,8 +46,8 @@ class Factory:
             class_obj = getattr(
                 __import__(module_name, globals(), locals(),
                            [class_name], -1), class_name)
-        except Exception, e:
-            print("cannot create class '%s'" % class_string)
+        except Exception as e:
+            LOGGER.error("cannot create class '%s'" % class_string)
             raise e
 
         return class_obj
@@ -61,8 +66,8 @@ class Factory:
         try:
             module_obj = __import__(module_string, globals(),
                                     locals(), fromlist=[''])
-        except Exception, e:
-            print("cannot create module from '%s'" % module_string)
+        except Exception as e:
+            LOGGER.error("cannot create module from '%s'" % module_string)
             raise e
 
         return module_obj

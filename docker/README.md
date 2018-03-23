@@ -10,8 +10,8 @@ In that case use the [Docker Readme at GHC GitHub](https://github.com/geopython/
 Since GHC release 0.4.0 GHC can run completely with two Docker containers from the same
 GHC Docker image:
 
-* `ghc_web` the web/Flask app
-* `ghc_runner` : the daeomon runner app that schedules and executes GHC's Probes
+* `GHC Webapp` the web/Flask app
+* `GHC Runner` : the daemon runner app that schedules and executes GHC's Probes
 
 ## Requirements
 
@@ -21,7 +21,8 @@ Docker installed and Docker daemon running.
 For installing Docker on Ubuntu there
 is a  [bash helper script](install-docker-ubuntu.sh).
 
-NB: The ``docker`` commands below may need to be prepended with ``sudo``, dependent on your login rights.
+NB: The ``docker`` commands below may need to be prepended with 
+``sudo``, dependent on your login rights.
 
 ## Build
 
@@ -42,22 +43,36 @@ For example [run.sh](run.sh) which launches GHC using the robust `gunicorn` WSGI
 ## Run
 
 ```
-docker run -d --name GeoHealthCheck -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run -d --name ghc_web -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 ```
 
 go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host).
 
-NB this runs GHC standalone with a `SQLite` DB, but without the cron-jobs that perform the healthchecks.
-You may schedule the cron-jobs using the local cron system with the 
-[cron-jobs-hourly](cron-jobs-hourly.sh) and
-[cron-jobs-daily](cron-jobs-daily.sh) Docker Entrypoints.
+NB this runs GHC standalone with a `SQLite` DB, but without the GHC Runner that performs the
+healthchecks. This can be done by setting `GHC_RUNNER_IN_WEBAPP`:
 
-But the most optimal way to run GHC with scheduled jobs and optionally Postgres as backend DB,
+```
+docker run  --name ghc_web -e GHC_RUNNER_IN_WEBAPP=True -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+
+```
+
+This allows both the `GHC Webapp` (Dashboard)and `GHC Runner` within a single Docker container.
+But this may in cases not be optimal as the `GHC Webapp`  may get overloaded 
+from processing by the `GHC Runner`. To see logging add `-e GHC_LOG_LEVEL=10 `.
+
+You can also run `GHC Webapp` (Dashboard) and `GHC Runner` as separate containers by overriding
+the default `ENTRYPOINT` with `/run-runner.sh`:
+
+```
+docker run -d --name ghc_runner --entrypoint "/run-runner.sh" -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+```
+
+The most optimal way to run GHC with scheduled jobs and optionally Postgres as backend DB,
 is to use [Docker Compose](https://docs.docker.com/compose), see below.
 
 ## Using docker-compose
 
-This allows a complete Docker setup, including cron-jobs and optionally using 
+This allows a complete Docker setup, including scheduling and optionally using 
 Postgres/PostGIS as database (recommended).  
 See the [Docker Compose Documentation](https://docs.docker.com/compose)
 for more info.
@@ -145,9 +160,6 @@ allow setting Environment variables.
 
 But more flexible is to use `.env` files.
 
-For example, to enable sending email notifications
-in Dutch witin the GHC hourly job, specify the `environment` like:
-
 ```
   ghc_runner:
     image: geopython/geohealthcheck:latest
@@ -157,12 +169,11 @@ in Dutch witin the GHC hourly job, specify the `environment` like:
     env_file:
       - ghc.env
 
-    depends_on:
-      - ghc_web
-
     entrypoint:
-      - bash
-      - /run-scheduler.sh
+      - /run-runner.sh
+
+    volumes:
+      - ghc_sqlitedb:/GeoHealthCheck/DB
 
 ```
 
@@ -188,17 +199,14 @@ version:
       - postgis_ghc
 
     entrypoint:
-      - bash
-      - /run-scheduler.sh
-      
-      .
-      .
+      - /run-runner.sh
+
   postgis_ghc:
     image: mdillon/postgis:9.6-alpine
 
     container_name: postgis_ghc
 
-    environment:
+    env_file:
       - ghc-postgis.env
 
     volumes:

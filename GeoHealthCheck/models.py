@@ -761,7 +761,7 @@ def db_commit():
     except Exception as err:
         DB.session.rollback()
         msg = str(err)
-        print(msg)
+        LOGGER.error(msg)
 
 
 if __name__ == '__main__':
@@ -821,11 +821,8 @@ if __name__ == '__main__':
                 print('Provide path to JSON file, e.g. tests/fixtures.json')
 
         elif sys.argv[1] == 'run':
-            print('START - Running health check tests on %s'
-                  % datetime.utcnow().isoformat())
-            # run_resources()
-            print('END - Running health check tests on %s'
-                  % datetime.utcnow().isoformat())
+            print('NOTICE: models.py no longer here.')
+            print('Use: python healthcheck.py or upcoming cli.py')
         elif sys.argv[1] == 'flush':
             retention_days = int(APP.config['GHC_RETENTION_DAYS'])
             print('Flushing runs older than %d days' %
