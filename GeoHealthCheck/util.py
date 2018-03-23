@@ -27,6 +27,7 @@
 #
 # =================================================================
 
+import io
 import json
 import logging
 import os
@@ -180,3 +181,11 @@ def transform_bbox(epsg1, epsg2, bbox):
     ul = pyproj.transform(p1, p2, bbox[2], bbox[3])
 
     return list(ll) + list(ul)
+
+
+def read(filename, encoding='utf-8'):
+    """read file contents"""
+    full_path = os.path.join(os.path.dirname(__file__), filename)
+    with io.open(full_path, encoding=encoding) as fh:
+        contents = fh.read().strip()
+    return contents

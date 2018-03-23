@@ -26,4 +26,13 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-__version__ = '0.4-dev'
+
+from util import read
+
+
+def get_package_version(file_):
+    """get version from top-level package init"""
+    return read(file_)
+
+
+__version__ = get_package_version('../VERSION')
