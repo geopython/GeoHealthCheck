@@ -32,7 +32,6 @@
 import csv
 import logging
 import json
-from datetime import datetime, timedelta
 from StringIO import StringIO
 from itertools import chain
 
