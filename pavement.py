@@ -242,7 +242,7 @@ def clean():
 
 @task
 def extract_translations():
-    """extrect translations wrapped in _() or gettext()"""
+    """extract translations wrapped in _() or gettext()"""
 
     pot_dir = path('GeoHealthCheck/translations/en/LC_MESSAGES')
     if not os.path.exists(pot_dir):

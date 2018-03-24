@@ -48,26 +48,28 @@ docker run -d --name ghc_web -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopy
 
 go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host).
 
-NB this runs GHC standalone with a `SQLite` DB, but without the GHC Runner that performs the
-healthchecks. This can be done by setting `GHC_RUNNER_IN_WEBAPP`:
+NB this runs GHC standalone with a `SQLite` DB and with the GHC Runner that performs the
+healthchecks. But this may in cases not be optimal as the `GHC Webapp`  may get overloaded 
+from processing by the `GHC Runner`. Tip: to see detailed logging add `-e GHC_LOG_LEVEL=10 `.
+
+This mode can be disabled by passing `GHC_RUNNER_IN_WEBAPP` to as an ENV 
+var to the Docker container:
 
 ```
-docker run  --name ghc_web -e GHC_RUNNER_IN_WEBAPP=True -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run  --name ghc_web -e GHC_RUNNER_IN_WEBAPP=False -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 
 ```
 
-This allows both the `GHC Webapp` (Dashboard)and `GHC Runner` within a single Docker container.
-But this may in cases not be optimal as the `GHC Webapp`  may get overloaded 
-from processing by the `GHC Runner`. To see logging add `-e GHC_LOG_LEVEL=10 `.
+This allows both the `GHC Webapp` (Dashboard)and `GHC Runner` within a separate Docker containers.
 
-You can also run `GHC Webapp` (Dashboard) and `GHC Runner` as separate containers by overriding
+You can then run `GHC Runner` as a separate container by overriding
 the default `ENTRYPOINT` with `/run-runner.sh`:
 
 ```
 docker run -d --name ghc_runner --entrypoint "/run-runner.sh" -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 ```
 
-The most optimal way to run GHC with scheduled jobs and optionally Postgres as backend DB,
+But the most optimal way to run GHC with scheduled jobs and optionally Postgres as backend DB,
 is to use [Docker Compose](https://docs.docker.com/compose), see below.
 
 ## Using docker-compose
@@ -75,7 +77,8 @@ is to use [Docker Compose](https://docs.docker.com/compose), see below.
 This allows a complete Docker setup, including scheduling and optionally using 
 Postgres/PostGIS as database (recommended).  
 See the [Docker Compose Documentation](https://docs.docker.com/compose)
-for more info.
+for more info. GHC Webapp and Runner are in this case 
+deployed as separate processes (Docker containers).
 
 *Note that the `docker-compose` YAML files below are meant as examples to be adapted to your*
 *local deployment situation.* 
@@ -98,7 +101,7 @@ docker-compose -f docker-compose.yml up  [-d]
 ### Using PostGIS DB
 
 The file [docker-compose.postgis.yml](compose/docker-compose.postgis.yml)  is
-similar but uses Postgres with PostGIS as database.
+similar but uses Postgres as the database.
 
 To run:
 
@@ -144,21 +147,23 @@ the Docker host IP address on your Docker host as follows:
 
 ```
 
-## Cronjobs
+## Cron jobs
 
-Cronjobs via `docker-compose` are since v0.4.0 no longer scheduled via Jobber (cron) 
+DEPRECATED: Cronjobs via `docker-compose` are since v0.4.0 no longer scheduled via Jobber (cron) 
 but within GHC itself. The GHC Docker Image can run as a Container in a daemon runner
 role that executes all GHC scheduled runs from the DB directly.
+But with the per-Resource scheduling introduced in v0.4.0, cron-jobs
+cannot support the detailed scheduling required.
 
 
 ## Configuration
 
 The default GHC configuration is specified within the [Dockerfile](../Dockerfile).
 This allows overriding these `ENV` vars during deployment (as opposed to having to build
-your own GHC Docker Image). Docker (`-e` options) and Docker Compose (`environment` section)
-allow setting Environment variables.  
+your own GHC Docker Image). Docker (`-e` options) and Docker Compose (`environment` and/or `env_file` 
+sections) allow setting Environment variables.  
 
-But more flexible is to use `.env` files.
+Here we use `.env` files.
 
 ```
   ghc_runner:
@@ -216,11 +221,10 @@ version:
 
 Here [ghc-postgis.env](compose/ghc-postgis.env) adds extra Postgres-related config settings.
 
-
 ## Other tasks
 
-You can always `bash` into the GHC container to run maintenance tasks.
-The GHC installation is at `/GeoHealthCheck`.
+You can always `bash` into the GHC Container to run maintenance tasks.
+The GHC installation is at `/GeoHealthCheck` within the Docker Container.
 
 ```
 
@@ -237,3 +241,5 @@ paver upgrade
 etc
 ```
 
+NB: database upgrades (`paver upgrade`)
+are always performed automatically when running GHC via Docker.

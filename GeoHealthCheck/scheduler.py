@@ -59,6 +59,26 @@ def db_commit():
 
 
 def run_job(resource_id, frequency):
+    """
+    Runs single job (all Probes) for single Resource.
+    As multiple instances of the job scheduler may run in different
+    processes and threads, the database is used to synchronize and assure
+    only one job will run. This is achieved by having one lock per Resource.
+    Only the process/thread that acquires its related ResourceLock record runs the job.
+    As to avoid permanent "lockouts", each ResourceLock has a lifetime, namely
+    the timespan until the next Run as configured for/per Resource. This gives
+    all job runners a chance to obtain a lock once "time's up" for the ResourceLock.
+    An extra check for lock obtainment is made via an unique UUID per job runner.
+    Once the lock is obtained the UUID-field of the lock record is set and committed
+    to the DB. If we then try to obtain the lock again (by reading from DB)
+    but the UUID is different this means another job runner instance did the same but
+    was just before us. The lock timespan will guard that a particular UUID will keep
+    the lock forever, e.g. if the application is suddenly shutdown.
+
+    :param resource_id:
+    :param frequency:
+    :return:
+    """
     # Generate unique id
     # https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits-in-python
     uuid = '%d-%s' % (os.getpid(), ''.join(random.choice(
@@ -71,7 +91,7 @@ def run_job(resource_id, frequency):
         stop_job(resource_id)
         return
 
-    # Resource exists: try to obtain lock.
+    # Resource exists: try to obtain our Resource Lock record.
     lock = ResourceLock.query.filter_by(identifier=resource_id).first()
 
     if not lock:
@@ -88,7 +108,7 @@ def run_job(resource_id, frequency):
                         (resource_id, str(lock_err)))
             return
     else:
-        # Lock is there, look if available
+        # Lock record found: check if available for our UUID.
         LOGGER.info('%d Lock avail: try obtaining..' % resource_id)
         if not lock.obtain(uuid, frequency):
             LOGGER.info('%d Cannot obtain' % resource_id)
@@ -167,7 +187,8 @@ def check_schedule():
         job = get_job(resource)
         if job is None:
             add_job(resource)
-
+            continue
+            
         current_freq = job.args[1]
 
         # Run frequency changed?

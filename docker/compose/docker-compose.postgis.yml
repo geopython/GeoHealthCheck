@@ -11,6 +11,8 @@ services:
 
     container_name: ghc_web
 
+    restart: unless-stopped
+
     env_file:
       - ghc.env
       - ghc-postgis.env
@@ -37,6 +39,8 @@ services:
 
     container_name: ghc_runner
 
+    restart: unless-stopped
+
     env_file:
       - ghc.env
       - ghc-postgis.env
@@ -62,6 +66,8 @@ services:
     image: mdillon/postgis:9.6-alpine
 
     container_name: postgis_ghc
+
+    restart: unless-stopped
 
     env_file:
       - ghc-postgis.env

@@ -14,6 +14,9 @@ source /venv/bin/activate .
 
 echo "Running GHC WSGI on ${HOST}:${PORT} with ${WSGI_WORKERS} workers"
 cd /GeoHealthCheck
+
+paver upgrade
+
 gunicorn --workers ${WSGI_WORKERS} \
 		--worker-class=${WSGI_WORKER_CLASS} \
 		--timeout ${WSGI_WORKER_TIMEOUT} \

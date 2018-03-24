@@ -8,7 +8,7 @@ Below are installation notes for GeoHealthCheck (GHC).
 Docker
 ------
 
-Easiest and quickest install/run
+The easiest and quickest install
 for GHC is with Docker/Docker Compose using the GHC images hosted on
 `Docker Hub <https://hub.docker.com/r/geopython/geohealthcheck>`_.
 
