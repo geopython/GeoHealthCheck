@@ -64,16 +64,19 @@ def run_job(resource_id, frequency):
     As multiple instances of the job scheduler may run in different
     processes and threads, the database is used to synchronize and assure
     only one job will run. This is achieved by having one lock per Resource.
-    Only the process/thread that acquires its related ResourceLock record runs the job.
-    As to avoid permanent "lockouts", each ResourceLock has a lifetime, namely
-    the timespan until the next Run as configured for/per Resource. This gives
-    all job runners a chance to obtain a lock once "time's up" for the ResourceLock.
-    An extra check for lock obtainment is made via an unique UUID per job runner.
-    Once the lock is obtained the UUID-field of the lock record is set and committed
-    to the DB. If we then try to obtain the lock again (by reading from DB)
-    but the UUID is different this means another job runner instance did the same but
-    was just before us. The lock timespan will guard that a particular UUID will keep
-    the lock forever, e.g. if the application is suddenly shutdown.
+    Only the process/thread that acquires its related ResourceLock record
+    runs the job. As to avoid permanent "lockouts", each ResourceLock has
+    a lifetime, namely the timespan until the next Run as configured for/per
+    Resource. This gives all job runners a chance to obtain a lock once
+    "time's up" for the ResourceLock.
+
+    An extra check for lock obtainment is made via an unique UUID per job
+    runner. Once the lock is obtained the UUID-field of the lock record
+    is set and committed to the DB. If we then try to obtain the lock again
+    (by reading from DB) but the UUID is different this means another job
+    runner instance did the same but was just before us. The lock timespan
+    will guard that a particular UUID will keep the lock forever, e.g. if
+    the application is suddenly shutdown.
 
     :param resource_id:
     :param frequency:
@@ -153,7 +156,6 @@ def run_job(resource_id, frequency):
 
 
 def start_schedule():
-
     LOGGER.info('Starting scheduler')
 
     # Adapt configuration
@@ -188,7 +190,7 @@ def check_schedule():
         if job is None:
             add_job(resource)
             continue
-            
+
         current_freq = job.args[1]
 
         # Run frequency changed?
