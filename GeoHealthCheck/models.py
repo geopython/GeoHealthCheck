@@ -50,17 +50,19 @@ LOGGER = logging.getLogger(__name__)
 # Complete handle of old runs deletion
 def flush_runs():
     APP = App.get_app()
-    retention_time = timedelta(*APP.config['GHC_RETENTION_DAYS'])
-
+    retention_days = int(APP.config['GHC_RETENTION_DAYS'])
+    LOGGER.info('Flushing runs older than %d days' % retention_days)
     all_runs = Run.query.all()
+    run_count = 0
     for run in all_runs:
-        how_old = (datetime.utcnow() - run.checked_datetime)
-        if how_old > retention_time:
+        days_old = (datetime.utcnow() - run.checked_datetime).days
+        if days_old > retention_days:
+            run_count += 1
             DB.session.delete(run)
     db_commit()
+    LOGGER.info('Deleted %d Runs' % run_count)
 
     DB.session.remove()
-
 
 class Run(DB.Model):
     """measurement of resource state"""
@@ -824,15 +826,6 @@ if __name__ == '__main__':
             print('NOTICE: models.py no longer here.')
             print('Use: python healthcheck.py or upcoming cli.py')
         elif sys.argv[1] == 'flush':
-            retention_days = int(APP.config['GHC_RETENTION_DAYS'])
-            print('Flushing runs older than %d days' %
-                  retention_days)
-            all_runs = Run.query.all()
-            for run in all_runs:
-                days_old = (datetime.utcnow() - run.checked_datetime).days
-                if days_old > retention_days:
-                    print('Run older than %d days. Deleting' % days_old)
-                    DB.session.delete(run)
-            db_commit()
+            flush_runs()
 
         DB.session.remove()
