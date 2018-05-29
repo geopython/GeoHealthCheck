@@ -28,6 +28,11 @@
 # =================================================================
 import os
 
+
+def str2bool(v):
+    return v.lower() in ("yes", "true", "t", "1")
+
+
 DEBUG = False
 SQLALCHEMY_ECHO = False
 
@@ -40,15 +45,15 @@ SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
 SECRET_KEY = os.environ['SECRET_KEY']
 
 GHC_RETENTION_DAYS = int(os.environ['GHC_RETENTION_DAYS'])
-GHC_SELF_REGISTER = os.environ['GHC_SELF_REGISTER']
-GHC_NOTIFICATIONS = os.environ['GHC_NOTIFICATIONS']
-GHC_NOTIFICATIONS_VERBOSITY = os.environ['GHC_NOTIFICATIONS_VERBOSITY']
-GHC_WWW_LINK_EXCEPTION_CHECK = os.environ['GHC_WWW_LINK_EXCEPTION_CHECK']
+GHC_SELF_REGISTER = str2bool(os.environ['GHC_SELF_REGISTER'])
+GHC_NOTIFICATIONS = str2bool(os.environ['GHC_NOTIFICATIONS'])
+GHC_NOTIFICATIONS_VERBOSITY = str2bool(os.environ['GHC_NOTIFICATIONS_VERBOSITY'])
+GHC_WWW_LINK_EXCEPTION_CHECK = str2bool(os.environ['GHC_WWW_LINK_EXCEPTION_CHECK'])
 GHC_NOTIFICATIONS_EMAIL = os.environ['GHC_NOTIFICATIONS_EMAIL']
 GHC_ADMIN_EMAIL = os.environ['GHC_ADMIN_EMAIL']
 GHC_SITE_TITLE = os.environ['GHC_SITE_TITLE']
 GHC_SITE_URL = os.environ['GHC_SITE_URL']
-GHC_RUNNER_IN_WEBAPP = bool(os.environ['GHC_RUNNER_IN_WEBAPP'])
+GHC_RUNNER_IN_WEBAPP = str2bool(os.environ['GHC_RUNNER_IN_WEBAPP'])
 GHC_LOG_LEVEL = int(os.environ['GHC_LOG_LEVEL'])
 GHC_LOG_FORMAT = os.environ['GHC_LOG_FORMAT']
 

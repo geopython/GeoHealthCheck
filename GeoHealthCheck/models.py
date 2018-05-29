@@ -64,6 +64,7 @@ def flush_runs():
 
     DB.session.remove()
 
+
 class Run(DB.Model):
     """measurement of resource state"""
 
