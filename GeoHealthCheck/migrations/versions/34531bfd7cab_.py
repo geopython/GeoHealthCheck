@@ -20,7 +20,7 @@ def upgrade():
     if not alembic_helpers.table_has_column('resource', 'run_frequency'):
         print('Column run_frequency not present in resource table, will create')
         op.add_column(u'resource', sa.Column('run_frequency', sa.Integer(),
-                      nullable=False, default=60, server_default=60))
+                      nullable=False, default=60, server_default='60'))
     else:
         print('Column run_frequency already present in resource table')
 
