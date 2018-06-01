@@ -75,7 +75,7 @@ def do_email(config, resource, run, status_changed, result):
     }
 
     msgbody = render_template2('notification_email.txt', template_vars)
-    msg = MIMEText(msgbody,'plain','utf-8')
+    msg = MIMEText(msgbody, 'plain', 'utf-8')
     msg['From'] = email.utils.formataddr((config['GHC_SITE_TITLE'],
                                           config['GHC_ADMIN_EMAIL']))
     msg['To'] = ','.join(notifications_email)
