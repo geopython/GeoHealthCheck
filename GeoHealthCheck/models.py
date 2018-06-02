@@ -570,8 +570,8 @@ class ResourceLock(DB.Model):
 
     def init_datetimes(self, interval_mins):
         self.start_time = datetime.utcnow()
-        # Add some space to end-time to prevent expiry
-        minutes = interval_mins + 3
+        # Subtract some space from end-time to allow obtain at scheduled time
+        minutes = interval_mins - 1
         self.end_time = self.start_time + timedelta(minutes)
 
     def has_expired(self):
