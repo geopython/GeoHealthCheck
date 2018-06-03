@@ -572,7 +572,7 @@ class ResourceLock(DB.Model):
         self.start_time = datetime.utcnow()
         # Subtract some space from end-time to allow obtain at scheduled time
         minutes = interval_mins - 1
-        self.end_time = self.start_time + timedelta(minutes)
+        self.end_time = self.start_time + timedelta(minutes=minutes)
 
     def has_expired(self):
         now = datetime.utcnow()

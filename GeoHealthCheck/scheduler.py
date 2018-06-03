@@ -107,14 +107,14 @@ def run_job(resource_id, frequency):
         lock_err = db_commit()
         if lock_err:
             # Another process may have been there first!
-            LOGGER.info('%d Cannot obtain Lock %s' %
+            LOGGER.info('%d Error obtaining Lock %s' %
                         (resource_id, str(lock_err)))
             return
     else:
-        # Lock record found: check if available for our UUID.
-        LOGGER.info('%d Lock avail: try obtaining..' % resource_id)
+        # Lock record found for Resource: check if available for our UUID.
+        LOGGER.info('%d Lock present: try obtaining..' % resource_id)
         if not lock.obtain(uuid, frequency):
-            LOGGER.info('%d Cannot obtain' % resource_id)
+            LOGGER.info('%d Cannot obtain lock' % resource_id)
             return
         else:
             LOGGER.info('%d Lock obtained, delete and renew' % resource_id)
