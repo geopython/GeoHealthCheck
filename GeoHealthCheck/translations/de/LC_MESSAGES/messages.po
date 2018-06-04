@@ -30,7 +30,7 @@ msgstr "schon registriert"
 
 #: GeoHealthCheck/app.py:495
 msgid "No resources detected"
-msgstr "Keine Ressouce vorhanden"
+msgstr "Keine Ressoucen vorhanden"
 
 #: GeoHealthCheck/app.py:509
 msgid "Service already registered"
@@ -224,7 +224,7 @@ msgstr "Eintrag löschen"
 
 #: GeoHealthCheck/templates/home.html:15
 msgid "Select a link on the left to view Resources."
-msgstr "Wählen Sie links einen Link, um die Ressouce zu sehen"
+msgstr "Wählen Sie links einen Link, um die Ressoucen zu sehen"
 
 #: GeoHealthCheck/templates/home.html:17
 msgid "Failing Resources"
