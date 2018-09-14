@@ -264,12 +264,16 @@ class Probe(Plugin):
                     # Query String: mainly OWS:* resources
                     url = "%s%s" % (url, request_string)
 
-                self.response = requests.get(url,
-                                             headers=headers)
+                self.response = requests.get(
+                    url,
+                    timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+                    headers=headers)
             elif self.REQUEST_METHOD == 'POST':
-                self.response = requests.post(url_base,
-                                              data=request_string,
-                                              headers=headers)
+                self.response = requests.post(
+                    url_base,
+                    timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+                    data=request_string,
+                    headers=headers)
         except requests.exceptions.RequestException as e:
             msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
