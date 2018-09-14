@@ -13,6 +13,7 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_RETENTION_DAYS**: the number of days to keep run history
 - **GHC_RUN_FREQUENCY**: cron keyword used to indicate frequency of runs
   (i.e. ``hourly``, ``daily``, ``monthly``)
+- **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a probe response after the given number of seconds
 - **GHC_SELF_REGISTER**: allow registrations from users on the website
 - **GHC_NOTIFICATIONS**: turn on email notifications
 - **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  GeoHealthCheck\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
-"POT-Creation-Date: 2018-03-05 14:06+0100\n"
+"POT-Creation-Date: 2018-09-14 16:48+0200\n"
 "PO-Revision-Date: 2015-10-21 00:15+0000\n"
 "Last-Translator: Tom Kralidis <tomkralidis@gmail.com>\n"
 "Language: fr\n"
@@ -13,70 +13,70 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.4.0\n"
+"Generated-By: Babel 2.6.0\n"
 
-#: GeoHealthCheck/app.py:457
+#: GeoHealthCheck/app.py:458
 msgid "This site is not configured for self-registration"
 msgstr "Ce site n'est pas configuré pour l'auto-inscription"
 
-#: GeoHealthCheck/app.py:458
+#: GeoHealthCheck/app.py:459
 msgid "Please contact"
 msgstr "S'il-vous-plaît contactez"
 
-#: GeoHealthCheck/app.py:473
+#: GeoHealthCheck/app.py:474
 msgid "already registered"
 msgstr "déjà inscrit"
 
-#: GeoHealthCheck/app.py:495
+#: GeoHealthCheck/app.py:496
 msgid "No resources detected"
 msgstr "Pas de ressources détectées"
 
-#: GeoHealthCheck/app.py:509
+#: GeoHealthCheck/app.py:510
 msgid "Service already registered"
 msgstr "Service déjà enregistré"
 
-#: GeoHealthCheck/app.py:581
+#: GeoHealthCheck/app.py:582
 msgid "Services registered"
 msgstr "Services enregistrés"
 
-#: GeoHealthCheck/app.py:687 GeoHealthCheck/app.py:715
-#: GeoHealthCheck/app.py:742
+#: GeoHealthCheck/app.py:690 GeoHealthCheck/app.py:718
+#: GeoHealthCheck/app.py:745
 msgid "Resource not found"
 msgstr "Ressource introuvable"
 
-#: GeoHealthCheck/app.py:695
+#: GeoHealthCheck/app.py:698
 msgid "INFO"
 msgstr "INFO"
 
-#: GeoHealthCheck/app.py:698 GeoHealthCheck/templates/edit_resource.html:348
+#: GeoHealthCheck/app.py:701 GeoHealthCheck/templates/edit_resource.html:350
 msgid "ERROR"
 msgstr "ERREUR"
 
-#: GeoHealthCheck/app.py:701
+#: GeoHealthCheck/app.py:704
 msgid "Resource tested successfully"
 msgstr "Ressources testées avec succès"
 
-#: GeoHealthCheck/app.py:736
+#: GeoHealthCheck/app.py:739
 msgid "You do not have access to delete this resource"
 msgstr "Vous ne pouvez pas supprimer cette ressource"
 
-#: GeoHealthCheck/app.py:754
+#: GeoHealthCheck/app.py:757
 msgid "Resource deleted"
 msgstr "Ressource supprimée"
 
-#: GeoHealthCheck/app.py:825
+#: GeoHealthCheck/app.py:828
 msgid "Invalid username and / or password"
 msgstr "Nom d'utilisateur et / ou mot de passe incorrect"
 
-#: GeoHealthCheck/app.py:838
+#: GeoHealthCheck/app.py:841
 msgid "Logged out"
 msgstr "Déconnecté"
 
-#: GeoHealthCheck/app.py:853
+#: GeoHealthCheck/app.py:856
 msgid "Invalid username"
 msgstr "Nom d'utilisateur incorrect"
 
-#: GeoHealthCheck/app.py:868
+#: GeoHealthCheck/app.py:871
 msgid "Password sent via email"
 msgstr "Mot de passe envoyé par mél"
 
@@ -167,7 +167,9 @@ msgstr "Saisissez une URL de personnalisation."
 
 #: GeoHealthCheck/templates/edit_resource.html:45
 msgid "Optionally, enter payload as list of key=value lines or JSON object."
-msgstr "Optionnellement, saisissez en complément une liste de lignes clé=valeur ou un objet JSON."
+msgstr ""
+"Optionnellement, saisissez en complément une liste de lignes clé=valeur "
+"ou un objet JSON."
 
 #: GeoHealthCheck/templates/edit_resource.html:66
 #: GeoHealthCheck/templates/resource.html:34
@@ -193,15 +195,15 @@ msgid "Details"
 msgstr "Détails"
 
 #: GeoHealthCheck/templates/edit_resource.html:128
-#: GeoHealthCheck/templates/edit_resource.html:328
-#: GeoHealthCheck/templates/edit_resource.html:344
+#: GeoHealthCheck/templates/edit_resource.html:330
+#: GeoHealthCheck/templates/edit_resource.html:346
 msgid "Save"
 msgstr "Enregistrer"
 
 #: GeoHealthCheck/templates/edit_resource.html:129
-#: GeoHealthCheck/templates/edit_resource.html:357
-#: GeoHealthCheck/templates/edit_resource.html:365
-#: GeoHealthCheck/templates/edit_resource.html:372
+#: GeoHealthCheck/templates/edit_resource.html:359
+#: GeoHealthCheck/templates/edit_resource.html:367
+#: GeoHealthCheck/templates/edit_resource.html:374
 msgid "Test"
 msgstr "Tester"
 
@@ -461,7 +463,10 @@ msgstr "Info"
 #~ msgstr "Voir les détails"
 
 #~ msgid "Optionally, enter payload as list of key=value lines."
-#~ msgstr "Optionnellement, saisissez en complément une liste de lignes clé=valeur."
+#~ msgstr ""
+#~ "Optionnellement, saisissez en complément une"
+#~ " liste de lignes clé=valeur."
 
 #~ msgid "You can enter multiple emails, separated with comma"
 #~ msgstr "Vous pouvez saisir plusieurs emails séparés par des virgules"
+
