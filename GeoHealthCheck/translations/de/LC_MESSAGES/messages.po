@@ -30,15 +30,15 @@ msgstr "schon registriert"
 
 #: GeoHealthCheck/app.py:495
 msgid "No resources detected"
-msgstr ""
+msgstr "Keine Ressourcen vorhanden"
 
 #: GeoHealthCheck/app.py:509
 msgid "Service already registered"
-msgstr "Der Service ist schon registriert"
+msgstr "Der Service ist bereits registriert"
 
 #: GeoHealthCheck/app.py:581
 msgid "Services registered"
-msgstr ""
+msgstr "Der Service wurde registriert"
 
 #: GeoHealthCheck/app.py:687 GeoHealthCheck/app.py:715
 #: GeoHealthCheck/app.py:742
@@ -75,11 +75,11 @@ msgstr "Ausgelogged"
 
 #: GeoHealthCheck/app.py:853
 msgid "Invalid username"
-msgstr ""
+msgstr "Ungültiger Benutzername"
 
 #: GeoHealthCheck/app.py:868
 msgid "Password sent via email"
-msgstr ""
+msgstr "Das Passwort wurde per Email verschickt"
 
 #: GeoHealthCheck/healthcheck.py:78
 msgid "Invalid resource type"
@@ -131,7 +131,7 @@ msgstr "Hinzufügen"
 
 #: GeoHealthCheck/templates/add.html:39
 msgid "Enter tags"
-msgstr ""
+msgstr "Tags angeben"
 
 #: GeoHealthCheck/templates/edit_resource.html:5
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:125
@@ -148,15 +148,15 @@ msgstr "Typ"
 #: GeoHealthCheck/templates/edit_resource.html:15
 #: GeoHealthCheck/templates/resource.html:30
 msgid "Active"
-msgstr ""
+msgstr "Aktiv"
 
 #: GeoHealthCheck/templates/edit_resource.html:23
 msgid "Notify emails"
-msgstr ""
+msgstr "Benachrichtigungs-Emails"
 
 #: GeoHealthCheck/templates/edit_resource.html:30
 msgid "Notify webhooks"
-msgstr ""
+msgstr "Benachrichtigungs-Webhooks"
 
 #: GeoHealthCheck/templates/edit_resource.html:43
 msgid "Enter url for webhook."
@@ -179,7 +179,7 @@ msgstr "Name"
 
 #: GeoHealthCheck/templates/edit_resource.html:73
 msgid "You can enter multiple emails separated with comma"
-msgstr ""
+msgstr "Mehrere Email-Adressen können kommasepariert angegeben werden"
 
 #: GeoHealthCheck/templates/edit_resource.html:115
 #: GeoHealthCheck/templates/includes/resources_list.html:7
@@ -224,15 +224,15 @@ msgstr "Eintrag löschen"
 
 #: GeoHealthCheck/templates/home.html:15
 msgid "Select a link on the left to view Resources."
-msgstr ""
+msgstr "Wählen Sie links einen Link, um die Ressourcen zu sehen"
 
 #: GeoHealthCheck/templates/home.html:17
 msgid "Failing Resources"
-msgstr ""
+msgstr "Fehlerhafte Ressourcen"
 
 #: GeoHealthCheck/templates/home.html:23
 msgid "None"
-msgstr ""
+msgstr "Keine"
 
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:109
 #: GeoHealthCheck/templates/includes/probe_info.html:95
@@ -247,7 +247,7 @@ msgstr "Login"
 
 #: GeoHealthCheck/templates/layout.html:60
 msgid "Language"
-msgstr ""
+msgstr "Sprache"
 
 #: GeoHealthCheck/templates/layout.html:67
 msgid "Help"
@@ -277,7 +277,7 @@ msgstr "Vergangenheit"
 
 #: GeoHealthCheck/templates/layout.html:109
 msgid "days"
-msgstr "tage"
+msgstr "Tage"
 
 #: GeoHealthCheck/templates/layout.html:110
 msgid "Test Frequency"
@@ -286,7 +286,7 @@ msgstr "Testfrequenz"
 #: GeoHealthCheck/templates/layout.html:131
 #: GeoHealthCheck/templates/opensearch_description.xml:11
 msgid "Powered by"
-msgstr "Angetrieben durch"
+msgstr "Unterstützt durch"
 
 #: GeoHealthCheck/templates/login.html:7
 #: GeoHealthCheck/templates/recover_password.html:7
@@ -298,7 +298,7 @@ msgstr "Benutzername"
 #: GeoHealthCheck/templates/recover_password_email.txt:6
 #: GeoHealthCheck/templates/register.html:9
 msgid "Password"
-msgstr "Password"
+msgstr "Passwort"
 
 #: GeoHealthCheck/templates/login.html:11
 msgid "Sign in"
@@ -311,7 +311,7 @@ msgstr "Registrierung"
 
 #: GeoHealthCheck/templates/login.html:17
 msgid "Forgot password?"
-msgstr ""
+msgstr "Passwort vergessen?"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 #: GeoHealthCheck/templates/recover_password_email.txt:4
@@ -321,7 +321,7 @@ msgstr "Hallo: Das ist eine automatisierte Nachricht von"
 #: GeoHealthCheck/templates/notification_email.txt:4
 #: GeoHealthCheck/templates/recover_password_email.txt:4
 msgid "service"
-msgstr "service"
+msgstr "Service"
 
 #: GeoHealthCheck/templates/notification_email.txt:6
 msgid "Resource"
@@ -347,11 +347,11 @@ msgstr "Nachricht"
 
 #: GeoHealthCheck/templates/recover_password.html:5
 msgid "Recover Password"
-msgstr ""
+msgstr "Passwort senden"
 
 #: GeoHealthCheck/templates/recover_password.html:10
 msgid "Recover password via email"
-msgstr ""
+msgstr "Passwort per Mail zusenden"
 
 #: GeoHealthCheck/templates/recover_password_email.txt:1
 msgid "Subject"
@@ -359,7 +359,7 @@ msgstr "Betreff"
 
 #: GeoHealthCheck/templates/recover_password_email.txt:1
 msgid "recover password"
-msgstr ""
+msgstr "Passwort zusenden"
 
 #: GeoHealthCheck/templates/register.html:10
 msgid "Email"
@@ -407,7 +407,7 @@ msgstr "Letzter Test"
 
 #: GeoHealthCheck/templates/resource.html:94
 msgid "Success"
-msgstr ""
+msgstr "Erfolgreich"
 
 #: GeoHealthCheck/templates/resource.html:96
 #: GeoHealthCheck/templates/resource.html:166
@@ -421,7 +421,7 @@ msgstr "Reaktionszeit (ms)"
 #: GeoHealthCheck/templates/includes/resources_list.html:33
 #: GeoHealthCheck/templates/resource.html:172
 msgid "seconds"
-msgstr "sekunden"
+msgstr "Sekunden"
 
 #: GeoHealthCheck/templates/resources.html:15
 msgid "Resources"
@@ -465,5 +465,5 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "You can enter multiple emails, separated with comma"
-#~ msgstr ""
+#~ msgstr "Mehrere Email-Adressen können kommasepariert angegeben werden"
 

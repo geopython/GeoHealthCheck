@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
-"POT-Creation-Date: 2016-07-25 19:37+0200\n"
+"POT-Creation-Date: 2018-09-14 16:48+0200\n"
 "PO-Revision-Date: 2015-07-25 19:57+0200\n"
 "Last-Translator: Davor Racić <davor.racic@gmail.com>\n"
 "Language: hr_HR\n"
@@ -12,70 +12,70 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.4.0\n"
+"Generated-By: Babel 2.6.0\n"
 
-#: GeoHealthCheck/app.py:457
+#: GeoHealthCheck/app.py:458
 msgid "This site is not configured for self-registration"
 msgstr "Ova stranica nije konfigurirana za registraciju"
 
-#: GeoHealthCheck/app.py:458
+#: GeoHealthCheck/app.py:459
 msgid "Please contact"
 msgstr "Molimo kontaktirajte"
 
-#: GeoHealthCheck/app.py:473
+#: GeoHealthCheck/app.py:474
 msgid "already registered"
 msgstr "već registriran"
 
-#: GeoHealthCheck/app.py:495
+#: GeoHealthCheck/app.py:496
 msgid "No resources detected"
 msgstr "Resurs nije otkriven"
 
-#: GeoHealthCheck/app.py:509
+#: GeoHealthCheck/app.py:510
 msgid "Service already registered"
 msgstr "Servis je već registriran"
 
-#: GeoHealthCheck/app.py:581
+#: GeoHealthCheck/app.py:582
 msgid "Services registered"
 msgstr "Servisi su registrirani"
 
-#: GeoHealthCheck/app.py:687 GeoHealthCheck/app.py:715
-#: GeoHealthCheck/app.py:742
+#: GeoHealthCheck/app.py:690 GeoHealthCheck/app.py:718
+#: GeoHealthCheck/app.py:745
 msgid "Resource not found"
 msgstr "Izvor nije pronađen"
 
-#: GeoHealthCheck/app.py:695
+#: GeoHealthCheck/app.py:698
 msgid "INFO"
 msgstr "INFO"
 
-#: GeoHealthCheck/app.py:698 GeoHealthCheck/templates/edit_resource.html:348
+#: GeoHealthCheck/app.py:701 GeoHealthCheck/templates/edit_resource.html:350
 msgid "ERROR"
 msgstr "GREŠKA"
 
-#: GeoHealthCheck/app.py:701
+#: GeoHealthCheck/app.py:704
 msgid "Resource tested successfully"
 msgstr "Izvor je uspješno testiran"
 
-#: GeoHealthCheck/app.py:736
+#: GeoHealthCheck/app.py:739
 msgid "You do not have access to delete this resource"
 msgstr "Nemate dozvole potrebne za brisanje ovoga izvora"
 
-#: GeoHealthCheck/app.py:754
+#: GeoHealthCheck/app.py:757
 msgid "Resource deleted"
 msgstr "Izvor je izbrisan"
 
-#: GeoHealthCheck/app.py:825
+#: GeoHealthCheck/app.py:828
 msgid "Invalid username and / or password"
 msgstr "Pogrešno korisničko i / ili zaporka"
 
-#: GeoHealthCheck/app.py:838
+#: GeoHealthCheck/app.py:841
 msgid "Logged out"
 msgstr "Odjavljen"
 
-#: GeoHealthCheck/app.py:853
+#: GeoHealthCheck/app.py:856
 msgid "Invalid username"
 msgstr "Neispravno korisničko ime"
 
-#: GeoHealthCheck/app.py:868
+#: GeoHealthCheck/app.py:871
 msgid "Password sent via email"
 msgstr "Zaporka je poslana putem e-maila"
 
@@ -152,70 +152,72 @@ msgstr "Aktivno"
 msgid "Notify emails"
 msgstr "Email za obavijesti"
 
-#: GeoHealthCheck/templates/edit_resource.html:30
+#: GeoHealthCheck/templates/edit_resource.html:25
+msgid "You can enter multiple emails separated with comma"
+msgstr "Možete unijeti više e-mailova odvojenih zarezima"
+
+#: GeoHealthCheck/templates/edit_resource.html:31
 msgid "Notify webhooks"
 msgstr "Webhookovi za obavijesti"
 
-#: GeoHealthCheck/templates/edit_resource.html:43
+#: GeoHealthCheck/templates/edit_resource.html:44
 msgid "Enter url for webhook."
 msgstr "URL webhook-a"
 
-#: GeoHealthCheck/templates/edit_resource.html:44
+#: GeoHealthCheck/templates/edit_resource.html:45
 msgid "Optionally, enter payload as list of key=value lines or JSON object."
-msgstr "Ukoliko postoji opcije, unesi payload kao listu key=value linija ili JSOn objekt"
+msgstr ""
+"Ukoliko postoji opcije, unesi payload kao listu key=value linija ili JSOn"
+" objekt"
 
-#: GeoHealthCheck/templates/edit_resource.html:65
+#: GeoHealthCheck/templates/edit_resource.html:66
 #: GeoHealthCheck/templates/resource.html:34
 msgid "Owner"
 msgstr "Vlasnik"
 
-#: GeoHealthCheck/templates/edit_resource.html:70
+#: GeoHealthCheck/templates/edit_resource.html:71
 #: GeoHealthCheck/templates/includes/resources_list.html:5
 #: GeoHealthCheck/templates/resource.html:39
 msgid "Name"
 msgstr "Ime"
 
-#: GeoHealthCheck/templates/edit_resource.html:73
-msgid "You can enter multiple emails separated with comma"
-msgstr "Možete unijeti više e-mailova odvojenih zarezima"
-
-#: GeoHealthCheck/templates/edit_resource.html:115
+#: GeoHealthCheck/templates/edit_resource.html:114
 #: GeoHealthCheck/templates/includes/resources_list.html:7
 #: GeoHealthCheck/templates/resource.html:115
 msgid "Status"
 msgstr "Status"
 
-#: GeoHealthCheck/templates/edit_resource.html:119
+#: GeoHealthCheck/templates/edit_resource.html:118
 #: GeoHealthCheck/templates/notification_email.txt:10
 #: GeoHealthCheck/templates/notification_email.txt:16
 msgid "Details"
 msgstr "Detalji"
 
-#: GeoHealthCheck/templates/edit_resource.html:129
-#: GeoHealthCheck/templates/edit_resource.html:328
-#: GeoHealthCheck/templates/edit_resource.html:344
+#: GeoHealthCheck/templates/edit_resource.html:128
+#: GeoHealthCheck/templates/edit_resource.html:330
+#: GeoHealthCheck/templates/edit_resource.html:346
 msgid "Save"
 msgstr "Spremi"
 
-#: GeoHealthCheck/templates/edit_resource.html:130
-#: GeoHealthCheck/templates/edit_resource.html:357
-#: GeoHealthCheck/templates/edit_resource.html:365
-#: GeoHealthCheck/templates/edit_resource.html:372
+#: GeoHealthCheck/templates/edit_resource.html:129
+#: GeoHealthCheck/templates/edit_resource.html:359
+#: GeoHealthCheck/templates/edit_resource.html:367
+#: GeoHealthCheck/templates/edit_resource.html:374
 msgid "Test"
 msgstr "Test"
 
-#: GeoHealthCheck/templates/edit_resource.html:131
+#: GeoHealthCheck/templates/edit_resource.html:130
 msgid "Cancel"
 msgstr "Odustani"
 
-#: GeoHealthCheck/templates/edit_resource.html:132
+#: GeoHealthCheck/templates/edit_resource.html:131
 #: GeoHealthCheck/templates/includes/check_edit_form.html:12
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:126
 #: GeoHealthCheck/templates/resource.html:16
 msgid "Delete"
 msgstr "Izbriši"
 
-#: GeoHealthCheck/templates/edit_resource.html:392
+#: GeoHealthCheck/templates/edit_resource.html:394
 #: GeoHealthCheck/templates/resource.html:140
 msgid "Delete resource"
 msgstr "Izbriši resurs"

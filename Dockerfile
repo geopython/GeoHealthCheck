@@ -22,6 +22,7 @@ ENV LC_ALL="en_US.UTF-8" \
 	ADMIN_EMAIL=admin.istrator@mydomain.com \
 	SQLALCHEMY_DATABASE_URI='sqlite:////GeoHealthCheck/DB/data.db' \
 	SECRET_KEY='d544ccc37dc3ad214c09b1b7faaa64c60351d5c8bb48b342' \
+	GHC_PROBE_HTTP_TIMEOUT_SECS=30 \
 	GHC_RETENTION_DAYS=30 \
 	GHC_SELF_REGISTER=False \
 	GHC_NOTIFICATIONS=False \
