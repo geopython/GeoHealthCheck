@@ -30,13 +30,13 @@
 RESOURCE_TYPES = {
     'OGC:WMS': {
         'label': 'Web Map Service (WMS)',
-        'versions': ['1.1.1'],
-        'capabilities': '?service=WMS&version=1.1.1&request=GetCapabilities'
+        'versions': ['1.3.0'],
+        'capabilities': 'service=WMS&version=1.3.0&request=GetCapabilities'
     },
     'OGC:WMTS': {
         'label': 'Web Map Tile Service (WMTS)',
         'versions': ['1.0.0'],
-        'capabilities': '?service=WMTS&version=1.0.0&request=GetCapabilities'
+        'capabilities': 'service=WMTS&version=1.0.0&request=GetCapabilities'
     },
     'OSGeo:TMS': {
         'label': 'Tile Map Service (TMS)',
@@ -45,27 +45,27 @@ RESOURCE_TYPES = {
     'OGC:WFS': {
         'label': 'Web Feature Service (WFS)',
         'versions': ['1.1.0'],
-        'capabilities': '?service=WFS&version=1.1.0&request=GetCapabilities'
+        'capabilities': 'service=WFS&version=1.1.0&request=GetCapabilities'
     },
     'OGC:WCS': {
         'label': 'Web Coverage Service (WCS)',
         'versions': ['1.1.0'],
-        'capabilities': '?service=WCS&version=1.1.0&request=GetCapabilities'
+        'capabilities': 'service=WCS&version=1.1.0&request=GetCapabilities'
     },
     'OGC:WPS': {
         'label': 'Web Processing Service (WPS)',
         'versions': ['1.0.0'],
-        'capabilities': '?service=WPS&version=1.0.0&request=GetCapabilities'
+        'capabilities': 'service=WPS&version=1.0.0&request=GetCapabilities'
     },
     'OGC:CSW': {
         'label': 'Catalogue Service (CSW)',
         'versions': ['2.0.2'],
-        'capabilities': '?service=CSW&version=2.0.2&request=GetCapabilities'
+        'capabilities': 'service=CSW&version=2.0.2&request=GetCapabilities'
     },
     'OGC:SOS': {
         'label': 'Sensor Observation Service (SOS)',
         'versions': ['1.0.0'],
-        'capabilities': '?service=SOS&version=1.0.0&request=GetCapabilities'
+        'capabilities': 'service=SOS&version=1.0.0&request=GetCapabilities'
     },
     'OGC:STA': {
         'label': 'SensorThings API (STA)',
