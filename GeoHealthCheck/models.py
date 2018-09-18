@@ -42,6 +42,7 @@ from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
 from wtforms.validators import Email, ValidationError
+from owslib.util import bind_url
 
 DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
@@ -391,7 +392,7 @@ class Resource(DB.Model):
     def get_capabilities_url(self):
         if self.resource_type.startswith('OGC:') \
                 and self.resource_type != 'OGC:STA':
-            url = '%s%s' % (self.url,
+            url = '%s%s' % (bind_url(self.url),
                             RESOURCE_TYPES[self.resource_type]['capabilities'])
         else:
             url = self.url
