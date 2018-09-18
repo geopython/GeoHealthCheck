@@ -34,13 +34,14 @@ Install
 
 .. note::
 
-  it is strongly recommended to install in a Python ``virtualenv``.
+  It is strongly recommended to install GeoHealthCheck in a Python ``virtualenv``.
   a ``virtualenv`` is self-contained and provides the flexibility to install /
   tear down / whatever packages without affecting system wide packages or
   settings.
-
+  If installing on Ubuntu, you may need to install the python-dev package for installation to complete successfully.
+  
 - Download a GeoHealthCheck release from
-  https://github.com/geopython/GeoHealthCheck/releases, or clone manually from GitHub.
+  https://github.com/geopython/GeoHealthCheck/releases, or clone manually from GitHub. 
 
 .. code-block:: bash
 
