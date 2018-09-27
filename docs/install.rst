@@ -106,8 +106,8 @@ Notes:
 
 * **Always backup your database first!!**
 * make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.0.3`, but best is to run `paver setup` also for other dependencies
-* upgrading is "smart": you can always run `paver upgrade`, it has no effect when DB already uptodate
-* when upgrading from earlier versions without Plugin-support
+* upgrading is "smart": you can always run `paver upgrade`, it has no effect when DB is already up to date
+* when upgrading from earlier versions without Plugin-support:
 
   - adapt your `config_site.py` to Plugin settings from `config_main.py`
   - assign `Probes` and `Checks` to each `Resource` via the UI
