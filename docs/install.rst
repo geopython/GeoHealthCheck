@@ -131,10 +131,10 @@ Start using the built-in ``mod_wsgi`` server:
 To enable in Apache, use ``GeoHealthCheck.wsgi`` and configure in Apache
 as per the main Flask documentation.
 
-Running under a sub-directory
+Running under a sub-path
 -----------------------------
 
-By default GeoHealthCheck is configured to run under the root directory on the webserver. However, it can be configured to run under a sub-directory. The method for doing this depends on the webserver you are using. 
+By default GeoHealthCheck is configured to run under the root directory on the webserver. However, it can be configured to run under a sub-path. The method for doing this depends on the webserver you are using, but the general requirement is to pass Flask's ``SCRIPT_NAME`` environment variable when GeoHealthCheck is started. 
 
 Below is an example of how to use nginx and gunicorn to run GeoHealthCheck in a directory "geohealthcheck", assuming that you have nginx and gunicorn already set up and configured:
 
