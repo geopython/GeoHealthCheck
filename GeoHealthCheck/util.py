@@ -153,19 +153,18 @@ def send_email(mail_config, fromaddr, toaddr, msg):
 
 def geocode(value, spatial_keyword_type='hostname'):
     """convenience function to geocode a value"""
-
+    lat, lon = 0.0, 0.0
     if spatial_keyword_type == 'hostname':
         try:
             hostname = urlparse(value).hostname
-            url = 'http://freegeoip.net/json/%s' % hostname
+            url = 'http://ip-api.com/json/%s' % hostname
             LOGGER.info('Geocoding %s with %s', hostname, url)
             content = json.loads(urlopen(url).read())
-            return content['latitude'], content['longitude']
-        except Exception, err:  # skip storage
+            lat, lon = content['lat'], content['lon']
+        except Exception as err:  # skip storage
             msg = 'Could not derive coordinates: %s' % err
             LOGGER.exception(msg)
-            raise ValueError(msg)
-    return []
+    return lat, lon
 
 
 def transform_bbox(epsg1, epsg2, bbox):
