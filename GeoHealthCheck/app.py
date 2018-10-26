@@ -47,7 +47,7 @@ from init import App
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
-from util import render_template2, send_email
+from util import render_template2, send_email, geocode
 import views
 
 # Module globals for convenience
@@ -642,6 +642,12 @@ def update(resource_identifier):
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])
+                update_counter += 1
+
+        # Update geo-IP if it failed earlier, e.g. during creation
+        if resource.latitude == 0.0:
+            resource.latitude, resource.longitude = geocode(resource.url)
+            if resource.latitude != 0.0:
                 update_counter += 1
 
     except Exception as err:

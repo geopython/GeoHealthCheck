@@ -120,7 +120,7 @@ or within the **GHC Webapp**.
 Scheduling via Cron
 ...................
 
-Edit the file ``jobs.cron`` that the paths reflect the path to the virtualenv.
+Edit the file ``jobs.cron`` so that the paths reflect the path to the virtualenv.
 Set the first argument to the desired monitoring time step. If finished editing,
 copy the command line calls e.g. ``/YOURvirtualenv/bin_or_SCRIPTSonwindows/python /path/to/GeoHealthCheck/GeoHealthCheck/healthcheck.py run``
 to the commandline to test if they work sucessfully.
@@ -146,7 +146,7 @@ Build Documentation
 -------------------
 
 Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``.
-In there, type ''make html'' plus ENTER and the documentation should be build locally.
+In there, type ''make html'' plus ENTER and the documentation should be built locally.
 
 GeoNode Resource Type Notes
 ---------------------------
