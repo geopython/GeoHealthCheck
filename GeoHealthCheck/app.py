@@ -665,11 +665,14 @@ def update(resource_identifier):
                 setattr(resource, key, resource_identifier_dict[key])
                 update_counter += 1
 
-        # Update geo-IP if it failed earlier, e.g. during creation
-        if resource.latitude == 0.0:
-            resource.latitude, resource.longitude = geocode(resource.url)
-            if resource.latitude != 0.0:
-                update_counter += 1
+        # Always update geo-IP: maybe failure on creation or
+        # IP-address of URL may have changed.
+        latitude, longitude = geocode(resource.url)
+        if latitude != 0.0 and longitude != 0.0:
+            # Only update for valid lat/lon
+            resource.latitude = latitude
+            resource.longitude = longitude
+            update_counter += 1
 
     except Exception as err:
         LOGGER.error("Cannot update resource: %s", err, exc_info=err)
