@@ -642,6 +642,9 @@ def update(resource_identifier):
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])
+                min_run_freq = CONFIG['GHC_MINIMAL_RUN_FREQUENCY_MINS']
+                if int(resource.run_frequency) < min_run_freq:
+                    resource.run_frequency = min_run_freq
                 update_counter += 1
 
         # Always update geo-IP: maybe failure on creation or
