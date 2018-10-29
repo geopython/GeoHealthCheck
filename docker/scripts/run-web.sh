@@ -12,11 +12,14 @@ echo "START /run-web.sh"
 
 source /venv/bin/activate .
 
-echo "Running GHC WSGI on ${HOST}:${PORT} with ${WSGI_WORKERS} workers"
 cd /GeoHealthCheck
 
 paver upgrade
 
+# SCRIPT_NAME should not have value '/'
+[ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
+
+echo "Running GHC WSGI on ${HOST}:${PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
 gunicorn --workers ${WSGI_WORKERS} \
 		--worker-class=${WSGI_WORKER_CLASS} \
 		--timeout ${WSGI_WORKER_TIMEOUT} \

@@ -10,6 +10,7 @@ You can override these settings in ``instance/config_site.py``:
 - **SECRET_KEY**: secret key to set when enabling authentication. Use the output of ``paver create_secret_key`` to set this value
 - **GHC_RETENTION_DAYS**: the number of days to keep run history
 - **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a probe response after the given number of seconds
+- **GHC_MINIMAL_RUN_FREQUENCY_MINS**: minimal run frequency for Resource that can be set in web UI
 - **GHC_SELF_REGISTER**: allow registrations from users on the website
 - **GHC_NOTIFICATIONS**: turn on email notifications
 - **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)

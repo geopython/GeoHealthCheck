@@ -70,8 +70,4 @@ then
 	cp -ar /plugins/* /GeoHealthCheck/GeoHealthCheck/plugins/
 fi
 
-# SCRIPT_NAME if set should not be empty string or have value '/'
-[ "${SCRIPT_NAME}" = '/' ] && SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
-[ -z "${SCRIPT_NAME}" ] && unset ${SCRIPT_NAME} && echo "unset empty SCRIPT_NAME"
-
 echo "END /configure.sh"

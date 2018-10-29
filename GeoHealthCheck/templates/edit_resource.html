@@ -91,7 +91,7 @@ or
             <tr>
                 <th>{{ _('Run Every') }}</th>
                 <td>
-                    <input type="number" id="input_resource_frequency" name="resource_frequency_value" value="{{ resource.run_frequency }}" style="width: 5%;"/> <label>{{ _('minutes') }}</label>
+                    <input type="number" id="input_resource_frequency" name="resource_frequency_value" min="{{ config['GHC_MINIMAL_RUN_FREQUENCY_MINS'] }}" value="{{ resource.run_frequency }}" style="width: 5%;"/> <label>{{ _('minutes') }}</label>
                 </td>
             </tr>
             <tr>
