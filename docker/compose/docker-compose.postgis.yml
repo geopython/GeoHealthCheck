@@ -63,7 +63,7 @@ services:
       # - ./../GeoHealthCheck/plugins:/plugins:ro
 
   postgis_ghc:
-    image: mdillon/postgis:9.6-alpine
+    image: mdillon/postgis:10-alpine
 
     container_name: postgis_ghc
 
