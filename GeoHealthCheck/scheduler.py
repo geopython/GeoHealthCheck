@@ -33,6 +33,7 @@ import logging
 import os
 import random
 import string
+from datetime import datetime, timedelta
 from models import Resource, ResourceLock, flush_runs
 from healthcheck import run_resource
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -177,7 +178,7 @@ def start_schedule():
         add_job(resource)
 
     # Start maintenance jobs
-    scheduler.add_job(flush_runs, 'interval', minutes=60)
+    scheduler.add_job(flush_runs, 'interval', minutes=150)
     scheduler.add_job(check_schedule, 'interval', minutes=5)
 
 
@@ -213,10 +214,10 @@ def update_job(resource):
 def add_job(resource):
     LOGGER.info('Starting job for resource=%d' % resource.identifier)
     freq = resource.run_frequency
-
+    next_run_time = datetime.now() + timedelta(minutes=random.randint(0, freq))
     scheduler.add_job(
         run_job, 'interval', args=[resource.identifier, freq],
-        minutes=freq,
+        minutes=freq, next_run_time=next_run_time,
         id=str(resource.identifier))
 
 
