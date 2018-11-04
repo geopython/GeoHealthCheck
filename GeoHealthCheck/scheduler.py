@@ -38,6 +38,9 @@ from models import Resource, ResourceLock, flush_runs
 from healthcheck import run_resource
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.base import JobLookupError
+from apscheduler.events import \
+    EVENT_SCHEDULER_STARTED, EVENT_SCHEDULER_SHUTDOWN, \
+    EVENT_JOB_MISSED, EVENT_JOB_ERROR
 from init import App
 
 LOGGER = logging.getLogger(__name__)
@@ -161,9 +164,15 @@ def start_schedule():
 
     # Adapt configuration
     scheduler.configure(job_defaults={
-        'coalesce': False,
-        'max_instances': 100000
+        'coalesce': True,
+        'max_instances': 1,
+        'misfire_grace_time': 300
     })
+
+    scheduler.add_listener(lifecycle_listener,
+                           EVENT_SCHEDULER_STARTED | EVENT_SCHEDULER_SHUTDOWN)
+    scheduler.add_listener(error_listener,
+                           EVENT_JOB_MISSED | EVENT_JOB_ERROR)
 
     # Start APScheduler
     scheduler.start()
@@ -200,6 +209,28 @@ def check_schedule():
             update_job(resource)
 
 
+def lifecycle_listener(event):
+    event_code = event.code
+    event_code_str = ''
+    if event_code == EVENT_SCHEDULER_STARTED:
+        event_code_str = 'EVENT_SCHEDULER_STARTED'
+    elif event_code | EVENT_SCHEDULER_SHUTDOWN:
+        event_code_str = 'EVENT_SCHEDULER_SHUTDOWN'
+
+    LOGGER.info('lifecycle_listener: %s - %s' % (event_code_str, str(event)))
+
+
+def error_listener(event):
+    event_code = event.code
+    event_code_str = ''
+    if event_code | EVENT_JOB_MISSED:
+        event_code_str = 'EVENT_JOB_MISSED'
+    elif event_code | EVENT_JOB_ERROR:
+        event_code_str = 'EVENT_JOB_ERROR'
+
+    LOGGER.error('error_listener: %s - %s' % (event_code_str, str(event)))
+
+
 def get_job(resource):
     return scheduler.get_job(str(resource.identifier))
 
@@ -217,7 +248,8 @@ def add_job(resource):
     next_run_time = datetime.now() + timedelta(minutes=random.randint(0, freq))
     scheduler.add_job(
         run_job, 'interval', args=[resource.identifier, freq],
-        minutes=freq, next_run_time=next_run_time,
+        minutes=freq, next_run_time=next_run_time, max_instances=1,
+        misfire_grace_time=(freq * 60) / 2, coalesce=True,
         id=str(resource.identifier))
 
 
@@ -234,6 +266,8 @@ def stop_job(resource_id):
 def stop_schedule():
     LOGGER.info('Stopping Scheduler')
     scheduler.shutdown()
+    scheduler.remove_listener(lifecycle_listener)
+    scheduler.remove_listener(error_listener)
 
 
 if __name__ == '__main__':
@@ -243,5 +277,5 @@ if __name__ == '__main__':
     start_schedule()
 
     while True:
-        print("This prints once a minute.")
-        time.sleep(60)  # Delay for 1 minute (60 seconds).
+        LOGGER.info("This prints once in 5 minutes")
+        time.sleep(300)  # Delay for 5 minute (300 seconds).
