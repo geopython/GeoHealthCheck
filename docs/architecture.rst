@@ -29,8 +29,8 @@ If **GHC_RUNNER_IN_WEBAPP** is set to True (the default) then the **GHC Runner**
 within the **GHC Webapp**.
 
 A third option is to only run the **GHC Webapp** and have the **GHC Runner** scheduled
-via `cron`. This was the (only) GHC option before v0.4.0 and will be phased out
-as starting with v0.4.0, per-Resource scheduling was introduced and `cron` support
+via `cron`. This was the (only) GHC option before v0.5.0 and will be phased out
+as starting with v0.5.0, per-Resource scheduling was introduced and `cron` support
 is highly platform-dependent (e.g. hard to use with Docker-based technologies).
 
 Dependent on the database-type (Postgres or SQLite) the **Database** is run
@@ -92,7 +92,7 @@ GHC Runner Design
 The **GHC Runner** in its core is a job scheduler based on the Python library
 `APScheduler <https://apscheduler.readthedocs.io>`_. Each job scheduled is a
 healthcheck runner for a single `Resource` that runs all the `Probes` for that `Resource`.
-The run-frequency follows the per-Resource run frequency (since v0.4.0).
+The run-frequency follows the per-Resource run frequency (since v0.5.0).
 
 The GHC Runner is thus responsible for running the `Probes` for each `Resource`, storing
 the `Results` and doing notifications when needed.
@@ -121,6 +121,10 @@ but the UUID is different this means another job runner instance did the same bu
 was just before us. The lock-lifetime (see above) guards that a particular UUID keeps
 the lock forever, e.g.  on sudden application shutdown.
 
-The above locking mechanism is supported for SQLite, but it is strongly
-advised to use PostgreSQL for better robustness and performance in general.
+To further increase liveliness, mainly to avoid all Jobs running at the same time when scheduled
+to run at the same frequency, each Job is started with a random time-offset on GHC Runner
+startup.
 
+The locking mechanism described above is supported for SQLite, but it is strongly
+advised to use PostgreSQL in production deployments,
+also for better robustness and performance in general.

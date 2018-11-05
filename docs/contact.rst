@@ -12,7 +12,7 @@ Links
 
 - website: http://geohealthcheck.org
 - GitHub: https://github.com/geopython/geohealthcheck
-- Demo: http://demo.geohealthcheck.org
+- Demo: https://demo.geohealthcheck.org
 - Presentation: http://geohealthcheck.org/presentation
 - Gitter Chat: https://gitter.im/geopython/GeoHealthCheck
 

@@ -49,9 +49,9 @@ Exporting database-data to a .json file with or without Runs is still to be done
 Exporting Resource and Run data from a running GHC instance can be effected via
 a REST API, for example:
 
-* all Resources: http://demo.geohealthcheck.org/json  (or `as CSV <http://demo.geohealthcheck.org/csv>`_)
-* one Resource: http://demo.geohealthcheck.org/resource/1/json (or `CSV <http://demo.geohealthcheck.org/resource/1/csv>`_)
-* all history (Runs) of one Resource: http://demo.geohealthcheck.org/resource/1/history/json (or `in csv <http://demo.geohealthcheck.org/resource/1/history/csv>`_)
+* all Resources: https://demo.geohealthcheck.org/json  (or `as CSV <https://demo.geohealthcheck.org/csv>`_)
+* one Resource: https://demo.geohealthcheck.org/resource/1/json (or `CSV <https://demo.geohealthcheck.org/resource/1/csv>`_)
+* all history (Runs) of one Resource: https://demo.geohealthcheck.org/resource/1/history/json (or `in csv <https://demo.geohealthcheck.org/resource/1/history/csv>`_)
 
 NB for detailed reporting data only JSON is supported.
 
@@ -114,11 +114,13 @@ Running Healthchecks
 --------------------
 
 Healthchecks (Runs) for each Resource can be scheduled via `cron` or
-(since v0.4.0) by running the **GHC Runner** app standalone (as daemon)
+(since v0.5.0) by running the **GHC Runner** app standalone (as daemon)
 or within the **GHC Webapp**.
 
 Scheduling via Cron
 ...................
+
+**Applies only to pre-0.5.0 versions.**
 
 Edit the file ``jobs.cron`` so that the paths reflect the path to the virtualenv.
 Set the first argument to the desired monitoring time step. If finished editing,

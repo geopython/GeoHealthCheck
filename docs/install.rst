@@ -29,7 +29,7 @@ GeoHealthCheck is built on the awesome Flask micro-framework and uses
 
 These dependencies are automatically installed (see below). ``Paver`` is used
 for installation and management. ``Cron`` was used for scheduling the actual
-healthchecks before v0.4.0.
+healthchecks before v0.5.0.
 
 Install
 -------
@@ -83,15 +83,7 @@ Install
   # start web-app
   python GeoHealthCheck/app.py  # http://localhost:8000/
 
-Schedule the cronjobs.
-
-.. code-block:: bash
-
-  # edit local paths to scripts
-  vi jobs.cron
-
-  # enable cron
-  crontab jobs.cron
+NB GHC supports internal scheduling, no cronjobs required.
 
 .. _upgrade:
 

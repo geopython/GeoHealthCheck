@@ -28,8 +28,7 @@ Links
 
 - website: http://geohealthcheck.org
 - GitHub: https://github.com/geopython/geohealthcheck
-- Demo: http://demo.geohealthcheck.org (official demo, master branch)
-- DevDemo: http://dev.geohealthcheck.org (latest development demo, dev branch)
+- Demo: https://demo.geohealthcheck.org (official demo, master branch)
 - Presentation: http://geohealthcheck.org/presentation
 - Gitter Chat: https://gitter.im/geopython/GeoHealthCheck
 
