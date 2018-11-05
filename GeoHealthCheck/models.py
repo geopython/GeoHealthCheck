@@ -31,7 +31,7 @@
 import json
 import logging
 from flask_babel import gettext as _
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import func, and_
 
 from sqlalchemy.orm import deferred
@@ -41,12 +41,29 @@ import util
 from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
-from notifications import notify
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 
 DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
+
+
+# Complete handle of old runs deletion
+def flush_runs():
+    APP = App.get_app()
+    retention_days = int(APP.config['GHC_RETENTION_DAYS'])
+    LOGGER.info('Flushing runs older than %d days' % retention_days)
+    all_runs = Run.query.all()
+    run_count = 0
+    for run in all_runs:
+        days_old = (datetime.utcnow() - run.checked_datetime).days
+        if days_old > retention_days:
+            run_count += 1
+            DB.session.delete(run)
+    db_commit()
+    LOGGER.info('Deleted %d Runs' % run_count)
+
+    DB.session.remove()
 
 
 class Run(DB.Model):
@@ -56,7 +73,8 @@ class Run(DB.Model):
     resource_identifier = DB.Column(DB.Integer,
                                     DB.ForeignKey('resource.identifier'))
     resource = DB.relationship('Resource',
-                               backref=DB.backref('runs', lazy='dynamic'))
+                               backref=DB.backref('runs', lazy='dynamic',
+                                                  cascade="all,delete"))
     checked_datetime = DB.Column(DB.DateTime, nullable=False)
     success = DB.Column(DB.Boolean, nullable=False)
     response_time = DB.Column(DB.Float, nullable=False)
@@ -216,6 +234,7 @@ def _validate_email(value):
         @staticmethod
         def gettext(*args, **kwargs):
             return _(*args, **kwargs)
+
     dummy_form = None
     v(dummy_form, dummy_value())
 
@@ -273,11 +292,11 @@ class Recipient(DB.Model):
     @classmethod
     def burry_dead(cls):
         RN = ResourceNotification
-        q = DB.session.query(cls)\
-                      .join(RN,
-                            RN.recipient_id == cls.id,
-                            isouter=True)\
-                      .filter(RN.recipient_id.is_(None))
+        q = DB.session.query(cls) \
+            .join(RN,
+                  RN.recipient_id == cls.id,
+                  isouter=True) \
+            .filter(RN.recipient_id.is_(None))
         for item in q:
             DB.session.delete(item)
 
@@ -289,10 +308,10 @@ class Recipient(DB.Model):
             raise ValueError("invalid value {}: {}".format(location, err))
 
         try:
-            r = DB.session.query(cls)\
-                          .filter(and_(cls.channel == channel,
-                                       cls.location == location))\
-                          .one()
+            r = DB.session.query(cls) \
+                .filter(and_(cls.channel == channel,
+                             cls.location == location)) \
+                .one()
         except (MultipleResultsFound, NoResultFound,):
             r = cls(channel=channel, location=location)
             DB.session.add(r)
@@ -309,12 +328,12 @@ class Recipient(DB.Model):
         Res = Resource
         ResNot = ResourceNotification
 
-        q = DB.session.query(Rcp.location)\
-                      .join(ResNot, ResNot.recipient_id == Rcp.id)\
-                      .join(Res, Res.identifier == ResNot.resource_id)\
-                      .group_by(Rcp.location)\
-                      .filter(and_(Res.owner_identifier == for_user,
-                                   Rcp.channel == channel))
+        q = DB.session.query(Rcp.location) \
+            .join(ResNot, ResNot.recipient_id == Rcp.id) \
+            .join(Res, Res.identifier == ResNot.resource_id) \
+            .group_by(Rcp.location) \
+            .filter(and_(Res.owner_identifier == for_user,
+                         Rcp.channel == channel))
         return [item[0] for item in q]
 
 
@@ -348,6 +367,7 @@ class Resource(DB.Model):
     owner = DB.relationship('User',
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
+    run_frequency = DB.Column(DB.Integer, default=60)
 
     def __init__(self, owner, resource_type, title, url, tags):
         self.resource_type = resource_type
@@ -465,26 +485,26 @@ class Resource(DB.Model):
             # clear specific channel
             to_delete = self.get_recipients(channel)
             if to_delete:
-                to_del_rcp = DB.session.query(RN)\
-                                       .join(Rcp,
-                                             Rcp.id == RN.recipient_id)\
-                                       .filter(
-                                            and_(RN.resource_id ==
-                                                 self.identifier,
-                                                 Rcp.channel == channel,
-                                                 Rcp.location.in_(to_delete))
-                                              )
+                to_del_rcp = DB.session.query(RN) \
+                    .join(Rcp,
+                          Rcp.id == RN.recipient_id) \
+                    .filter(
+                    and_(RN.resource_id ==
+                         self.identifier,
+                         Rcp.channel == channel,
+                         Rcp.location.in_(to_delete))
+                )
             else:
                 to_del_rcp = []
         else:
             # remove all m2m connections for Resource<->Recipient
-            to_del_rcp = DB.session.query(RN)\
-                                   .join(Rcp,
-                                         Rcp.id == RN.recipient_id)\
-                                   .filter(
-                                         RN.resource_id ==
-                                         self.identifier,
-                                          )
+            to_del_rcp = DB.session.query(RN) \
+                .join(Rcp,
+                      Rcp.id == RN.recipient_id) \
+                .filter(
+                RN.resource_id ==
+                self.identifier,
+            )
         for rcp_ntf in to_del_rcp:
             DB.session.delete(rcp_ntf)
         if burry_dead:
@@ -519,6 +539,49 @@ class Resource(DB.Model):
         for c in Recipient.TYPES:
             out[c] = self.get_recipients(c)
         return out
+
+
+class ResourceLock(DB.Model):
+    """lock resource for multiprocessing runs"""
+
+    identifier = DB.Column(DB.Integer,
+                           primary_key=True, autoincrement=False, unique=True)
+    resource_identifier = DB.Column(
+        DB.Integer, DB.ForeignKey('resource.identifier'), unique=True)
+    resource = DB.relationship('Resource',
+                               backref=DB.backref('locks', lazy='dynamic',
+                                                  cascade="all,delete"))
+    owner = DB.Column(DB.Text, nullable=False, default='NOT SET')
+
+    start_time = DB.Column(DB.DateTime, nullable=False)
+    end_time = DB.Column(DB.DateTime, nullable=False)
+
+    def __init__(self, resource, owner, interval_mins):
+        self.identifier = resource.identifier
+        self.resource = resource
+        self.owner = owner
+        self.init_datetimes(interval_mins)
+
+    def init_datetimes(self, interval_mins):
+        self.start_time = datetime.utcnow()
+        # Subtract some space from end-time to allow obtain at scheduled time
+        minutes = interval_mins - 1
+        self.end_time = self.start_time + timedelta(minutes=minutes)
+
+    def has_expired(self):
+        now = datetime.utcnow()
+        return now > self.end_time
+
+    def obtain(self, owner, frequency):
+        if not self.has_expired():
+            return False
+
+        self.owner = owner
+        self.init_datetimes(frequency)
+        return True
+
+    def __repr__(self):
+        return '<ResourceLock rsc_id=%r>' % self.identifier
 
 
 class User(DB.Model):
@@ -697,7 +760,7 @@ def db_commit():
     except Exception as err:
         DB.session.rollback()
         msg = str(err)
-        print(msg)
+        LOGGER.error(msg)
 
 
 if __name__ == '__main__':
@@ -757,60 +820,9 @@ if __name__ == '__main__':
                 print('Provide path to JSON file, e.g. tests/fixtures.json')
 
         elif sys.argv[1] == 'run':
-            print('START - Running health check tests on %s'
-                  % datetime.utcnow().isoformat())
-            from healthcheck import run_test_resource
-
-            for resource in Resource.query.all():  # run all tests
-                print('Testing %s %s' %
-                      (resource.resource_type, resource.url))
-
-                if not resource.active:
-                    print('Resource is not active. Skipping')
-                    continue
-
-                # Get the status of the last run,
-                # assume success if there is none
-                last_run_success = True
-                last_run = resource.last_run
-                if last_run:
-                    last_run_success = last_run.success
-
-                # Run test
-                result = run_test_resource(resource)
-
-                run1 = Run(resource, result)
-
-                print('Adding Run: success=%s, response_time=%ss\n'
-                      % (str(run1.success), run1.response_time))
-
-                DB.session.add(run1)
-
-                # commit or rollback each run to avoid long-lived transactions
-                # see https://github.com/geopython/GeoHealthCheck/issues/14
-                db_commit()
-
-                if APP.config['GHC_NOTIFICATIONS']:
-                    # Attempt notification
-                    try:
-                        notify(APP.config, resource, run1, last_run_success)
-                    except Exception as err:
-                        LOGGER.error("Cannot send notifications: %s",
-                                     err,
-                                     exc_info=err)
-
-            print('END - Running health check tests on %s'
-                  % datetime.utcnow().isoformat())
+            print('NOTICE: models.py no longer here.')
+            print('Use: python healthcheck.py or upcoming cli.py')
         elif sys.argv[1] == 'flush':
-            retention_days = int(APP.config['GHC_RETENTION_DAYS'])
-            print('Flushing runs older than %d days' %
-                  retention_days)
-            all_runs = Run.query.all()
-            for run in all_runs:
-                days_old = (datetime.utcnow() - run.checked_datetime).days
-                if days_old > retention_days:
-                    print('Run older than %d days. Deleting' % days_old)
-                    DB.session.delete(run)
-            db_commit()
+            flush_runs()
 
         DB.session.remove()

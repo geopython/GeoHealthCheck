@@ -8,7 +8,7 @@ Below are installation notes for GeoHealthCheck (GHC).
 Docker
 ------
 
-Easiest and quickest install/run
+The easiest and quickest install
 for GHC is with Docker/Docker Compose using the GHC images hosted on
 `Docker Hub <https://hub.docker.com/r/geopython/geohealthcheck>`_.
 
@@ -19,15 +19,17 @@ for a full guide.
 Requirements
 ------------
 
-GeoHealthCheck is built on the awesome Flask microframework and uses
-Flask-SQLAlchemy for database interaction and Flask-Login for authorization.
-Flask-Migrate with Alembic and Flask-Script support is used for database upgrades.
+GeoHealthCheck is built on the awesome Flask micro-framework and uses
+`Flask-SQLAlchemy` for database interaction and Flask-Login for authorization.
+`Flask-Migrate` with `Alembic` and `Flask-Script` is used for database upgrades.
 
-OWSLib is used to interact with OGC Web Services.
+`OWSLib` is used to interact with OGC Web Services.
+
+`APScheduler` is used to run scheduled healthchecks.
 
 These dependencies are automatically installed (see below). ``Paver`` is used
-for installation and management. ``Cron`` is used for scheduling the actual
-healthchecks.
+for installation and management. ``Cron`` was used for scheduling the actual
+healthchecks before v0.4.0.
 
 Install
 -------
@@ -49,19 +51,22 @@ Install
   . bin/activate
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
+
   # install paver dependency for admin tool
   pip install Paver
+
   # setup app
   paver setup
+
   # create secret key to use for auth
   paver create_secret_key
+
   # almost there!  Customize config
   vi instance/config_site.py
   # edit:
   # - SQLALCHEMY_DATABASE_URI
   # - SECRET_KEY  # from paver create_secret_key
   # - GHC_RETENTION_DAYS
-  # - GHC_RUN_FREQUENCY
   # - GHC_SELF_REGISTER
   # - GHC_NOTIFICATIONS
   # - GHC_NOTIFICATIONS_VERBOSITY
@@ -75,7 +80,7 @@ Install
   # init database
   python GeoHealthCheck/models.py create
 
-  # start server
+  # start web-app
   python GeoHealthCheck/app.py  # http://localhost:8000/
 
 Schedule the cronjobs.

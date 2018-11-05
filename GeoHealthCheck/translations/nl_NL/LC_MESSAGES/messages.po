@@ -381,6 +381,16 @@ msgstr "Monitoring Periode"
 msgid "Response Times (seconds)"
 msgstr "Response Tijden (seconden)"
 
+#: GeoHealthCheck/templates/resource.html:60
+#: GeoHealthCheck/templates/edit_resource.html:94
+msgid "minutes"
+msgstr "minuten"
+
+#: GeoHealthCheck/templates/resource.html:58
+#: GeoHealthCheck/templates/edit_resource.html:92
+msgid "Run Every"
+msgstr "Run Elke"
+
 #: GeoHealthCheck/templates/resource.html:71
 msgid "Min"
 msgstr "Min"

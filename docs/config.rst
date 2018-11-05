@@ -6,14 +6,11 @@ Configuration
 Core configuration is set by GeoHealthCheck in ``GeoHealthCheck/config_main.py``.
 You can override these settings in ``instance/config_site.py``:
 
-- **SQLALCHEMY_DATABASE_URI**: the database configuration.  See the
-  SQLAlchemy documentation for more info
-- **SECRET_KEY**: secret key to set when enabling authentication.  Use
-  the output of ``paver create_secret_key`` to set this value
+- **SQLALCHEMY_DATABASE_URI**: the database configuration.  See the SQLAlchemy documentation for more info
+- **SECRET_KEY**: secret key to set when enabling authentication. Use the output of ``paver create_secret_key`` to set this value
 - **GHC_RETENTION_DAYS**: the number of days to keep run history
-- **GHC_RUN_FREQUENCY**: cron keyword used to indicate frequency of runs
-  (i.e. ``hourly``, ``daily``, ``monthly``)
 - **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a probe response after the given number of seconds
+- **GHC_MINIMAL_RUN_FREQUENCY_MINS**: minimal run frequency for Resource that can be set in web UI
 - **GHC_SELF_REGISTER**: allow registrations from users on the website
 - **GHC_NOTIFICATIONS**: turn on email notifications
 - **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)
@@ -28,6 +25,8 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_USER_PLUGINS**: list of Plugin classes or modules provided by user (you)
 - **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
 - **GHC_METADATA_CACHE_SECS**: metadata, "Capabilities Docs", cache expiry time, default 900 secs, -1 to disable
+- **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: false)
+- **GHC_LOG_LEVEL**: logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING)
 - **GHC_MAP**: default map settings
 
   - **url**: URL of TileLayer
@@ -35,7 +34,6 @@ You can override these settings in ``instance/config_site.py``:
   - **centre_long**: Centre longitude for homepage map
   - **maxzoom**: maximum zoom level
   - **subdomains**: available subdomains to help with parallel requests
-
 
 Enabling or disabling languages
 -------------------------------

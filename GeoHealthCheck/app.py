@@ -32,7 +32,6 @@
 import csv
 import logging
 import json
-from datetime import datetime, timedelta
 from StringIO import StringIO
 from itertools import chain
 
@@ -44,7 +43,6 @@ from flask_login import (LoginManager, login_user, logout_user,
 from flask_migrate import Migrate
 
 from __init__ import __version__
-from healthcheck import sniff_test_resource, run_test_resource
 from init import App
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
@@ -73,6 +71,16 @@ LANGUAGES = (
     ('es_BO', 'Español (Bolivia)'),
     ('hr_HR', 'Croatian (Croatia)')
 )
+
+# Should GHC Runner be run within GHC webapp?
+if CONFIG['GHC_RUNNER_IN_WEBAPP'] is True:
+    LOGGER.info('Running GHC Scheduler in WebApp')
+    from scheduler import start_schedule
+
+    # Start scheduler
+    start_schedule()
+else:
+    LOGGER.info('NOT Running GHC Scheduler in WebApp')
 
 
 # commit or rollback shorthand
@@ -122,35 +130,6 @@ def unauthorized_callback():
     return redirect(url_for('login', lang=g.current_lang, next=url))
 
 
-def next_page_refresh():
-    """determines when to refresh webapp based on GHC_RUN_FREQUENCY"""
-
-    now = datetime.now()
-
-    frequency = CONFIG['GHC_RUN_FREQUENCY']
-
-    if frequency == 'hourly':  # get next hour
-        now2 = now.replace(minute=0, second=0, microsecond=0)
-        refresh = timedelta(hours=1)
-    elif frequency == 'daily':  # get next day
-        now2 = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        refresh = timedelta(days=1)
-    elif frequency == ['weekly']:  # get next day
-        now2 = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        refresh = timedelta(weeks=1)
-    elif frequency == ['monthly']:
-        now2 = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        refresh = timedelta(weeks=4)
-    elif frequency == ['yearly']:  # get next day
-        now2 = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        refresh = timedelta(weeks=52)
-
-    next_frequency = now2 + refresh
-    differ = next_frequency - now
-
-    return differ.seconds
-
-
 @APP.template_filter('cssize_reliability')
 def cssize_reliability(value, css_type=None):
     """returns CSS button class snippet based on score"""
@@ -162,11 +141,11 @@ def cssize_reliability(value, css_type=None):
         score = 'danger'
         panel = 'red'
     elif (CONFIG['GHC_RELIABILITY_MATRIX']['orange']['min'] <= number <=
-            CONFIG['GHC_RELIABILITY_MATRIX']['orange']['max']):
+          CONFIG['GHC_RELIABILITY_MATRIX']['orange']['max']):
         score = 'warning'
         panel = 'yellow'
     elif (CONFIG['GHC_RELIABILITY_MATRIX']['green']['min'] <= number <=
-            CONFIG['GHC_RELIABILITY_MATRIX']['green']['max']):
+          CONFIG['GHC_RELIABILITY_MATRIX']['green']['max']):
         score = 'success'
         panel = 'green'
     else:  # should never really get here
@@ -203,7 +182,6 @@ def context_processors():
     tags = views.get_tag_counts()
     return {
         'app_version': __version__,
-        'next_page_refresh': next_page_refresh(),
         'resource_types': RESOURCE_TYPES,
         'resource_types_counts': rtc['counts'],
         'resources_total': rtc['total'],
@@ -490,6 +468,7 @@ def add():
     url = request.form['url'].strip()
     resources_to_add = []
 
+    from healthcheck import sniff_test_resource, run_test_resource
     sniffed_resources = sniff_test_resource(CONFIG, resource_type, url)
 
     if not sniffed_resources:
@@ -557,7 +536,7 @@ def add():
                             param_vals = {}
                             for param in param_defs:
                                 if param_defs[param]['value']:
-                                    param_vals[param] =\
+                                    param_vals[param] = \
                                         param_defs[param]['value']
                             check_vars = CheckVars(
                                 probe_to_add, check_class, param_vals)
@@ -641,8 +620,8 @@ def update(resource_identifier):
 
                 # Add ProbeVars anew each with optional CheckVars
                 for probe in value:
-                    print('adding Probe class=%s parms=%s' %
-                          (probe['probe_class'], str(probe)))
+                    LOGGER.info('adding Probe class=%s parms=%s' %
+                                (probe['probe_class'], str(probe)))
                     probe_vars = ProbeVars(resource, probe['probe_class'],
                                            probe['parameters'])
                     for check in probe['checks']:
@@ -663,6 +642,9 @@ def update(resource_identifier):
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])
+                min_run_freq = CONFIG['GHC_MINIMAL_RUN_FREQUENCY_MINS']
+                if int(resource.run_frequency) < min_run_freq:
+                    resource.run_frequency = min_run_freq
                 update_counter += 1
 
         # Always update geo-IP: maybe failure on creation or
@@ -699,6 +681,7 @@ def test(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
+    from healthcheck import run_test_resource
     result = run_test_resource(
         resource)
 
@@ -754,10 +737,6 @@ def delete(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(url_for('home', lang=g.current_lang))
 
-    runs = Run.query.filter_by(resource_identifier=resource_identifier).all()
-
-    for run in runs:
-        DB.session.delete(run)
     resource.clear_recipients()
     DB.session.delete(resource)
 
@@ -908,7 +887,7 @@ def api_probes_avail(resource_type=None, resource_id=None):
 
 if __name__ == '__main__':  # run locally, for fun
     import sys
-    logging.basicConfig()
+
     HOST = '0.0.0.0'
     PORT = 8000
     if len(sys.argv) > 1:

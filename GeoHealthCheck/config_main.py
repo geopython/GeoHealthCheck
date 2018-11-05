@@ -38,8 +38,8 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
 SECRET_KEY = None
 
 GHC_RETENTION_DAYS = 30
-GHC_RUN_FREQUENCY = 'hourly'
 GHC_PROBE_HTTP_TIMEOUT_SECS = 30
+GHC_MINIMAL_RUN_FREQUENCY_MINS = 10
 GHC_SELF_REGISTER = False
 GHC_NOTIFICATIONS = False
 GHC_NOTIFICATIONS_VERBOSITY = True
@@ -48,6 +48,10 @@ GHC_ADMIN_EMAIL = 'you@example.com'
 GHC_NOTIFICATIONS_EMAIL = ['you2@example.com']
 GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
 GHC_SITE_URL = 'http://host'
+GHC_RUNNER_IN_WEBAPP = True
+# 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL
+GHC_LOG_LEVEL = 30
+GHC_LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
 # Some GetCaps docs are huge. This allows
 # caching them for N seconds. Set to -1 to

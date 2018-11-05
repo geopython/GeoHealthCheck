@@ -27,13 +27,13 @@
 #
 # =================================================================
 
-import datetime
+from datetime import datetime
 import logging
 import json
 from urllib2 import urlopen
 from urlparse import urlparse
 from functools import partial
-from pprint import pprint
+from flask_babel import gettext
 
 from owslib.wms import WebMapService
 from owslib.wmts import WebMapTileService
@@ -44,12 +44,74 @@ from owslib.wps import WebProcessingService
 from owslib.csw import CatalogueServiceWeb
 from owslib.sos import SensorObservationService
 
-from flask_babel import gettext
+from init import App
 from enums import RESOURCE_TYPES
+from models import Resource, Run
 from probe import Probe
 from result import ResourceResult
+from notifications import notify
 
 LOGGER = logging.getLogger(__name__)
+APP = App.get_app()
+DB = App.get_db()
+
+
+# commit or rollback shorthand
+def db_commit():
+    err = None
+    try:
+        DB.session.commit()
+    except Exception as err:
+        DB.session.rollback()
+    # finally:
+    #     DB.session.close()
+    return err
+
+
+def run_resources():
+    for resource in Resource.query.all():  # run all tests
+        LOGGER.info('Testing %s %s' %
+                    (resource.resource_type, resource.url))
+
+        run_resource(resource.identifier)
+
+
+# complete handle of resource test
+def run_resource(resourceid):
+    resource = Resource.query.filter_by(identifier=resourceid).first()
+
+    if not resource.active:
+        # Exit test of resource if it's not active
+        return
+
+    # Get the status of the last run,
+    # assume success if there is none
+    last_run_success = True
+    last_run = resource.last_run
+    if last_run:
+        last_run_success = last_run.success
+
+    # Run test
+    result = run_test_resource(resource)
+
+    run1 = Run(resource, result, datetime.utcnow())
+
+    DB.session.add(run1)
+
+    # commit or rollback each run to avoid long-lived transactions
+    # see https://github.com/geopython/GeoHealthCheck/issues/14
+    db_commit()
+
+    if APP.config['GHC_NOTIFICATIONS']:
+        # Attempt notification
+        try:
+            notify(APP.config, resource, run1, last_run_success)
+        except Exception as err:
+            # Don't bail out on failure in order to commit the Run
+            msg = str(err)
+            logging.warn('error notifying: %s' % msg)
+    if not __name__ == '__main__':
+        DB.session.remove()
 
 
 def run_test_resource(resource):
@@ -81,7 +143,7 @@ def sniff_test_resource(config, resource_type, url):
         raise RuntimeError(msg2)
 
     title = None
-    start_time = datetime.datetime.utcnow()
+    start_time = datetime.utcnow()
     message = None
     resource_type_map = {'OGC:WMS': [partial(WebMapService, version='1.3.0'),
                                      partial(WebMapService, version='1.1.1')],
@@ -153,7 +215,7 @@ def sniff_test_resource(config, resource_type, url):
             title = urlparse(url).hostname
         elif resource_type == 'OSGeo:GeoNode':
             endpoints = ows
-            end_time = datetime.datetime.utcnow()
+            end_time = datetime.utcnow()
             delta = end_time - start_time
             response_time = '%s.%s' % (delta.seconds, delta.microseconds)
             base_tags = geonode_make_tags(url)
@@ -184,7 +246,7 @@ def sniff_test_resource(config, resource_type, url):
         message = msg
         success = False
 
-    end_time = datetime.datetime.utcnow()
+    end_time = datetime.utcnow()
 
     delta = end_time - start_time
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
@@ -235,12 +297,15 @@ def geonode_make_tags(base_url):
 
 
 if __name__ == '__main__':
-    import sys
-    logging.basicConfig(level=logging.INFO)
-    from init import App
-    if len(sys.argv) < 3:
-        print('Usage: %s <resource_type> <url>' % sys.argv[0])
-        sys.exit(1)
-
-    # TODO: need APP.config here, None for now
-    pprint(sniff_test_resource(App.get_config(), sys.argv[1], sys.argv[2]))
+    print('START - Running health check tests on %s'
+          % datetime.utcnow().isoformat())
+    run_resources()
+    print('END - Running health check tests on %s'
+          % datetime.utcnow().isoformat())
+    # from init import App
+    # if len(sys.argv) < 3:
+    #     print('Usage: %s <resource_type> <url>' % sys.argv[0])
+    #     sys.exit(1)
+    #
+    # # TODO: need APP.config here, None for now
+    # pprint(sniff_test_resource(App.get_config(), sys.argv[1], sys.argv[2]))

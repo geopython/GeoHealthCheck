@@ -89,6 +89,12 @@ or
                 </td>
             </tr>
             <tr>
+                <th>{{ _('Run Every') }}</th>
+                <td>
+                    <input type="number" id="input_resource_frequency" name="resource_frequency_value" min="{{ config['GHC_MINIMAL_RUN_FREQUENCY_MINS'] }}" value="{{ resource.run_frequency }}" style="width: 5%;"/> <label>{{ _('minutes') }}</label>
+                </td>
+            </tr>
+            <tr>
                 <th>Probes</th>
 
                 <td id="probe-edit-forms">
@@ -258,6 +264,9 @@ or
         // Collect tags
         var new_tags = $('#resource_tags').val();
 
+        // Collect test_frequency
+        var new_frequency = $('input[name="resource_frequency_value"]').val();
+
         // Collect active
         var new_active = $('#input_resource_active').prop('checked');
 
@@ -335,6 +344,7 @@ or
                 title: new_title,
                 active: new_active,
                 tags: new_tags,
+                run_frequency: new_frequency,
                 probes: new_probes,
                 notify_emails: new_notify_emails,
                 notify_webhooks: new_notify_webhooks

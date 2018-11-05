@@ -1,79 +1,55 @@
-# Default Compose config: runs GHC with SQLite backend and cronjobs
+# Default Docker Compose config:
+# runs GHC Web App (ghc_web) and GHC Daemon Runner (ghc_runner) Docker containers
+# with SQLite backend.  ghc_runner will run using the schedule
+# configured in the GHC Web App.
+#
+# Plugins (optional) need to be configured for both Docker containers.
 version: "3"
 
 services:
-  geohealthcheck:
+  ghc_web:
     image: geopython/geohealthcheck:latest
+
+    container_name: ghc_web
+
+    restart: unless-stopped
+
     ports:
       - 8083:80
-#    environment:
-#       GHC_USER_PLUGINS: 'GeoHealthCheck.plugins.user.mywmsprobe,GeoHealthCheck.plugins.user.mywmsprobe2'
+
+    env_file:
+      - ghc.env
+
     volumes:
       - ghc_sqlitedb:/GeoHealthCheck/DB
-      # Optional Plugins, Path on the host, relative to the Compose file
+      # Optional Plugins, using Path on the host, relative to this Compose file
+      # To activate: 2 steps for runner and GHC webapp:
+      # - configure in ghc.env
+      # - mount these as docker volume on host
       # See https://docs.docker.com/compose/compose-file/#volumes
       # - ./../GeoHealthCheck/plugins:/plugins:ro
 
-  geohealthcheck-cron-hourly:
+  ghc_runner:
     image: geopython/geohealthcheck:latest
-    depends_on:
-      - geohealthcheck
 
-    # Override settings to enable email notifications and user Plugins
-#    environment:
-#      LC_ALL: "nl_NL.UTF-8"
-#      LANG: "nl_NL.UTF-8"
-#      LANGUAGE: "nl_NL.UTF-8"
-#      GHC_NOTIFICATIONS: 'true'
-#      GHC_NOTIFICATIONS_VERBOSITY: 'true'
-#      GHC_ADMIN_EMAIL: 'us@gmail.com'
-#      GHC_NOTIFICATIONS_EMAIL: 'us@gmail.com,them@domain.com'
-#      GHC_SMTP_SERVER: 'smtp.gmail.com'
-#      GHC_SMTP_PORT: 587
-#      GHC_SMTP_TLS: 'true'
-#      GHC_SMTP_SSL: 'false'
-#      GHC_SMTP_USERNAME: 'us@gmail.com'
-#      GHC_SMTP_PASSWORD: 'the_passw'
-#      GHC_USER_PLUGINS: 'GeoHealthCheck.plugins.user.mywmsprobe,GeoHealthCheck.plugins.user.mywmsprobe2'
+    container_name: ghc_runner
+
+    restart: unless-stopped
+
+    env_file:
+      - ghc.env
 
     entrypoint:
-      - bash
-      - /cron-jobs-hourly.sh
+      - /run-runner.sh
+
     volumes:
       - ghc_sqlitedb:/GeoHealthCheck/DB
-      # Optional Plugins, Path on the host, relative to the Compose file
+      # Optional Plugins, using Path on the host, relative to this Compose file
+      # To activate 2 steps:
+      # - configure in ghc.env
+      # - mount these as docker volume on host
       # See https://docs.docker.com/compose/compose-file/#volumes
       # - ./../GeoHealthCheck/plugins:/plugins:ro
-    labels:
-      io.ghc-cron-hourly: 'true'
-
-  geohealthcheck-cron-daily:
-    image: geopython/geohealthcheck:latest
-    depends_on:
-      - geohealthcheck
-    entrypoint:
-      - bash
-      - /cron-jobs-daily.sh
-    volumes:
-      - ghc_sqlitedb:/GeoHealthCheck/DB
-    labels:
-      io.ghc-cron-daily: 'true'
-
-  jobber:
-    image: blacklabelops/jobber:docker.v1.1
-    depends_on:
-      - geohealthcheck-cron-hourly
-      - geohealthcheck-cron-daily
-    environment:
-      # May see warnings, see https://github.com/blacklabelops/rsnapshot/issues/2 but ok.
-      JOB_NAME1: ghc-cron-hourly
-      JOB_COMMAND1: docker start $$(docker ps -a -f label=io.ghc-cron-hourly=true --format="{{.ID}}")
-      JOB_TIME1: 0 0 *
-      JOB_NAME2: ghc-cron-daily
-      JOB_COMMAND2: docker start $$(docker ps -a -f label=io.ghc-cron-daily=true --format="{{.ID}}")
-      JOB_TIME2: 0 45 0 *
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
 
 # docker-compose v2+ needs separate volumes section
 volumes:

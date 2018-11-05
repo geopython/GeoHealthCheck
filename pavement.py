@@ -242,7 +242,7 @@ def clean():
 
 @task
 def extract_translations():
-    """extrect translations wrapped in _() or gettext()"""
+    """extract translations wrapped in _() or gettext()"""
 
     pot_dir = path('GeoHealthCheck/translations/en/LC_MESSAGES')
     if not os.path.exists(pot_dir):
@@ -281,6 +281,18 @@ def update_translations():
     call_task('extract_translations')
     sh('pybabel update -i %st -d %s' % (
         options.base.pot, options.base.translations))
+
+
+@task
+def runner_daemon():
+    """Run the HealthCheck runner daemon scheduler"""
+    sh('python GeoHealthCheck/scheduler.py')
+
+
+@task
+def run_healthchecks():
+    """Run all HealthChecks directly"""
+    sh('python GeoHealthCheck/healthcheck.py')
 
 
 def sphinx_make():

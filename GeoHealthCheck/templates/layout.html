@@ -2,7 +2,6 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="refresh" content="{{ next_page_refresh }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{{ config['GHC_SITE_TITLE'] }}">
         <link rel="icon" href="../../favicon.ico">
@@ -107,8 +106,9 @@
                             <i class="fa fa-cog fa-fw"></i>{{ _('Settings') }}
                             <ul class="nav nav-second-level">
                                 <li><a>{{ _('History') }}: {{ config['GHC_RETENTION_DAYS'] }} {{ _('days') }}</a></li>
-                                <li><a>{{ _('Test Frequency') }}: {{ config['GHC_RUN_FREQUENCY'] }}</a></li>
+                                <li><a>{{ _('Runner in Webapp') }}: {{ config['GHC_RUNNER_IN_WEBAPP'] }} </a></li>
                                 <li><a>{{ _('Probe Timeout') }}: {{ config['GHC_PROBE_HTTP_TIMEOUT_SECS'] }} seconds</a></li>
+                                <li><a>{{ _('Minimal Run Freq') }}: {{ config['GHC_MINIMAL_RUN_FREQUENCY_MINS'] }} minutes</a></li>
                                 <li><a id="clockbox"></a></li>
                             </ul>
                         </li>

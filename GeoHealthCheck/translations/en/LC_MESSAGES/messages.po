@@ -381,6 +381,16 @@ msgstr ""
 msgid "Response Times (seconds)"
 msgstr ""
 
+#: GeoHealthCheck/templates/resource.html:60
+#: GeoHealthCheck/templates/edit_resource.html:94
+msgid "minutes"
+msgstr ""
+
+#: GeoHealthCheck/templates/resource.html:58
+#: GeoHealthCheck/templates/edit_resource.html:92
+msgid "Run Every"
+msgstr ""
+
 #: GeoHealthCheck/templates/resource.html:71
 msgid "Min"
 msgstr ""

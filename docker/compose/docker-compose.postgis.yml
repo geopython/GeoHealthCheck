@@ -1,42 +1,86 @@
-# Overrides default docker-compose.yml
-# To run specify both files:
-# sudo docker-compose -f docker-compose.yml -f docker-compose.postgis.yml up [-d]
-
+# GHC Docker setup with Postgres as backend DB.
+#
+# To run:
+# sudo docker-compose -f docker-compose.postgis.yml up [-d]
+#
 version: "3"
 
 services:
-  geohealthcheck:
+  ghc_web:
+    image: geopython/geohealthcheck:latest
+
+    container_name: ghc_web
+
+    restart: unless-stopped
+
+    env_file:
+      - ghc.env
+      - ghc-postgis.env
+
     links:
       - postgis_ghc
+
     depends_on:
       - postgis_ghc
-    environment:
-      - SQLALCHEMY_DATABASE_URI=postgresql://ghc:ghc@postgis_ghc:5432/ghc
 
-  geohealthcheck-cron-daily:
+    ports:
+      - 8083:80
+
+    # volumes:
+      # Optional Plugins, using Path on the host, relative to this Compose file
+      # To activate: 2 steps for runner and GHC webapp:
+      # - configure in ghc.env
+      # - mount these as docker volume on host
+      # See https://docs.docker.com/compose/compose-file/#volumes
+      # - ./../GeoHealthCheck/plugins:/plugins:ro
+
+  ghc_runner:
+    image: geopython/geohealthcheck:latest
+
+    container_name: ghc_runner
+
+    restart: unless-stopped
+
+    env_file:
+      - ghc.env
+      - ghc-postgis.env
+
     links:
       - postgis_ghc
-    environment:
-      - SQLALCHEMY_DATABASE_URI=postgresql://ghc:ghc@postgis_ghc:5432/ghc
 
-  geohealthcheck-cron-hourly:
-    links:
+    depends_on:
       - postgis_ghc
-    environment:
-      - SQLALCHEMY_DATABASE_URI=postgresql://ghc:ghc@postgis_ghc:5432/ghc
+
+    entrypoint:
+      - /run-runner.sh
+
+    # volumes:
+      # Optional Plugins, using Path on the host, relative to this Compose file
+      # To activate 2 steps:
+      # - configure in ghc.env
+      # - mount these as docker volume on host
+      # See https://docs.docker.com/compose/compose-file/#volumes
+      # - ./../GeoHealthCheck/plugins:/plugins:ro
 
   postgis_ghc:
-    image: mdillon/postgis:9.6-alpine
+    image: mdillon/postgis:10-alpine
+
+    container_name: postgis_ghc
+
+    restart: unless-stopped
+
+    env_file:
+      - ghc-postgis.env
+
     volumes:
       - ghc_pgdb:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
+
+# If you ever need to expose PG ports on host externally
+#    ports:
+#      - 5432:5432
+
     expose:
       - 5432
-    environment:
-      - POSTGRES_USER=ghc
-      - POSTGRES_PASSWORD=ghc
-      - POSTGRES_DB=ghc
 
 # docker-compose v2+ needs separate volumes section
 volumes:

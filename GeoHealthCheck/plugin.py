@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from factory import Factory
+import logging
 import inspect
 import collections
 import copy
 from init import App
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(object):
@@ -176,7 +179,7 @@ class Plugin(object):
                             and baseclass != class_obj:
                         add_result(plugin_name, class_obj)
                 except Exception:
-                    print('cannot create obj class=%s' % plugin_name)
+                    LOGGER.warn('cannot create obj class=%s' % plugin_name)
 
         return result
 
