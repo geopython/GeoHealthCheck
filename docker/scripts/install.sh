@@ -5,18 +5,12 @@ virtualenv venv && cd /venv
 . bin/activate
 
 # GHC Source was added in Dockerfile, install
-cd /GeoHealthCheck
-pip install Paver
-pip install sphinx
-
-# For PostGIS support
-pip install psycopg2
-
-# For WSGI server
-# NB we use async workers as some Probes may take a long time
+# NB we use gunicorn/eventlet async workers as some Probes may take a long time
 # e.g. fetching Metadata (Caps) and testing all layers
-pip install -I eventlet
-pip install -I gunicorn
+# Install Python packages for installation and setup
+pip install -I -r /GeoHealthCheck/docker/scripts/requirements.txt
+
+cd /GeoHealthCheck
 
 # Sets up GHC itself
 paver setup

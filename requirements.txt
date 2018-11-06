@@ -4,8 +4,8 @@ Flask-Login==0.2.11
 Flask-Migrate==2.0.3
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
-OWSLib
-Sphinx
+OWSLib==0.17.0
+Sphinx==1.8.1
 requests>=2.20.0
 WTForms==2.1
 APScheduler==3.5.1
