@@ -25,7 +25,7 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_USER_PLUGINS**: list of Plugin classes or modules provided by user (you)
 - **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
 - **GHC_METADATA_CACHE_SECS**: metadata, "Capabilities Docs", cache expiry time, default 900 secs, -1 to disable
-- **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: false)
+- **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: ``True``)
 - **GHC_LOG_LEVEL**: logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING)
 - **GHC_MAP**: default map settings
 

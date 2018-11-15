@@ -74,6 +74,7 @@ Install
   # - GHC_NOTIFICATIONS_EMAIL
   # - GHC_SITE_TITLE
   # - GHC_SITE_URL
+  # - GHC_RUNNER_IN_WEBAPP # see 'running' section below
   # - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled
   # - GHC_MAP  # or use default settings
 
@@ -113,10 +114,17 @@ When running with Docker see the
 `GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
 how to run `paver upgrade` within your Docker Container.
 
+Upgrade notes v0.5.0
+....................
+
+In GHC v0.5.0 a new run-architecture was introduced. By default, healthchecks run under
+the control of an internal scheduler, i.s.o. of external cron-jobs. See also the :ref:`architecture` chapter
+and :ref:`admin_running` and below.
+
 Running
 -------
 
-Start using the built-in ``mod_wsgi`` server:
+Start using Flask's built-in WSGI server:
 
 .. code-block:: bash
 
@@ -125,11 +133,25 @@ Start using the built-in ``mod_wsgi`` server:
   python GeoHealthCheck/app.py 192.168.0.105:8957  # http://192.168.0.105:8957
 
 
+This runs the (Flask) **GHC Webapp**, by default with the **GHC Runner** (scheduled healthchecker) internally.
+See also :ref:`admin_running` for the different options running the **GHC Webapp** and **GHC Runner**. It is
+recommended to run these as separate processes. For this set **GHC_RUNNER_IN_WEBAPP** to `False` in your `site_config.py`.
+From the command-line run both processes, e.g. in background or different terminal sessions:
+
+.. code-block:: bash
+
+  # run GHC Runner, here in background
+  python GeoHealthCheck/scheduler.py &
+
+  # run GHC Webapp for http://localhost:8000
+  python GeoHealthCheck/app.py
+
+
 To enable in Apache, use ``GeoHealthCheck.wsgi`` and configure in Apache
 as per the main Flask documentation.
 
 Running under a sub-path
------------------------------
+------------------------
 
 By default GeoHealthCheck is configured to run under the root directory on the webserver. However, it can be configured to run under a sub-path. The method for doing this depends on the webserver you are using, but the general requirement is to pass Flask's ``SCRIPT_NAME`` environment variable when GeoHealthCheck is started. 
 
@@ -141,10 +163,56 @@ Below is an example of how to use nginx and gunicorn to run GeoHealthCheck in a 
  
     location /geohealthcheck {
       proxy_pass http://127.0.0.1:8000/geohealthcheck;
-      }
+    }
       
 - Include the parameter "-e SCRIPT_NAME=/geohealthcheck" in your command for running gunicorn:
 
 .. code-block:: bash
   
     gunicorn -e SCRIPT_NAME=/geohealthcheck app:app
+
+Production Recommendations
+--------------------------
+
+Use Docker!
+...........
+
+When running GHC in long-term production environment the following is recommended:
+
+* use Docker, see the `GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/tree/master/docker>`_
+
+Using Docker, especially with Docker Compose (sample files provided) is our #1 recommendation. It saves
+all the hassle from installing the requirements, upgrades etc. Docker (Compose) is also used to run the GHC demo site
+and almost all of our other deployments.
+
+Use PostgreSQL
+..............
+
+Although GHC will work with `SQLite`, this is not a good option for production use, in particular
+for reliability starting with GHC v0.5.0:
+
+* reliability:  **GHC Runner** will do concurrent updates to the database, this will be unreliable under `SQLite`
+* performance: PostgreSQL has been proven superior, especially in query-performance
+
+Use a WSGI Server
+.................
+
+Although GHC can be run from the commandline using the Flask internal WSGI web-server, this
+is a fragile and possibly insecure option in production use (as also the Flask manual states).
+Best is to use a WSGI-server as stated in the `Flask deployment options <http://flask.pocoo.org/docs/1.0/deploying/#deployment>`_.
+
+See for example the `GHC Docker run.sh <https://github.com/geopython/GeoHealthCheck/blob/master/docker/scripts/run-web.sh>`_
+script to run the GHC Webapp with `gunicorn` and the `GHC Runner run-runner.sh <https://github.com/geopython/GeoHealthCheck/blob/master/docker/scripts/run-runner.sh>`_ script
+to run the scheduled healthchecks.
+
+Use virtualenv
+..............
+
+This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`!
+
+Use SSL (HTTPS)
+...............
+
+As users and admin may login, running on plain http will send passwords in the clear.
+These days it has become almost trivial to automatically install SSL certificates
+with `Let's Encrypt <https://letsencrypt.org/>`_.

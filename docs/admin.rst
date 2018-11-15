@@ -110,11 +110,13 @@ The following aspects of a `Resource` can be edited:
 
 By default, when resource is created, owner's email will be added to notifications, however, resource can have arbitrary number or emails to notify.
 
+.. _admin_running:
+
 Running Healthchecks
 --------------------
 
 Healthchecks (Runs) for each Resource can be scheduled via `cron` or
-(since v0.5.0) by running the **GHC Runner** app standalone (as daemon)
+(starting with v0.5.0) by running the **GHC Runner** app standalone (as daemon)
 or within the **GHC Webapp**.
 
 Scheduling via Cron
@@ -139,10 +141,18 @@ GHC Runner as Daemon
 In this mode GHC applies internal scheduling for each individual `Resource`.
 This is the preferred mode as each `Resource` can have its own schedule (configurable
 via Dashboard) and `cron` has dependencies on local environment.
-Later versions may phase out cron-scheduling.
-The **GHC Runner** can be run via the command `paver runner_daemon` or internally within
-the **GHC Webapp** by setting the config variable **GHC_RUNNER_IN_WEBAPP** to True.
+Later versions may phase out cron-scheduling completely.
 
+The **GHC Runner** can be run via the command `paver runner_daemon` or can run internally within
+the **GHC Webapp** by setting the config variable **GHC_RUNNER_IN_WEBAPP** to `True` (the default).
+NB it is still possible to run GHC as in the pre-v0.5.0 mode using cron-jobs: just run the
+**GHC Webapp** with **GHC_RUNNER_IN_WEBAPP** set to `False` and have your cron-jobs scheduled.
+
+In summary there are three options to run GHC and its healthchecks:
+
+* run **GHC Runner** within the **GHC Webapp**: set **GHC_RUNNER_IN_WEBAPP** to `True` and run only the GHC webapp
+* (recommended): run **GHC Webapp** and **GHC Runner** separately (set **GHC_RUNNER_IN_WEBAPP** to `False`)
+* (deprecated): run **GHC Webapp** with **GHC_RUNNER_IN_WEBAPP** set to `False` and schedule healthchecks via external cron-jobs
 
 Build Documentation
 -------------------
