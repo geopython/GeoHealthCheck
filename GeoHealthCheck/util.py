@@ -35,6 +35,7 @@ import smtplib
 from urllib2 import urlopen
 from urlparse import urlparse
 from gettext import translation
+from passlib.hash import pbkdf2_sha256
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -48,6 +49,16 @@ def average(values):
         return float(sum(values) / len(values))
     except ZeroDivisionError:
         return 0
+
+
+def create_hash(string):
+    # https://passlib.readthedocs.io/en/stable/narr/hash-tutorial.html
+    return pbkdf2_sha256.hash(string)
+
+
+def verify_hash(hash1, hash2):
+    # https://passlib.readthedocs.io/en/stable/narr/hash-tutorial.html
+    return pbkdf2_sha256.verify(hash1, hash2)
 
 
 def percentage(number, total):

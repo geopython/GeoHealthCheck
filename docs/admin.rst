@@ -55,12 +55,55 @@ a REST API, for example:
 
 NB for detailed reporting data only JSON is supported.
 
+.. _admin_user_mgt:
+
 User Management
 ---------------
 
 On setup a single `admin` user is created interactively.
 
 Via the **GHC_SELF_REGISTER** config setting, you allow/disallow registrations from users on the website.
+
+Passwords
+.........
+
+Passwords are stored encrypted. Even the same password-string will have different "hashes".
+There is no way that GHC can decrypt a stored password. This can become a challenge in cases where
+a password is forgotten and somehow the email-based reset is not available nor working.
+In that case, password-hashes can be created from the command-line using the Python library `passlib <https://passlib.readthedocs.io/en/stable/>`_
+within an interactive Python-shell as follows: ::
+
+	$ pip install passlib
+	# or in Debian/Ubuntu: apt-get install python-passlib
+
+	pythonfrom passlib.hash import pbkdf2_sha256
+	>>>
+	>>> hash = pbkdf2_sha256.hash("mynewpassword")
+	>>> print hash
+	$pbkdf2-sha256$29000$da51rlVKKWVsLSWEsBYCoA$2/shIdqAxGJkDq6TTeIOgQKbtYAOPSi5EA3TDij1L6Y
+	>>> pbkdf2_sha256.verify("mynewpassword", hash)
+	True
+
+Or more compact within the root dir of your GHC installation: ::
+
+	>>> from GeoHealthCheck.util import create_hash
+	>>> create_hash('mynewpassword')
+	'$pbkdf2-sha256$29000$8X4PAUAIAcC4V2rNea9Vqg$XnMx1SfEiBzBAMOQOOC7uxCcyzVuKaHENLj3IfXvfu0'
+
+Or even more compact within the root dir of your GHC installation via Paver: ::
+
+	$ paver create_hash -p mypass
+	---> pavement.create_hash
+	Copy/paste the entire token below for example to set password
+	$pbkdf2-sha256$29000$FkJoTYnxPqc0pjQG4HxP6Q$C3SZb8jqtM7zKS1DSLcouc/CL9XMI9cL5xT6DRTOEd4
+
+Then copy-paste the hash-string into the `password`-field of the User-record in the User-table. For example in SQL something like: ::
+
+	$ sqlite3 data.db
+	# or psql equivalent for Postgres
+
+	sqlite> UPDATE user SET password = '<above hash-value>' WHERE username == 'myusername';
+
 
 Adding Resources
 ----------------
@@ -159,6 +202,25 @@ Build Documentation
 
 Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``.
 In there, type ''make html'' plus ENTER and the documentation should be built locally.
+
+Email Configuration
+-------------------
+
+A working email-configuration is required for notifications and password recovery.
+This can sometimes be tricky, below is a working configuration for the Gmail account
+`my_gmail_name@gmail.com`. ::
+
+	GHC_SMTP = {
+	    'server': 'smtp.gmail.com',
+	    'port': 587,
+	    'tls': True,
+	    'ssl': False,
+	    'username': 'my_gmail_name@gmail.com',
+	    'password': '<my gmail password>'
+	}
+
+Then in your Google Account settings for that email address you should turn on *"Allow less secure apps"*
+as `explained here <https://support.google.com/accounts/answer/6010255>`_.
 
 GeoNode Resource Type Notes
 ---------------------------

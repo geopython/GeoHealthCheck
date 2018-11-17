@@ -184,6 +184,24 @@ def create(options):
 
 
 @task
+@cmdopts([
+    ('password=', 'p', 'password')
+])
+def create_hash(options):
+    """
+    Create hash, mainly for passwords.
+    Usage: paver create_hash -p mypass
+    """
+
+    import sys
+    sys.path.insert(0, BASEDIR)
+    from GeoHealthCheck.util import create_hash
+    token = create_hash(options.get('password', None))
+    info('Copy/paste the entire token below for example to set password')
+    info(token)
+
+
+@task
 def upgrade():
     """upgrade database if changed; be sure to backup first!"""
 
@@ -248,7 +266,7 @@ def extract_translations():
     if not os.path.exists(pot_dir):
         pot_dir.makedirs()
 
-    sh('pybabel extract -F babel.cfg -o %st GeoHealthCheck' % options.base.pot)
+    sh('pybabel extract -F babel.cfg -o %s GeoHealthCheck' % options.base.pot)
 
 
 @task
@@ -279,7 +297,7 @@ def update_translations():
     """update language strings"""
 
     call_task('extract_translations')
-    sh('pybabel update -i %st -d %s' % (
+    sh('pybabel update -i %s -d %s' % (
         options.base.pot, options.base.translations))
 
 

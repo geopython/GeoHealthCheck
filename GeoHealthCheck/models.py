@@ -32,6 +32,7 @@ import json
 import logging
 from flask_babel import gettext as _
 from datetime import datetime, timedelta
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy import func, and_
 
 from sqlalchemy.orm import deferred
@@ -44,13 +45,13 @@ from init import App
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 
+APP = App.get_app()
 DB = App.get_db()
 LOGGER = logging.getLogger(__name__)
 
 
 # Complete handle of old runs deletion
 def flush_runs():
-    APP = App.get_app()
     retention_days = int(APP.config['GHC_RETENTION_DAYS'])
     LOGGER.info('Flushing runs older than %d days' % retention_days)
     all_runs = Run.query.all()
@@ -585,7 +586,12 @@ class ResourceLock(DB.Model):
 
 
 class User(DB.Model):
-    """user accounts"""
+    """
+    user accounts.
+    Token handling thanks to:
+    https://navaspot.wordpress.com/2014/06/25/\
+              how-to-implement-forgot-password-feature-in-flask/
+    """
 
     identifier = DB.Column('user_id', DB.Integer, primary_key=True,
                            autoincrement=True)
@@ -598,10 +604,21 @@ class User(DB.Model):
 
     def __init__(self, username, password, email, role='user'):
         self.username = username
-        self.password = password
+        self.set_password(password)
         self.email = email
         self.role = role
         self.registered_on = datetime.utcnow()
+
+    def authenticate(self, password):
+        return util.verify_hash(password, self.password)
+
+    def encrypt(self, string):
+        # https://passlib.readthedocs.io/en/stable/narr/hash-tutorial.html
+        return util.create_hash(string)
+
+    def get_token(self, expiration=7200):
+        s = Serializer(APP.config['SECRET_KEY'], expiration)
+        return s.dumps({'user': self.get_id()}).decode('utf-8')
 
     def is_authenticated(self):
         return True
@@ -614,6 +631,21 @@ class User(DB.Model):
 
     def get_id(self):
         return unicode(self.identifier)
+
+    def set_password(self, password):
+        self.password = self.encrypt(password)
+
+    @staticmethod
+    def verify_token(token):
+        s = Serializer(APP.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except Exception:
+            return None
+        user_id = data.get('user')
+        if user_id:
+            return User.query.get(user_id)
+        return None
 
     def __repr__(self):
         return '<User %r>' % (self.username)
