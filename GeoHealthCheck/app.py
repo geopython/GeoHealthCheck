@@ -928,13 +928,13 @@ def reset(token=None):
     if registered_user is None:
         LOGGER.warn('Cannot find User from token: %s' % token)
         flash(gettext('Invalid token'), 'danger')
-        return redirect(url_for('reset', lang=g.current_lang))
+        return redirect(url_for('login', lang=g.current_lang))
 
     # Valid user: change password from form-value
     password = request.form['password']
     if not password:
         flash(gettext('Password required'), 'danger')
-        return redirect(url_for('reset', lang=g.current_lang))
+        return redirect(url_for('reset/%s' % token, lang=g.current_lang))
     registered_user.set_password(password)
     DB.session.add(registered_user)
 
