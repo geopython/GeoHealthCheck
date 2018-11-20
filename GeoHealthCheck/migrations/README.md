@@ -21,8 +21,13 @@ Whenever a change in the database schema or table content
 conventions has changed a new migration should be created via the command.
 
 	python manage.py db migrate
+
+Where `migrate` is an alias for `revision --autogenerate`. 
+Alternatively if the autogeneration does not work, create an empty migration: 
+
+	python manage.py db revision
 	
-This will create a new revision and a `<revision_number>_.py` file 
+In both cases this will create a new revision and a `<revision_number>_.py` file 
 under `versions/` to upgrade
 to that revision. After this command that `.py` file should be inspected 
 and modified where needed. In particular Postgres installations using the

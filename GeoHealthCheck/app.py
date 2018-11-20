@@ -47,7 +47,7 @@ from init import App
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
-from util import render_template2, send_email, geocode
+from util import send_email, geocode
 import views
 
 # Module globals for convenience
@@ -437,11 +437,21 @@ def register():
         msg2 = gettext('Please contact')
         msg = '%s.  %s %s' % (msg1, msg2,
                               CONFIG['GHC_ADMIN_EMAIL'])
+        flash('%s' % msg, 'danger')
         return render_template('register.html', errmsg=msg)
     if request.method == 'GET':
         return render_template('register.html')
+
+    # Check for existing user or email
+    user = User.query.filter_by(username=request.form['username']).first()
+    email = User.query.filter_by(email=request.form['email']).first()
+    if user or email:
+        flash('%s' % gettext('Invalid username or email'), 'danger')
+        return render_template('register.html')
+
     user = User(request.form['username'],
                 request.form['password'], request.form['email'])
+
     DB.session.add(user)
     try:
         DB.session.commit()
@@ -810,11 +820,25 @@ def login():
         return render_template('login.html')
     username = request.form['username']
     password = request.form['password']
-    registered_user = User.query.filter_by(username=username,
-                                           password=password).first()
-    if registered_user is None:
+    registered_user = User.query.filter_by(username=username).first()
+    authenticated = False
+    if registered_user:
+        # May not have upgraded to pw encryption: warn
+        if len(registered_user.password) < 80:
+            msg = 'Please upgrade GHC to encrypted passwords first, see docs!'
+            flash(gettext(msg), 'danger')
+            return redirect(url_for('login', lang=g.current_lang))
+
+        try:
+            authenticated = registered_user.authenticate(password)
+        finally:
+            pass
+
+    if not authenticated:
         flash(gettext('Invalid username and / or password'), 'danger')
         return redirect(url_for('login', lang=g.current_lang))
+
+    # Login ok
     login_user(registered_user)
 
     if 'next' in request.args:
@@ -833,34 +857,98 @@ def logout():
         return redirect(url_for('home', lang=g.current_lang))
 
 
-@APP.route('/recover', methods=['GET', 'POST'])
-def recover():
-    """recover"""
+@APP.route('/reset_req', methods=['GET', 'POST'])
+def reset_req():
+    """
+    Reset password request handling.
+    """
     if request.method == 'GET':
-        return render_template('recover_password.html')
-    username = request.form['username']
-    registered_user = User.query.filter_by(username=username, ).first()
+        return render_template('reset_password_request.html')
+
+    # Reset request form with email
+    email = request.form['email']
+    registered_user = User.query.filter_by(email=email).first()
     if registered_user is None:
-        flash(gettext('Invalid username'), 'danger')
-        return redirect(url_for('recover', lang=g.current_lang))
+        LOGGER.warn('Invalid email for reset_req: %s' % email)
+        flash(gettext('Invalid email'), 'danger')
+        return redirect(url_for('reset', lang=g.current_lang))
 
-    fromaddr = '%s <%s>' % (CONFIG['GHC_SITE_TITLE'],
-                            CONFIG['GHC_ADMIN_EMAIL'])
-    toaddr = registered_user.email
+    # Generate reset url using user-specific token
+    token = registered_user.get_token()
+    reset_url = '%s/reset/%s' % (CONFIG['GHC_SITE_URL'], token)
 
-    template_vars = {
-        'config': CONFIG,
-        'password': registered_user.password
-    }
-    msg = render_template2('recover_password_email.txt', template_vars)
+    # Create message body with reset link
+    msg_body = render_template('reset_password_email.txt',
+                               lang=g.current_lang, config=CONFIG,
+                               reset_url=reset_url)
 
-    send_email(CONFIG['GHC_SMTP'], fromaddr, toaddr, msg)
+    try:
+        from email.mime.text import MIMEText
+        from email.utils import formataddr
+        msg = MIMEText(msg_body, 'plain', 'utf-8')
+        msg['From'] = formataddr((CONFIG['GHC_SITE_TITLE'],
+                                  CONFIG['GHC_ADMIN_EMAIL']))
+        msg['To'] = registered_user.email
+        msg['Subject'] = '[%s] %s' % (CONFIG['GHC_SITE_TITLE'],
+                                      gettext('reset password'))
 
-    flash(gettext('Password sent via email'), 'success')
+        from_addr = '%s <%s>' % (CONFIG['GHC_SITE_TITLE'],
+                                 CONFIG['GHC_ADMIN_EMAIL'])
+
+        to_addr = registered_user.email
+
+        msg_text = msg.as_string()
+        send_email(CONFIG['GHC_SMTP'], from_addr, to_addr, msg_text)
+    except Exception as err:
+        msg = 'Cannot send email. Contact admin: '
+        LOGGER.warn(msg + ' err=' + str(err))
+        flash(gettext(msg) + CONFIG['GHC_ADMIN_EMAIL'], 'danger')
+        return redirect(url_for('login', lang=g.current_lang))
+
+    flash(gettext('Password reset link sent via email'), 'success')
 
     if 'next' in request.args:
         return redirect(request.args.get('next'))
     return redirect(url_for('home', lang=g.current_lang))
+
+
+@APP.route('/reset/<token>', methods=['GET', 'POST'])
+def reset(token=None):
+    """
+    Reset password submit form handling.
+    """
+    if token is None:
+        return redirect(url_for('reset_req', lang=g.current_lang))
+
+    if request.method == 'GET':
+        return render_template('reset_password_form.html')
+
+    # Reset form requested via token URL
+    registered_user = User.verify_token(token)
+    if registered_user is None:
+        LOGGER.warn('Cannot find User from token: %s' % token)
+        flash(gettext('Invalid token'), 'danger')
+        return redirect(url_for('login', lang=g.current_lang))
+
+    # Valid user: change password from form-value
+    password = request.form['password']
+    if not password:
+        flash(gettext('Password required'), 'danger')
+        return redirect(url_for('reset/%s' % token, lang=g.current_lang))
+    registered_user.set_password(password)
+    DB.session.add(registered_user)
+
+    try:
+        DB.session.commit()
+        flash(gettext('Update password OK'), 'success')
+    except Exception as err:
+        msg = 'Update password failed!'
+        LOGGER.warn(msg + ' err=' + str(err))
+        DB.session.rollback()
+        flash(gettext(msg), 'danger')
+
+    # Finally redirect user to login page
+    return redirect(url_for('login', lang=g.current_lang))
 
 
 #

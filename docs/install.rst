@@ -111,7 +111,7 @@ Notes:
   - assign `Probes` and `Checks` to each `Resource` via the UI
 
 When running with Docker see the
-`GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
+`Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
 how to run `paver upgrade` within your Docker Container.
 
 Upgrade notes v0.5.0
@@ -120,6 +120,15 @@ Upgrade notes v0.5.0
 In GHC v0.5.0 a new run-architecture was introduced. By default, healthchecks run under
 the control of an internal scheduler, i.s.o. of external cron-jobs. See also the :ref:`architecture` chapter
 and :ref:`admin_running` and below.
+
+Upgrade notes v0.6.0
+....................
+
+In GHC v0.6.0 encryption was added for password storage. Existing passwords should be migrated via
+the `paver upgrade` command. Also password recovery was changed: a user can create a new password via
+a unique, personal URL that GHC sends by email. This requires a working email configuration and a reachable
+`SITE_URL` config value. See :ref:`admin_user_mgt` for solving password problems.
+
 
 Running
 -------
