@@ -871,7 +871,7 @@ def reset_req():
     if registered_user is None:
         LOGGER.warn('Invalid email for reset_req: %s' % email)
         flash(gettext('Invalid email'), 'danger')
-        return redirect(url_for('reset', lang=g.current_lang))
+        return redirect(url_for('reset_req', lang=g.current_lang))
 
     # Generate reset url using user-specific token
     token = registered_user.get_token()
@@ -880,7 +880,8 @@ def reset_req():
     # Create message body with reset link
     msg_body = render_template('reset_password_email.txt',
                                lang=g.current_lang, config=CONFIG,
-                               reset_url=reset_url)
+                               reset_url=reset_url,
+                               username=registered_user.username)
 
     try:
         from email.mime.text import MIMEText
@@ -917,20 +918,23 @@ def reset(token=None):
     """
     Reset password submit form handling.
     """
+
+    # Must have at least a token to proceed.
     if token is None:
         return redirect(url_for('reset_req', lang=g.current_lang))
 
-    if request.method == 'GET':
-        return render_template('reset_password_form.html')
-
-    # Reset form requested via token URL
+    # Token received: verify if ok, may also time-out.
     registered_user = User.verify_token(token)
     if registered_user is None:
         LOGGER.warn('Cannot find User from token: %s' % token)
         flash(gettext('Invalid token'), 'danger')
         return redirect(url_for('login', lang=g.current_lang))
 
-    # Valid user: change password from form-value
+    # Token and user ok: return reset form.
+    if request.method == 'GET':
+        return render_template('reset_password_form.html')
+
+    # Valid token and user: change password from form-value
     password = request.form['password']
     if not password:
         flash(gettext('Password required'), 'danger')
