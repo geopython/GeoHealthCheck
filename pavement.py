@@ -70,7 +70,7 @@ def setup():
         data_dir = options.base.instance / 'data'
         data_dir.mkdir()
         # data_dir.chmod(0777) gives failure on Python 2.7 Paver 1.2.1
-        os.chmod(path(data_dir), 0777)
+        os.chmod(path(data_dir), 0o777)
         # setup config
         config_file.copy(config_site)
 
@@ -180,7 +180,7 @@ def create(options):
 
     if all([username, password, email]):
         args = '%s %s %s' % (username, password, email)
-    sh('python GeoHealthCheck/models.py create %s' % args)
+    sh('python %s create %s' % (path('GeoHealthCheck/models.py'), args))
 
 
 @task
@@ -241,9 +241,8 @@ def refresh_docs():
     with pushd(options.base.docs):
         sh('%s clean' % make)
         sh('%s html' % make)
-        sh('mkdir %s' % options.base.static_docs)
-        sh('cp -rp %s/docs/_build/html/* %s' % (BASEDIR,
-                                                options.base.static_docs))
+        source_html_dir = path('%s/docs/_build/html' % BASEDIR)
+        source_html_dir.copytree(options.base.static_docs)
 
 
 @task
@@ -304,13 +303,13 @@ def update_translations():
 @task
 def runner_daemon():
     """Run the HealthCheck runner daemon scheduler"""
-    sh('python GeoHealthCheck/scheduler.py')
+    sh('python %s' % path('GeoHealthCheck/scheduler.py'))
 
 
 @task
 def run_healthchecks():
     """Run all HealthChecks directly"""
-    sh('python GeoHealthCheck/healthcheck.py')
+    sh('python %s' % path('GeoHealthCheck/healthcheck.py'))
 
 
 def sphinx_make():
