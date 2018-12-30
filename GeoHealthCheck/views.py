@@ -107,6 +107,18 @@ def get_resource_by_id(identifier):
         identifier=identifier).first_or_404()
 
 
+def get_run_by_id(identifier):
+    """return one Run by identifier"""
+    return models.Run.query.filter_by(
+        identifier=identifier).first_or_404()
+
+
+def get_run_by_resource_id(identifier):
+    """return one Run by identifier"""
+    return models.Run.query.filter_by(
+        resource_identifier=identifier)
+
+
 def get_resource_types_counts():
     """return frequency counts of registered resource types"""
 

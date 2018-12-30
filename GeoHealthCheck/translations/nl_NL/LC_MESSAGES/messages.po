@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
-"POT-Creation-Date: 2018-11-17 16:34+0100\n"
+"POT-Creation-Date: 2018-12-30 15:51+0100\n"
 "PO-Revision-Date: 2015-07-25 19:57+0200\n"
 "Last-Translator: Just van den Broecke <justb4@gmail.com>\n"
 "Language: nl_NL\n"
@@ -14,64 +14,64 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: GeoHealthCheck/app.py:437
+#: GeoHealthCheck/app.py:436
 msgid "This site is not configured for self-registration"
 msgstr "Deze site is niet geconfigureerd voor zelf-registratie"
 
-#: GeoHealthCheck/app.py:438
+#: GeoHealthCheck/app.py:437
 msgid "Please contact"
 msgstr "Contacteer"
 
-#: GeoHealthCheck/app.py:450
+#: GeoHealthCheck/app.py:449
 msgid "Invalid username or email"
 msgstr "Ongeldige naam of email"
 
-#: GeoHealthCheck/app.py:463
+#: GeoHealthCheck/app.py:462
 msgid "already registered"
 msgstr "reeds geregistreerd"
 
-#: GeoHealthCheck/app.py:486
+#: GeoHealthCheck/app.py:485
 msgid "No resources detected"
 msgstr "Geen resources gevonden"
 
-#: GeoHealthCheck/app.py:500
+#: GeoHealthCheck/app.py:499
 msgid "Service already registered"
 msgstr "Service reeds geregistreerd"
 
-#: GeoHealthCheck/app.py:572
+#: GeoHealthCheck/app.py:571
 msgid "Services registered"
 msgstr "Service geregistreerd"
 
-#: GeoHealthCheck/app.py:692 GeoHealthCheck/app.py:721
-#: GeoHealthCheck/app.py:748
+#: GeoHealthCheck/app.py:691 GeoHealthCheck/app.py:720
+#: GeoHealthCheck/app.py:747
 msgid "Resource not found"
 msgstr "Bron niet gevonden"
 
-#: GeoHealthCheck/app.py:701
+#: GeoHealthCheck/app.py:700
 msgid "INFO"
 msgstr "INFO"
 
-#: GeoHealthCheck/app.py:704 GeoHealthCheck/templates/edit_resource.html:360
+#: GeoHealthCheck/app.py:703 GeoHealthCheck/templates/edit_resource.html:360
 msgid "ERROR"
 msgstr "FOUT"
 
-#: GeoHealthCheck/app.py:707
+#: GeoHealthCheck/app.py:706
 msgid "Resource tested successfully"
 msgstr "Bron succesvol getest"
 
-#: GeoHealthCheck/app.py:742
+#: GeoHealthCheck/app.py:741
 msgid "You do not have access to delete this resource"
 msgstr "U heeft geen permissie om deze bron te verwijderen"
 
-#: GeoHealthCheck/app.py:756
+#: GeoHealthCheck/app.py:755
 msgid "Resource deleted"
 msgstr "Bron verwijderd"
 
-#: GeoHealthCheck/app.py:839
+#: GeoHealthCheck/app.py:838
 msgid "Invalid username and / or password"
 msgstr "Foutieve gebruikersnaam en / of wachtwoord"
 
-#: GeoHealthCheck/app.py:854
+#: GeoHealthCheck/app.py:853
 msgid "Logged out"
 msgstr "Uitgelogd"
 
@@ -79,33 +79,25 @@ msgstr "Uitgelogd"
 msgid "Invalid email"
 msgstr "Ongeldig email adres"
 
-#: GeoHealthCheck/app.py:892
+#: GeoHealthCheck/app.py:894
 msgid "reset password"
 msgstr "reset wachtwoord"
 
-#: GeoHealthCheck/app.py:902
-msgid "Cannot send email. Contact admin: "
-msgstr "Kan geen email versturen. Contacteer admin: "
-
-#: GeoHealthCheck/app.py:906
+#: GeoHealthCheck/app.py:909
 msgid "Password reset link sent via email"
 msgstr "Wachtwoord reset link verzonden per email"
 
-#: GeoHealthCheck/app.py:927
+#: GeoHealthCheck/app.py:930
 msgid "Invalid token"
 msgstr "Ongeldig token"
 
-#: GeoHealthCheck/app.py:933
+#: GeoHealthCheck/app.py:940
 msgid "Password required"
 msgstr "Wachtwoord vereist"
 
-#: GeoHealthCheck/app.py:940
+#: GeoHealthCheck/app.py:947
 msgid "Update password OK"
 msgstr "Update wachtwoord OK"
-
-#: GeoHealthCheck/app.py:943
-msgid "Update password failed!"
-msgstr "Update wachtwoord heeft gefaald"
 
 #: GeoHealthCheck/healthcheck.py:140
 msgid "Invalid resource type"
@@ -167,12 +159,12 @@ msgstr "Bewerken"
 
 #: GeoHealthCheck/templates/edit_resource.html:10
 #: GeoHealthCheck/templates/includes/resources_list.html:4
-#: GeoHealthCheck/templates/resource.html:26
+#: GeoHealthCheck/templates/resource.html:23
 msgid "Type"
 msgstr "Type"
 
 #: GeoHealthCheck/templates/edit_resource.html:15
-#: GeoHealthCheck/templates/resource.html:30
+#: GeoHealthCheck/templates/resource.html:27
 msgid "Active"
 msgstr "Aktief"
 
@@ -197,29 +189,28 @@ msgid "Optionally, enter payload as list of key=value lines or JSON object."
 msgstr "Optioneel voeg payload toe als lijst van key=value paren of JSON object"
 
 #: GeoHealthCheck/templates/edit_resource.html:66
-#: GeoHealthCheck/templates/resource.html:34
+#: GeoHealthCheck/templates/resource.html:31
 msgid "Owner"
 msgstr "Eigenaar"
 
 #: GeoHealthCheck/templates/edit_resource.html:71
 #: GeoHealthCheck/templates/includes/resources_list.html:5
-#: GeoHealthCheck/templates/resource.html:39
+#: GeoHealthCheck/templates/resource.html:36
 msgid "Name"
 msgstr "Naam"
 
 #: GeoHealthCheck/templates/edit_resource.html:92
-#: GeoHealthCheck/templates/resource.html:58
+#: GeoHealthCheck/templates/resource.html:55
 msgid "Run Every"
 msgstr "Run Elke"
 
 #: GeoHealthCheck/templates/edit_resource.html:94
-#: GeoHealthCheck/templates/resource.html:60
+#: GeoHealthCheck/templates/resource.html:57
 msgid "minutes"
 msgstr "minuten"
 
 #: GeoHealthCheck/templates/edit_resource.html:120
 #: GeoHealthCheck/templates/includes/resources_list.html:7
-#: GeoHealthCheck/templates/resource.html:121
 msgid "Status"
 msgstr "Status"
 
@@ -254,7 +245,7 @@ msgid "Delete"
 msgstr "Verwijder"
 
 #: GeoHealthCheck/templates/edit_resource.html:404
-#: GeoHealthCheck/templates/resource.html:146
+#: GeoHealthCheck/templates/resource.html:149
 msgid "Delete resource"
 msgstr "Verwijder bron"
 
@@ -272,74 +263,73 @@ msgstr "Geen"
 
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:109
 #: GeoHealthCheck/templates/includes/probe_info.html:95
-#: GeoHealthCheck/templates/layout.html:41
+#: GeoHealthCheck/templates/layout.html:40
 msgid "Add"
 msgstr "Voeg Toe"
 
-#: GeoHealthCheck/templates/layout.html:56
+#: GeoHealthCheck/templates/layout.html:55
 #: GeoHealthCheck/templates/login.html:5
 msgid "Login"
 msgstr "Inloggen"
 
-#: GeoHealthCheck/templates/layout.html:59
+#: GeoHealthCheck/templates/layout.html:58
 msgid "Language"
 msgstr "Taal"
 
-#: GeoHealthCheck/templates/layout.html:66
+#: GeoHealthCheck/templates/layout.html:65
 msgid "Help"
 msgstr "Help"
 
-#: GeoHealthCheck/templates/layout.html:76
+#: GeoHealthCheck/templates/layout.html:75
 msgid "Resource Types"
 msgstr "Bron Typen"
 
-#: GeoHealthCheck/templates/layout.html:85
-#: GeoHealthCheck/templates/layout.html:100
+#: GeoHealthCheck/templates/layout.html:84
+#: GeoHealthCheck/templates/layout.html:99
 msgid "Show All"
 msgstr "Allen Tonen"
 
-#: GeoHealthCheck/templates/layout.html:91
+#: GeoHealthCheck/templates/layout.html:90
 msgid "Tags"
 msgstr "Tags"
 
-#: GeoHealthCheck/templates/layout.html:106
+#: GeoHealthCheck/templates/layout.html:105
 msgid "Settings"
 msgstr "Instellingen"
 
-#: GeoHealthCheck/templates/layout.html:108
-#: GeoHealthCheck/templates/resource.html:114
+#: GeoHealthCheck/templates/layout.html:107
+#: GeoHealthCheck/templates/resource.html:110
 msgid "History"
 msgstr "Historie"
 
-#: GeoHealthCheck/templates/layout.html:108
+#: GeoHealthCheck/templates/layout.html:107
 msgid "days"
 msgstr "dagen"
 
-#: GeoHealthCheck/templates/layout.html:109
+#: GeoHealthCheck/templates/layout.html:108
 msgid "Runner in Webapp"
 msgstr "Runner in Webapp"
 
-#: GeoHealthCheck/templates/layout.html:110
+#: GeoHealthCheck/templates/layout.html:109
 msgid "Probe Timeout"
 msgstr "Probe timeout"
 
-#: GeoHealthCheck/templates/layout.html:111
+#: GeoHealthCheck/templates/layout.html:110
 msgid "Minimal Run Freq"
 msgstr "Minimale Run Freq"
 
-#: GeoHealthCheck/templates/layout.html:132
+#: GeoHealthCheck/templates/layout.html:131
 #: GeoHealthCheck/templates/opensearch_description.xml:11
 msgid "Powered by"
 msgstr "Aangedreven door"
 
 #: GeoHealthCheck/templates/login.html:7
-#: GeoHealthCheck/templates/recover_password.html:7
 #: GeoHealthCheck/templates/register.html:8
+#: GeoHealthCheck/templates/reset_password_email.txt:9
 msgid "Username"
 msgstr "Gebruikersnaam"
 
 #: GeoHealthCheck/templates/login.html:8
-#: GeoHealthCheck/templates/recover_password_email.txt:6
 #: GeoHealthCheck/templates/register.html:9
 #: GeoHealthCheck/templates/reset_password_form.html:7
 msgid "Password"
@@ -359,13 +349,11 @@ msgid "Forgot password?"
 msgstr "Wachtwoord vergeten?"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
-#: GeoHealthCheck/templates/recover_password_email.txt:4
 #: GeoHealthCheck/templates/reset_password_email.txt:1
 msgid "Hi: this is an automated message from the"
 msgstr "Hallo: dit is een automatisch bericht van de"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
-#: GeoHealthCheck/templates/recover_password_email.txt:4
 #: GeoHealthCheck/templates/reset_password_email.txt:1
 msgid "service"
 msgstr "service"
@@ -383,30 +371,16 @@ msgid "Resource URL"
 msgstr "Bron URL"
 
 #: GeoHealthCheck/templates/notification_email.txt:12
-#: GeoHealthCheck/templates/resource.html:119
+#: GeoHealthCheck/templates/resource.html:117
+#: GeoHealthCheck/templates/resource.html:165
 msgid "Date"
 msgstr "Datum"
 
 #: GeoHealthCheck/templates/notification_email.txt:14
-#: GeoHealthCheck/templates/resource.html:101
+#: GeoHealthCheck/templates/resource.html:98
+#: GeoHealthCheck/templates/resource.html:125
 msgid "Message"
 msgstr "Bericht"
-
-#: GeoHealthCheck/templates/recover_password.html:5
-msgid "Recover Password"
-msgstr "Herstel wachtwoord"
-
-#: GeoHealthCheck/templates/recover_password.html:10
-msgid "Recover password via email"
-msgstr "Herstel wachtwoord via email"
-
-#: GeoHealthCheck/templates/recover_password_email.txt:1
-msgid "Subject"
-msgstr "Onderwerp"
-
-#: GeoHealthCheck/templates/recover_password_email.txt:1
-msgid "recover password"
-msgstr "herstel wachtwoord"
 
 #: GeoHealthCheck/templates/register.html:10
 #: GeoHealthCheck/templates/reset_password_request.html:7
@@ -429,7 +403,7 @@ msgstr "Volg de link hieronder om een nieuw wachtwoord aan te maken"
 msgid "Ignore this email if this was not initiated by you"
 msgstr "Negeer deze email als dit niet door U in gang was gezet"
 
-#: GeoHealthCheck/templates/reset_password_email.txt:9
+#: GeoHealthCheck/templates/reset_password_email.txt:11
 msgid "Greetings from"
 msgstr "Groeten van"
 
@@ -449,59 +423,85 @@ msgstr "Reset wachtwoord"
 msgid "Reset password via email"
 msgstr "Reset wachtwoord via email"
 
-#: GeoHealthCheck/templates/resource.html:12
+#: GeoHealthCheck/templates/resource.html:13
 msgid "Test Now"
 msgstr "Test Nu"
 
-#: GeoHealthCheck/templates/includes/overall_status.html:3
-#: GeoHealthCheck/templates/resource.html:21
-msgid "Monitoring Period"
-msgstr "Monitoring Periode"
-
 #: GeoHealthCheck/templates/includes/resources_list.html:8
-#: GeoHealthCheck/templates/resource.html:74
+#: GeoHealthCheck/templates/resource.html:71
 msgid "Response Times (seconds)"
 msgstr "Response Tijden (seconden)"
 
-#: GeoHealthCheck/templates/resource.html:77
+#: GeoHealthCheck/templates/resource.html:74
 msgid "Min"
 msgstr "Min"
 
-#: GeoHealthCheck/templates/resource.html:78
+#: GeoHealthCheck/templates/resource.html:75
 msgid "Average"
 msgstr "Gemiddeld"
 
-#: GeoHealthCheck/templates/resource.html:79
+#: GeoHealthCheck/templates/resource.html:76
 msgid "Max"
 msgstr "Max"
 
 #: GeoHealthCheck/templates/includes/resources_list.html:9
-#: GeoHealthCheck/templates/resource.html:84
+#: GeoHealthCheck/templates/resource.html:81
 msgid "Reliability"
 msgstr "Gezondheid"
 
+#: GeoHealthCheck/templates/resource.html:93
+msgid "Last Run Result"
+msgstr "Laatste Run resultaat"
+
 #: GeoHealthCheck/templates/includes/resources_list.html:6
-#: GeoHealthCheck/templates/resource.html:99
+#: GeoHealthCheck/templates/resource.html:96
 msgid "Last Check"
 msgstr "Laatste Check"
 
-#: GeoHealthCheck/templates/resource.html:100
+#: GeoHealthCheck/templates/resource.html:97
 msgid "Success"
 msgstr "Succes"
 
-#: GeoHealthCheck/templates/resource.html:102
-#: GeoHealthCheck/templates/resource.html:172
+#: GeoHealthCheck/templates/resource.html:99
 msgid "Response Time"
 msgstr "Response Tijd"
 
-#: GeoHealthCheck/templates/resource.html:120
-msgid "Response Time (seconds)"
-msgstr "Response Tijd (seconds)"
+#: GeoHealthCheck/templates/resource.html:102
+msgid "No runs yet"
+msgstr "Nog geen Runs"
 
-#: GeoHealthCheck/templates/includes/resources_list.html:33
-#: GeoHealthCheck/templates/resource.html:178
-msgid "seconds"
-msgstr "seconden"
+#: GeoHealthCheck/templates/resource.html:104
+msgid "Last Run Summary"
+msgstr "Laatste Run overzicht"
+
+#: GeoHealthCheck/templates/resource.html:113
+msgid "Period"
+msgstr "Periode"
+
+#: GeoHealthCheck/templates/resource.html:121
+#: GeoHealthCheck/templates/resource.html:165
+msgid "Duration"
+msgstr "Duur"
+
+#: GeoHealthCheck/templates/resource.html:122
+msgid "Total Probe execution duration"
+msgstr "Totale Probe uitvoertijd"
+
+#: GeoHealthCheck/templates/resource.html:126
+msgid "Hover mouse over plot to see Run Results here"
+msgstr "Beweeg muis over grafiek om Run resultaten te zien"
+
+#: GeoHealthCheck/templates/resource.html:129
+msgid "Full report"
+msgstr "Volledig rapport"
+
+#: GeoHealthCheck/templates/resource.html:130
+msgid "Show"
+msgstr "Toon"
+
+#: GeoHealthCheck/templates/resource.html:137
+msgid "Download"
+msgstr "Download"
 
 #: GeoHealthCheck/templates/resources.html:15
 msgid "Resources"
@@ -519,6 +519,10 @@ msgstr "resultaten"
 msgid "Dashboard"
 msgstr "Dashboard"
 
+#: GeoHealthCheck/templates/includes/overall_status.html:3
+msgid "Monitoring Period"
+msgstr "Monitoring Periode"
+
 #: GeoHealthCheck/templates/includes/overall_status.html:20
 msgid "Operational"
 msgstr "Operationeel"
@@ -534,6 +538,10 @@ msgstr "Defect"
 #: GeoHealthCheck/templates/includes/probe_info.html:92
 msgid "Info"
 msgstr "Info"
+
+#: GeoHealthCheck/templates/includes/resources_list.html:33
+msgid "seconds"
+msgstr "seconden"
 
 #~ msgid "Language"
 #~ msgstr "Taalkeuze"
@@ -561,4 +569,25 @@ msgstr "Info"
 
 #~ msgid "Cannot send email. Contact admin: GHC_ADMIN_EMAIL"
 #~ msgstr ""
+
+#~ msgid "Cannot send email. Contact admin: "
+#~ msgstr "Kan geen email versturen. Contacteer admin: "
+
+#~ msgid "Update password failed!"
+#~ msgstr "Update wachtwoord heeft gefaald"
+
+#~ msgid "Recover Password"
+#~ msgstr "Herstel wachtwoord"
+
+#~ msgid "Recover password via email"
+#~ msgstr "Herstel wachtwoord via email"
+
+#~ msgid "Subject"
+#~ msgstr "Onderwerp"
+
+#~ msgid "recover password"
+#~ msgstr "herstel wachtwoord"
+
+#~ msgid "Response Time (seconds)"
+#~ msgstr "Response Tijd (seconds)"
 
