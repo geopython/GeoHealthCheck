@@ -144,6 +144,12 @@ def setup():
         content = urlopen(url).read()
         f.write(content)
 
+    # install Plotly.js to static/lib
+    with open(path(options.base.static_lib / 'plotly-basic.min.js'), 'w') as f:
+        url = 'https://cdn.plot.ly/plotly-basic-1.43.1.min.js'
+        content = urlopen(url).read()
+        f.write(content)
+
     # build i18n .mo files
     call_task('compile_translations')
 
