@@ -977,6 +977,35 @@ def api_probes_avail(resource_type=None, resource_id=None):
     return jsonify(probes)
 
 
+@APP.route('/api/v1.0/runs/<int:resource_id>')
+@APP.route('/api/v1.0/runs/<int:resource_id>/<int:run_id>')
+def api_runs(resource_id, run_id=None):
+    """
+    Get Runs (History of results) for Resource.
+    """
+    if run_id:
+        runs = [views.get_run_by_id(run_id)]
+    else:
+        runs = views.get_run_by_resource_id(resource_id)
+
+    total = 0
+    run_arr = []
+    for run in runs:
+        total += 1
+        run_dict = {
+            'id': run.identifier,
+            'success': run.success,
+            'response_time':  run.response_time,
+            'checked_datetime': run.checked_datetime,
+            'message':  run.message,
+            'report': run.report
+        }
+        run_arr.append(run_dict)
+
+    json_dict = {'total': total, 'runs': run_arr}
+    return jsonify(json_dict)
+
+
 if __name__ == '__main__':  # run locally, for fun
     import sys
 
