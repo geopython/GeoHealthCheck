@@ -3,6 +3,8 @@
 {% block extrahead %}
         <link rel="alternate" type="application/json" href="{{ url_for('json-resource', identifier=resource.identifier) }}"/>
         <link rel="alternate" type="text/csv" href="{{ url_for('csv-resource', identifier=resource.identifier) }}"/>
+        <script type="text/javascript" src="{{ url_for('static', filename='lib/plotly-basic.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='site/js/runs_chart.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -140,8 +142,6 @@
 </div>
 {% endblock %}
 {% block extrafoot %}
-<script type="text/javascript" src="{{ url_for('static', filename='lib/plotly-basic.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='site/js/runs_chart.js') }}"></script>
 <script type="text/javascript">
 
     {% if g.user.is_authenticated() %}
