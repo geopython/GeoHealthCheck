@@ -3,8 +3,7 @@
 {% block extrahead %}
         <link rel="alternate" type="application/json" href="{{ url_for('json-resource', identifier=resource.identifier) }}"/>
         <link rel="alternate" type="text/csv" href="{{ url_for('csv-resource', identifier=resource.identifier) }}"/>
-        <script type="text/javascript" src="{{ url_for('static', filename='lib/plotly-basic.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='site/js/runs_chart.js') }}"></script>
+        <script type="text/javascript" src="https://cdn.plot.ly/plotly-basic-1.43.1.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -142,6 +141,7 @@
 </div>
 {% endblock %}
 {% block extrafoot %}
+<script type="text/javascript" src="{{ url_for('static', filename='site/js/runs_chart.js') }}"></script>
 <script type="text/javascript">
 
     {% if g.user.is_authenticated() %}
@@ -157,18 +157,7 @@
     });
 
     {% endif %}
-
-    {% if resource.first_run %}
-    $(window).on('load', function() {
-        // Plot run data (when available) in interactive Chart
-        var runData = {{ resource.runs_to_json()|safe }};
-        var resourceURL = '{{ url_for('api_runs', resource_id=resource.identifier) }}';
-        var hoverTemplate = "{{ _('Date') }}: %{x}  {{ _('Duration') }}: %{y:.2f}s"
-        drawChart('run-chart', runData, resourceURL, hoverTemplate);
-    });
-
-    {% endif %}
-
+    
     // Show Resource location Map
     var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
 
@@ -184,6 +173,18 @@
         tags: true,
         disabled: true
     });
+
+    {% if resource.first_run %}
+    $(window).on('load', function() {
+        // Plot run data (when available) in interactive Chart
+        var runData = {{ resource.runs_to_json()|safe }};
+        var resourceURL = '{{ url_for('api_runs', resource_id=resource.identifier) }}';
+        var hoverTemplate = "{{ _('Date') }}: %{x}  {{ _('Duration') }}: %{y:.2f}s"
+        drawChart('run-chart', runData, resourceURL, hoverTemplate);
+    });
+
+    {% endif %}
+
 </script>
 
 {% endblock %}
