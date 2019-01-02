@@ -144,47 +144,58 @@
 <script type="text/javascript" src="{{ url_for('static', filename='site/js/runs_chart.js') }}"></script>
 <script type="text/javascript">
 
-    {% if g.user.is_authenticated() %}
-    $('#confirm-delete').click(function() {
-        if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
-            return false;
-        }
-    });
-
-    $('#resource_edit').click(function() {
-        // $('#flashed_message').append('<br/><strong>Getting metadata for Resource...</strong>');
-        return true;
-    });
-
-    {% endif %}
-    
-    // Show Resource location Map
-    var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
-
-    map.addLayer(new L.TileLayer(
-        '{{ config['GHC_MAP']['url']}}', {
-            maxZoom: {{ config['GHC_MAP']['maxzoom']}},
-            subdomains: '{{ config['GHC_MAP']['subdomains']}}',
-        }
-    ));
-    L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
-
-    $('#resource_tags').select2({
-        tags: true,
-        disabled: true
-    });
-
-    {% if resource.first_run %}
     $(window).on('load', function() {
+        {% if g.user.is_authenticated() %}
+        $('#confirm-delete').click(function() {
+            if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
+                return false;
+            }
+        });
+
+        $('#resource_edit').click(function() {
+            // $('#flashed_message').append('<br/><strong>Getting metadata for Resource...</strong>');
+            return true;
+        });
+
+        {% endif %}
+
+        $('#resource_tags').select2({
+            tags: true,
+            disabled: true
+        });
+        function waitForLeaflet() {
+            if (window.L) {
+                // Show Resource location Map
+               var map = L.map('resource-map').setView([{{ resource.latitude }}, {{ resource.longitude }}], 5);
+
+               map.addLayer(new L.TileLayer(
+                   '{{ config['GHC_MAP']['url']}}', {
+                       maxZoom: {{ config['GHC_MAP']['maxzoom']}},
+                       subdomains: '{{ config['GHC_MAP']['subdomains']}}',
+                   }
+               ));
+               L.marker([{{ resource.latitude }}, {{ resource.longitude }}]).addTo(map)
+             }
+            else {
+                if (console) {
+                    console.log('Wait for Leaflet...');
+                }
+                window.setTimeout("waitForLeaflet();", 100);
+            }
+        }
+
+        // Show Map when Leaflet completely ready
+        waitForLeaflet();
+
+        {% if resource.first_run %}
         // Plot run data (when available) in interactive Chart
         var runData = {{ resource.runs_to_json()|safe }};
         var resourceURL = '{{ url_for('api_runs', resource_id=resource.identifier) }}';
         var hoverTemplate = "{{ _('Date') }}: %{x}  {{ _('Duration') }}: %{y:.2f}s"
         drawChart('run-chart', runData, resourceURL, hoverTemplate);
+        {% endif %}
     });
-
-    {% endif %}
-
+    
 </script>
 
 {% endblock %}

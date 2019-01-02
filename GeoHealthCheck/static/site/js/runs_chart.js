@@ -9,7 +9,7 @@ function prepData(rawData, hoverTemplate) {
     var y = [];
     var ids = [];
     var markerColors = [];
-    rawData.forEach(function(datum, i) {
+    rawData.forEach(function (datum, i) {
 
         x.push(new Date(datum[xField]));
         y.push(datum[yField]);
@@ -42,10 +42,30 @@ function prepData(rawData, hoverTemplate) {
                 width: 1
             }
         },
-       x: x,
+        x: x,
         y: y,
         ids: ids
     }];
+}
+
+function showRunDetails(runURL) {
+    $.ajax({
+        type: "GET",
+        url: runURL,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            // Format JSON: http://jsfiddle.net/K83cK
+            var runData = data.runs[0];
+            $('#run-chart-hover-date').text(runData.checked_datetime);
+            $('#run-chart-hover-resptime').text(runData.response_time.toFixed(2) + ' s');
+            $('#run-chart-hover-msg').text(runData.message);
+            $('#run-chart-hover-report').attr("href", runURL)
+        },
+        error: function (errMsg) {
+            $('#run-chart-hover').text("Error: " + errMsg);
+        }
+    });
 }
 
 function drawChart(elementId, runData, resourceURL, hoverTemplate) {
@@ -80,22 +100,22 @@ function drawChart(elementId, runData, resourceURL, hoverTemplate) {
                 count: 1,
                 label: '1w'
             },
-        {
-            step: 'month',
-            stepmode: 'backward',
-            count: 1,
-            label: '1m'
-        },
-        {
-            step: 'all',
-        }],
+            {
+                step: 'month',
+                stepmode: 'backward',
+                count: 1,
+                label: '1m'
+            },
+            {
+                step: 'all',
+            }],
     };
 
     var data = prepData(runData, hoverTemplate);
 
     var layout = {
         title: 'Probe Runs',
-        hovermode:'closest',
+        hovermode: 'closest',
         paper_bgcolor: '#EEEEEE',
         xaxis: {
             type: 'date',
@@ -104,53 +124,48 @@ function drawChart(elementId, runData, resourceURL, hoverTemplate) {
                 bgcolor: '#DDDDDD'
             },
             title: {
-               text: 'Date'
+                text: 'Date'
             }
         },
         yaxis: {
             type: 'linear',
             fixedrange: true,
             title: {
-               text: 'Duration (secs)'
+                text: 'Duration (secs)'
             }
         }
     };
 
     var options = {
-    	scrollZoom: true, // lets us scroll to zoom in and out - works
-    	showLink: false, // removes the link to edit on plotly - works
+        scrollZoom: true, // lets us scroll to zoom in and out - works
+        showLink: false, // removes the link to edit on plotly - works
         // Names: https://github.com/plotly/plotly.js/blob/master/src/components/modebar/buttons.js
-    	modeBarButtonsToRemove: ['lasso2d', 'zoom2d', 'pan', 'pan2d', 'autoScale2d', 'sendDataToCloud', 'hoverCompareCartesian', 'hoverClosestCartesian', 'toggleSpikelines', 'select2d'],
-    	// modeBarButtonsToAdd: ['lasso2d'],
-    	displayLogo: false, // this one also seems to not work
-    	displayModeBar: true, //this one does work
+        modeBarButtonsToRemove: ['lasso2d', 'zoom2d', 'pan', 'pan2d', 'autoScale2d', 'sendDataToCloud', 'hoverCompareCartesian', 'hoverClosestCartesian', 'toggleSpikelines', 'select2d'],
+        // modeBarButtonsToAdd: ['lasso2d'],
+        displayLogo: false, // this one also seems to not work
+        displayModeBar: true, //this one does work
     };
 
-    Plotly.plot(runChart, data, layout, options);
+    function waitForPlotly() {
+        if (window.Plotly) {
+            Plotly.plot(runChart, data, layout, options);
 
-    runChart.on('plotly_hover', function(data){
-        var run_id = data.points[0].id;
+            runChart.on('plotly_hover', function (data) {
+                showRunDetails(resourceURL + '/' + data.points[0].id);
+            });
 
-        var runURL = resourceURL + "/" + run_id;
-        $.ajax({
-            type: "GET",
-            url: runURL,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(data){
-                // Format JSON: http://jsfiddle.net/K83cK
-                var runData = data.runs[0];
-                $('#run-chart-hover-date').text(runData.checked_datetime);
-                $('#run-chart-hover-resptime').text(runData.response_time.toFixed(2) + ' s');
-                $('#run-chart-hover-msg').text(runData.message);
-                $('#run-chart-hover-report').attr("href", runURL)
-            },
-            error: function(errMsg) {
-                $('#run-chart-hover').text("Error: " + errMsg);
+            runChart.on('plotly_click', function (data) {
+                showRunDetails(resourceURL + '/' + data.points[0].id);
+            });
+        }
+        else {
+            if (console) {
+                console.log('Wait for Plotly...');
             }
-        });
-    })
-     .on('plotly_unhover', function(data){
+            window.setTimeout("waitForPlotly();", 100);
+        }
+    }
 
-    });
+    // Start drawing when Plotly completely ready
+    waitForPlotly();
 }
