@@ -959,7 +959,6 @@ def reset(token=None):
 # REST Interface Calls
 #
 
-
 @APP.route('/api/v1.0/probes-avail/')
 @APP.route('/api/v1.0/probes-avail/<resource_type>')
 @APP.route('/api/v1.0/probes-avail/<resource_type>/<int:resource_id>')
@@ -978,8 +977,10 @@ def api_probes_avail(resource_type=None, resource_id=None):
 
 
 @APP.route('/api/v1.0/runs/<int:resource_id>')
+@APP.route('/api/v1.0/runs/<int:resource_id>.<content_type>')
 @APP.route('/api/v1.0/runs/<int:resource_id>/<int:run_id>')
-def api_runs(resource_id, run_id=None):
+@APP.route('/api/v1.0/runs/<int:resource_id>/<int:run_id>.<content_type>')
+def api_runs(resource_id, run_id=None, content_type='json'):
     """
     Get Runs (History of results) for Resource.
     """
@@ -988,10 +989,8 @@ def api_runs(resource_id, run_id=None):
     else:
         runs = views.get_run_by_resource_id(resource_id)
 
-    total = 0
     run_arr = []
     for run in runs:
-        total += 1
         run_dict = {
             'id': run.identifier,
             'success': run.success,
@@ -1002,8 +1001,14 @@ def api_runs(resource_id, run_id=None):
         }
         run_arr.append(run_dict)
 
-    json_dict = {'total': total, 'runs': run_arr}
-    return jsonify(json_dict)
+    runs_dict = {'total': len(run_arr), 'runs': run_arr}
+    result = 'unknown'
+    if content_type == 'json':
+        result = jsonify(runs_dict)
+    elif content_type == 'html':
+        result = render_template('includes/runs.html',
+                                 lang=g.current_lang, runs=runs_dict['runs'])
+    return result
 
 
 if __name__ == '__main__':  # run locally, for fun

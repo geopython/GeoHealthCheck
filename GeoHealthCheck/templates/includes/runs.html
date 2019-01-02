@@ -1,0 +1,50 @@
+{% for run in runs %}
+<h3>Run id={{ run.id }} </h3>
+<table class="table">
+    <tr>
+        <td>Time: {{ run.checked_datetime }}</td><td>Success: {{ run.success }}</td><td>Total Response Time: {{ run.response_time }}</td>
+    </tr>
+
+</table>
+
+<h4>Probe Results</h4>
+{% for probe in run.report.probes %}
+<table class="table table-bordered">
+    <tr>
+        <th>Probe</th><td><strong>{{ probe.name }}</strong></td>
+    </tr>
+    <tr>
+        <th>Success</th><td>{{ probe.success }}</td>
+    </tr>
+    <tr>
+        <th>Response Time</th><td>{{ probe.response_time }}</td>
+    </tr>
+    {% if probe.checks|length < 1 %}
+    <tr>
+        <th>Message</th><td>{{ probe.message|e }}</td>
+    </tr>
+    {% endif %}
+    {% if probe.checks|length > 0 %}
+    <tr>
+        <td colspan="2"><strong>Checks</strong>
+            {% for check in probe.checks %}
+            <table class="table table-condensed table-bordered">
+                <tr>
+                    <th>Check</th><td><strong>{{ check.name }}</strong></td>
+                </tr>
+                <tr>
+                    <th>Success</th><td>{{ check.success }}</td>
+                </tr>
+                <tr>
+                    <th>Message</th><td>{{ check.message|e }}</td>
+                </tr>
+            </table>
+            {% endfor %}
+        </td>
+    </tr>
+    {% endif %}
+</table>
+
+{% endfor %}
+<hr/>
+{% endfor %}

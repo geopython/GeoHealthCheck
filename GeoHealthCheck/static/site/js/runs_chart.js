@@ -60,7 +60,7 @@ function showRunDetails(runURL) {
             $('#run-chart-hover-date').text(runData.checked_datetime);
             $('#run-chart-hover-resptime').text(runData.response_time.toFixed(2) + ' s');
             $('#run-chart-hover-msg').text(runData.message);
-            $('#run-chart-hover-report').attr("href", runURL)
+            $('#run-open').removeClass('disabled').attr("href", runURL + '.html');
         },
         error: function (errMsg) {
             $('#run-chart-hover').text("Error: " + errMsg);
