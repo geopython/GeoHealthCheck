@@ -394,7 +394,7 @@ class Resource(DB.Model):
 
     @property
     def all_response_times(self):
-        result = 0
+        result = [0]
         if self.runs.count() > 0:
             result = [run.response_time for run in self.runs]
         return result

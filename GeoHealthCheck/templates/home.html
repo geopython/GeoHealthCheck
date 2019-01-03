@@ -16,7 +16,7 @@
     </p>
     <h2>{{ _('Failing Resources') }}</h2>
     {% set resources = response['failed_resources'] %}
-    <div>
+    <div style="width: 70%">
     {% if resources|length > 0 %}
     {% include 'includes/resources_list.html' %}
     {% else %}

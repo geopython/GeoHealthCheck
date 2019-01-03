@@ -1,12 +1,10 @@
-<table id="resources-table" class="table table-striped table-bordered table-hover">
+<table id="resources-table" class="table table-condensed table-striped table-bordered table-hover table-responsive">
     <thead>
         <tr>
-            <th>{{ _('Type') }}</th>
-            <th>{{ _('Name') }}</th>
-            <th>{{ _('Last Check') }}</th>
-            <th>{{ _('Status') }}</th>
-            <th>{{ _('Response Times (seconds)') }}</th>
-            <th class="col-md-1">{{ _('Reliability') }}</th>
+            <th class="col-md-3">{{ _('Type') }}</th>
+            <th class="col-md-6">{{ _('Name') }}</th>
+            <th class="col-md-1 text-center">{{ _('Status') }}</th>
+            <th class="col-md-2 text-center">{{ _('Reliability') }}</th>
         </tr>
     </thead>
     <tbody class="searchable">
@@ -17,7 +15,7 @@
                 <a class="facet-url" href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ resource.url  }}">{{ resource.title }}</a>
                 <br>
                 {% if resource.tags %}
-                <select id="resource_tags" multiple="multiple" style="width: 100%;">
+                <select id="resource_tags" multiple="multiple" style="width: 80%;">
                 {% for tag in resource.tags %}
                 {% if tag.name != '' %}
                     <option value="{{ tag.name }}" selected="selected">{{ tag.name }}</option>
@@ -27,31 +25,23 @@
                 {% endif %}
             </td>
             {% if resource.last_run %}
-            <td>
-                 <ul>
-                     <li>{{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }}</li>
-                     <li>{{ resource.last_run.response_time|round(2) }} {{ _('seconds') }}</li>
-                 </ul>
-             </td>
+            <td class="text-center">
+                <a href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ _('Details') }}">
              {% if resource.last_run.success %}
-             <td><button type="button" class="btn btn-success btn-circle btn nohover"><i class="fa fa-check"></i></button></td>
+                 <span class="btn btn-circle btn-success"><i class="fa fa-check"></i></span>
              {% else %}
-             <td><span title="{{ resource.last_run.message }}" class="btn btn-danger btn-circle btn"><i class="fa fa-times"></i></span></td>
+                 <span class="btn btn-circle btn-danger"><i class="fa fa-times"></i></span>
+            </a>
+            </td>
              {% endif %}
-             <td>
-                 <ul>
-                     <li>Min: {{ resource.min_response_time|round(2) }}</li>
-                     <li>Average: {{ resource.average_response_time|round(2) }}</li>
-                     <li>Max: {{ resource.max_response_time|round(2) }}</li>
-                 </ul>
-                 <span style="display: none; color: green" class="sparkline col-md-10">{{ resource.all_response_times }}</span>
+             <td class="text-center">
+                 <a href="{{ url_for('get_resource_by_id', lang=g.current_lang, identifier=resource.identifier) }}" title="{{ _('Details') }}">
+                     <span class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block">{{ resource.reliability|round2 }}%</span>
+                 </a>
              </td>
-             <td class="text-right"><button type="button" class="btn btn-{{ resource.reliability|cssize_reliability }} btn-block nohover">{{ resource.reliability|round2 }}%</button></td>
             {% else %}
             <td><span>No runs yet</span></td>
-            <td><span>0</span></td>
-            <td><span>0</span></td>
-            <td><span>0</span></td>
+            <td><span>&nbsp;</span></td>
             {% endif %}
        </tr>
     {% endfor %}
