@@ -19,7 +19,7 @@
     </div>
         <span id="resources-table-num-results">{{ response['total'] }} {{ _('results') }}</span>
 
-    <div>
+    <div style="width: 70%">
         {% set resources = response['resources'] %}
         {% include 'includes/resources_list.html' %}
     </div>
