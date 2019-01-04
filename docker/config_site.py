@@ -96,7 +96,7 @@ GHC_RELIABILITY_MATRIX = {
 }
 
 GHC_MAP = {
-    'url': 'http://tile.osm.org/{z}/{x}/{y}.png',
+    'url': 'https://tile.osm.org/{z}/{x}/{y}.png',
     'centre_lat': 42.3626,
     'centre_long': -71.0843,
     'maxzoom': 18,
