@@ -25,7 +25,7 @@ msgstr "S'il-vous-plaît contactez"
 
 #: GeoHealthCheck/app.py:449
 msgid "Invalid username or email"
-msgstr ""
+msgstr "Nom d'utilisateur ou courriel incorrect"
 
 #: GeoHealthCheck/app.py:462
 msgid "already registered"
@@ -78,7 +78,7 @@ msgstr "Déconnecté"
 
 #: GeoHealthCheck/app.py:873
 msgid "Invalid email"
-msgstr ""
+msgstr "Courriel invalide"
 
 #: GeoHealthCheck/app.py:894
 msgid "reset password"
@@ -94,11 +94,11 @@ msgstr ""
 
 #: GeoHealthCheck/app.py:940
 msgid "Password required"
-msgstr ""
+msgstr "Mot de passe requis"
 
 #: GeoHealthCheck/app.py:947
 msgid "Update password OK"
-msgstr ""
+msgstr "Mise à jour de mot de passe OK"
 
 #: GeoHealthCheck/healthcheck.py:140
 msgid "Invalid resource type"
@@ -175,7 +175,7 @@ msgstr "Notifiez les emails"
 
 #: GeoHealthCheck/templates/edit_resource.html:25
 msgid "You can enter multiple emails separated with comma"
-msgstr "Vous pouvez saisir plusieurs emails séparés par des virgules"
+msgstr "Vous pouvez saisir plusieurs courriels séparés par des virgules"
 
 #: GeoHealthCheck/templates/edit_resource.html:31
 msgid "Notify webhooks"
@@ -210,12 +210,12 @@ msgstr ""
 #: GeoHealthCheck/templates/edit_resource.html:94
 #: GeoHealthCheck/templates/resource.html:57
 msgid "minutes"
-msgstr ""
+msgstr "minutes"
 
 #: GeoHealthCheck/templates/edit_resource.html:120
 #: GeoHealthCheck/templates/includes/resources_list.html:7
 msgid "Status"
-msgstr "Etat"
+msgstr "État"
 
 #: GeoHealthCheck/templates/edit_resource.html:124
 #: GeoHealthCheck/templates/notification_email.txt:10
@@ -262,7 +262,7 @@ msgstr "Ressources en échec"
 
 #: GeoHealthCheck/templates/home.html:23
 msgid "None"
-msgstr "Rien"
+msgstr "Aucun"
 
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:109
 #: GeoHealthCheck/templates/includes/probe_info.html:95
@@ -298,7 +298,7 @@ msgstr "Mots-clés"
 
 #: GeoHealthCheck/templates/layout.html:105
 msgid "Settings"
-msgstr "Paramétrage"
+msgstr "Paramètres"
 
 #: GeoHealthCheck/templates/layout.html:107
 #: GeoHealthCheck/templates/resource.html:110
@@ -388,7 +388,7 @@ msgstr "Message"
 #: GeoHealthCheck/templates/register.html:10
 #: GeoHealthCheck/templates/reset_password_request.html:7
 msgid "Email"
-msgstr "Email"
+msgstr "Courriel"
 
 #: GeoHealthCheck/templates/register.html:13
 msgid "Signup"
@@ -400,7 +400,7 @@ msgstr ""
 
 #: GeoHealthCheck/templates/reset_password_email.txt:4
 msgid "Follow the link below to create a new password"
-msgstr ""
+msgstr "Suivre le lien ci-dessous pour créer un nouveau mot de passe"
 
 #: GeoHealthCheck/templates/reset_password_email.txt:5
 msgid "Ignore this email if this was not initiated by you"
@@ -412,11 +412,11 @@ msgstr ""
 
 #: GeoHealthCheck/templates/reset_password_form.html:5
 msgid "Enter new password"
-msgstr ""
+msgstr "Entrez le nouveau mot de passe"
 
 #: GeoHealthCheck/templates/reset_password_form.html:10
 msgid "Create"
-msgstr ""
+msgstr "Créer"
 
 #: GeoHealthCheck/templates/reset_password_request.html:5
 msgid "Reset Password"
@@ -479,12 +479,12 @@ msgstr ""
 
 #: GeoHealthCheck/templates/resource.html:113
 msgid "Period"
-msgstr ""
+msgstr "Période"
 
 #: GeoHealthCheck/templates/resource.html:121
 #: GeoHealthCheck/templates/resource.html:165
 msgid "Duration"
-msgstr ""
+msgstr "Durée"
 
 #: GeoHealthCheck/templates/resource.html:122
 msgid "Total Probe execution duration"
@@ -496,15 +496,15 @@ msgstr ""
 
 #: GeoHealthCheck/templates/resource.html:129
 msgid "Full report"
-msgstr ""
+msgstr "Rapport complet"
 
 #: GeoHealthCheck/templates/resource.html:130
 msgid "Show"
-msgstr ""
+msgstr "Montrer"
 
 #: GeoHealthCheck/templates/resource.html:137
 msgid "Download"
-msgstr ""
+msgstr "Télécharger"
 
 #: GeoHealthCheck/templates/resources.html:15
 msgid "Resources"
@@ -567,7 +567,7 @@ msgstr "secondes"
 #~ msgstr "Nom d'utilisateur incorrect"
 
 #~ msgid "Password sent via email"
-#~ msgstr "Mot de passe envoyé par mél"
+#~ msgstr "Mot de passe envoyé par courriel"
 
 #~ msgid "Cannot send email. Contact admin: GHC_ADMIN_EMAIL"
 #~ msgstr ""
@@ -582,7 +582,7 @@ msgstr "secondes"
 #~ msgstr "Récupérer le mot de passe"
 
 #~ msgid "Recover password via email"
-#~ msgstr "Récupérer le mot de passe par email"
+#~ msgstr "Récupérer le mot de passe par courriel"
 
 #~ msgid "Subject"
 #~ msgstr "Sujet"
