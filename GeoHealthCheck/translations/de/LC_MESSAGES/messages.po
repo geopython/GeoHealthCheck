@@ -26,7 +26,7 @@ msgstr "Bitte kontaktiere"
 
 #: GeoHealthCheck/app.py:449
 msgid "Invalid username or email"
-msgstr ""
+msgstr "Ungültiger Benutzername oder E-Mail"
 
 #: GeoHealthCheck/app.py:462
 msgid "already registered"
@@ -51,7 +51,7 @@ msgstr "Ressource wurde nicht gefunden"
 
 #: GeoHealthCheck/app.py:700
 msgid "INFO"
-msgstr ""
+msgstr "INFO"
 
 #: GeoHealthCheck/app.py:703 GeoHealthCheck/templates/edit_resource.html:360
 msgid "ERROR"
@@ -79,27 +79,27 @@ msgstr "Ausgelogged"
 
 #: GeoHealthCheck/app.py:873
 msgid "Invalid email"
-msgstr ""
+msgstr "Ungültige E-Mail"
 
 #: GeoHealthCheck/app.py:894
 msgid "reset password"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 #: GeoHealthCheck/app.py:909
 msgid "Password reset link sent via email"
-msgstr ""
+msgstr "Link zum Zurücksetzen des Passworts wurde per E-Mail verschickt"
 
 #: GeoHealthCheck/app.py:930
 msgid "Invalid token"
-msgstr ""
+msgstr "Unültiger Token"
 
 #: GeoHealthCheck/app.py:940
 msgid "Password required"
-msgstr ""
+msgstr "Passwort benötigt"
 
 #: GeoHealthCheck/app.py:947
 msgid "Update password OK"
-msgstr ""
+msgstr "Passwort aktualisieren OK"
 
 #: GeoHealthCheck/healthcheck.py:140
 msgid "Invalid resource type"
@@ -172,11 +172,11 @@ msgstr "Aktiv"
 
 #: GeoHealthCheck/templates/edit_resource.html:23
 msgid "Notify emails"
-msgstr "Benachrichtigungs-Emails"
+msgstr "Benachrichtigungs-E-Mails"
 
 #: GeoHealthCheck/templates/edit_resource.html:25
 msgid "You can enter multiple emails separated with comma"
-msgstr "Mehrere Email-Adressen können kommasepariert angegeben werden"
+msgstr "Mehrere E-Mail-Adressen können kommasepariert angegeben werden"
 
 #: GeoHealthCheck/templates/edit_resource.html:31
 msgid "Notify webhooks"
@@ -184,11 +184,11 @@ msgstr "Benachrichtigungs-Webhooks"
 
 #: GeoHealthCheck/templates/edit_resource.html:44
 msgid "Enter url for webhook."
-msgstr ""
+msgstr "Bitte URL für Webhook eingeben"
 
 #: GeoHealthCheck/templates/edit_resource.html:45
 msgid "Optionally, enter payload as list of key=value lines or JSON object."
-msgstr ""
+msgstr "Optional: geben Sie die Last als liste von key=value Zeilen or als JSON-Objekt an."
 
 #: GeoHealthCheck/templates/edit_resource.html:66
 #: GeoHealthCheck/templates/resource.html:31
@@ -209,7 +209,7 @@ msgstr ""
 #: GeoHealthCheck/templates/edit_resource.html:94
 #: GeoHealthCheck/templates/resource.html:57
 msgid "minutes"
-msgstr ""
+msgstr "Minuten"
 
 #: GeoHealthCheck/templates/edit_resource.html:120
 #: GeoHealthCheck/templates/includes/resources_list.html:7
@@ -233,7 +233,7 @@ msgstr "Speichern"
 #: GeoHealthCheck/templates/edit_resource.html:377
 #: GeoHealthCheck/templates/edit_resource.html:384
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #: GeoHealthCheck/templates/edit_resource.html:136
 msgid "Cancel"
@@ -289,11 +289,11 @@ msgstr "Ressourcentypen"
 #: GeoHealthCheck/templates/layout.html:84
 #: GeoHealthCheck/templates/layout.html:99
 msgid "Show All"
-msgstr ""
+msgstr "Alle anzeigen"
 
 #: GeoHealthCheck/templates/layout.html:90
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 #: GeoHealthCheck/templates/layout.html:105
 msgid "Settings"
@@ -318,7 +318,7 @@ msgstr ""
 
 #: GeoHealthCheck/templates/layout.html:110
 msgid "Minimal Run Freq"
-msgstr ""
+msgstr "Minimale Durchlauffrequenz"
 
 #: GeoHealthCheck/templates/layout.html:131
 #: GeoHealthCheck/templates/opensearch_description.xml:11
@@ -387,7 +387,7 @@ msgstr "Nachricht"
 #: GeoHealthCheck/templates/register.html:10
 #: GeoHealthCheck/templates/reset_password_request.html:7
 msgid "Email"
-msgstr "Email"
+msgstr "E-Mail"
 
 #: GeoHealthCheck/templates/register.html:13
 msgid "Signup"
@@ -395,35 +395,35 @@ msgstr "Einloggen"
 
 #: GeoHealthCheck/templates/reset_password_email.txt:3
 msgid "You have requested to reset your password"
-msgstr ""
+msgstr "Sie haben das Zurücksetzen des Passworts angefordert"
 
 #: GeoHealthCheck/templates/reset_password_email.txt:4
 msgid "Follow the link below to create a new password"
-msgstr ""
+msgstr "Folgen Sie dem Link, um ein neues Passwort zu setzen"
 
 #: GeoHealthCheck/templates/reset_password_email.txt:5
 msgid "Ignore this email if this was not initiated by you"
-msgstr ""
+msgstr "Ignorieren Sie diese E-Mail, wenn das Passwort nicht zurückgesetzt werden soll"
 
 #: GeoHealthCheck/templates/reset_password_email.txt:11
 msgid "Greetings from"
-msgstr ""
+msgstr "Grüße von"
 
 #: GeoHealthCheck/templates/reset_password_form.html:5
 msgid "Enter new password"
-msgstr ""
+msgstr "Geben Sie ein neues Passwort ein"
 
 #: GeoHealthCheck/templates/reset_password_form.html:10
 msgid "Create"
-msgstr ""
+msgstr "Erzeugen"
 
 #: GeoHealthCheck/templates/reset_password_request.html:5
 msgid "Reset Password"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 #: GeoHealthCheck/templates/reset_password_request.html:10
 msgid "Reset password via email"
-msgstr ""
+msgstr "Zurücksetzen des Passworts via E-Mail"
 
 #: GeoHealthCheck/templates/resource.html:13
 msgid "Test Now"
@@ -453,7 +453,7 @@ msgstr "Verlässlichkeit"
 
 #: GeoHealthCheck/templates/resource.html:93
 msgid "Last Run Result"
-msgstr ""
+msgstr "Ergebnisse des letzten Durchlaufs"
 
 #: GeoHealthCheck/templates/includes/resources_list.html:6
 #: GeoHealthCheck/templates/resource.html:96
@@ -470,40 +470,40 @@ msgstr "Reaktionszeit"
 
 #: GeoHealthCheck/templates/resource.html:102
 msgid "No runs yet"
-msgstr ""
+msgstr "Bisher keine Durchläufe"
 
 #: GeoHealthCheck/templates/resource.html:104
 msgid "Last Run Summary"
-msgstr ""
+msgstr "Zusammenfassung des letzten Durchlaufs"
 
 #: GeoHealthCheck/templates/resource.html:113
 msgid "Period"
-msgstr ""
+msgstr "Zeitraum"
 
 #: GeoHealthCheck/templates/resource.html:121
 #: GeoHealthCheck/templates/resource.html:165
 msgid "Duration"
-msgstr ""
+msgstr "Dauer"
 
 #: GeoHealthCheck/templates/resource.html:122
 msgid "Total Probe execution duration"
-msgstr ""
+msgstr "Gesamtdauer der letzten Untersuchung"
 
 #: GeoHealthCheck/templates/resource.html:126
 msgid "Hover mouse over plot to see Run Results here"
-msgstr ""
+msgstr "Bewegen Sie die Maus über einem Plot, um die Ergebnisse des Durchlaufs anzuzeigen"
 
 #: GeoHealthCheck/templates/resource.html:129
 msgid "Full report"
-msgstr ""
+msgstr "Vollständiger Bericht"
 
 #: GeoHealthCheck/templates/resource.html:130
 msgid "Show"
-msgstr ""
+msgstr "Anzeigen"
 
 #: GeoHealthCheck/templates/resource.html:137
 msgid "Download"
-msgstr ""
+msgstr "Download"
 
 #: GeoHealthCheck/templates/resources.html:15
 msgid "Resources"
@@ -539,7 +539,7 @@ msgstr "Nicht verfügbar"
 
 #: GeoHealthCheck/templates/includes/probe_info.html:92
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: GeoHealthCheck/templates/includes/resources_list.html:33
 msgid "seconds"
