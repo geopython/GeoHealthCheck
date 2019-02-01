@@ -157,7 +157,7 @@ msgstr "Tags angeben"
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:125
 #: GeoHealthCheck/templates/resource.html:15
 msgid "Edit"
-msgstr "Verändern"
+msgstr "Bearbeiten"
 
 #: GeoHealthCheck/templates/edit_resource.html:10
 #: GeoHealthCheck/templates/includes/resources_list.html:4
@@ -204,7 +204,7 @@ msgstr "Name"
 #: GeoHealthCheck/templates/edit_resource.html:92
 #: GeoHealthCheck/templates/resource.html:55
 msgid "Run Every"
-msgstr ""
+msgstr "Ausführung alle..."
 
 #: GeoHealthCheck/templates/edit_resource.html:94
 #: GeoHealthCheck/templates/resource.html:57
@@ -237,7 +237,7 @@ msgstr "Test"
 
 #: GeoHealthCheck/templates/edit_resource.html:136
 msgid "Cancel"
-msgstr "Abbruch"
+msgstr "Abbrechen"
 
 #: GeoHealthCheck/templates/edit_resource.html:137
 #: GeoHealthCheck/templates/includes/check_edit_form.html:12
