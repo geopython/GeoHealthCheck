@@ -6,7 +6,7 @@ Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
 itsdangerous==1.1.0
 OWSLib==0.17.0
-Sphinx==1.8.1
+Sphinx==1.8.4
 requests>=2.20.0
 WTForms==2.1
 APScheduler==3.5.1
