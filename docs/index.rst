@@ -38,11 +38,13 @@ The latest version is always available at http://docs.geohealthcheck.org.
 Contents:
 
 .. toctree::
+   :numbered:
    :maxdepth: 2
 
    install.rst
    config.rst
    admin.rst
+   userguide.rst
    architecture.rst
    plugins.rst
    license.rst

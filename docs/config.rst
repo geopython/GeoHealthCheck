@@ -3,13 +3,18 @@
 Configuration
 =============
 
-Core configuration is set by GeoHealthCheck in ``GeoHealthCheck/config_main.py``.
-You can override these settings in ``instance/config_site.py``:
+This chapter provides guidance for configuring a GeoHealthCheck instance.
+
+Configuration Parameters
+------------------------
+
+The core configuration is in ``GeoHealthCheck/config_main.py``.
+Optionally override these settings for your instance in ``instance/config_site.py``:
 
 - **SQLALCHEMY_DATABASE_URI**: the database configuration.  See the SQLAlchemy documentation for more info
 - **SECRET_KEY**: secret key to set when enabling authentication. Use the output of ``paver create_secret_key`` to set this value
-- **GHC_RETENTION_DAYS**: the number of days to keep run history
-- **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a probe response after the given number of seconds
+- **GHC_RETENTION_DAYS**: the number of days to keep Run history
+- **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a Probe response after the given number of seconds
 - **GHC_MINIMAL_RUN_FREQUENCY_MINS**: minimal run frequency for Resource that can be set in web UI
 - **GHC_SELF_REGISTER**: allow registrations from users on the website
 - **GHC_NOTIFICATIONS**: turn on email notifications
@@ -18,14 +23,14 @@ You can override these settings in ``instance/config_site.py``:
 - **GHC_ADMIN_EMAIL**: email address of administrator / contact- notification emails will come from this address
 - **GHC_NOTIFICATIONS_EMAIL**: list of email addresses that notifications should come to. Use a different address to **GHC_ADMIN_EMAIL** if you have trouble receiving notification emails. Also, you can set separate notification emails to specific resources. Failing resource will send notification to emails from **GHC_NOTIFICATIONS_EMAIL** value and emails configured for that specific resource altogether.
 - **GHC_SITE_TITLE**: title used for installation / deployment
-- **GHC_SITE_URL**: url of the installation / deployment
+- **GHC_SITE_URL**: full URL of the installation / deployment
 - **GHC_SMTP**:  configure SMTP settings if **GHC_NOTIFICATIONS** is enabled
 - **GHC_RELIABILITY_MATRIX**: classification scheme for grading resource
 - **GHC_PLUGINS**: list of Core/built-in Plugin classes or modules available on installation
 - **GHC_USER_PLUGINS**: list of Plugin classes or modules provided by user (you)
 - **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
 - **GHC_METADATA_CACHE_SECS**: metadata, "Capabilities Docs", cache expiry time, default 900 secs, -1 to disable
-- **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: ``True``)
+- **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: ``True``), more below
 - **GHC_LOG_LEVEL**: logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING)
 - **GHC_MAP**: default map settings
 
@@ -34,6 +39,70 @@ You can override these settings in ``instance/config_site.py``:
   - **centre_long**: Centre longitude for homepage map
   - **maxzoom**: maximum zoom level
   - **subdomains**: available subdomains to help with parallel requests
+
+Email Configuration
+-------------------
+
+A working email-configuration is required for notifications and password recovery.
+This can sometimes be tricky, below is a working configuration for the GMail account
+`my_gmail_name@gmail.com`. ::
+
+	GHC_SMTP = {
+	    'server': 'smtp.gmail.com',
+	    'port': 587,
+	    'tls': True,
+	    'ssl': False,
+	    'username': 'my_gmail_name@gmail.com',
+	    'password': '<my gmail password>'
+	}
+
+In your Google Account settings for that GMail address you should turn on *"Allow less secure apps"*
+as `explained here <https://support.google.com/accounts/answer/6010255>`_.
+
+.. _admin_running:
+
+Healthcheck Scheduling
+----------------------
+
+Healthchecks (Runs) for each Resource can be scheduled via `cron` or
+(starting with v0.5.0) by running the **GHC Runner** app standalone (as daemon)
+or within the **GHC Webapp**.
+
+Scheduling via Cron
+...................
+
+**Applies only to pre-0.5.0 versions.**
+
+Edit the file ``jobs.cron`` so that the paths reflect the path to the virtualenv.
+Set the first argument to the desired monitoring time step. If finished editing,
+copy the command line calls e.g. ``/YOURvirtualenv/bin_or_SCRIPTSonwindows/python /path/to/GeoHealthCheck/GeoHealthCheck/healthcheck.py run``
+to the commandline to test if they work sucessfully.
+On Windows - do not forget to include the ''.exe.'' file extension to the python executable.
+For documentation how to create cron jobs see your operating system: on \*NIX systems e.g.  ``crontab -e`` and on
+windows e.g. the `nssm <https://nssm.cc/>`_.
+
+NB the limitation of cron is that the per `Resource` schedule cannot be applied as
+the cron job will run healthchecks on all `Resources`.
+
+GHC Runner as Daemon
+....................
+
+In this mode GHC applies internal scheduling for each individual `Resource`.
+This is the preferred mode as each `Resource` can have its own schedule (configurable
+via Dashboard) and `cron` has dependencies on local environment.
+Later versions may phase out cron-scheduling completely.
+
+The **GHC Runner** can be run via the command `paver runner_daemon` or can run internally within
+the **GHC Webapp** by setting the config variable **GHC_RUNNER_IN_WEBAPP** to `True` (the default).
+NB it is still possible to run GHC as in the pre-v0.5.0 mode using cron-jobs: just run the
+**GHC Webapp** with **GHC_RUNNER_IN_WEBAPP** set to `False` and have your cron-jobs scheduled.
+
+In summary there are three options to run GHC and its healthchecks:
+
+* run **GHC Runner** within the **GHC Webapp**: set **GHC_RUNNER_IN_WEBAPP** to `True` and run only the GHC webapp
+* (recommended): run **GHC Webapp** and **GHC Runner** separately (set **GHC_RUNNER_IN_WEBAPP** to `False`)
+* (deprecated): run **GHC Webapp** with **GHC_RUNNER_IN_WEBAPP** set to `False` and schedule healthchecks via external cron-jobs
+
 
 Enabling or disabling languages
 -------------------------------
@@ -68,90 +137,3 @@ follows:
 
 To adjust this matrix, edit **GHC_RELIABILITY_MATRIX** in
 ``instance/config_site.py``.
-
-
-Configuring notifications
--------------------------
-
-GeoHealthCheck can send notifications to various channels, depending on resource.
-Notifications can be configured in edit form:
-
-.. figure:: _static/notifications_config.png
-    :align: center
-    :alt: GHC notifications configuration
-
-    *Figure - GHC notifications configuration*
-
-
-There are two channels implemented:
-
-=====
-Email
-=====
-
-Notifications can be send to designated emails. If set in config, GeoHealthCheck will 
-send notifications for all resources to emails defined in **GHC_NOTIFICATIONS_EMAIL**. 
-Additionally, each resource can have arbitrary list of emails (filled in **Notify emails** 
-field in edit form). By default, when resource is created, owner's email is added to 
-the list. User can add any email address, even for users that are not registered in 
-GeoHealthCheck instance. When editing emails list for a resource, user will get address 
-suggestions based on emails added for other resources by that user. Multiple emails should
-be separated with comma (`,`) char.
-
-=======
-Webhook
-=======
-
-Notifications can be also send as webhooks through `POST` request. Resource can have arbitrary 
-number of webhooks configured. 
-
-In edit form, user can add webhook configuration. Each webhook should be entered in separate field.
-Each webhook should contain at least URL to which `POST` request will be send. GeoHealthCheck will 
-send following fields with that request:
-
-.. csv-table::
-    :header: Form field,Field type,Description
-
-    ghc.result,string,Descriptive result of failed test
-    ghc.resource.url,URL,Resource's url
-    ghc.resource.title,string,Resource's title
-    ghc.resource.type,string,Resource's type name
-    ghc.resource.view,URL,URL to resource data in GeoHealthCheck
-
-
-Configuration can hold additional form payload that will be send along with GHC fields.
-Syntax for configuration:
-
- * first line should be url to which webhook will be send
- * second line should be empty
- * third line (and subsequent) are used to store custom payload, and should contain either:
-   * each pair of field and value in separate lines (`field=value`)
-   * JSONified object, which properties will be used as form fields
-
-Configuration samples:
-
-* just an url
-
-.. code::
-
-    http://server/webhook/endpoint
-
-
-* url with fields as field-value pairs
-
-.. code::
-
-    http://server/webhook/endpoint
-
-    foo=bar
-    otherfield=someothervalue
-
-
-* url and payload as JSON:
-
-.. code::
-
-    http://server/webhook/endpoint
-
-    {"foo":"bar","otherfield":"someothervalue"}
-
