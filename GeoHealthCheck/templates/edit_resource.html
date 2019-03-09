@@ -274,9 +274,13 @@ or
         var new_notify_emails = $('#input_resource_notify_emails').val().split(',');
         var new_notify_webhooks = [];
 
-        $('[name=resource_notify_webhooks_value').each(function(idx, elm){
-            // skip template elements
-            if ($(elm).parents('.whook_container.template').length> 0){
+        $('textarea[name="resource_notify_webhooks_value"]').each(function(idx, elm){
+            // skip template elements ??
+            // if ($(elm).parents('.whook_container.template').length> 0){
+            //     return;
+            // }
+            var val = $(elm).val();
+            if (val === '') {
                 return;
             }
             new_notify_webhooks.push($(elm).val());
