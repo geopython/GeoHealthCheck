@@ -7,6 +7,10 @@ This chapter provides guidance for configuring GeoHealthCheck's (GHC) actual tas
 API services on (OGC) URL Endpoints. It is written from the perspective of the end-user who interacts
 with GHC's webapp (UI).
 
+This chapter contains figures of screenshots. Click on a figure to see a larger version of the image.
+Use the back-button to get back into this document. This chapter can also be found by pressing
+Help (top menu) within the Web UI.
+
 Terminology
 -----------
 
@@ -22,7 +26,7 @@ The following terminology applies:
 
 The main user task within the web UI is to manage (add, update, delete) a set of `Resources`.
 For each `Resource` its various properties (scheduling, notifications, tags etc)
-and `Probes` is managed. Subsequently, for each `Probe` its various `Checks` is managed.
+and `Probes` is managed. Subsequently, for each `Probe` its various `Checks` are managed.
 
 Registration
 ------------
@@ -31,14 +35,62 @@ If the administrator of the GHC instance has enabled User Registration (**GHC_SE
 any person can register and manage `Resources` on that GHC instance. A User can only manage its own Resources.
 The Admin user can always edit/manage any `Resource`.
 
+
+.. figure:: _static/userguide/register-s.png
+    :target: _static/userguide/register.png
+    :align: center
+    :alt: Registration
+
+    *Registration*
+
+Start registration by clicking Login in menu and then the *Register* link within the Login screen.
 When registering, a working email adress is required if you want to receive Resource
 notifications by email and for password-recovery.
+
+Home Screen
+-----------
+
+The initial home screen always shows failing Resources (if any).
+The badges on the top show percentages:
+
+- *Operational*: percentage of all Resources that is currently "up"/healthy
+- *Failing*:  percentage of all Resources that is currently"down"/failing
+- *Reliable*: percentage of time that Resources are "up"/healthy within the retention window
+
+.. figure:: _static/userguide/dashboard-home-s.png
+    :target: _static/userguide/dashboard-home.png
+    :align: center
+    :alt: Home
+
+    *Home Screen*
+
+Using the vertical menu items on the left different lists of Resources
+can be shown: either by Resource Type (like WMS in Figure below),
+or by Tags (discussed later).
+
+.. figure:: _static/userguide/wms-resources-s.png
+    :target: _static/userguide/wms-resources.png
+    :align: center
+    :alt: Home
+
+    *WMS Type Resource List*
+
+
+Clicking the Home icon (top left) brings back the initial home screen.
 
 Adding Resources
 ----------------
 
-Click the Add+ button for adding new resources.
+Click the Add+ button in the top menu to add a new Resource.
 
+.. figure:: _static/userguide/add-resource-1-s.png
+    :target: _static/userguide/add-resource-1.png
+    :align: center
+    :alt: Home
+
+    *Add Resource - Select Type*
+
+First choose a Resource Type from the dropdown menu.
 The following Resource Types are available:
 
 - Web Map Service (WMS)
@@ -55,6 +107,75 @@ The following Resource Types are available:
 - File Transfer Protocol (FTP)
 - GeoNode autodiscovery (see :ref:`geonode_notes`)
 
+Next fill in the URL and optional tags for the Resource.
+
+.. figure:: _static/userguide/add-resource-2-s.png
+    :target: _static/userguide/add-resource-2.png
+    :align: center
+    :alt: Home
+
+    *Add Resource - specify URL and optional Tags*
+
+Fill in the endpoint URL, like an OGC WMS, FTP URL or a weblink for the Web Address Type.
+For OGC-Resources **this is should be the root-endpoint-URL, not the Capabilities-URL**.
+
+You can add new or existing tags as well here. On Submit, the Resource will get a single
+default Probe assigned. For OGC-Resources this is usually a `CapabilitiesProbe`.
+If successful you are directed to the Resource Edit screen (see next).
+
+
+Editing Resources
+-----------------
+
+Open the Resource details by clicking its name in the Resources list at the Dashboard/Home page.
+Under the Resource title is a blue Edit button (if you own the Resource or as admin).
+When Adding a Resource (see above), you are automatically directed to the Resource Edit Screen.
+
+
+.. figure:: _static/userguide/edit-resource-1-s.png
+    :target: _static/userguide/edit-resource-1.png
+    :align: center
+    :alt: Home
+
+    *Edit Resource - Basics*
+
+The following general aspects of a `Resource` can be edited:
+
+- Resource name (initial Name may come from Capabilities or HTML `title` element if present)
+- Resource Tags
+- Resource active/non-active (makes Probes (in)active, e.g. when repairing a Resource)
+- Notification: recipient(s) for email (expanded below)
+- Notification: target(s) and parameters for webhooks (advanced: expanded below)
+- Resource run schedule, "Run Every" N minutes
+
+By default, when a Resource is created,
+the owner's email will be added to notifications, however, a Resource can have arbitrary number or emails to notify.
+
+.. figure:: _static/userguide/edit-resource-2-s.png
+    :target: _static/userguide/edit-resource-2.png
+    :align: center
+    :alt: Home
+
+    *Edit Resource - Edit Probe*
+
+The most important/functional aspects for a Resource are its Probes.
+
+- Manage Probes for the Resource: select a Probe from "Probes Available"
+- Optionally edit Probe parameters, fixed values have grey background
+- Manage Checks for the Probe, add by selecting from "Checks Available"
+- Optionally edit Check parameters
+
+.. figure:: _static/userguide/edit-resource-3-s.png
+    :target: _static/userguide/edit-resource-3.png
+    :align: center
+    :alt: Home
+
+    *Edit Resource - Add Probe*
+
+Note that all "Edit" buttons with Probes and Checks are toggles to show/hide a Probe and/or Check.
+
+Click Save to save all Resource settings and then click Test to test your Probes and Checks.
+NB Test only works on the Resource settings as saved! So Save, then Test.
 
 Deleting Resources
 ------------------
@@ -62,31 +183,90 @@ Deleting Resources
 Open the Resource details by clicking its name in the Resources list.
 Under the Resource title is a red Delete button.
 
-Editing Resources
------------------
-
-Open the resource details by clicking its name in the resources list at the Dashboard page.
-Under the resource title is a blue Edit button.
-
-The following aspects of a `Resource` can be edited:
-
-- Resource name
-- Resource Tags
-- Resource active/non-active
-- Notification recipients
-- Resource run schedule
-- Resource Probes, select from "Probes Available"
-- For each Probe: Probe parameters
-- For each Probe: Probe Checks, select from "Checks Available"
-- For each Check: Checks parameters
-
-By default, when resource is created, owner's email will be added to notifications, however, resource can have arbitrary number or emails to notify.
-
 Tagging
 -------
 
 Each Resource can be tagged with multiple tags. This provides a handy way to structure
 your Resources into any kind of categories/groups, like `Production` and `Test`, common servers any other grouping.
+
+Failure Analysis
+----------------
+
+As history builds up for each Resource, Users may get notified, usually by email, when one or more Probes fail for a Resource
+(and again when the Resource is healthy again). In this section we analyse a failing Resource (WMS).
+
+.. figure:: _static/userguide/email-notification-fail.png
+    :target: _static/userguide/email-notification-fail.png
+    :align: center
+    :alt: WMS Resource
+
+    *Email Notification - Failing Resource*
+
+This kind of email is received when the Resource has failed.
+We can already see in the message (showing the last message from one or more failing Probes)
+that something is wrong with an `.ecw` (compressed raster image) file within the WMS.
+We can click on the link to go directly to the Resource view within the GHC demo site.
+
+NB: Dependent on the **GHC_NOTIFICATIONS_VERBOSITY** config setting, this email is received only
+once on the first failure (False) or on each failing Run.
+
+In order to analyse "what happened", the graph shown in the Resource view can be inspected.
+Below, this WMS Resource is shown.
+
+.. figure:: _static/userguide/wms-resource-s.png
+    :target: _static/userguide/wms-resource.png
+    :align: center
+    :alt: WMS Resource
+
+    *WMS Type Resource View*
+
+As can be seen, this WMS Resource is now up (`Last Run Result` on top right) but has a Reliability of 57.56 percent.
+This means that within the retention window (one week for the demo site) it has been down for about
+half of the time. This Resource als has quite some Probes active, so is thoroughly tested each hour.
+
+.. figure:: _static/userguide/wms-resource-history-s.png
+    :target: _static/userguide/wms-resource-history.png
+    :align: center
+    :alt: WMS Resource
+
+    *WMS Type Resource View - History*
+
+Scrolling down within the Resource view the History Graph is shown. Each Resource Run is presented by a dot.
+Red dots indicate that one or more Probes have failed in a Run. Green that all Probes gave success.
+
+We see that this WMS has failed from somewhere on March 7, 2019 until March 11, 2019 when it became healthy again (last green dot right).
+Also the Resource has been made inactive for some time during failure as no dots are shown.
+The WMS itself may have been up though all the time! The is a classic case: the Capabilities Probe always succeeds, but more
+detailed WMS GetMap Probes may have failed. We can inspect this in more detail from the history graph.
+
+.. figure:: _static/userguide/wms-resource-history-detail-s.png
+    :target: _static/userguide/wms-resource-history-detail.png
+    :align: center
+    :alt: WMS Resource
+
+    *WMS Type Resource View - History Detail*
+
+The History Graph can be explored in detail by simply hovering the mouse over its dots.
+Also the graph can be zoomed in/out and panned, even with the mouse wheel.
+For each dot the overall result is shown: Date/Time of Run, Duration (of all Probe runs), Message (Ok, or error message).
+By clicking the Show-button the full Run report, i.e. all Probe and Check results for that Date/Time are shown
+in a popup panel.
+
+Here we can see more detail for this WMS: the WMS `GetMap` and two other WMS `GetMap`-related Probes like `WMSDrillDown`, have failed, because
+an image file (.ecw file) could  not be opened/found. This is a classical example why you would need GeoHealthCheck: GetCapabilities
+always succeeds on the service endpoint, but more detailed `GetMap` requests fail!
+
+The last run within the history is again success, so apparently the underlying issues have been repaired and
+the WMS is healthy again! For the last Run (green dot in graph), the email below is received.
+
+.. figure:: _static/userguide/email-notification-ok.png
+    :target: _static/userguide/email-notification-ok.png
+    :align: center
+    :alt: WMS Resource
+
+    *Email Notification - Resource Ok Again*
+
+This kind of email is received when the Resource is healthy (Ok, True) again.
 
 Per-Resource Notifications
 --------------------------
@@ -97,7 +277,7 @@ Notifications for each Resource can be configured in the Resource edit form:
     :align: center
     :alt: GHC notifications configuration
 
-    *Figure - GHC notifications configuration*
+    *GHC notifications configuration*
 
 
 Note: if left empty, the global (email-)notification settings will apply.

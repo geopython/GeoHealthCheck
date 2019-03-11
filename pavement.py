@@ -112,6 +112,7 @@ def setup():
         f.write(content)
 
     # install bootstrap-tagsinput to static/lib
+    info('Getting select2')
     select2 = 'https://github.com/select2/select2/archive/4.0.3.zip'
 
     zipstr = StringIO(urlopen(select2).read())
@@ -126,6 +127,7 @@ def setup():
         os.rename(dirname, dstdir)
 
     # install leafletjs to static/lib
+    info('Getting leaflet')
     leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'
 
     zipstr = StringIO(urlopen(leafletjs).read())
@@ -143,13 +145,6 @@ def setup():
         url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
         content = urlopen(url).read()
         f.write(content)
-
-    # install Plotly.js to static/lib (no, use CDN)
-    # with open(path(options.base.static_lib / 'plotly-basic.min.js'), 'w')
-    # as f:
-    #     url = 'https://cdn.plot.ly/plotly-basic-1.43.1.min.js'
-    #     content = urlopen(url).read()
-    #     f.write(content)
 
     # build i18n .mo files
     call_task('compile_translations')
