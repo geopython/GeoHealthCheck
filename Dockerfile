@@ -62,7 +62,7 @@ WSGI_WORKER_CLASS='eventlet' \
 GHC_USER_PLUGINS=''
 
 RUN apk add --no-cache --virtual .build-deps gcc build-base linux-headers postgresql-dev \
-    && apk add --no-cache bash postgresql-client tzdata openntpd \
+    && apk add --no-cache py-lxml bash postgresql-client tzdata openntpd \
     && pip install virtualenv \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
