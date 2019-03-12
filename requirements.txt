@@ -6,6 +6,7 @@ Flask-Script==2.0.5
 SQLAlchemy==1.2.18
 Flask-SQLAlchemy==2.1
 itsdangerous==1.1.0
+lxml==4.3.2
 pyproj==1.9.6
 OWSLib==0.17.0
 Sphinx==1.8.4
