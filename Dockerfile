@@ -61,8 +61,8 @@ WSGI_WORKER_CLASS='eventlet' \
 # GHC User Plugins, best be overridden via Container environment \
 GHC_USER_PLUGINS=''
 
-RUN apk add --no-cache --virtual .build-deps gcc build-base linux-headers postgresql-dev \
-    && apk add --no-cache py-lxml bash postgresql-client tzdata openntpd \
+RUN apk add --no-cache --virtual .build-deps gcc build-base libxslt-dev libxml2-dev linux-headers postgresql-dev \
+    && apk add --no-cache bash postgresql-client libxslt libxml2 tzdata openntpd \
     && pip install virtualenv \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 

@@ -117,7 +117,7 @@ Next fill in the URL and optional tags for the Resource.
     *Add Resource - specify URL and optional Tags*
 
 Fill in the endpoint URL, like an OGC WMS, FTP URL or a weblink for the Web Address Type.
-For OGC-Resources **this is should be the root-endpoint-URL, not the Capabilities-URL**.
+For OGC-Resources **this should be the root-endpoint-URL, not the Capabilities-URL**.
 
 You can add new or existing tags as well here. On Submit, the Resource will get a single
 default Probe assigned. For OGC-Resources this is usually a `CapabilitiesProbe`.
@@ -144,12 +144,11 @@ The following general aspects of a `Resource` can be edited:
 - Resource name (initial Name may come from Capabilities or HTML `title` element if present)
 - Resource Tags
 - Resource active/non-active (makes Probes (in)active, e.g. when repairing a Resource)
-- Notification: recipient(s) for email (expanded below)
-- Notification: target(s) and parameters for webhooks (advanced: expanded below)
+- Notification: recipient(s) for email (see :ref:`notification_notes`)
+- Notification: target(s) and parameters for webhooks (advanced: see :ref:`notification_notes`)
 - Resource run schedule, "Run Every" N minutes
 
-By default, when a Resource is created,
-the owner's email will be added to notifications, however, a Resource can have arbitrary number or emails to notify.
+By default, when a Resource is created, the owner's email will be added to the email-notifications.
 
 .. figure:: _static/userguide/edit-resource-2-s.png
     :target: _static/userguide/edit-resource-2.png
@@ -267,6 +266,8 @@ the WMS is healthy again! For the last Run (green dot in graph), the email below
     *Email Notification - Resource Ok Again*
 
 This kind of email is received when the Resource is healthy (Ok, True) again.
+
+.. _notification_notes:
 
 Per-Resource Notifications
 --------------------------
