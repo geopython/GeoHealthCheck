@@ -142,12 +142,20 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             ft_namespaces = filter(None, list(ft_namespaces))
 
             # In some cases default NS is used: no FT NSs
+            nsmap = None
             if len(ft_namespaces) > 0:
-                nsmap = wfs._capabilities.nsmap
-            else:
-                # Just use dummy NS, to satisfy REQUEST_TEMPLATE
-                ft_namespaces = ['notapplicable']
-                nsmap = {ft_namespaces[0]: 'http://not.appli.cable/'}
+                try:
+                    # issue #243 this depends if lxml etree present
+                    # and used by OWSLib ! Otherwise fall-back.
+                    nsmap = wfs._capabilities.nsmap
+                except Exception as err:
+                    # Fall-back
+                    pass
+
+            if not nsmap:
+                # Just build dummy NS map, to satisfy REQUEST_TEMPLATE
+                ft_namespaces = ['dummyns']
+                nsmap = {ft_namespaces[0]: 'http://dummy.ns/'}
                 self.PARAM_DEFS['type_ns_prefix']['value'] = ft_namespaces[0]
                 self.PARAM_DEFS['type_ns_uri']['value'] = \
                     nsmap[ft_namespaces[0]]
