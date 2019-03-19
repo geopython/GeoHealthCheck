@@ -689,15 +689,28 @@ def get_last_run():
         Run.identifier == DB.session.query(func.max(Run.identifier))).first()
 
 
-def get_last_runs(count):
-    """return last N Runs"""
-    last_id = DB.session.query(func.max(Run.identifier)).first()[0]
-    if not last_id:
-        return []
+def get_last_run_per_resource():
+    """return last N Runs with results for each Resource"""
 
-    rsc_count = get_resources_count()
-    return DB.session.query(Run).filter(
-        Run.identifier > (last_id - rsc_count)).limit(count).all()
+    # We need an Innerjoin on same table
+    # example: https://stackoverflow.com/questions/2411559/
+    #    how-do-i-query-sql-for-a-latest-record-date-for-each-user
+
+    sql = """
+    select t.resource_identifier, t.identifier, t.success
+    from Run t
+    inner join (
+        select resource_identifier, max(identifier) as MaxId
+        from Run
+        group by resource_identifier
+    ) tm on t.resource_identifier = tm.resource_identifier
+    and t.identifier = tm.MaxId;
+    """
+
+    # Use raw query on SQLAlchemy, as the programmatic buildup
+    # would be overly complex, if even possible.
+    last_runs = DB.session.execute(sql)
+    return last_runs
 
 
 def get_tag_counts():

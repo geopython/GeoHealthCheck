@@ -139,12 +139,13 @@ def get_health_summary():
 
     # Resources status derived from last N runs
     total_resources = models.get_resources_count()
-    last_runs = models.get_last_runs(total_resources)
+    last_runs = models.get_last_run_per_resource()
     failed = 0
     failed_resources = []
     for run in last_runs:
         if not run.success:
-            failed_resources.append(run.resource)
+            failed_resources.append(
+                get_resource_by_id(run.resource_identifier))
             failed += 1
 
     success = total_resources - failed
