@@ -117,7 +117,7 @@ def do_email(config, resource, run, status_changed, result):
                          exc_info=err)
     try:
         server.sendmail(config['GHC_ADMIN_EMAIL'],
-                        config['GHC_NOTIFICATIONS_EMAIL'],
+                        notifications_email,
                         msg.as_string())
     except Exception as err:
         LOGGER.exception(str(err), exc_info=err)
