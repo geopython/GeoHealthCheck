@@ -30,6 +30,7 @@
 import logging
 import models
 import util
+from sqlalchemy import text
 from plugin import Plugin
 from factory import Factory
 
@@ -61,7 +62,7 @@ def list_resources(resource_type=None, query=None, tag=None):
     filters = ()
 
     if resource_type is not None:
-        filters = filters + ("resource_type = '%s'" % resource_type,)
+        filters = filters + (text("resource_type = '%s'" % resource_type),)
 
     if query is not None:
         field, term = get_query_field_term(query)
