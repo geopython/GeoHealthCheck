@@ -51,6 +51,30 @@ def average(values):
         return 0
 
 
+def format_checked_datetime(run, default='-'):
+    """common formatting datetime fields"""
+    if not run or not run.checked_datetime:
+        return default
+
+    return run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
+def format_run_status(run, default='-'):
+    """common formatting success boolean field"""
+    if not run:
+        return default
+
+    return run.success
+
+
+def format_obj_value(obj, default='-'):
+    """common formatting object field"""
+    if not obj:
+        return default
+
+    return obj
+
+
 def create_hash(string):
     # https://passlib.readthedocs.io/en/stable/narr/hash-tutorial.html
     return pbkdf2_sha256.hash(string)

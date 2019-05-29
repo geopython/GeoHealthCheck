@@ -47,7 +47,8 @@ from init import App
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
-from util import send_email, geocode
+from util import send_email, geocode, format_checked_datetime, \
+    format_run_status, format_obj_value
 import views
 
 # Module globals for convenience
@@ -215,25 +216,33 @@ def export():
     if request.url_rule.rule == '/json':
         json_dict = {'total': response['total'], 'resources': []}
         for r in response['resources']:
-            ghc_url = '%s/resource/%s' % (CONFIG['GHC_SITE_URL'], r.identifier)
-            json_dict['resources'].append({
-                'resource_type': r.resource_type,
-                'title': r.title,
-                'url': r.url,
-                'ghc_url': ghc_url,
-                'ghc_json': '%s/json' % ghc_url,
-                'ghc_csv': '%s/csv' % ghc_url,
-                'first_run': r.first_run.checked_datetime.strftime(
-                    '%Y-%m-%dT%H:%M:%SZ'),
-                'last_run': r.last_run.checked_datetime.strftime(
-                    '%Y-%m-%dT%H:%M:%SZ'),
-                'status': r.last_run.success,
-                'min_response_time': round(r.min_response_time, 2),
-                'average_response_time': round(r.average_response_time, 2),
-                'max_response_time': round(r.max_response_time, 2),
-                'reliability': round(r.reliability, 2),
-                'last_report': r.last_run.report
-            })
+            try:
+                ghc_url = '%s/resource/%s' % \
+                          (CONFIG['GHC_SITE_URL'], r.identifier)
+                last_run_report = '-'
+                if r.last_run:
+                    last_run_report = r.last_run.report
+
+                json_dict['resources'].append({
+                    'resource_type': r.resource_type,
+                    'title': r.title.encode('utf-8'),
+                    'url': r.url,
+                    'ghc_url': ghc_url,
+                    'ghc_json': '%s/json' % ghc_url,
+                    'ghc_csv': '%s/csv' % ghc_url,
+                    'first_run': format_checked_datetime(r.first_run),
+                    'last_run': format_checked_datetime(r.last_run),
+                    'status': format_run_status(r.last_run),
+                    'min_response_time': round(r.min_response_time, 2),
+                    'average_response_time': round(r.average_response_time, 2),
+                    'max_response_time': round(r.max_response_time, 2),
+                    'reliability': round(r.reliability, 2),
+                    'last_report': format_obj_value(last_run_report)
+                })
+            except Exception as e:
+                LOGGER.warning(
+                    'JSON error resource id=%d: %s' % (r.identifier, str(e)))
+
         return jsonify(json_dict)
     elif request.url_rule.rule == '/csv':
         output = StringIO()
@@ -245,27 +254,30 @@ def export():
         ]
         writer.writerow(header)
         for r in response['resources']:
-            ghc_url = '%s%s' % (CONFIG['GHC_SITE_URL'],
-                                url_for('get_resource_by_id',
-                                        identifier=r.identifier))
+            try:
+                ghc_url = '%s%s' % (CONFIG['GHC_SITE_URL'],
+                                    url_for('get_resource_by_id',
+                                            identifier=r.identifier))
 
-            writer.writerow([
-                r.resource_type,
-                r.title,
-                r.url,
-                ghc_url,
-                '%s/json' % ghc_url,
-                '%s/csv' % ghc_url,
-                r.first_run.checked_datetime.strftime(
-                    '%Y-%m-%dT%H:%M:%SZ'),
-                r.last_run.checked_datetime.strftime(
-                    '%Y-%m-%dT%H:%M:%SZ'),
-                r.last_run.success,
-                round(r.min_response_time, 2),
-                round(r.average_response_time, 2),
-                round(r.max_response_time, 2),
-                round(r.reliability, 2)
-            ])
+                writer.writerow([
+                    r.resource_type,
+                    r.title.encode('utf-8'),
+                    r.url,
+                    ghc_url,
+                    '%s/json' % ghc_url,
+                    '%s/csv' % ghc_url,
+                    format_checked_datetime(r.first_run),
+                    format_checked_datetime(r.last_run),
+                    format_run_status(r.last_run),
+                    round(r.min_response_time, 2),
+                    round(r.average_response_time, 2),
+                    round(r.max_response_time, 2),
+                    round(r.reliability, 2)
+                ])
+            except Exception as e:
+                LOGGER.warning(
+                    'CSV error resource id=%d: %s' % (r.identifier, str(e)))
+
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
 
@@ -290,9 +302,13 @@ def export_resource(identifier):
     history_json = '%s/resource/%s/history/json' % (CONFIG['GHC_SITE_URL'],
                                                     resource.identifier)
     if 'json' in request.url_rule.rule:
+        last_run_report = '-'
+        if resource.last_run:
+            last_run_report = resource.last_run.report
+
         json_dict = {
             'identifier': resource.identifier,
-            'title': resource.title,
+            'title': resource.title.encode('utf-8'),
             'url': resource.url,
             'resource_type': resource.resource_type,
             'owner': resource.owner.username,
@@ -300,14 +316,12 @@ def export_resource(identifier):
             'average_response_time': resource.average_response_time,
             'max_response_time': resource.max_response_time,
             'reliability': resource.reliability,
-            'status': resource.last_run.success,
-            'first_run': resource.first_run.checked_datetime.strftime(
-                '%Y-%m-%dT%H:%M:%SZ'),
-            'last_run': resource.last_run.checked_datetime.strftime(
-                '%Y-%m-%dT%H:%M:%SZ'),
+            'status': format_run_status(resource.last_run),
+            'first_run': format_checked_datetime(resource.first_run),
+            'last_run': format_checked_datetime(resource.last_run),
             'history_csv': history_csv,
             'history_json': history_json,
-            'last_report': resource.last_run.report
+            'last_report': format_obj_value(last_run_report)
         }
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:
@@ -323,7 +337,7 @@ def export_resource(identifier):
         writer.writerow(header)
         writer.writerow([
             resource.identifier,
-            resource.title,
+            resource.title.encode('utf-8'),
             resource.url,
             resource.resource_type,
             resource.owner.username,
@@ -331,11 +345,9 @@ def export_resource(identifier):
             resource.average_response_time,
             resource.max_response_time,
             resource.reliability,
-            resource.last_run.success,
-            resource.first_run.checked_datetime.strftime(
-                '%Y-%m-%dT%H:%M:%SZ'),
-            resource.last_run.checked_datetime.strftime(
-                '%Y-%m-%dT%H:%M:%SZ'),
+            format_run_status(resource.last_run),
+            format_checked_datetime(resource.first_run),
+            format_checked_datetime(resource.last_run),
             history_csv,
             history_json
         ])
@@ -358,12 +370,11 @@ def export_resource_history(identifier):
             json_dict['runs'].append({
                 'owner': resource.owner.username,
                 'resource_type': resource.resource_type,
-                'checked_datetime': run.checked_datetime.strftime(
-                    '%Y-%m-%dT%H:%M:%SZ'),
-                'title': resource.title,
+                'checked_datetime': format_checked_datetime(run),
+                'title': resource.title.encode('utf-8'),
                 'url': resource.url,
                 'response_time': round(run.response_time, 2),
-                'status': run.success
+                'status': format_run_status(run)
             })
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:
@@ -378,12 +389,11 @@ def export_resource_history(identifier):
             writer.writerow([
                 resource.owner.username,
                 resource.resource_type,
-                run.checked_datetime.strftime(
-                    '%Y-%m-%dT%H:%M:%SZ'),
-                resource.title,
+                format_checked_datetime(run),
+                resource.title.encode('utf-8'),
                 resource.url,
-                run.response_time,
-                run.success,
+                round(run.response_time, 2),
+                format_run_status(run),
             ])
         return output.getvalue(), 200, {'Content-type': 'text/csv'}
 
