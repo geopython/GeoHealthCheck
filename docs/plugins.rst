@@ -299,6 +299,7 @@ See an example for both below from `config_main.py` for **GHC_PLUGINS** and **GH
        'GeoHealthCheck.plugins.probe.http',
        'GeoHealthCheck.plugins.probe.sta',
        'GeoHealthCheck.plugins.probe.wmsdrilldown',
+       'GeoHealthCheck.plugins.probe.wfs3',
 
        # Checks
        'GeoHealthCheck.plugins.check.checks',
@@ -333,6 +334,9 @@ See an example for both below from `config_main.py` for **GHC_PLUGINS** and **GH
        'OGC:STA': {
            'probe_class': 'GeoHealthCheck.plugins.probe.sta.StaCaps'
        },
+	   'OGC:WFS3': {
+	       'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown'
+	   },
        'urn:geoss:waf': {
            'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
        },

@@ -7,8 +7,9 @@ Overview
 GeoHealthCheck (GHC) is a Python application to support monitoring OGC services uptime,
 availability and Quality of Service (QoS).
 
-It can be used to monitor overall health of OGC services like WMS, WFS, WCS, WMTS, SOS, CSW
-and more, but also standard web(-API) URLs.
+GHC can be used to monitor overall health of OGC services (OWS) like WMS, WFS, WCS, WMTS, SOS, CSW
+and more, plus some recent OGC APIs like SensorThings API and WFS v3 (OGC Features API).
+But also standard web REST APIs and ordinary URLs can be monitored.
 
 Features
 --------
