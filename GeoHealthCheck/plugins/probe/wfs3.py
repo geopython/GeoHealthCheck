@@ -1,3 +1,4 @@
+import requests
 from owslib.wfs import WebFeatureService
 
 from GeoHealthCheck.probe import Probe
@@ -19,15 +20,17 @@ class WFS3Drilldown(Probe):
 
     REQUEST_METHOD = 'GET'
 
-    # PARAM_DEFS = {
-    #     'drilldown_level': {
-    #         'type': 'string',
-    #         'description': 'How heavy the drilldown should be.',
-    #         'default': 'minor',
-    #         'required': True,
-    #         'range': ['minor', 'moderate', 'full']
-    #     }
-    # }
+    PARAM_DEFS = {
+        'drilldown_level': {
+            'type': 'string',
+            'description': 'How heavy the drilldown should be.\
+                            basic: test presence endpoints, \
+                            full: go through collections, fetch items',
+            'default': 'basic',
+            'required': True,
+            'range': ['basic', 'full']
+        }
+    }
     """Param defs"""
 
     def __init__(self):
@@ -48,12 +51,29 @@ class WFS3Drilldown(Probe):
         try:
             wfs3 = WebFeatureService(self._resource.url, version='3.0')
             wfs3.conformance()
+
+            # TODO: OWSLib 0.17.1 has no call to '/api yet.
+            url = wfs3._build_url('api')
+            api = requests.get(url).json()
+            for attr in ['components', 'paths', 'openapi']:
+                val = api.get(attr, None)
+                if val is None:
+                    msg = '/api: missing attr: %s' % attr
+                    result = self.add_result(
+                        result, False, msg, 'Test Collection')
+                    continue
+
             collections = wfs3.collections()
         except Exception as err:
             result.set(False, str(err))
 
         result.stop()
         self.result.add_result(result)
+
+        if self._parameters['drilldown_level'] == 'basic':
+            return
+
+        # ASSERTION: will do full drilldown from here
 
         # 2. Test layers
         # TODO: use parameters to work on less/more drilling
@@ -67,7 +87,26 @@ class WFS3Drilldown(Probe):
                 coll_name = coll_name.encode('utf-8')
 
                 try:
-                    items = wfs3.collection_items(coll_name, limit=2)
+                    coll = wfs3.collection(coll_name)
+
+                    # TODO: Maybe also add crs
+                    for attr in ['name', 'links']:
+                        val = coll.get(attr, None)
+                        if val is None:
+                            msg = '%s: missing attr: %s' \
+                                  % (coll_name, attr)
+                            result = self.add_result(
+                                result, False, msg, 'Test Collection')
+                            continue
+                except Exception as e:
+                    msg = 'GetCollection %s: OWSLib err: %s ' \
+                          % (str(e), coll_name)
+                    result = self.add_result(result,
+                                             False, msg, 'Test GetCollection')
+                    continue
+
+                try:
+                    items = wfs3.collection_items(coll_name, limit=1)
                 except Exception as e:
                     msg = 'GetItems %s: OWSLib err: %s ' % (str(e), coll_name)
                     result = self.add_result(result,
@@ -75,10 +114,18 @@ class WFS3Drilldown(Probe):
                     continue
 
                 features = items.get('features', None)
-                if not features:
+                if features is None:
                     msg = 'GetItems %s: No features attr' % coll_name
                     result = self.add_result(result,
                                              False, msg, 'Test GetItems')
+                    continue
+
+                type = items.get('type', '')
+                if type != 'FeatureCollection':
+                    msg = '%s:%s type not FeatureCollection: %s' \
+                          % (coll_name, type, val)
+                    result = self.add_result(
+                        result, False, msg, 'Test GetItems')
                     continue
 
                 if len(items['features']) > 0:
@@ -93,11 +140,19 @@ class WFS3Drilldown(Probe):
                                                  False, msg, 'Test GetItem')
                         continue
 
-                    for attr in ['id', 'links', 'properties', 'type']:
+                    for attr in \
+                            ['id', 'links', 'properties', 'geometry', 'type']:
                         val = item.get(attr, None)
-                        if not val:
-                            msg = '%s:%s no attr=%s' \
+                        if val is None:
+                            msg = '%s:%s missing attr: %s' \
                                   % (coll_name, str(fid), attr)
+                            result = self.add_result(
+                                result, False, msg, 'Test GetItem')
+                            continue
+
+                        if attr == 'type' and val != 'Feature':
+                            msg = '%s:%s type not Feature: %s' \
+                                  % (coll_name, str(fid), val)
                             result = self.add_result(
                                 result, False, msg, 'Test GetItem')
                             continue
