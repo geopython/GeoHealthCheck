@@ -318,6 +318,7 @@ class Probe(Plugin):
         # by Check instances.
         for check_var in self._check_vars:
             check = None
+            check_class = ''
             try:
                 check_class = check_var.check_class
                 check = Factory.create_obj(check_class)

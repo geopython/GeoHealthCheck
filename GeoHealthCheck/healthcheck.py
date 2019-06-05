@@ -154,6 +154,7 @@ def sniff_test_resource(config, resource_type, url):
                          'OGC:WPS': [WebProcessingService],
                          'OGC:CSW': [CatalogueServiceWeb],
                          'OGC:SOS': [SensorObservationService],
+                         'OGC:WFS3': [urlopen],
                          'OGC:STA': [urlopen],
                          'WWW:LINK': [urlopen],
                          'FTP': [urlopen],
@@ -233,6 +234,8 @@ def sniff_test_resource(config, resource_type, url):
         elif resource_type.startswith(('OGC:', 'OSGeo')):
             if resource_type == 'OGC:STA':
                 title = 'OGC STA'
+            elif resource_type == 'OGC:WFS3':
+                title = 'OGC WFS3'
             else:
                 title = ows.identification.title
         if title is None:

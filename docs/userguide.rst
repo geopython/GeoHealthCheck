@@ -102,6 +102,7 @@ The following Resource Types are available:
 - Web Processing Service (WPS)
 - Sensor Observation Service (SOS)
 - `SensorThings API <http://docs.opengeospatial.org/is/15-078r6/15-078r6.html>`_ (STA)
+- OGC Features API (WFS3)
 - Web Accessible Folder (WAF)
 - Web Address (URL)
 - File Transfer Protocol (FTP)

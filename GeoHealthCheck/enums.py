@@ -71,6 +71,9 @@ RESOURCE_TYPES = {
         'label': 'SensorThings API (STA)',
         'versions': ['1.0']
     },
+    'OGC:WFS3': {
+        'label': 'OGC API Features (WFS3)'
+    },
     'urn:geoss:waf': {
         'label': 'Web Accessible Folder (WAF)'
     },

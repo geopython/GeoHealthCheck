@@ -105,6 +105,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.http',
     'GeoHealthCheck.plugins.probe.sta',
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
+    'GeoHealthCheck.plugins.probe.wfs3',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
@@ -144,6 +145,9 @@ GHC_PROBE_DEFAULTS = {
     },
     'OGC:STA': {
         'probe_class': 'GeoHealthCheck.plugins.probe.sta.StaCaps'
+    },
+    'OGC:WFS3': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown'
     },
     'urn:geoss:waf': {
         'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
