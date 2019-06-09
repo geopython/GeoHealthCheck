@@ -189,20 +189,25 @@ class WFS3OpenAPIValidator(Probe):
     def perform_request(self):
         """
         Perform the validation.
-        See https://github.com/p1c2u/openapi-spec-validator
+        Uses https://github.com/p1c2u/openapi-spec-validator on
+        the specfile (dict) returned from the OpenAPI endpoint.
         """
 
-        # 1. Test basic validation
-        result = Result(True, 'Basic API Endpoint Test')
+        # Step 1 basic sanity check
+        result = Result(True, 'OpenAPI Validation Test')
         result.start()
-        api_url = None
         api_doc = None
         try:
             wfs3 = WebFeatureService(self._resource.url, version='3.0')
 
             # TODO: OWSLib 0.17.1 has no call to '/api yet.
+            # Build endpoint URL (may have f=json etc)
             api_url = wfs3._build_url('api')
+
+            # Get OpenAPI spec from endpoint as dict once
             api_doc = requests.get(api_url).json()
+
+            # Basic sanity check
             for attr in ['components', 'paths', 'openapi']:
                 val = api_doc.get(attr, None)
                 if val is None:
@@ -221,17 +226,19 @@ class WFS3OpenAPIValidator(Probe):
 
         # ASSERTION: /api exists, next OpenAPI Validation
 
+        # Step 2 detailed OpenAPI Compliance test
         result = Result(True, 'Validate OpenAPI Compliance')
         result.start()
         try:
-            # val_result = validate_spec_url(api_url)
+            # Call the openapi-spec-validator and iterate through errors
             errors_iterator = openapi_v3_spec_validator.iter_errors(api_doc)
             for error in errors_iterator:
+                # Add each validation error as separate Result object
                 result = add_result(
                     self, result, False,
-                    str(error), "OpenAPI Compliance Result")
+                    str(error), 'OpenAPI Compliance Result')
         except Exception as err:
-            result.set(False, 'API Validation err: e=%s' % str(err))
+            result.set(False, 'OpenAPI Validation err: e=%s' % str(err))
 
         result.stop()
 
