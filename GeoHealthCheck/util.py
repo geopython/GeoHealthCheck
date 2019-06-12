@@ -32,8 +32,8 @@ import json
 import logging
 import os
 import smtplib
-from urllib2 import urlopen
-from urlparse import urlparse
+from urllib.request import urlopen
+from urllib.parse import urlparse
 from gettext import translation
 from passlib.hash import pbkdf2_sha256
 
@@ -105,7 +105,7 @@ def get_python_snippet(resource):
         lines.append('# testing via OWSLib')
         lines.append('# test GetCapabilities')
     else:
-        lines.append('# testing via urllib2 and urlparse')
+        lines.append('# testing via urllib')
 
     if resource.resource_type == 'OGC:WMS':
         lines.append('from owslib.wms import WebMapService')
@@ -130,19 +130,19 @@ def get_python_snippet(resource):
         lines.append('myows = SensorObservationService(\'%s\')' % resource.url)
     elif resource.resource_type == 'WWW:LINK':
         lines.append('import re')
-        lines.append('from urllib2 import urlopen')
+        lines.append('from urllib.request import urlopen')
         lines.append('ows = urlopen(\'%s\')' % resource.url)
         lines.append('try:')
         lines.append('    title_re = re.compile("<title>(.+?)</title>")')
         lines.append('    title = title_re.search(ows.read()).group(1)')
     elif resource.resource_type == 'urn:geoss:waf':
-        lines.append('from urllib2 import urlopen')
-        lines.append('from urlparse import urlparse')
+        lines.append('from urllib.request import urlopen')
+        lines.append('from urllib.parse import urlparse')
         lines.append('ows = urlopen(\'%s\')' % resource.url)
         lines.append('title = urlparse(url).hostname')
     elif resource.resource_type == 'FTP':
-        lines.append('from urllib2 import urlopen')
-        lines.append('from urlparse import urlparse')
+        lines.append('from urllib.request import urlopen')
+        lines.append('from urllib.parse import urlparse')
         lines.append('ows = urlopen(\'%s\')' % resource.url)
         lines.append('title = urlparse(url).hostname')
 

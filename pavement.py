@@ -32,7 +32,7 @@ import os
 import shutil
 import tempfile
 from io import StringIO
-from urllib2 import urlopen
+from urllib.request import urlopen
 import zipfile
 
 from paver.easy import (Bunch, call_task, cmdopts, info, options,

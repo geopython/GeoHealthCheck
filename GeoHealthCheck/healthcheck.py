@@ -30,8 +30,8 @@
 from datetime import datetime
 import logging
 import json
-from urllib2 import urlopen
-from urlparse import urlparse
+from urllib.request import urlopen
+from urllib.parse import urlparse
 from functools import partial
 from flask_babel import gettext
 
