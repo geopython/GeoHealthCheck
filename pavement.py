@@ -106,9 +106,9 @@ def setup():
                            'startbootstrap-sb-admin-2-3.3.7-1'))
 
     # install sparklines to static/site/js
-    with open(path(options.base.static_lib / 'jspark.js'), 'w') as f:
+    with open(path(options.base.static_lib / 'jspark.js'), 'wb') as f:
         content = urlopen('http://ejohn.org/files/jspark.js').read()
-        content.replace('red', 'green')
+        content.replace(b'red', b'green')
         f.write(content)
 
     # install bootstrap-tagsinput to static/lib
@@ -135,13 +135,13 @@ def setup():
     zipfile_obj.extractall(options.base.static_lib / 'leaflet')
 
     # install html5shiv to static/lib
-    with open(path(options.base.static_lib / 'html5shiv.min.js'), 'w') as f:
+    with open(path(options.base.static_lib / 'html5shiv.min.js'), 'wb') as f:
         url = 'https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
         content = urlopen(url).read()
         f.write(content)
 
     # install respond to static/lib
-    with open(path(options.base.static_lib / 'respond.min.js'), 'w') as f:
+    with open(path(options.base.static_lib / 'respond.min.js'), 'wb') as f:
         url = 'https://oss.maxcdn.com/respond/1.4.2/respond.min.js'
         content = urlopen(url).read()
         f.write(content)
