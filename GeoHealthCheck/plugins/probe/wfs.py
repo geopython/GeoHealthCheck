@@ -1,7 +1,11 @@
+import logging
+
 from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.util import transform_bbox
 from owslib.wfs import WebFeatureService
+
+LOGGER = logging.getLogger(__name__)
 
 
 class WfsGetFeatureBbox(Probe):
@@ -149,6 +153,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                     # and used by OWSLib ! Otherwise fall-back.
                     nsmap = wfs._capabilities.nsmap
                 except Exception as err:
+                    LOGGER.warning(err)
                     # Fall-back
                     pass
 
