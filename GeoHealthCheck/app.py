@@ -32,7 +32,7 @@
 import csv
 import logging
 import json
-from io import StringIO
+from io import BytesIO
 from itertools import chain
 
 from flask import (flash, g, jsonify, redirect,
@@ -245,7 +245,7 @@ def export():
 
         return jsonify(json_dict)
     elif request.url_rule.rule == '/csv':
-        output = StringIO()
+        output = BytesIO()
         writer = csv.writer(output)
         header = [
             'resource_type', 'title', 'url', 'ghc_url', 'ghc_json', 'ghc_csv',
@@ -325,7 +325,7 @@ def export_resource(identifier):
         }
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:
-        output = StringIO()
+        output = BytesIO()
         writer = csv.writer(output)
         header = [
             'identifier', 'title', 'url', 'resource_type', 'owner',
@@ -378,7 +378,7 @@ def export_resource_history(identifier):
             })
         return jsonify(json_dict)
     elif 'csv' in request.url_rule.rule:
-        output = StringIO()
+        output = BytesIO()
         writer = csv.writer(output)
         header = [
             'owner', 'resource_type', 'checked_datetime', 'title', 'url',

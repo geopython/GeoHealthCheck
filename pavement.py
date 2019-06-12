@@ -31,7 +31,7 @@ import glob
 import os
 import shutil
 import tempfile
-from io import StringIO
+from io import BytesIO
 from urllib.request import urlopen
 import zipfile
 
@@ -89,7 +89,7 @@ def setup():
             need_to_fetch = True
 
     if need_to_fetch:
-        zipstr = StringIO(urlopen(skin).read())
+        zipstr = BytesIO(urlopen(skin).read())
         zipfile_obj = zipfile.ZipFile(zipstr)
         zipfile_obj.extractall(options.base.static_lib)
 
@@ -115,7 +115,7 @@ def setup():
     info('Getting select2')
     select2 = 'https://github.com/select2/select2/archive/4.0.3.zip'
 
-    zipstr = StringIO(urlopen(select2).read())
+    zipstr = BytesIO(urlopen(select2).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(options.base.static_lib)
     dirname = glob.glob(options.base.static_lib / 'select2-*')[0]
@@ -130,7 +130,7 @@ def setup():
     info('Getting leaflet')
     leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'
 
-    zipstr = StringIO(urlopen(leafletjs).read())
+    zipstr = BytesIO(urlopen(leafletjs).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(options.base.static_lib / 'leaflet')
 
