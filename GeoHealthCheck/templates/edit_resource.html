@@ -109,7 +109,7 @@ or
                 <th>Probes<br/>Available</th>
 
                 <td>
-                    {% for probe_class, probe_avail in probes_avail.iteritems() %}
+                    {% for probe_class, probe_avail in probes_avail.items() %}
                         {% include 'includes/probe_info.html' %}
                     {% endfor %}
                 </td>

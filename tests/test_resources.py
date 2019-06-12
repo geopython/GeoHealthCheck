@@ -130,7 +130,7 @@ class GeoHealthCheckTest(unittest.TestCase):
                 self.assertTrue(success)
                 self.assertEqual(test_url, url)
                 self.assertEqual(test_params, params)
-            except Exception, err:
+            except Exception as err:
                 self.assertFalse(success, str(err))
 
 

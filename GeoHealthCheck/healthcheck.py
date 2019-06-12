@@ -171,7 +171,7 @@ def sniff_test_resource(config, resource_type, url):
             try:
                 ows = ows_handler(url)
                 break
-            except Exception, err:
+            except Exception as err:
                 LOGGER.warning("Cannot use %s on %s: %s",
                                ows_handler, url, err, exc_info=err)
         if ows is None:

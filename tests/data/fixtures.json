@@ -29,7 +29,7 @@
       "resource_type": "OGC:WFS",
       "active": true,
       "title": "WOUDC Web Feature Service",
-      "url": "http://geo.woudc.org/ows",
+      "url": "https://geo.woudc.org/ows",
       "tags": [
         "ows"
       ]
@@ -50,7 +50,7 @@
       "resource_type": "OGC:CSW",
       "active": true,
       "title": "WOUDC Catalogue Service",
-      "url": "http://geo.woudc.org/csw",
+      "url": "https://geo.woudc.org/csw",
       "tags": [
         "ows"
       ]
@@ -71,7 +71,7 @@
       "resource_type": "WWW:LINK",
       "active": true,
       "title": "WOUDC Definitions Service",
-      "url": "http://geo.woudc.org/def",
+      "url": "https://geo.woudc.org/def",
       "tags": []
     },
     "PDOK TMS": {

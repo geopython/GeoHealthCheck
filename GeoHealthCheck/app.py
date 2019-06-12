@@ -32,7 +32,7 @@
 import csv
 import logging
 import json
-from StringIO import StringIO
+from io import StringIO
 from itertools import chain
 
 from flask import (flash, g, jsonify, redirect,

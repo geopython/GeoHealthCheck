@@ -31,7 +31,7 @@ import glob
 import os
 import shutil
 import tempfile
-from StringIO import StringIO
+from io import StringIO
 from urllib2 import urlopen
 import zipfile
 
@@ -136,13 +136,13 @@ def setup():
 
     # install html5shiv to static/lib
     with open(path(options.base.static_lib / 'html5shiv.min.js'), 'w') as f:
-        url = 'http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
+        url = 'https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
         content = urlopen(url).read()
         f.write(content)
 
     # install respond to static/lib
     with open(path(options.base.static_lib / 'respond.min.js'), 'w') as f:
-        url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
+        url = 'https://oss.maxcdn.com/respond/1.4.2/respond.min.js'
         content = urlopen(url).read()
         f.write(content)
 
