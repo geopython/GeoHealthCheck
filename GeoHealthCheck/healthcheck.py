@@ -281,7 +281,7 @@ def geonode_get_ows(base_url):
 
     try:
         data = json.load(r)
-    except (TypeError, ValueError,), err:
+    except (TypeError, ValueError,) as err:
         msg = "Cannot decode response from GeoNode at {}: {}".format(base_url,
                                                                      err)
         raise ValueError(msg)

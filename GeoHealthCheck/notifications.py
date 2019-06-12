@@ -205,7 +205,7 @@ def do_webhook(config, resource, run, status_changed, result):
     for rcp in recipients:
         try:
             url, params = _parse_webhook_location(rcp)
-        except ValueError, err:
+        except ValueError as err:
             LOGGER.warning("Cannot send to {}: {}"
                            .format(rcp, err), exc_info=err)
 

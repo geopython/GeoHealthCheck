@@ -213,7 +213,7 @@ def _validate_webhook(value):
     from GeoHealthCheck.notifications import _parse_webhook_location
     try:
         _parse_webhook_location(value)
-    except ValueError, err:
+    except ValueError as err:
         raise ValidationError('{}: {}'.format(value, err))
     return value
 
@@ -281,7 +281,7 @@ class Recipient(DB.Model):
         for v in validators:
             try:
                 v(value)
-            except (ValidationError, TypeError), err:
+            except (ValidationError, TypeError) as err:
                 raise ValueError("Bad value: {}".format(err), err)
 
     def is_email(self):
@@ -305,7 +305,7 @@ class Recipient(DB.Model):
     def get_or_create(cls, channel, location):
         try:
             cls.validate(channel, location)
-        except ValidationError, err:
+        except ValidationError as err:
             raise ValueError("invalid value {}: {}".format(location, err))
 
         try:
