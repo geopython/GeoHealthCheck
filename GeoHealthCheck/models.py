@@ -38,7 +38,7 @@ from sqlalchemy import func, and_
 from sqlalchemy.orm import deferred
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-import util
+import .util
 from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
