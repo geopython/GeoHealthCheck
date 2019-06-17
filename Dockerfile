@@ -31,6 +31,7 @@ ENV LC_ALL="en_US.UTF-8" \
 	GHC_WWW_LINK_EXCEPTION_CHECK=False \
 	GHC_ADMIN_EMAIL='you@example.com' \
 	GHC_RUNNER_IN_WEBAPP=False \
+	GHC_REQUIRE_WEBAPP_AUTH=False \
 	GHC_LOG_LEVEL=30 \
 	GHC_LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - %(message)s' \
 	GHC_NOTIFICATIONS_EMAIL='you2@example.com,them@example.com' \

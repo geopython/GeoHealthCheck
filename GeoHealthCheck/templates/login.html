@@ -10,12 +10,19 @@
     <div class="form-group">
         <button type="submit" class="btn btn-success">{{ _('Sign in') }}</button>
     </div>
+      {% if not config['GHC_REQUIRE_WEBAPP_AUTH'] %}
     <div>
         <a href="{{ url_for('register', lang=g.current_lang) }}">{{ _('Register') }}</a>
     </div>
+      {% endif %}
     <div>
         <a href="{{ url_for('reset_req', lang=g.current_lang) }}">{{ _('Forgot password?') }}</a>
     </div>
+    {% if config['GHC_REQUIRE_WEBAPP_AUTH'] %}
+      <div>
+          <strong>{{ _('This app requires an authenticated user') }}</strong>
+      </div>
+    {% endif %}
   </form>
 </div>
 {% endblock %}

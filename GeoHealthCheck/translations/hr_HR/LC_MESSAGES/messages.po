@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/geopython/GeoHealthCheck/issues\n"
-"POT-Creation-Date: 2018-12-30 15:51+0100\n"
+"POT-Creation-Date: 2019-06-17 14:17+0200\n"
 "PO-Revision-Date: 2019-01-04 19:57+0200\n"
 "Last-Translator: Davor Racić <davor.racic@gmail.com>\n"
 "Language: hr_HR\n"
@@ -14,88 +14,88 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: GeoHealthCheck/app.py:436
+#: GeoHealthCheck/app.py:456
 msgid "This site is not configured for self-registration"
 msgstr "Ova stranica nije konfigurirana za registraciju"
 
-#: GeoHealthCheck/app.py:437
+#: GeoHealthCheck/app.py:457
 msgid "Please contact"
 msgstr "Molimo kontaktirajte"
 
-#: GeoHealthCheck/app.py:449
+#: GeoHealthCheck/app.py:469
 msgid "Invalid username or email"
 msgstr "Neispravno korisničko ime ili email"
 
-#: GeoHealthCheck/app.py:462
+#: GeoHealthCheck/app.py:482
 msgid "already registered"
 msgstr "već registriran"
 
-#: GeoHealthCheck/app.py:485
+#: GeoHealthCheck/app.py:505
 msgid "No resources detected"
 msgstr "Resurs nije otkriven"
 
-#: GeoHealthCheck/app.py:499
+#: GeoHealthCheck/app.py:519
 msgid "Service already registered"
 msgstr "Servis je već registriran"
 
-#: GeoHealthCheck/app.py:571
+#: GeoHealthCheck/app.py:591
 msgid "Services registered"
 msgstr "Servisi su registrirani"
 
-#: GeoHealthCheck/app.py:691 GeoHealthCheck/app.py:720
-#: GeoHealthCheck/app.py:747
+#: GeoHealthCheck/app.py:711 GeoHealthCheck/app.py:740
+#: GeoHealthCheck/app.py:767
 msgid "Resource not found"
 msgstr "Izvor nije pronađen"
 
-#: GeoHealthCheck/app.py:700
+#: GeoHealthCheck/app.py:720
 msgid "INFO"
 msgstr "INFO"
 
-#: GeoHealthCheck/app.py:703 GeoHealthCheck/templates/edit_resource.html:360
+#: GeoHealthCheck/app.py:723 GeoHealthCheck/templates/edit_resource.html:361
 msgid "ERROR"
 msgstr "GREŠKA"
 
-#: GeoHealthCheck/app.py:706
+#: GeoHealthCheck/app.py:726
 msgid "Resource tested successfully"
 msgstr "Izvor je uspješno testiran"
 
-#: GeoHealthCheck/app.py:741
+#: GeoHealthCheck/app.py:761
 msgid "You do not have access to delete this resource"
 msgstr "Nemate dozvole potrebne za brisanje ovoga izvora"
 
-#: GeoHealthCheck/app.py:755
+#: GeoHealthCheck/app.py:775
 msgid "Resource deleted"
 msgstr "Izvor je izbrisan"
 
-#: GeoHealthCheck/app.py:838
+#: GeoHealthCheck/app.py:859
 msgid "Invalid username and / or password"
 msgstr "Pogrešno korisničko i / ili zaporka"
 
-#: GeoHealthCheck/app.py:853
+#: GeoHealthCheck/app.py:874
 msgid "Logged out"
 msgstr "Odjavljen"
 
-#: GeoHealthCheck/app.py:873
+#: GeoHealthCheck/app.py:895
 msgid "Invalid email"
 msgstr "Neispravan email"
 
-#: GeoHealthCheck/app.py:894
+#: GeoHealthCheck/app.py:916
 msgid "reset password"
 msgstr "promijeni zaporku"
 
-#: GeoHealthCheck/app.py:909
+#: GeoHealthCheck/app.py:931
 msgid "Password reset link sent via email"
 msgstr "Poveznica za promjenu zaporke poslana putem emaila"
 
-#: GeoHealthCheck/app.py:930
+#: GeoHealthCheck/app.py:953
 msgid "Invalid token"
 msgstr "neispravan token"
 
-#: GeoHealthCheck/app.py:940
+#: GeoHealthCheck/app.py:963
 msgid "Password required"
 msgstr "potrebna zaporka"
 
-#: GeoHealthCheck/app.py:947
+#: GeoHealthCheck/app.py:970
 msgid "Update password OK"
 msgstr "promjena zaporke uspješna"
 
@@ -103,7 +103,7 @@ msgstr "promjena zaporke uspješna"
 msgid "Invalid resource type"
 msgstr "Neispravan tip izvora"
 
-#: GeoHealthCheck/healthcheck.py:213 GeoHealthCheck/healthcheck.py:239
+#: GeoHealthCheck/healthcheck.py:214 GeoHealthCheck/healthcheck.py:242
 msgid "for"
 msgstr "za"
 
@@ -153,18 +153,18 @@ msgstr "Unesi tag-ove"
 
 #: GeoHealthCheck/templates/edit_resource.html:5
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:125
-#: GeoHealthCheck/templates/resource.html:15
+#: GeoHealthCheck/templates/resource.html:46
 msgid "Edit"
 msgstr "Izmjena"
 
 #: GeoHealthCheck/templates/edit_resource.html:10
 #: GeoHealthCheck/templates/includes/resources_list.html:4
-#: GeoHealthCheck/templates/resource.html:23
+#: GeoHealthCheck/templates/resource.html:54
 msgid "Type"
 msgstr "Tip"
 
 #: GeoHealthCheck/templates/edit_resource.html:15
-#: GeoHealthCheck/templates/resource.html:27
+#: GeoHealthCheck/templates/resource.html:58
 msgid "Active"
 msgstr "Aktivno"
 
@@ -191,47 +191,49 @@ msgstr ""
 " objekt"
 
 #: GeoHealthCheck/templates/edit_resource.html:66
-#: GeoHealthCheck/templates/resource.html:31
+#: GeoHealthCheck/templates/resource.html:62
 msgid "Owner"
 msgstr "Vlasnik"
 
 #: GeoHealthCheck/templates/edit_resource.html:71
 #: GeoHealthCheck/templates/includes/resources_list.html:5
-#: GeoHealthCheck/templates/resource.html:36
+#: GeoHealthCheck/templates/resource.html:67
 msgid "Name"
 msgstr "Ime"
 
 #: GeoHealthCheck/templates/edit_resource.html:92
-#: GeoHealthCheck/templates/resource.html:55
+#: GeoHealthCheck/templates/resource.html:86
 msgid "Run Every"
 msgstr "Pokreni svakih"
 
 #: GeoHealthCheck/templates/edit_resource.html:94
-#: GeoHealthCheck/templates/resource.html:57
+#: GeoHealthCheck/templates/resource.html:88
 msgid "minutes"
 msgstr "minuta"
 
 #: GeoHealthCheck/templates/edit_resource.html:120
-#: GeoHealthCheck/templates/includes/resources_list.html:7
+#: GeoHealthCheck/templates/includes/resources_list.html:6
 msgid "Status"
 msgstr "Status"
 
 #: GeoHealthCheck/templates/edit_resource.html:124
+#: GeoHealthCheck/templates/includes/resources_list.html:29
+#: GeoHealthCheck/templates/includes/resources_list.html:38
 #: GeoHealthCheck/templates/notification_email.txt:10
 #: GeoHealthCheck/templates/notification_email.txt:16
 msgid "Details"
 msgstr "Detalji"
 
 #: GeoHealthCheck/templates/edit_resource.html:134
-#: GeoHealthCheck/templates/edit_resource.html:339
-#: GeoHealthCheck/templates/edit_resource.html:356
+#: GeoHealthCheck/templates/edit_resource.html:340
+#: GeoHealthCheck/templates/edit_resource.html:357
 msgid "Save"
 msgstr "Spremi"
 
 #: GeoHealthCheck/templates/edit_resource.html:135
-#: GeoHealthCheck/templates/edit_resource.html:369
-#: GeoHealthCheck/templates/edit_resource.html:377
-#: GeoHealthCheck/templates/edit_resource.html:384
+#: GeoHealthCheck/templates/edit_resource.html:370
+#: GeoHealthCheck/templates/edit_resource.html:378
+#: GeoHealthCheck/templates/edit_resource.html:385
 msgid "Test"
 msgstr "Test"
 
@@ -242,12 +244,12 @@ msgstr "Odustani"
 #: GeoHealthCheck/templates/edit_resource.html:137
 #: GeoHealthCheck/templates/includes/check_edit_form.html:12
 #: GeoHealthCheck/templates/includes/probe_edit_form.html:126
-#: GeoHealthCheck/templates/resource.html:16
+#: GeoHealthCheck/templates/resource.html:47
 msgid "Delete"
 msgstr "Izbriši"
 
-#: GeoHealthCheck/templates/edit_resource.html:404
-#: GeoHealthCheck/templates/resource.html:149
+#: GeoHealthCheck/templates/edit_resource.html:405
+#: GeoHealthCheck/templates/resource.html:191
 msgid "Delete resource"
 msgstr "Izbriši resurs"
 
@@ -300,7 +302,7 @@ msgid "Settings"
 msgstr "Postavke"
 
 #: GeoHealthCheck/templates/layout.html:107
-#: GeoHealthCheck/templates/resource.html:110
+#: GeoHealthCheck/templates/resource.html:149
 msgid "History"
 msgstr "Povijest"
 
@@ -341,14 +343,18 @@ msgstr "Zaporka"
 msgid "Sign in"
 msgstr "Prijava"
 
-#: GeoHealthCheck/templates/login.html:14
+#: GeoHealthCheck/templates/login.html:15
 #: GeoHealthCheck/templates/register.html:6
 msgid "Register"
 msgstr "Registracija"
 
-#: GeoHealthCheck/templates/login.html:17
+#: GeoHealthCheck/templates/login.html:19
 msgid "Forgot password?"
 msgstr "Zaboravljena zaporka?"
+
+#: GeoHealthCheck/templates/login.html:23
+msgid "This app requires an authenticated user"
+msgstr ""
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 #: GeoHealthCheck/templates/reset_password_email.txt:1
@@ -373,14 +379,14 @@ msgid "Resource URL"
 msgstr "URL resursa"
 
 #: GeoHealthCheck/templates/notification_email.txt:12
-#: GeoHealthCheck/templates/resource.html:117
-#: GeoHealthCheck/templates/resource.html:165
+#: GeoHealthCheck/templates/resource.html:156
+#: GeoHealthCheck/templates/resource.html:235
 msgid "Date"
 msgstr "Datum"
 
 #: GeoHealthCheck/templates/notification_email.txt:14
-#: GeoHealthCheck/templates/resource.html:98
-#: GeoHealthCheck/templates/resource.html:125
+#: GeoHealthCheck/templates/resource.html:129
+#: GeoHealthCheck/templates/resource.html:164
 msgid "Message"
 msgstr "Poruka"
 
@@ -425,83 +431,77 @@ msgstr "Izmjena zaporke"
 msgid "Reset password via email"
 msgstr "Izmjena zaporke putem emaila"
 
-#: GeoHealthCheck/templates/resource.html:13
+#: GeoHealthCheck/templates/resource.html:44
 msgid "Test Now"
 msgstr "Testiraj odmah"
 
-#: GeoHealthCheck/templates/includes/resources_list.html:8
-#: GeoHealthCheck/templates/resource.html:71
+#: GeoHealthCheck/templates/resource.html:102
 msgid "Response Times (seconds)"
 msgstr "Vremena odziva (sekundi)"
 
-#: GeoHealthCheck/templates/resource.html:74
+#: GeoHealthCheck/templates/resource.html:105
 msgid "Min"
 msgstr "Min"
 
-#: GeoHealthCheck/templates/resource.html:75
+#: GeoHealthCheck/templates/resource.html:106
 msgid "Average"
 msgstr "Prosjek"
 
-#: GeoHealthCheck/templates/resource.html:76
+#: GeoHealthCheck/templates/resource.html:107
 msgid "Max"
 msgstr "Max"
 
-#: GeoHealthCheck/templates/includes/resources_list.html:9
-#: GeoHealthCheck/templates/resource.html:81
+#: GeoHealthCheck/templates/includes/resources_list.html:7
+#: GeoHealthCheck/templates/resource.html:112
 msgid "Reliability"
 msgstr "Pouzdanost"
 
-#: GeoHealthCheck/templates/resource.html:93
+#: GeoHealthCheck/templates/resource.html:124
 msgid "Last Run Result"
 msgstr "Rezultat zadnjeg pokretanja"
 
-#: GeoHealthCheck/templates/includes/resources_list.html:6
-#: GeoHealthCheck/templates/resource.html:96
+#: GeoHealthCheck/templates/resource.html:127
 msgid "Last Check"
 msgstr "Posljednja provjera"
 
-#: GeoHealthCheck/templates/resource.html:97
+#: GeoHealthCheck/templates/resource.html:128
 msgid "Success"
 msgstr "Uspješno"
 
-#: GeoHealthCheck/templates/resource.html:99
+#: GeoHealthCheck/templates/resource.html:130
 msgid "Response Time"
 msgstr "Vrijeme odziva"
 
-#: GeoHealthCheck/templates/resource.html:102
+#: GeoHealthCheck/templates/resource.html:133
 msgid "No runs yet"
 msgstr "Još nije pokrenuto"
 
-#: GeoHealthCheck/templates/resource.html:104
+#: GeoHealthCheck/templates/resource.html:135
 msgid "Last Run Summary"
 msgstr "Sažetak zadnjeg pokretanja"
 
-#: GeoHealthCheck/templates/resource.html:113
+#: GeoHealthCheck/templates/resource.html:152
 msgid "Period"
 msgstr "Razdoblje"
 
-#: GeoHealthCheck/templates/resource.html:121
-#: GeoHealthCheck/templates/resource.html:165
+#: GeoHealthCheck/templates/resource.html:160
+#: GeoHealthCheck/templates/resource.html:235
 msgid "Duration"
 msgstr "Trajanje"
 
-#: GeoHealthCheck/templates/resource.html:122
+#: GeoHealthCheck/templates/resource.html:161
 msgid "Total Probe execution duration"
 msgstr "Ukupno trajanje testa"
 
-#: GeoHealthCheck/templates/resource.html:126
+#: GeoHealthCheck/templates/resource.html:165
 msgid "Hover mouse over plot to see Run Results here"
 msgstr "Pomakni miš preko grafikona za prikaz rezultata ovdje"
 
-#: GeoHealthCheck/templates/resource.html:129
+#: GeoHealthCheck/templates/resource.html:168
 msgid "Full report"
 msgstr "Puni izvještaj"
 
-#: GeoHealthCheck/templates/resource.html:130
-msgid "Show"
-msgstr "Prikaži"
-
-#: GeoHealthCheck/templates/resource.html:137
+#: GeoHealthCheck/templates/resource.html:179
 msgid "Download"
 msgstr "Preuzmi"
 
@@ -540,10 +540,6 @@ msgstr "Nepouzdan"
 #: GeoHealthCheck/templates/includes/probe_info.html:92
 msgid "Info"
 msgstr "Info"
-
-#: GeoHealthCheck/templates/includes/resources_list.html:33
-msgid "seconds"
-msgstr "sekundi"
 
 #~ msgid "Service registered"
 #~ msgstr ""
@@ -589,4 +585,10 @@ msgstr "sekundi"
 
 #~ msgid "Response Time (seconds)"
 #~ msgstr "Vrijeme odziva (sekundi)"
+
+#~ msgid "Show"
+#~ msgstr "Prikaži"
+
+#~ msgid "seconds"
+#~ msgstr "sekundi"
 

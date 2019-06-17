@@ -56,6 +56,7 @@ GHC_ADMIN_EMAIL = os.environ['GHC_ADMIN_EMAIL']
 GHC_SITE_TITLE = os.environ['GHC_SITE_TITLE']
 GHC_SITE_URL = os.environ['GHC_SITE_URL']
 GHC_RUNNER_IN_WEBAPP = str2bool(os.environ['GHC_RUNNER_IN_WEBAPP'])
+GHC_REQUIRE_WEBAPP_AUTH = str2bool(os.environ['GHC_REQUIRE_WEBAPP_AUTH'])
 GHC_LOG_LEVEL = int(os.environ['GHC_LOG_LEVEL'])
 GHC_LOG_FORMAT = os.environ['GHC_LOG_FORMAT']
 
