@@ -74,6 +74,9 @@ RESOURCE_TYPES = {
     'OGC:WFS3': {
         'label': 'OGC API Features (WFS3)'
     },
+    'ESRI:FS': {
+        'label': 'ESRI ArcGIS FeatureServer (FS)'
+    },
     'urn:geoss:waf': {
         'label': 'Web Accessible Folder (WAF)'
     },
