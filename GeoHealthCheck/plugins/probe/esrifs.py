@@ -1,18 +1,20 @@
 import requests
 
 from GeoHealthCheck.probe import Probe
-from GeoHealthCheck.result import Result
+from GeoHealthCheck.result import Result, push_result
 
 
 class ESRIFSDrilldown(Probe):
     """
     Probe for ESRI FeatureServer endpoint "drilldown": starting
-    with top endpoint: get Layers and do Queries on these etc.
+    with top /FeatureServer endpoint: get Layers and get Features on these.
     """
 
     NAME = 'ESRIFS Drilldown'
+
     DESCRIPTION = 'Traverses an ESRI FeatureServer ' \
                   '(REST) API endpoint by drilling down'
+
     RESOURCE_TYPE = 'ESRI:FS'
 
     REQUEST_METHOD = 'GET'
@@ -21,8 +23,8 @@ class ESRIFSDrilldown(Probe):
         'drilldown_level': {
             'type': 'string',
             'description': 'How heavy the drilldown should be.\
-                            basic: test presence Capabilities, \
-                            full: go through Layers, get features',
+                            basic: test presence of Capabilities, \
+                            full: go through Layers, get Features',
             'default': 'basic',
             'required': True,
             'range': ['basic', 'full']
@@ -38,16 +40,20 @@ class ESRIFSDrilldown(Probe):
         Perform the drilldown.
         """
 
+        # Be sure to use bare root URL http://.../FeatureServer
         fs_url = self._resource.url.split('?')[0]
 
         # Assemble request templates with root FS URL
         req_tpl = {
             'fs_caps': fs_url + '?f=json',
+
             'layer_caps': fs_url + '/%d?f=json',
+
             'get_features': fs_url +
             '/%d/query?where=1=1'
             '&outFields=*&resultOffset=0&'
             'resultRecordCount=1&f=json',
+
             'get_feature_by_id': fs_url +
             '/%d/query?where=%s=%s&outFields=*&f=json'
         }
@@ -63,7 +69,7 @@ class ESRIFSDrilldown(Probe):
                 val = fs_caps.get(attr, None)
                 if val is None:
                     msg = 'Service: missing attr: %s' % attr
-                    result = add_result(
+                    result = push_result(
                         self, result, False, msg, 'Test Layer:')
                     continue
 
@@ -116,6 +122,7 @@ class ESRIFSDrilldown(Probe):
                     if len(features) == 0:
                         continue
 
+                    # At least one Feature: use first and try to get by id
                     object_id = features[0]['attributes'][obj_id_field_name]
                     feature = requests.get(req_tpl['get_feature_by_id']
                                            % (layer_id, obj_id_field_name,
@@ -123,16 +130,16 @@ class ESRIFSDrilldown(Probe):
 
                     feature = feature['features']
                     if len(feature) == 0:
-                        msg = 'layer: %d: missing feature id: %s' \
+                        msg = 'layer: %d: missing Feature - id: %s' \
                               % (layer_id, str(object_id))
-                        result = add_result(
+                        result = push_result(
                             self, result, False, msg,
                             'Test Layer: %d' % layer_id)
 
                 except Exception as e:
                     msg = 'GetLayer: id=%d: err=%s ' \
                           % (layer_id, str(e))
-                    result = add_result(
+                    result = push_result(
                         self, result, False, msg, 'Test Get Features:')
                     continue
 
@@ -144,13 +151,3 @@ class ESRIFSDrilldown(Probe):
 
         # Add to overall Probe result
         self.result.add_result(result)
-
-
-# Util to quickly add Results and open new one.
-def add_result(obj, result, val, msg, new_result_name):
-    result.set(val, msg)
-    result.stop()
-    obj.result.add_result(result)
-    result = Result(True, new_result_name)
-    result.start()
-    return result

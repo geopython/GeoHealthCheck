@@ -137,3 +137,13 @@ class CheckResult(Result):
         }
 
         return report
+
+
+# Util to quickly add Results and open new one.
+def push_result(obj, result, val, msg, new_result_name):
+    result.set(val, msg)
+    result.stop()
+    obj.result.add_result(result)
+    result = Result(True, new_result_name)
+    result.start()
+    return result
