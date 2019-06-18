@@ -75,6 +75,7 @@ Install
   # - GHC_SITE_TITLE
   # - GHC_SITE_URL
   # - GHC_RUNNER_IN_WEBAPP # see 'running' section below
+  # - GHC_REQUIRE_WEBAPP_AUTH  # optional: to require authentication to access webapp
   # - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled
   # - GHC_MAP  # or use default settings
 

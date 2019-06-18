@@ -104,6 +104,26 @@ def before_request():
     if not hasattr(g, 'current_lang'):
         g.current_lang = 'en'
 
+    if CONFIG['GHC_REQUIRE_WEBAPP_AUTH'] is True:
+        # Login is required to access GHC Webapp.
+        # We need to pass-through static resources like CSS.
+        if any(['/static/' in request.path,
+                request.path.endswith('.ico'),
+                g.user.is_authenticated(),  # This is from Flask-Login
+                (request.endpoint is not None
+                 and getattr(APP.view_functions[request.endpoint],
+                             'is_public', False))]):
+            return  # Access granted
+        else:
+            return redirect(url_for('login'))
+
+
+# Marks (endpoint-) function as always to be accessible
+# (used for GHC_REQUIRE_WEBAPP_AUTH)
+def public_route(decorated_function):
+    decorated_function.is_public = True
+    return decorated_function
+
 
 @APP.teardown_appcontext
 def shutdown_session(exception=None):
@@ -814,6 +834,7 @@ def get_check_edit_form(check_class):
 
 
 @APP.route('/login', methods=['GET', 'POST'])
+@public_route
 def login():
     """login"""
     if request.method == 'GET':
@@ -858,6 +879,7 @@ def logout():
 
 
 @APP.route('/reset_req', methods=['GET', 'POST'])
+@public_route
 def reset_req():
     """
     Reset password request handling.
@@ -914,6 +936,7 @@ def reset_req():
 
 
 @APP.route('/reset/<token>', methods=['GET', 'POST'])
+@public_route
 def reset(token=None):
     """
     Reset password submit form handling.
