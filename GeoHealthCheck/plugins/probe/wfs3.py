@@ -3,7 +3,7 @@ from owslib.wfs import WebFeatureService
 from openapi_spec_validator import openapi_v3_spec_validator
 
 from GeoHealthCheck.probe import Probe
-from GeoHealthCheck.result import Result
+from GeoHealthCheck.result import Result, push_result
 
 
 class WFS3Drilldown(Probe):
@@ -60,7 +60,7 @@ class WFS3Drilldown(Probe):
                 val = api.get(attr, None)
                 if val is None:
                     msg = '/api: missing attr: %s' % attr
-                    result = add_result(
+                    result = push_result(
                         self, result, False, msg, 'Test Collection')
                     continue
 
@@ -96,13 +96,13 @@ class WFS3Drilldown(Probe):
                         if val is None:
                             msg = '%s: missing attr: %s' \
                                   % (coll_name, attr)
-                            result = add_result(
+                            result = push_result(
                                 self, result, False, msg, 'Test Collection')
                             continue
                 except Exception as e:
                     msg = 'GetCollection %s: OWSLib err: %s ' \
                           % (str(e), coll_name)
-                    result = add_result(
+                    result = push_result(
                         self, result, False, msg, 'Test GetCollection')
                     continue
 
@@ -110,14 +110,14 @@ class WFS3Drilldown(Probe):
                     items = wfs3.collection_items(coll_name, limit=1)
                 except Exception as e:
                     msg = 'GetItems %s: OWSLib err: %s ' % (str(e), coll_name)
-                    result = add_result(
+                    result = push_result(
                         self, result, False, msg, 'Test GetItems')
                     continue
 
                 features = items.get('features', None)
                 if features is None:
                     msg = 'GetItems %s: No features attr' % coll_name
-                    result = add_result(
+                    result = push_result(
                         self, result, False, msg, 'Test GetItems')
                     continue
 
@@ -125,7 +125,7 @@ class WFS3Drilldown(Probe):
                 if type != 'FeatureCollection':
                     msg = '%s:%s type not FeatureCollection: %s' \
                           % (coll_name, type, val)
-                    result = add_result(
+                    result = push_result(
                         self, result, False, msg, 'Test GetItems')
                     continue
 
@@ -137,7 +137,7 @@ class WFS3Drilldown(Probe):
                     except Exception as e:
                         msg = 'GetItem %s: OWSLib err: %s' \
                               % (str(e), coll_name)
-                        result = add_result(
+                        result = push_result(
                             self, result, False, msg, 'Test GetItem')
                         continue
 
@@ -147,14 +147,14 @@ class WFS3Drilldown(Probe):
                         if val is None:
                             msg = '%s:%s missing attr: %s' \
                                   % (coll_name, str(fid), attr)
-                            result = add_result(
+                            result = push_result(
                                 self, result, False, msg, 'Test GetItem')
                             continue
 
                         if attr == 'type' and val != 'Feature':
                             msg = '%s:%s type not Feature: %s' \
                                   % (coll_name, str(fid), val)
-                            result = add_result(
+                            result = push_result(
                                 self, result, False, msg, 'Test GetItem')
                             continue
 
@@ -234,7 +234,7 @@ class WFS3OpenAPIValidator(Probe):
             errors_iterator = openapi_v3_spec_validator.iter_errors(api_doc)
             for error in errors_iterator:
                 # Add each validation error as separate Result object
-                result = add_result(
+                result = push_result(
                     self, result, False,
                     str(error), 'OpenAPI Compliance Result')
         except Exception as err:
@@ -245,15 +245,6 @@ class WFS3OpenAPIValidator(Probe):
         # Add to overall Probe result
         self.result.add_result(result)
 
-
-# Util to quickly add Results and open new one.
-def add_result(obj, result, val, msg, new_result_name):
-    result.set(val, msg)
-    result.stop()
-    obj.result.add_result(result)
-    result = Result(True, new_result_name)
-    result.start()
-    return result
 
 # class WFS3Caps(Probe):
 #     """Probe for OGC WFS3 API main endpoint url"""

@@ -107,6 +107,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.sta',
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
     'GeoHealthCheck.plugins.probe.wfs3',
+    'GeoHealthCheck.plugins.probe.esrifs',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
@@ -149,6 +150,9 @@ GHC_PROBE_DEFAULTS = {
     },
     'OGC:WFS3': {
         'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown'
+    },
+    'ESRI:FS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
     },
     'urn:geoss:waf': {
         'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
