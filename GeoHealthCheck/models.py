@@ -369,14 +369,16 @@ class Resource(DB.Model):
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
     run_frequency = DB.Column(DB.Integer, default=60)
+    _auth = DB.Column('auth', DB.Text, nullable=True, default=None)
 
-    def __init__(self, owner, resource_type, title, url, tags):
+    def __init__(self, owner, resource_type, title, url, tags, auth=None):
         self.resource_type = resource_type
         self.active = True
         self.title = title
         self.url = url
         self.owner = owner
         self.tags = tags
+        self.auth = auth
         self.latitude, self.longitude = util.geocode(url)
 
     def __repr__(self):
@@ -542,6 +544,24 @@ class Resource(DB.Model):
         for c in Recipient.TYPES:
             out[c] = self.get_recipients(c)
         return out
+
+    @property
+    def auth(self):
+        if not self.has_auth():
+            return None
+
+        s = util.decode(APP.config['SECRET_KEY'], self._auth)
+        return json.loads(s)
+
+    @auth.setter
+    def auth(self, auth_dict):
+        if auth_dict is None:
+            return
+        s = json.dumps(auth_dict)
+        self._auth = util.encode(APP.config['SECRET_KEY'], s)
+
+    def has_auth(self):
+        return self._auth is not None
 
 
 class ResourceLock(DB.Model):

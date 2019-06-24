@@ -133,6 +133,24 @@ class GeoHealthCheckTest(unittest.TestCase):
             except Exception, err:
                 self.assertFalse(success, str(err))
 
+    def testSetGetResoureAuth(self):
+        # Test set/get auth for any Resource, tests en/decrypt
+        resource = Resource.query.first()
+        auth_dict = {
+            'type': 'basic',
+            'data': {
+                'username': 'the_user',
+                'password': 'the_password'
+             }
+        }
+
+        resource.auth = auth_dict
+        auth_dict_test = resource.auth
+
+        self.assertEqual(auth_dict_test['type'], 'basic')
+        self.assertEqual(auth_dict_test['data']['username'], 'the_user')
+        self.assertEqual(auth_dict_test['data']['password'], 'the_password')
+
 
 if __name__ == '__main__':
     unittest.main()
