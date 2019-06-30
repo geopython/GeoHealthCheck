@@ -42,6 +42,7 @@ import util
 from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
+from resourceauth import ResourceAuth
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 
@@ -379,6 +380,7 @@ class Resource(DB.Model):
         self.owner = owner
         self.tags = tags
         self.auth = auth
+        self.auth_obj = None
         self.latitude, self.longitude = util.geocode(url)
 
     def __repr__(self):
@@ -547,21 +549,39 @@ class Resource(DB.Model):
 
     @property
     def auth(self):
-        if not self.has_auth():
-            return None
+        return ResourceAuth.decode(self._auth)
 
-        s = util.decode(APP.config['SECRET_KEY'], self._auth)
-        return json.loads(s)
+    @property
+    def auth_type(self):
+        if not self.has_auth():
+            return 'None'
+        return self.auth['type']
 
     @auth.setter
     def auth(self, auth_dict):
         if auth_dict is None:
+            self._auth = None
             return
-        s = json.dumps(auth_dict)
-        self._auth = util.encode(APP.config['SECRET_KEY'], s)
+
+        self.auth_obj = ResourceAuth.create(auth_dict)
+        self._auth = self.auth_obj.encode()
 
     def has_auth(self):
         return self._auth is not None
+
+    def add_auth_header(self, headers_dict):
+        if 'Authorization' in headers_dict:
+            del headers_dict['Authorization']
+
+        if not self.has_auth():
+            return headers_dict
+
+        self.auth_obj = ResourceAuth.create(self.auth)
+
+        return self.auth_obj.add_auth_header(headers_dict)
+
+    def get_auth_types(self):
+        return ResourceAuth.get_auth_types().keys()
 
 
 class ResourceLock(DB.Model):

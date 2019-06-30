@@ -227,7 +227,7 @@ class Probe(Plugin):
         pass
 
     def get_request_headers(self):
-        return self.REQUEST_HEADERS
+        return self._resource.add_auth_header(self.REQUEST_HEADERS)
 
     def perform_request(self):
         """ Perform actual request to service"""

@@ -111,6 +111,9 @@ GHC_PLUGINS = [
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
+
+    # Resource Auth Plugins
+    'GeoHealthCheck.plugins.resourceauth.resourceauths',
 ]
 
 # Entry for User Plugins: will be added to default core GHC_PLUGINS

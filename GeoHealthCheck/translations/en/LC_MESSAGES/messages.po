@@ -169,57 +169,61 @@ msgid "Type"
 msgstr ""
 
 #: GeoHealthCheck/templates/edit_resource.html:15
+msgid "Authentication"
+msgstr ""
+
+#: GeoHealthCheck/templates/edit_resource.html:23
 #: GeoHealthCheck/templates/resource.html:58
 msgid "Active"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:23
+#: GeoHealthCheck/templates/edit_resource.html:25
 msgid "Notify emails"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:25
+#: GeoHealthCheck/templates/edit_resource.html:31
 msgid "You can enter multiple emails separated with comma"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:31
+#: GeoHealthCheck/templates/edit_resource.html:44
 msgid "Notify webhooks"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:44
+#: GeoHealthCheck/templates/edit_resource.html:45
 msgid "Enter url for webhook."
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:45
+#: GeoHealthCheck/templates/edit_resource.html:66
 msgid "Optionally, enter payload as list of key=value lines or JSON object."
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:66
+#: GeoHealthCheck/templates/edit_resource.html:71
 #: GeoHealthCheck/templates/resource.html:62
 msgid "Owner"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:71
+#: GeoHealthCheck/templates/edit_resource.html:92
 #: GeoHealthCheck/templates/includes/resources_list.html:5
 #: GeoHealthCheck/templates/resource.html:67
 msgid "Name"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:92
+#: GeoHealthCheck/templates/edit_resource.html:94
 #: GeoHealthCheck/templates/resource.html:86
 msgid "Run Every"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:94
+#: GeoHealthCheck/templates/edit_resource.html:120
 #: GeoHealthCheck/templates/resource.html:88
 msgid "minutes"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:120
+#: GeoHealthCheck/templates/edit_resource.html:124
 #: GeoHealthCheck/templates/includes/resources_list.html:6
 msgid "Status"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:124
+#: GeoHealthCheck/templates/edit_resource.html:134
 #: GeoHealthCheck/templates/includes/resources_list.html:29
 #: GeoHealthCheck/templates/includes/resources_list.html:38
 #: GeoHealthCheck/templates/notification_email.txt:10
@@ -227,20 +231,20 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:134
+#: GeoHealthCheck/templates/edit_resource.html:135
 #: GeoHealthCheck/templates/edit_resource.html:340
 #: GeoHealthCheck/templates/edit_resource.html:357
 msgid "Save"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:135
+#: GeoHealthCheck/templates/edit_resource.html:136
 #: GeoHealthCheck/templates/edit_resource.html:370
 #: GeoHealthCheck/templates/edit_resource.html:378
 #: GeoHealthCheck/templates/edit_resource.html:385
 msgid "Test"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:136
+#: GeoHealthCheck/templates/edit_resource.html:137
 msgid "Cancel"
 msgstr ""
 

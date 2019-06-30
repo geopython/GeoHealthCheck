@@ -36,6 +36,7 @@ from GeoHealthCheck.models import (DB, Resource, Run, load_data,
                                    Recipient)
 from GeoHealthCheck.healthcheck import run_test_resource
 from GeoHealthCheck.notifications import _parse_webhook_location
+from GeoHealthCheck.resourceauth import ResourceAuth
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -136,8 +137,24 @@ class GeoHealthCheckTest(unittest.TestCase):
     def testSetGetResoureAuth(self):
         # Test set/get auth for any Resource, tests en/decrypt
         resource = Resource.query.first()
+
+        # No Auth
         auth_dict = {
-            'type': 'basic',
+            'type': 'None',
+            'data': {}
+        }
+
+        resource.auth = auth_dict
+        auth_dict_test = resource.auth
+        self.assertEqual(auth_dict_test, None)
+
+        resource.auth = None
+        auth_dict_test = resource.auth
+        self.assertEqual(auth_dict_test, None)
+
+        # Basic Auth
+        auth_dict = {
+            'type': 'Basic',
             'data': {
                 'username': 'the_user',
                 'password': 'the_password'
@@ -146,10 +163,100 @@ class GeoHealthCheckTest(unittest.TestCase):
 
         resource.auth = auth_dict
         auth_dict_test = resource.auth
-
-        self.assertEqual(auth_dict_test['type'], 'basic')
+        # 31eYldfEhW1X34Wo1Mmkn5XQlVucUYSrzsbA1qmZ1VhcU1ehxajWr9HUmFqcU1amzJqTpMTW1qqm1sdV3pBSU6jcoJ6Ea4JZyMLUyplW4A
+        self.assertEqual(auth_dict_test['type'], 'Basic')
         self.assertEqual(auth_dict_test['data']['username'], 'the_user')
         self.assertEqual(auth_dict_test['data']['password'], 'the_password')
+
+        # Bearer Token
+        auth_dict = {
+            'type': 'Bearer Token',
+            'data': {
+                'token': 'a8KeTFOceitnRWT3M2rt'
+             }
+        }
+
+        resource.auth = auth_dict
+        auth_dict_test = resource.auth
+        self.assertEqual(auth_dict_test['type'], 'Bearer Token')
+        self.assertEqual(
+            auth_dict_test['data']['token'], 'a8KeTFOceitnRWT3M2rt')
+
+    def testResoureAuthPlugins(self):
+        auth_types = ResourceAuth.get_auth_types()
+        for auth_type in ['None', 'Basic', 'Bearer Token']:
+            self.assertEqual(auth_type in auth_types, True)
+
+        # No Auth
+        auth_dict = {
+            'type': 'None',
+            'data': {}
+        }
+
+        auth_obj = ResourceAuth.create(auth_dict)
+
+        self.assertEqual(auth_obj.__class__.__name__, 'NoAuth')
+        self.assertEqual(auth_obj.NAME, 'None')
+        self.assertEqual(auth_obj.verify(), False)
+
+        # Basic Auth
+        auth_dict = {
+            'type': 'Basic',
+            'data': {
+                'username': 'the_user',
+                'password': 'the_password'
+             }
+        }
+
+        auth_obj = ResourceAuth.create(auth_dict)
+
+        self.assertEqual(auth_obj.__class__.__name__, 'BasicAuth')
+        self.assertEqual(auth_obj.NAME, 'Basic')
+        self.assertEqual(auth_obj.verify(), True)
+        encoded_val = auth_obj.encode()
+        auth_dict_test = auth_obj.decode(encoded_val)
+        self.assertEqual(auth_dict_test['type'], 'Basic')
+        self.assertEqual(auth_dict_test['data']['username'], 'the_user')
+        self.assertEqual(auth_dict_test['data']['password'], 'the_password')
+
+        auth_dict = {
+            'type': 'Basic',
+            'data': {
+                'username': '',
+                'password': ''
+             }
+        }
+        auth_obj = ResourceAuth.create(auth_dict)
+        self.assertEqual(auth_obj.verify(), False)
+
+        auth_dict = {
+            'type': 'Basic',
+            'data': {
+                'username': None,
+                'password': None
+             }
+        }
+        auth_obj = ResourceAuth.create(auth_dict)
+        self.assertEqual(auth_obj.verify(), False)
+
+        # Bearer Token
+        auth_dict = {
+            'type': 'Bearer Token',
+            'data': {
+                'token': 'a8KeTFOceitnRWT3M2rt'
+             }
+        }
+
+        auth_obj = ResourceAuth.create(auth_dict)
+
+        self.assertEqual(auth_obj.__class__.__name__, 'BearerTokenAuth')
+        self.assertEqual(auth_obj.NAME, 'Bearer Token')
+        self.assertEqual(auth_obj.verify(), True)
+        encoded_val = auth_obj.encode()
+        auth_dict_test = auth_obj.decode(encoded_val)
+        self.assertEqual(auth_dict_test['type'], 'Bearer Token')
+        self.assertEqual(
+            auth_dict_test['data']['token'], 'a8KeTFOceitnRWT3M2rt')
 
 
 if __name__ == '__main__':

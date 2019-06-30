@@ -18,6 +18,58 @@
                     <input type="checkbox" id="input_resource_active" name="resource_active_value" {{ 'checked' if resource.active == true else '' }}/>
                 </td>
             </tr>
+            <tr>
+                <th>
+                    {{ _('Authentication') }}
+                </th>
+                <td>
+                    <label>{{ _('Select optional authentication method and applicable credentials') }}</label>
+                    {% set rsc_auth_type  = resource.auth_type %}
+                    <table class="table table-condensed">
+                        <tr>
+                         <td style="width: 20%;">
+                            <select class="form-control" id="select_resource_auth_type" name="select_resource_auth_type_val">
+                                 <!-- select box auth type -->
+                                 {% for auth_type in auth_types %}
+                                    {% set selected = '' %}
+
+                                    {% if rsc_auth_type == auth_type %}
+                                       {% set selected = 'selected' %}
+                                    {% endif %}
+                                 <option value="{{ auth_type }}" {{ selected }}>{{ auth_type }}</option>
+                                 {% endfor %}
+                             </select>
+                        </td>
+                            {% set placeholder1 = '' %}
+                            {% set placeholder2 = '' %}
+                            {% set auth_val1 = '' %}
+                            {% set auth_val2 = '' %}
+
+                            {% if rsc_auth_type == 'Basic' %}
+                             {% set placeholder1 = 'Username' %}
+                             {% set placeholder2 = 'Password' %}
+                             {% set auth_val1 = resource.auth['data']['username'] %}
+                             {% set auth_val2 = resource.auth['data']['password'] %}
+
+                            {% elif rsc_auth_type == 'Bearer Token' %}
+                              {% set placeholder1 = 'Token' %}
+                              {% set auth_val1 = resource.auth['data']['token'] %}
+
+                            {% endif %}
+
+
+                        <td style="width: 30%;">
+                          <input type="text" class="form-control" id="input_resource_auth_data1" name="input_resource_auth_data1_val" value="{{ auth_val1 }}" placeholder="{{ placeholder1 }}">
+                        </td>
+
+                        <td style="width: 30%;">
+                          <input type="text" class="form-control" id="input_resource_auth_data2" name="input_resource_auth_data2_val" value="{{ auth_val2 }}" placeholder="{{ placeholder2 }}">
+                        </td>
+                      </tr>
+                    </table>
+
+                </td>
+            </tr>
 
             <tr>
                 <th>{{ _("Notify emails") }}</th>
@@ -258,6 +310,23 @@ or
     $('#save').click(function() {
         $('#toggle-status-detail').hide();
 
+        var auth_type = $('select[name="select_resource_auth_type_val"]').val();
+        var new_auth = {
+            'type': auth_type,
+            'data': {
+
+            }
+        };
+
+        var auth_data1 = $('#input_resource_auth_data1').val();
+        var auth_data2 = $('#input_resource_auth_data2').val();
+        if (auth_type === 'Basic') {
+            new_auth['data']['username'] = auth_data1;
+            new_auth['data']['password'] = auth_data2;
+        } else if (auth_type === 'Bearer Token') {
+            new_auth['data']['token'] = auth_data1;
+        }
+        
         // Collect title
         var new_title = $('input[name="resource_title_value"]').val();
 
@@ -342,6 +411,7 @@ or
             type: "POST",
             url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
             data: JSON.stringify({
+                auth: new_auth,
                 title: new_title,
                 active: new_active,
                 tags: new_tags,

@@ -669,6 +669,8 @@ def update(resource_identifier):
             elif key == 'notify_webhooks':
                 resource.set_recipients('webhook',
                                         [v for v in value if v.strip()])
+            elif key == 'auth':
+                resource.auth = value
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])
@@ -749,6 +751,7 @@ def edit_resource(resource_identifier):
                            lang=g.current_lang,
                            resource=resource,
                            suggestions=suggestions,
+                           auth_types=resource.get_auth_types(),
                            probes_avail=probes_avail)
 
 
