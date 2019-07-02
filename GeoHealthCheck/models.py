@@ -580,9 +580,6 @@ class Resource(DB.Model):
 
         return self.auth_obj.add_auth_header(headers_dict)
 
-    def get_auth_types(self):
-        return ResourceAuth.get_auth_types().keys()
-
 
 class ResourceLock(DB.Model):
     """lock resource for multiprocessing runs"""

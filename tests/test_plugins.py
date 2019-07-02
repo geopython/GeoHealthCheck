@@ -74,6 +74,13 @@ class GeoHealthCheckTest(unittest.TestCase):
             # Must have perform method
             self.assertIsNotNone(plugin.perform)
 
+        plugins = Plugin.get_plugins('GeoHealthCheck.resourceauth.ResourceAuth')
+        for plugin in plugins:
+            plugin = Factory.create_obj(plugin)
+            self.assertIsNotNone(plugin)
+            # Must have encode method
+            self.assertIsNotNone(plugin.encode)
+
         plugins = Plugin.get_plugins(
             'GeoHealthCheck.probe.Probe',
             filters=[('RESOURCE_TYPE', 'OGC:*'), ('RESOURCE_TYPE', 'OGC:WMS')])

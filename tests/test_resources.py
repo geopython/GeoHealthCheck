@@ -183,9 +183,9 @@ class GeoHealthCheckTest(unittest.TestCase):
             auth_dict_test['data']['token'], 'a8KeTFOceitnRWT3M2rt')
 
     def testResoureAuthPlugins(self):
-        auth_types = ResourceAuth.get_auth_types()
+        auth_defs = ResourceAuth.get_auth_defs()
         for auth_type in ['None', 'Basic', 'Bearer Token']:
-            self.assertEqual(auth_type in auth_types, True)
+            self.assertEqual(auth_type in auth_defs, True)
 
         # No Auth
         auth_dict = {

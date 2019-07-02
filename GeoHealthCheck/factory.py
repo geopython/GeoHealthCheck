@@ -8,6 +8,7 @@ class Factory:
     Object, Function class Factory (Pattern).
     Based on: http://stackoverflow.com/questions/2226330/
         instantiate-a-python-class-from-a-name
+    Also contains introspection util functions.
     """
 
     @staticmethod
@@ -117,3 +118,10 @@ class Factory:
             else:
                 classes = list(c.__bases__) + classes
         return None
+
+    @staticmethod
+    def full_class_name_for_obj(o):
+        module = o.__class__.__module__
+        if module is None or module == str.__class__.__module__:
+            return o.__class__.__name__
+        return module + '.' + o.__class__.__name__

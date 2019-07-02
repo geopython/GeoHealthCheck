@@ -36,14 +36,14 @@ class BasicAuth(ResourceAuth):
     PARAM_DEFS = {
         'username': {
             'type': 'string',
-            'description': 'The username',
+            'description': 'Username',
             'default': None,
             'required': True,
             'range': None
         },
         'password': {
-            'type': 'string',
-            'description': 'The password',
+            'type': 'password',
+            'description': 'Password',
             'default': None,
             'required': True,
             'range': None
@@ -90,7 +90,7 @@ class BasicAuth(ResourceAuth):
         }
 
 
-        :return: None or dict with http auth header value
+        :return: None or http Basic auth header value
         """
 
         # Has auth, encode as HTTP header value
@@ -117,8 +117,8 @@ class BearerTokenAuth(ResourceAuth):
 
     PARAM_DEFS = {
         'token': {
-            'type': 'string',
-            'description': 'The token string',
+            'type': 'password',
+            'description': 'Token string',
             'default': None,
             'required': True,
             'range': None
@@ -157,7 +157,7 @@ class BearerTokenAuth(ResourceAuth):
              }
         }
 
-        :return: None or dict with http auth header value
+        :return: None or http auth header value
         """
 
         # Bearer Type, see eg. https://tools.ietf.org/html/rfc6750

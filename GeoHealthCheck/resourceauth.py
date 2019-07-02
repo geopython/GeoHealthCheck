@@ -11,7 +11,8 @@ LOGGER = logging.getLogger(__name__)
 class ResourceAuth(Plugin):
     """
      Base class for specific Plugin implementations to perform
-     authentication on a Resource.
+     authentication on a Resource. Subclasses provide specific
+     auth methods like Basic Auth, Bearer Token etc.
     """
 
     def __init__(self):
@@ -30,19 +31,24 @@ class ResourceAuth(Plugin):
     @staticmethod
     def create(auth_dict):
         auth_type = auth_dict['type']
-        auth_class = ResourceAuth.get_auth_types()[auth_type]
-        auth_obj = Factory.create_obj(auth_class)
+        auth_obj_def = ResourceAuth.get_auth_defs()[auth_type]
+        auth_obj = Factory.create_obj(
+            Factory.full_class_name_for_obj(auth_obj_def))
         auth_obj.init(auth_dict)
         return auth_obj
 
     @staticmethod
-    def get_auth_types():
+    def get_auth_defs():
+        """
+        Get available ResourceAuth definitions.
+        :return: dict keyed by NAME with object instance values
+        """
         auth_classes = Plugin.get_plugins(
             baseclass='GeoHealthCheck.resourceauth.ResourceAuth')
         result = {}
         for auth_class in auth_classes:
             auth_obj = Factory.create_obj(auth_class)
-            result[auth_obj.NAME] = auth_class
+            result[auth_obj.NAME] = auth_obj
 
         return result
 
@@ -50,6 +56,10 @@ class ResourceAuth(Plugin):
         return False
 
     def encode(self):
+        """
+        Encode/encrypt auth dict structure.
+        :return: encoded string
+        """
         if not self.verify():
             return None
 
@@ -62,6 +72,10 @@ class ResourceAuth(Plugin):
 
     @staticmethod
     def decode(encoded):
+        """
+         Decode/decrypt encrypted string into auth dict.
+         :return: encoded auth dict
+         """
         if encoded is None:
             return None
 

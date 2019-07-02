@@ -47,6 +47,7 @@ from init import App
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
+from resourceauth import ResourceAuth
 from util import send_email, geocode, format_checked_datetime, \
     format_run_status, format_obj_value
 import views
@@ -751,7 +752,7 @@ def edit_resource(resource_identifier):
                            lang=g.current_lang,
                            resource=resource,
                            suggestions=suggestions,
-                           auth_types=resource.get_auth_types(),
+                           auths_avail=ResourceAuth.get_auth_defs(),
                            probes_avail=probes_avail)
 
 
