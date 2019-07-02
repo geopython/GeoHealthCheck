@@ -74,7 +74,8 @@ class GeoHealthCheckTest(unittest.TestCase):
             # Must have perform method
             self.assertIsNotNone(plugin.perform)
 
-        plugins = Plugin.get_plugins('GeoHealthCheck.resourceauth.ResourceAuth')
+        plugins = Plugin.get_plugins(
+            'GeoHealthCheck.resourceauth.ResourceAuth')
         for plugin in plugins:
             plugin = Factory.create_obj(plugin)
             self.assertIsNotNone(plugin)
