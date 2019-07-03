@@ -1,5 +1,3 @@
-import requests
-
 from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.result import Result, push_result
 
@@ -8,6 +6,8 @@ class ESRIFSDrilldown(Probe):
     """
     Probe for ESRI FeatureServer endpoint "drilldown": starting
     with top /FeatureServer endpoint: get Layers and get Features on these.
+    Test e.g. from https://sampleserver6.arcgisonline.com/arcgis/rest/services
+    (at least sampleserver6 is ArcGIS 10.6.1 supporting Paging).
     """
 
     NAME = 'ESRIFS Drilldown'
@@ -63,8 +63,7 @@ class ESRIFSDrilldown(Probe):
         result.start()
         layers = []
         try:
-
-            fs_caps = requests.get(req_tpl['fs_caps']).json()
+            fs_caps = self.perform_get_request(req_tpl['fs_caps']).json()
             for attr in ['currentVersion', 'layers']:
                 val = fs_caps.get(attr, None)
                 if val is None:
@@ -93,7 +92,7 @@ class ESRIFSDrilldown(Probe):
                 layer_ids.append(layer['id'])
 
             for layer_id in layer_ids:
-                layer_caps.append(requests.get(
+                layer_caps.append(self.perform_get_request(
                     req_tpl['layer_caps'] % layer_id).json())
 
         except Exception as err:
@@ -115,7 +114,7 @@ class ESRIFSDrilldown(Probe):
             for layer_id in layer_ids:
 
                 try:
-                    features = requests.get(
+                    features = self.perform_get_request(
                         req_tpl['get_features'] % layer_id).json()
                     obj_id_field_name = features['objectIdFieldName']
                     features = features['features']
@@ -124,9 +123,10 @@ class ESRIFSDrilldown(Probe):
 
                     # At least one Feature: use first and try to get by id
                     object_id = features[0]['attributes'][obj_id_field_name]
-                    feature = requests.get(req_tpl['get_feature_by_id']
-                                           % (layer_id, obj_id_field_name,
-                                              str(object_id))).json()
+                    feature = self.perform_get_request(
+                        req_tpl['get_feature_by_id'] % (
+                            layer_id, obj_id_field_name,
+                            str(object_id))).json()
 
                     feature = feature['features']
                     if len(feature) == 0:

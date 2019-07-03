@@ -18,12 +18,56 @@
                     <input type="checkbox" id="input_resource_active" name="resource_active_value" {{ 'checked' if resource.active == true else '' }}/>
                 </td>
             </tr>
+            <tr>
+                <th>
+                    {{ _('Authentication') }}
+                </th>
+                <td>
+                    <label>{{ _('Select optional authentication method and applicable credentials') }}</label>
+                    {% set rsc_auth_type  = resource.auth_type  %}
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <select class="form-control" id="select_resource_auth_type" name="select_resource_auth_type_val">
+                                 <!-- select box auth type, default None -->
+                                 {% for auth_type in auths_avail %}
+                                    {% set selected = '' %}
+                                    {% if auth_type == rsc_auth_type %}
+                                       {% set selected = 'selected' %}
+                                    {% endif %}
+                                 <option value="{{ auth_type }}" {{ selected }}>{{ auth_type }}</option>
+                                 {% endfor %}
+                             </select>
+                        </div>
+                        {% for auth_type in auths_avail %}
+                            {% set auth_def = auths_avail[auth_type] %}
+                            {% for auth_param in auth_def.PARAM_DEFS %}
+                                {% set auth_param_def = auth_def.PARAM_DEFS[auth_param] %}
+                                {% set input_visibility = 'none' %}
+                                {% set input_type = 'text' %}
+                                {% set auth_param_val = '' %}
+
+                                {% if auth_type == rsc_auth_type %}
+                                    {% set input_visibility = 'inline' %}
+                                    {% set auth_param_val = resource.auth['data'][auth_param] %}
+                                {% endif %}
+                                {% if auth_param_def['type'] == 'password' %}
+                                    {% set input_type = 'password' %}
+                                {% endif %}
+                                <div class="col-xs-4 auth-input-row" data-auth-type="{{ auth_type }}" style="display: {{ input_visibility }};">
+                                    <input type="{{ input_type }}" class="form-control" name="data-auth" data-auth-type="{{ auth_type }}" data-auth-param="{{ auth_param }}" class="form-control"  value="{{ auth_param_val }}" placeholder="{{ auth_param_def['description'] }}">
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+
+                </td>
+            </tr>
 
             <tr>
                 <th>{{ _("Notify emails") }}</th>
                 <td>
                     <label>{{ _('You can enter multiple emails separated with comma') }}</label>
-                    <input type="text" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}"/>
+                    <input type="text" class="form-control" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}"/>
                 </td>
             </tr>
 
@@ -33,7 +77,7 @@
                     <div class="container-fluid">
                         {% for whook in resource.get_recipients('webhook') %}
                         <div class="whook_container">
-                            <textarea cols="150" name="resource_notify_webhooks_value">{{ whook }}</textarea>
+                            <textarea class="form-control" cols="150" name="resource_notify_webhooks_value">{{ whook }}</textarea>
                             <br/>
                             <span title="remove webhook configuration" class="remove glyphicon glyphicon-minus text-left"></span>
                         </div>
@@ -47,7 +91,7 @@
                     </div>
 
                     <div class="whook_container template">
-                        <textarea cols="150" name="resource_notify_webhooks_value" placeholder="http://url/path
+                        <textarea class="form-control" cols="150" name="resource_notify_webhooks_value" placeholder="http://url/path
 
 field_name=value
 or
@@ -71,7 +115,7 @@ or
                     {{ _('Name') }}
                 </th>
                 <td>
-                    <input type="text" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" />
+                    <input type="text" class="form-control" id="input_resource_title" name="resource_title_value" value="{{ resource.title }}" />
                 </td>
             </tr>
             <tr>
@@ -161,6 +205,22 @@ or
     // probes_available = JSON.parse(probes_json);
 
     {% if g.user.is_authenticated() %}
+
+    // Show input elements for selected Resource auth
+    $('#select_resource_auth_type').change(function(){
+        var selectedAuth = $(this).children("option:selected").val();
+        $('.auth-input-row').each(function (key, elem) {
+            var elm = $(elem);
+
+            // First hide all inputs
+            elm.css("display","none");
+
+            // Only inputs for selected auth type visible
+            if (elm.data('auth-type') === selectedAuth) {
+                elm.css("display","inline");
+            }
+        });
+    });
 
     function get_probe_entry(button) {
         // Find parent Probe entry and the detail div therein
@@ -257,7 +317,25 @@ or
 
     $('#save').click(function() {
         $('#toggle-status-detail').hide();
+        
+        // Resource auth: get and map input elements for auth type
+        var auth_type = $('select[name="select_resource_auth_type_val"]').val();
+        var new_auth = {
+            'type': auth_type,
+            'data': {}
+        };
 
+        // Gather form data from auth input elements related to type
+        var new_auth_data = new_auth['data'];
+        $('input[name=data-auth]').each(function (key, input) {
+            var elm = $(input);
+            // Only get form data for selected auth type
+            if (elm.data('auth-type') !== auth_type) {
+                return;
+            }
+            new_auth_data[elm.data('auth-param')] = elm.val();
+        });
+        
         // Collect title
         var new_title = $('input[name="resource_title_value"]').val();
 
@@ -342,6 +420,7 @@ or
             type: "POST",
             url: "{{ url_for('update', resource_identifier=resource.identifier) }}",
             data: JSON.stringify({
+                auth: new_auth,
                 title: new_title,
                 active: new_active,
                 tags: new_tags,

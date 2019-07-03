@@ -32,6 +32,8 @@ import json
 import logging
 import os
 import smtplib
+import six
+import base64
 from urllib2 import urlopen
 from urlparse import urlparse
 from gettext import translation
@@ -223,3 +225,34 @@ def read(filename, encoding='utf-8'):
     with io.open(full_path, encoding=encoding) as fh:
         contents = fh.read().strip()
     return contents
+
+
+# https://gist.github.com/gowhari/fea9c559f08a310e5cfd62978bc86a1a
+def encode(key, string):
+    encoded_chars = []
+    for i in range(len(string)):
+        key_c = key[i % len(key)]
+        encoded_c = chr(ord(string[i]) + ord(key_c) % 256)
+        encoded_chars.append(encoded_c)
+    encoded_string = ''.join(encoded_chars)
+    encoded_string = encoded_string.encode('latin') \
+        if six.PY3 else encoded_string
+    return base64.urlsafe_b64encode(encoded_string).rstrip(b'=')
+
+
+# https://gist.github.com/gowhari/fea9c559f08a310e5cfd62978bc86a1a
+def decode(key, string):
+    string = base64.urlsafe_b64decode(string + b'===')
+    string = string.decode('latin') if six.PY3 else string
+    encoded_chars = []
+    for i in range(len(string)):
+        key_c = key[i % len(key)]
+        encoded_c = chr((ord(string[i]) - ord(key_c) + 256) % 256)
+        encoded_chars.append(encoded_c)
+    encoded_string = ''.join(encoded_chars)
+    return encoded_string
+
+# e = encode('a key', 'a message')
+# d = decode('a key', e)
+# print([e])
+# print([d])

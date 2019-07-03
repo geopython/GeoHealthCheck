@@ -42,6 +42,9 @@ class Plugin(object):
     def __init__(self):
         self._parameters = {}
 
+    def get_class_name(self):
+        return type(self).__name__
+
     def get_param(self, param_name):
         """
         Get actual parameter value. `param_name` should be defined

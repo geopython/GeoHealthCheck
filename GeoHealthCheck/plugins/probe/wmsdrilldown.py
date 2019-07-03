@@ -46,7 +46,8 @@ class WmsDrilldown(Probe):
         result = Result(True, 'Test Capabilities')
         result.start()
         try:
-            wms = WebMapService(self._resource.url)
+            wms = WebMapService(self._resource.url,
+                                headers=self.get_request_headers())
             title = wms.identification.title
             self.log('response: title=%s' % title)
         except Exception as err:

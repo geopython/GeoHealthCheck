@@ -148,6 +148,7 @@ The following general aspects of a `Resource` can be edited:
 - Notification: recipient(s) for email (see :ref:`notification_notes`)
 - Notification: target(s) and parameters for webhooks (advanced: see :ref:`notification_notes`)
 - Resource run schedule, "Run Every" N minutes
+- Optional HTTP authentication (`Basic` or `Bearer Token`) for secured Resource endpoints
 
 By default, when a Resource is created, the owner's email will be added to the email-notifications.
 
@@ -377,3 +378,21 @@ which is constructed with the template: *GeoNode _hostname_*, where *_hostname_*
 is a host name from url provided. For example, let's assume you add GeoNode
 instance that is served from `demo.geonode.org`. All resources created in this way
 will have *GeoNode demo.geonode.org* tag.
+
+Resource Authentication
+-----------------------
+
+Resource authentication allows a user to optionally add credentials to access a secured `Resource` endpoint.
+Currently two (HTTP) authentication methods are supported:
+
+* `Basic Authentication`: "classic" username and password based
+* `Bearer Token`: single token based
+
+The default is `None`, i.e. no authentication.
+
+Within the `Resource` Edit screen, whenever a user selects an authentication method,
+the related input form-fields are shown. Any credentials added are stored encrypted.
+
+Resource Authentication has been implemented using GHC Plugins, thus may
+be extended at will.
+

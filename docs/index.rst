@@ -23,6 +23,7 @@ Features
 - database upgrades: using Alembic with Flask-Migrate
 - extensible healthchecks via Plugins
 - per-resource scheduling and notifications
+- per-resource HTTP-authentication like Basic, Token (optional)
 
 Links
 -----

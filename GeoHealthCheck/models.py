@@ -42,6 +42,7 @@ import util
 from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
+from resourceauth import ResourceAuth
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 
@@ -369,14 +370,17 @@ class Resource(DB.Model):
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
     run_frequency = DB.Column(DB.Integer, default=60)
+    _auth = DB.Column('auth', DB.Text, nullable=True, default=None)
 
-    def __init__(self, owner, resource_type, title, url, tags):
+    def __init__(self, owner, resource_type, title, url, tags, auth=None):
         self.resource_type = resource_type
         self.active = True
         self.title = title
         self.url = url
         self.owner = owner
         self.tags = tags
+        self.auth = auth
+        self.auth_obj = None
         self.latitude, self.longitude = util.geocode(url)
 
     def __repr__(self):
@@ -542,6 +546,39 @@ class Resource(DB.Model):
         for c in Recipient.TYPES:
             out[c] = self.get_recipients(c)
         return out
+
+    @property
+    def auth(self):
+        return ResourceAuth.decode(self._auth)
+
+    @property
+    def auth_type(self):
+        if not self.has_auth():
+            return 'None'
+        return self.auth['type']
+
+    @auth.setter
+    def auth(self, auth_dict):
+        if auth_dict is None:
+            self._auth = None
+            return
+
+        self.auth_obj = ResourceAuth.create(auth_dict)
+        self._auth = self.auth_obj.encode()
+
+    def has_auth(self):
+        return self._auth is not None
+
+    def add_auth_header(self, headers_dict):
+        if 'Authorization' in headers_dict:
+            del headers_dict['Authorization']
+
+        if not self.has_auth():
+            return headers_dict
+
+        self.auth_obj = ResourceAuth.create(self.auth)
+
+        return self.auth_obj.add_auth_header(headers_dict)
 
 
 class ResourceLock(DB.Model):

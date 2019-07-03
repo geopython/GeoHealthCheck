@@ -1,11 +1,12 @@
-import sys
-import datetime
 import logging
+import sys
+
+import datetime
 import requests
-from plugin import Plugin
-from init import App
 
 from factory import Factory
+from init import App
+from plugin import Plugin
 from result import ProbeResult
 
 LOGGER = logging.getLogger(__name__)
@@ -227,7 +228,7 @@ class Probe(Plugin):
         pass
 
     def get_request_headers(self):
-        return self.REQUEST_HEADERS
+        return self._resource.add_auth_header(self.REQUEST_HEADERS)
 
     def perform_request(self):
         """ Perform actual request to service"""
@@ -256,7 +257,6 @@ class Probe(Plugin):
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
 
         try:
-            headers = self.get_request_headers()
             if self.REQUEST_METHOD == 'GET':
                 # Default is plain URL, e.g. for WWW:LINK
                 url = url_base
@@ -264,16 +264,10 @@ class Probe(Plugin):
                     # Query String: mainly OWS:* resources
                     url = "%s%s" % (url, request_string)
 
-                self.response = requests.get(
-                    url,
-                    timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
-                    headers=headers)
+                self.response = self.perform_get_request(url)
             elif self.REQUEST_METHOD == 'POST':
-                self.response = requests.post(
-                    url_base,
-                    timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
-                    data=request_string,
-                    headers=headers)
+                self.response = self.perform_post_request(
+                    url_base, request_string)
         except requests.exceptions.RequestException as e:
             msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
@@ -283,6 +277,21 @@ class Probe(Plugin):
 
             if self.response.status_code / 100 in [4, 5]:
                 self.log('Error response: %s' % (str(self.response.text)))
+
+    def perform_get_request(self, url):
+        """ Perform actual HTTP GET request to service"""
+        return requests.get(
+            url,
+            timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+            headers=self.get_request_headers())
+
+    def perform_post_request(self, url_base, request_string):
+        """ Perform actual HTTP POST request to service"""
+        return requests.post(
+            url_base,
+            timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+            data=request_string,
+            headers=self.get_request_headers())
 
     def run_request(self):
         """ Run actual request to service"""

@@ -47,6 +47,7 @@ from init import App
 from enums import RESOURCE_TYPES
 from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
+from resourceauth import ResourceAuth
 from util import send_email, geocode, format_checked_datetime, \
     format_run_status, format_obj_value
 import views
@@ -669,6 +670,8 @@ def update(resource_identifier):
             elif key == 'notify_webhooks':
                 resource.set_recipients('webhook',
                                         [v for v in value if v.strip()])
+            elif key == 'auth':
+                resource.auth = value
             elif getattr(resource, key) != resource_identifier_dict[key]:
                 # Update other resource attrs, mainly 'name'
                 setattr(resource, key, resource_identifier_dict[key])
@@ -749,6 +752,7 @@ def edit_resource(resource_identifier):
                            lang=g.current_lang,
                            resource=resource,
                            suggestions=suggestions,
+                           auths_avail=ResourceAuth.get_auth_defs(),
                            probes_avail=probes_avail)
 
 
