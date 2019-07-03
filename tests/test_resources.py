@@ -32,6 +32,7 @@ import unittest
 import sys
 import os
 
+from GeoHealthCheck.init import App
 from GeoHealthCheck.models import (DB, Resource, Run, load_data,
                                    Recipient)
 from GeoHealthCheck.healthcheck import run_test_resource
@@ -46,6 +47,9 @@ sys.path.append('%s/..' % TEST_DIR)
 
 class GeoHealthCheckTest(unittest.TestCase):
     def setUp(self):
+        # Need this for Resource Auth
+        App.get_config()['SECRET_KEY'] = 'mysecrettestkey'
+
         self.db = DB
         # do once per test
         load_data('%s/data/fixtures.json' % TEST_DIR)
