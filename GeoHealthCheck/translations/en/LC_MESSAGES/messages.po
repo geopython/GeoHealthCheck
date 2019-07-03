@@ -168,11 +168,15 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:15
+#: GeoHealthCheck/templates/edit_resource.html:23
 msgid "Authentication"
 msgstr ""
 
-#: GeoHealthCheck/templates/edit_resource.html:23
+#: GeoHealthCheck/templates/edit_resource.html:26
+msgid "Select optional authentication method and applicable credentials"
+msgstr ""
+
+#: GeoHealthCheck/templates/edit_resource.html:15
 #: GeoHealthCheck/templates/resource.html:58
 msgid "Active"
 msgstr ""
