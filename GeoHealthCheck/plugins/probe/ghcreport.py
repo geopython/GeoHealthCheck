@@ -44,27 +44,25 @@ class GHCEmailReporter(Probe):
         ghc_url = self._resource.url.split('?')[0]
 
         # Assemble request templates with root FS URL
-        req_tpl = {
-            'summary': ghc_url + '/api/v1.0/summary/',
-        }
 
-        # 1. Test top Service endpoint existence
+        summary_url = ghc_url + '/api/v1.0/summary/'
+
+        # 1. Get the summary (JSON) report from GHC endpoint
         result = Result(True, 'Get GHC Report')
         result.start()
-        summary_report = 'Cannot get summary from %s' % \
-                         req_tpl['summary']
         try:
-            summary_report = self.perform_get_request(
-                req_tpl['summary']).json()
+            summary_report = self.perform_get_request(summary_url).json()
         except Exception as err:
-            result.set(False, str(err))
+            msg = 'Cannot get summary from %s err=%s' % \
+                  (summary_url, str(err))
+            result.set(False, msg)
+            result.stop()
+            self.result.add_result(result)
+            return
 
-        result.stop()
-        self.result.add_result(result)
+        # ASSERTION - summary report fetch ok
 
-        # ASSERTION: will do email reporting from here
-
-        # 3. Test getting Features from Layers
+        # 2. Do email reporting with summary report
         result = Result(True, 'Send Email')
         result.start()
 
