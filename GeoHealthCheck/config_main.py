@@ -108,6 +108,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
     'GeoHealthCheck.plugins.probe.wfs3',
     'GeoHealthCheck.plugins.probe.esrifs',
+    'GeoHealthCheck.plugins.probe.ghcreport',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
@@ -168,5 +169,9 @@ GHC_PROBE_DEFAULTS = {
     },
     'OSGeo:GeoNode': {
         'probe_class': None
+    },
+    'GHC:Report': {
+        'probe_class':
+            'GeoHealthCheck.plugins.probe.ghcreport.GHCEmailReporter'
     }
 }

@@ -88,5 +88,8 @@ RESOURCE_TYPES = {
     },
     'OSGeo:GeoNode': {
         'label': 'GeoNode instance'
+    },
+    'GHC:Report': {
+        'label': 'GeoHealthCheck Reporter (GHC-R)'
     }
 }

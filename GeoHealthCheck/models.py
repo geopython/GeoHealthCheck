@@ -109,6 +109,14 @@ class Run(DB.Model):
     def __repr__(self):
         return '<Run %r>' % (self.identifier)
 
+    def for_json(self):
+        return {
+            'success': self.success,
+            'response_time': self.response_time,
+            'checked_datetime': self.checked_datetime,
+            'message': self.message
+        }
+
 
 class ProbeVars(DB.Model):
     """
@@ -579,6 +587,19 @@ class Resource(DB.Model):
         self.auth_obj = ResourceAuth.create(self.auth)
 
         return self.auth_obj.add_auth_header(headers_dict)
+
+    def for_json(self):
+        return {
+            'identifier': self.identifier,
+            'resource_type': self.resource_type,
+            'url': self.url,
+            'title': self.title,
+            'active': self.active,
+            'owner': self.owner.username,
+            'owner_identifier': self.owner.identifier,
+            'run_frequency': self.run_frequency,
+            'reliability': round(self.reliability, 1)
+        }
 
 
 class ResourceLock(DB.Model):

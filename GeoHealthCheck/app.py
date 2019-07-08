@@ -986,6 +986,29 @@ def reset(token=None):
 # REST Interface Calls
 #
 
+@APP.route('/api/v1.0/summary/')
+def api_summary(resource_type=None, resource_id=None):
+    """
+    Get health summary for all Resources within this instance.
+    """
+
+    health_summary = views.get_health_summary()
+
+    # Convert Runs to dict-like structure
+    for run in ['first_run', 'last_run']:
+        run_obj = health_summary.get(run, None)
+        if run_obj:
+            health_summary[run] = run_obj.for_json()
+
+    # Convert Resources failing to dict-like structure
+    failed_resources = []
+    for resource in health_summary['failed_resources']:
+        failed_resources.append(resource.for_json())
+    health_summary['failed_resources'] = failed_resources
+
+    return jsonify(health_summary)
+
+
 @APP.route('/api/v1.0/probes-avail/')
 @APP.route('/api/v1.0/probes-avail/<resource_type>')
 @APP.route('/api/v1.0/probes-avail/<resource_type>/<int:resource_id>')
