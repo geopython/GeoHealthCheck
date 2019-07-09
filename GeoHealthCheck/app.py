@@ -30,10 +30,9 @@
 # =================================================================
 
 import csv
-import logging
 import json
+import logging
 from StringIO import StringIO
-from itertools import chain
 
 from flask import (flash, g, jsonify, redirect,
                    render_template, request, url_for)
@@ -41,16 +40,17 @@ from flask_babel import gettext
 from flask_login import (LoginManager, login_user, logout_user,
                          current_user, login_required)
 from flask_migrate import Migrate
+from itertools import chain
 
+import views
 from __init__ import __version__
-from init import App
 from enums import RESOURCE_TYPES
-from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
+from init import App
+from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from resourceauth import ResourceAuth
 from util import send_email, geocode, format_checked_datetime, \
     format_run_status, format_obj_value
-import views
 
 # Module globals for convenience
 LOGGER = logging.getLogger(__name__)
@@ -986,8 +986,10 @@ def reset(token=None):
 # REST Interface Calls
 #
 
+@APP.route('/api/v1.0/summary')
 @APP.route('/api/v1.0/summary/')
-def api_summary(resource_type=None, resource_id=None):
+@APP.route('/api/v1.0/summary.<content_type>')
+def api_summary(content_type='json'):
     """
     Get health summary for all Resources within this instance.
     """
@@ -1006,7 +1008,13 @@ def api_summary(resource_type=None, resource_id=None):
         failed_resources.append(resource.for_json())
     health_summary['failed_resources'] = failed_resources
 
-    return jsonify(health_summary)
+    if content_type == 'json':
+        result = jsonify(health_summary)
+    else:
+        result = '<pre>\n%s\n</pre>' % \
+                 render_template('status_report_email.txt',
+                                 lang=g.current_lang, summary=health_summary)
+    return result
 
 
 @APP.route('/api/v1.0/probes-avail/')

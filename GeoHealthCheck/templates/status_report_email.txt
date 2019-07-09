@@ -15,10 +15,12 @@
 [{{resource.identifier}}] - "{{resource.title}}"
   {{ _('Reliability') }}: {{ resource.reliability }}%
   {{ _('URL') }}: {{ resource.url }}
-  {{ _('owner') }}: {{ resource.owner }}
+  {{ _('Owner') }}: {{ resource.owner }}
   {{ _('Details') }}: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
 {% endfor %}
-
+{% if summary.failed_resources|length == 0 %}{{ _('None') }}!{% endif %}
 == {{ _('Links') }} ==
-Home: {{ config.GHC_SITE_URL }}
-Status CSV: {{ config.GHC_SITE_URL }}/csv
+{{ _('Home') }}: {{ config.GHC_SITE_URL }}
+{{ _('Summary') }} JSON: {{ config.GHC_SITE_URL }}/api/v1.0/summary
+{{ _('Summary') }} TXT: {{ config.GHC_SITE_URL }}/api/v1.0/summary.txt
+{{ _('Status') }}  CSV: {{ config.GHC_SITE_URL }}/csv

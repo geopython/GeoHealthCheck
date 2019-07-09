@@ -24,6 +24,7 @@ Features
 - extensible healthchecks via Plugins
 - per-resource scheduling and notifications
 - per-resource HTTP-authentication like Basic, Token (optional)
+- regular status summary report via email (optional)
 
 Links
 -----

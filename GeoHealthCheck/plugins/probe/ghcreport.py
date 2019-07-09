@@ -28,7 +28,15 @@ class GHCEmailReporter(Probe):
 
     REQUEST_METHOD = 'GET'
 
-    PARAM_DEFS = {}
+    PARAM_DEFS = {
+        'email': {
+            'type': 'string',
+            'description': 'A comma-separated list of email addresses \
+                           to send status report to',
+            'default': None,
+            'required': True
+        }
+    }
 
     """Param defs"""
 
@@ -77,14 +85,21 @@ class GHCEmailReporter(Probe):
 
             msg_body = render_template2(
                 'status_report_email.txt', template_vars)
-            resource = self._resource
 
-            to_addrs = resource.get_recipients('email')
-            if len(to_addrs) == 0:
+            resource = self._resource
+            to_addrs = self._parameters.get('email', None)
+            if to_addrs is None:
                 raise Exception(
-                    "No emails set for resource %s",
+                    'No emails set for GHCEmailReporter in resource=%s' %
                     resource.identifier)
 
+            to_addrs = to_addrs.replace(' ', '')
+            if len(to_addrs) == 0:
+                raise Exception(
+                    'No emails set for GHCEmailReporter in resource=%s' %
+                    resource.identifier)
+
+            to_addrs = to_addrs.split(',')
             msg = MIMEText(msg_body, 'plain', 'utf-8')
             msg['From'] = formataddr((config['GHC_SITE_TITLE'],
                                       config['GHC_ADMIN_EMAIL']))
