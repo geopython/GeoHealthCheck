@@ -30,10 +30,9 @@
 # =================================================================
 
 import csv
-import logging
 import json
+import logging
 from StringIO import StringIO
-from itertools import chain
 
 from flask import (flash, g, jsonify, redirect,
                    render_template, request, url_for)
@@ -41,16 +40,17 @@ from flask_babel import gettext
 from flask_login import (LoginManager, login_user, logout_user,
                          current_user, login_required)
 from flask_migrate import Migrate
+from itertools import chain
 
+import views
 from __init__ import __version__
-from init import App
 from enums import RESOURCE_TYPES
-from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from factory import Factory
+from init import App
+from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
 from resourceauth import ResourceAuth
 from util import send_email, geocode, format_checked_datetime, \
     format_run_status, format_obj_value
-import views
 
 # Module globals for convenience
 LOGGER = logging.getLogger(__name__)
@@ -985,6 +985,37 @@ def reset(token=None):
 #
 # REST Interface Calls
 #
+
+@APP.route('/api/v1.0/summary')
+@APP.route('/api/v1.0/summary/')
+@APP.route('/api/v1.0/summary.<content_type>')
+def api_summary(content_type='json'):
+    """
+    Get health summary for all Resources within this instance.
+    """
+
+    health_summary = views.get_health_summary()
+
+    # Convert Runs to dict-like structure
+    for run in ['first_run', 'last_run']:
+        run_obj = health_summary.get(run, None)
+        if run_obj:
+            health_summary[run] = run_obj.for_json()
+
+    # Convert Resources failing to dict-like structure
+    failed_resources = []
+    for resource in health_summary['failed_resources']:
+        failed_resources.append(resource.for_json())
+    health_summary['failed_resources'] = failed_resources
+
+    if content_type == 'json':
+        result = jsonify(health_summary)
+    else:
+        result = '<pre>\n%s\n</pre>' % \
+                 render_template('status_report_email.txt',
+                                 lang=g.current_lang, summary=health_summary)
+    return result
+
 
 @APP.route('/api/v1.0/probes-avail/')
 @APP.route('/api/v1.0/probes-avail/<resource_type>')

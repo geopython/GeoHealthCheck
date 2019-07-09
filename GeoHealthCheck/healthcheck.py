@@ -159,6 +159,7 @@ def sniff_test_resource(config, resource_type, url):
                          'OGC:STA': [urlopen],
                          'WWW:LINK': [urlopen],
                          'FTP': [urlopen],
+                         'GHC:Report': [urlopen],
                          'OSGeo:GeoNode': [geonode_get_ows],
                          }
     try:

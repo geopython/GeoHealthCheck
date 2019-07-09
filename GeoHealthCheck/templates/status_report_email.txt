@@ -1,0 +1,26 @@
+{{ _('Hi: this is an automated message from the') }} {{ config.GHC_SITE_TITLE }} {{ _('service') }}.
+
+== {{ _('Monitoring Period') }} ==
+{{ _('From') }}: {{ summary.first_run.checked_datetime }}
+{{ _('To') }}: {{ summary.last_run.checked_datetime }}
+
+== {{ _('Status') }} ==
+{{ _('Resources') }}: {{ summary.total }}
+{{ _('Operational') }}: {{ summary.success.number }}
+{{ _('Failing') }}: {{ summary.fail.number }}
+{{ _('Reliability') }}: {{ summary.reliability }}%
+
+== {{ _('Failing') }} {{ _('Resources') }} ==
+{% for resource in summary.failed_resources %}
+[{{resource.identifier}}] - "{{resource.title}}"
+  {{ _('Reliability') }}: {{ resource.reliability }}%
+  {{ _('URL') }}: {{ resource.url }}
+  {{ _('Owner') }}: {{ resource.owner }}
+  {{ _('Details') }}: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
+{% endfor %}
+{% if summary.failed_resources|length == 0 %}{{ _('None') }}!{% endif %}
+== {{ _('Links') }} ==
+{{ _('Home') }}: {{ config.GHC_SITE_URL }}
+{{ _('Summary') }} JSON: {{ config.GHC_SITE_URL }}/api/v1.0/summary
+{{ _('Summary') }} TXT: {{ config.GHC_SITE_URL }}/api/v1.0/summary.txt
+{{ _('Status') }}  CSV: {{ config.GHC_SITE_URL }}/csv

@@ -107,6 +107,7 @@ The following Resource Types are available:
 - Web Address (URL)
 - File Transfer Protocol (FTP)
 - GeoNode autodiscovery (see :ref:`geonode_notes`)
+- GeoHealthCheck Reporter (GHC-R) (see :ref:`ghc_reporter_notes`)
 
 Next fill in the URL and optional tags for the Resource.
 
@@ -378,6 +379,38 @@ which is constructed with the template: *GeoNode _hostname_*, where *_hostname_*
 is a host name from url provided. For example, let's assume you add GeoNode
 instance that is served from `demo.geonode.org`. All resources created in this way
 will have *GeoNode demo.geonode.org* tag.
+
+.. _ghc_reporter_notes:
+
+GeoHealthCheck Reporter Type
+----------------------------
+
+The `GeoHealthCheck Reporter (GHC-R)` Resource type allows users to receive a regular status
+summary report by email for the Resources in any local or remote GHC instance.
+Typically this is used for the local GHC instance. To setup:
+
+* in top-menu select `Add | GeoHealthCheck Reporter (GHC-R)`
+* in `Add Resource` screen add the site URL of the target GHC instance
+
+Then in `Resource Edit` screen
+
+* set `Run Every` field to a high value, typically 1440 minutes (every 24 hour)
+* click `Edit` button for the assigned `GHC Email Reporter`
+* set `email` field in `Probe Parameters` to one or more email adresses (comma-separated)
+
+.. warning::
+	The Resource form-field *"Notify emails"* is **not** the target for the Email Report!
+	It is used to report any possible errors for report assembly and email delivery.
+
+.. warning::
+	Summary email reports may in cases be marked as spam by your email provider.
+	In those cases you should greenlist (mark as non-spam) the sender email address.
+
+.. note::
+	Tip: The `GeoHealthCheck Reporter Probe` uses
+	the `/api/v1.0/summary` API call. You can always get the last status report message as text via
+	the URL `<GHC Instance URL>/api/v1.0/summary.txt` for example
+	https://demo.geohealthcheck.org/api/v1.0/summary.txt
 
 Resource Authentication
 -----------------------
