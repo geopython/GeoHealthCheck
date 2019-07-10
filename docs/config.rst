@@ -30,7 +30,7 @@ Optionally override these settings for your instance in ``instance/config_site.p
 - **GHC_USER_PLUGINS**: list of Plugin classes or modules provided by user (you)
 - **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
 - **GHC_METADATA_CACHE_SECS**: metadata, "Capabilities Docs", cache expiry time, default 900 secs, -1 to disable
-- **GHC_REQUIRE_WEBAPP_AUTH**: require authentication (login) to access GHC webapp (default: ``False``)
+- **GHC_REQUIRE_WEBAPP_AUTH**: require authentication (login or Basic Auth) to access GHC webapp and APIs (default: ``False``)
 - **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: ``True``), more below
 - **GHC_LOG_LEVEL**: logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING)
 - **GHC_MAP**: default map settings
@@ -146,5 +146,6 @@ In some cases it is required that only logged-in (authenticated) users like the 
 access the entire GHC webapp and its APIs. In that case the config setting **GHC_REQUIRE_WEBAPP_AUTH**
 should be set to ``True``. (version 0.7+). Non-authenticated users will be presented with
 the login screen. Initially only the ``admin`` user will be able to login, but it is possible to register
-and allow additional users by registering within the ``admin`` login session.
-Note that password reset is still enabled.
+and allow additional users by registering these within the ``admin`` login session.
+Note that password reset is still enabled. For remote REST API calls standard HTTP Basic
+Authentication (via the HTTP `Authentication` request header) can be used.

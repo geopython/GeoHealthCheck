@@ -394,6 +394,7 @@ Typically this is used for the local GHC instance. To setup:
 
 Then in `Resource Edit` screen
 
+* if the target GHC instance requires authentication: in `Authentication` form field select `Basic` and fill in username and password
 * set `Run Every` field to a high value, typically 1440 minutes (every 24 hour)
 * click `Edit` button for the assigned `GHC Email Reporter`
 * set `email` field in `Probe Parameters` to one or more email adresses (comma-separated)

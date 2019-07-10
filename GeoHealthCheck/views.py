@@ -33,6 +33,8 @@ import util
 from sqlalchemy import text
 from plugin import Plugin
 from factory import Factory
+from init import App
+APP = App.get_app()
 
 LOGGER = logging.getLogger(__name__)
 
@@ -156,6 +158,7 @@ def get_health_summary():
     success_percentage = 100 - failed_percentage
 
     response = {
+        'site_url': APP.config['GHC_SITE_URL'],
         'total': total_resources,
         'success': {
             'number': success,
