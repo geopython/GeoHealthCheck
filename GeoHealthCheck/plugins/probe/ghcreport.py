@@ -59,7 +59,14 @@ class GHCEmailReporter(Probe):
         result = Result(True, 'Get GHC Report')
         result.start()
         try:
-            summary_report = self.perform_get_request(summary_url).json()
+            response = self.perform_get_request(summary_url)
+            status = response.status_code
+            overall_status = status / 100
+            if overall_status in [4, 5]:
+                raise Exception('HTTP Error status=%d reason=%s'
+                                % (status, response.reason))
+
+            summary_report = response.json()
         except Exception as err:
             msg = 'Cannot get summary from %s err=%s' % \
                   (summary_url, str(err))

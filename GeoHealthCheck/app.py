@@ -29,12 +29,13 @@
 #
 # =================================================================
 
+import base64
 import csv
 import json
 import logging
 from StringIO import StringIO
 
-from flask import (flash, g, jsonify, redirect,
+from flask import (abort, flash, g, jsonify, redirect,
                    render_template, request, url_for)
 from flask_babel import gettext
 from flask_login import (LoginManager, login_user, logout_user,
@@ -150,6 +151,38 @@ def unauthorized_callback():
     else:
         url = '%s%s' % (request.script_root, request.path)
     return redirect(url_for('login', lang=g.current_lang, next=url))
+
+
+@LOGIN_MANAGER.request_loader
+def load_user_from_request(request):
+
+    # Try to login using Basic Auth
+    # Inspiration: https://flask-login.readthedocs.io
+    #              /en/latest/#custom-login-using-request-loader
+    basic_auth_val = request.headers.get('Authorization')
+    if basic_auth_val:
+        basic_auth_val = basic_auth_val.replace('Basic ', '', 1)
+        authenticated = False
+        try:
+            username, password = base64.b64decode(basic_auth_val).split(':')
+
+            user = User.query.filter_by(username=username).first()
+            if user:
+                authenticated = user.authenticate(password)
+        finally:
+            # Ignore errors, they should all fail the auth attempt
+            pass
+
+        if not authenticated:
+            LOGGER.warning('Unauthorized access for user=%s' % username)
+            abort(401)
+        else:
+            return user
+
+    # TODO: may add login via api-key or token here
+
+    # finally, return None if both methods did not login the user
+    return None
 
 
 @APP.template_filter('cssize_reliability')
