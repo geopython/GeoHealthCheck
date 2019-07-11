@@ -301,6 +301,10 @@ msgstr "Bron Typen"
 msgid "Show All"
 msgstr "Allen Tonen"
 
+#: GeoHealthCheck/templates/layout.html:86
+msgid "Show Mine"
+msgstr "Toon Eigen"
+
 #: GeoHealthCheck/templates/layout.html:90
 msgid "Tags"
 msgstr "Tags"

@@ -82,7 +82,10 @@
                                 {% endif %}
                                 {% endfor %}
                                 <li><i><a href="{{ url_for('resources', lang=g.current_lang) }}">{{ _('Show All') }}</a></i></li>
-                            </ul>
+                                {% if g.user.is_authenticated() %}
+                                <li><i><a href="{{ url_for('resources', lang=g.current_lang, q='owner:%s' % g.user.username) }}">{{ _('Show Mine') }}</a></i></li>
+                                {% endif %}
+                           </ul>
                         </li>
                     </ul>
                     <ul class="nav nav-sidebar">

@@ -304,36 +304,40 @@ msgstr ""
 msgid "Show All"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:90
+#: GeoHealthCheck/templates/layout.html:86
+msgid "Show Mine"
+msgstr ""
+
+#: GeoHealthCheck/templates/layout.html:93
 msgid "Tags"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:105
+#: GeoHealthCheck/templates/layout.html:108
 msgid "Settings"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:107
+#: GeoHealthCheck/templates/layout.html:110
 #: GeoHealthCheck/templates/resource.html:149
 msgid "History"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:107
+#: GeoHealthCheck/templates/layout.html:110
 msgid "days"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:108
+#: GeoHealthCheck/templates/layout.html:111
 msgid "Runner in Webapp"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:109
+#: GeoHealthCheck/templates/layout.html:112
 msgid "Probe Timeout"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:110
+#: GeoHealthCheck/templates/layout.html:113
 msgid "Minimal Run Freq"
 msgstr ""
 
-#: GeoHealthCheck/templates/layout.html:131
+#: GeoHealthCheck/templates/layout.html:134
 #: GeoHealthCheck/templates/opensearch_description.xml:11
 msgid "Powered by"
 msgstr ""
