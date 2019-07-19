@@ -318,7 +318,7 @@ msgstr ""
 
 #: GeoHealthCheck/templates/layout.html:109
 msgid "Probe Timeout"
-msgstr ""
+msgstr "Timeout der Untersuchung"
 
 #: GeoHealthCheck/templates/layout.html:110
 msgid "Minimal Run Freq"
@@ -356,7 +356,7 @@ msgstr "Passwort vergessen?"
 
 #: GeoHealthCheck/templates/login.html:23
 msgid "This app requires an authenticated user"
-msgstr ""
+msgstr "Diese Anwendung benötigt einen authentifizierten Benutzer"
 
 #: GeoHealthCheck/templates/notification_email.txt:4
 #: GeoHealthCheck/templates/reset_password_email.txt:1
