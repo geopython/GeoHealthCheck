@@ -105,21 +105,60 @@ In summary there are three options to run GHC and its healthchecks:
 * (deprecated): run **GHC Webapp** with **GHC_RUNNER_IN_WEBAPP** set to `False` and schedule healthchecks via external cron-jobs
 
 
-Enabling or disabling languages
--------------------------------
+Language Translations
+---------------------
 
-Open the file ``GeoHealthCheck/app.py`` and look for the language switcher (e.g. 'en','fr') and remove or add the desired languages.
-In case a new language (e.g. this needs a new translation file called ``*.po``)  is to be added,
-make a copy of  one of the folders in ``GeoHealthCheck/translations/``; rename the folder to the desired language (e.g. 'de' for german);
-start editing the file in ``LC_MESSAGES/messages.po`` and add your translations to the ''msgstr''.
-Don't forget the change the specified language in the messages.po file as well.
-For example the ``messages.po`` file for the german case has an english  ''msgid''  string,
-which needs to be translated in ''msgstr'' as seen below.  ::
+GHC supports multiple languages by using [Babel](http://babel.pocoo.org) with [Flask-Babel](https://pythonhosted.org/Flask-Babel/).
 
-    -#: GeoHealthCheck/app.py:394
-    -msgid "This site is not configured for self-registration"
-    -msgstr "Diese Webseite unterstützt keine Selbstregistrierung"
+*"Babel is an integrated collection of utilities that assist in internationalizing*
+*and localizing Python applications, with an emphasis on web-based applications."*
 
+Enabling/Disabling a Language
+.............................
+
+Open the file `GeoHealthCheck/app.py` and look for the language switcher (e.g. 'en','fr') and remove or add the desired languages.
+In case of a new language, a new translation file (called a `*.po`) has to be added as follows:
+
+* make a copy of one of the folders in `GeoHealthCheck/translations/`;
+* rename the folder to the desired language (e.g. `'de'` for German) using the language ISO codes
+* edit the file `<your_lang>/LC_MESSAGES/messages.po`, adding your translations to the `msgstr`
+
+Don't forget the change the specified language in the `messages.po` file as well.
+For example the `messages.po` file for the German case has an English  `msgid`  string,
+which needs to be translated in `msgstr'` as seen below.  ::
+
+    #: GeoHealthCheck/app.py:394
+    msgid "This site is not configured for self-registration"
+    msgstr "Diese Webseite unterstützt keine Selbstregistrierung"
+
+Compiling Language Files
+........................
+
+At runtime compiled versions, `*.mo` files, of the language-files are used.
+Easiest to compile is via: `paver compile_translations` in the project root dir.
+This basically calls ``pybabel compile` with the proper options.
+Now you can e.g. test your new translations by starting GHC.
+
+Updating Language Files
+.......................
+
+Once a language-file (`.po`) is present, it will need updating as development progresses.
+In order to know what to update (which strings are untranslated) it best to first update the `messages.po` file with
+all language strings, their location(s) within project files and whether the translation is missing.
+Missing translations will have `msgstr ""` like in this excerpt: ::
+
+	#: GeoHealthCheck/notifications.py:245 GeoHealthCheck/notifications.py:247
+	msgid "Passing"
+	msgstr "Jetzt geht's"
+
+	#: GeoHealthCheck/plugins/probe/ghcreport.py:115
+	msgid "Status summary"
+	msgstr ""
+
+Next all empty `msgstr`s can be filled.
+
+Updating is easiest using the command `paver update_translations` within the root dir of the project.
+This will basically call `pybabel extract` followed by `pybabel update` with the proper parameters.
 
 Customizing the Score Matrix
 ----------------------------
