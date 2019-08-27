@@ -48,363 +48,310 @@
         <section>
             <h1>GeoHealthCheck</h1>
             <h3>QoS Monitor for (OGC OWS)</h3>
-                <h3>Geospatial Web Services</h3>
+            <h3>Geospatial Web Services</h3>
             <p><a href="https://justobjects.nl" target="_new">Just van den Broecke</a></p>
             <p><a href="http://kralidis.ca" target="_new">Tom Kralidis</a></p>
-	    <p><a href="http://www.gisxperts.de" target="_new">Hannes I. Reuter</a></p>
+	        <p><a href="http://www.gisxperts.de" target="_new">Hannes I. Reuter</a></p>
             <!--<p>Put your name here if you edited these slides</p>-->
             <p><a href="http://geohealthcheck.org" target="_new">geohealthcheck.org</a></p>
             <h3><a href="https://github.com/geopython/GeoHealthCheck" target="_blank"><img style="border: none;" src="media/fa-github.png"></a></h3>
             <p><a href="http://geohealthcheck.org/LICENSE.txt" target="_new"><img src="media/cc.png"/><img src="media/by.png"/></a></p>
         </section>
 
-        <!-- Intro: Credits -->
-        <section>
-            <h2>Credits</h2>
-            <p>
-                This presentation has been created with <br/>
-                <a target="_new" href="https://github.com/hakimel/reveal.js">Reveal.js</a> by <a href="https://github.com/hakimel">Hakim El Hattab</a><br/>
-                Create beautiful interactive slide decks using HTML.
-            </p>
-            <p>
-                &nbsp;
-            </p>
-            <p>
-                Use left/right arrow keys. ESC for slides overview
-            </p>
-            <p>
-                <a href="index.html?print-pdf">PDF Print</a> then File|Print... (Chrome only)
-            </p>
-        </section>
 
-        <!-- Intro: About Authors: Just van den Broecke -->
-        <!--<section data-background="media/about-just.jpg">-->
-            <!--&nbsp;-->
-        <!--</section>-->
+<!--        &lt;!&ndash; Intro: About OGC OWS &ndash;&gt;-->
+<!--        <section style="text-align: left;">-->
+<!--            <h2>OGC ? &nbsp;&nbsp;OWS?</h2>-->
+<!--            <h3>- OGC: <a target="_new" href="https://www.opengeospatial.org">Open Geospatial Consortium</a></h3>-->
+<!--            <h3>- OGC defines OWS standards</h3>-->
+<!--            <h3>- OWS: <a target="_new" href="https://www.opengeospatial.org">OGC Web Services</a></h3>-->
+<!--            <h3>- OWS standards include: </h3>-->
+<!--            <h3>&nbsp;&nbsp;&nbsp;WMS, WFS, WCS, CSW, SOS, WPS, WMTS</h3>-->
+<!--         </section>-->
 
-        <!-- Intro: About Authors: Just van den Broecke -->
-        <section style="text-align: left;">
-            <h2>Just van den Broecke
-            <a href="https://justobjects.nl" target="_blank"><img style="border: none;" src="media/fa-user.png"></a> <a href="https://wiki.osgeo.org/wiki/Just_van_den_Broecke" target="_blank"><img style="border: none;" src="media/fa-wikipedia-w.png"></a> <a href="https://github.com/justb4" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/justb4" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
-            <h3>- <a href="https://justobjects.nl">Open Source Geospatial Professional</a></h3>
-            <h3>- Core contributor GeoHealthCheck</h3>
-            <h3>- <a href="https://geoqos.com">GeoQoS</a> - hosted GeoHealthCheck</h3>
-            <h3>- <a href="https://map5.nl">Map5.nl</a> -  online maps</h3>
-            <h3>- Chair OSGeo.nl Dutch Local Chapter</h3>
-            <h3>- Founder <a href="https://www.stetl.org">Stetl</a></h3>
-            <h3>- Core contributor <a href="https://data.smartemission.nl">Smart Emission</a></h3>
-        </section>
-
-        <!-- Intro: About Authors: Tom Kralidis -->
-        <section style="text-align: left;">
-            <h2>Tom Kralidis
-            <a href="http://kralidis.ca" target="_blank"><img style="border: none;" src="media/fa-user.png"></a> <a href="https://en.wikipedia.org/wiki/User:Tomkralidis" target="_blank"><img style="border: none;" src="media/fa-wikipedia-w.png"></a> <a href="https://github.com/tomkralidis" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/tomkralidis" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
-            <h3>- Founder of <a href="http://pycsw.org">pycsw</a></h3>
-            <h3>- Founder of GeoHealthCheck</h3>
-            <h3>- <a href="https://geopython.github.io/OWSLib">OWSLib</a></h3>
-            <h3>- <a href="https://github.com/geopython/pygeometa">pygeometa</a></h3>
-            <h3>- <a href="http://geonode.org">GeoNode</a></h3>
-            <h3>- <a href="http://qgis.org">QGIS (MetaSearch)</a></h3>
-            <h3>- <a href="http://pywps.org">PyWPS</a></h3>
-            <h3>- <a href="http://mapserver.org">MapServer</a></h3>
-        </section>
-
-	<!-- Intro: About Authors: Hannes I. Reuter -->
-        <section style="text-align: left;">
-            <h2>Hannes Isaak Reuter
-            <a href="http://gisxperts.de" target="_blank"><img style="border: none;" src="media/fa-user.png"></a>  <a href="https://github.com/hannesaddec" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/hireuter" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
-            <h3>- Geoecologist (GIS, Soil) and DEM Scientist</h3>
-            <h3>- Contributor to GHC and other OSS</h3>
-            <h3>- Long Term user of ArcInfo, QGIS, GDAL, Python, pyWPS</h3>
-            <h3>- Working in the <a href="http://ec.europa.eu/eurostat/web/gisco" target="_blank">GISCO Team</a></h3>
-        </section>    
-
-        <!-- Intro: About OGC OWS -->
-        <section style="text-align: left;">
-            <h2>OGC ? &nbsp;&nbsp;OWS?</h2>
-            <h3>- OGC: <a target="_new" href="https://www.opengeospatial.org">Open Geospatial Consortium</a></h3>
-            <h3>- OGC defines OWS standards</h3>
-            <h3>- OWS: <a target="_new" href="https://www.opengeospatial.org">OGC Web Services</a></h3>
-            <h3>- OWS standards include: </h3>
-            <h3>&nbsp;&nbsp;&nbsp;WMS, WFS, WCS, CSW, SOS, WPS, WMTS</h3>
-         </section>
-
-        <!-- Intro: About OGC OWS -->
-        <section data-background="media/ogc-ows.jpg">
-            &nbsp;
-        </section>
+<!--        &lt;!&ndash; Intro: About OGC OWS &ndash;&gt;-->
+<!--        <section data-background="media/ogc-ows.jpg">-->
+<!--            &nbsp;-->
+<!--        </section>-->
 
         <!-- Contents -->
-        <section style="text-align: left;">
-            <h1>Contents</h1>
-                <h2>- <a href="?transition=slide#challenges">OWS Monitoring Challenges</a></h2>
-                <h2>- <a href="?transition=slide#walkthrough">GHC Walk-through</a></h2>
-                <h2>- <a href="?transition=slide#setup">GHC Setup</a></h2>
-                <h2>- <a href="?transition=slide#architecture">GHC Architecture</a></h2>
-                <h2>- <a href="?transition=slide#project">GHC Project</a></h2>
-            <p>
-                GHC=<a target="_new" href="https://github.com/geopython/GeoHealthCheck">GeoHealthCheck</a>
-            </p>
-        </section>
+<!--        <section style="text-align: left;">-->
+<!--            <h1>Contents</h1>-->
+<!--                <h2>- <a href="?transition=slide#challenges">OWS Monitoring Challenges</a></h2>-->
+<!--                <h2>- <a href="?transition=slide#walkthrough">GHC Walk-through</a></h2>-->
+<!--                <h2>- <a href="?transition=slide#setup">GHC Setup</a></h2>-->
+<!--                <h2>- <a href="?transition=slide#architecture">GHC Architecture</a></h2>-->
+<!--                <h2>- <a href="?transition=slide#project">GHC Project</a></h2>-->
+<!--            <p>-->
+<!--                GHC=<a target="_new" href="https://github.com/geopython/GeoHealthCheck">GeoHealthCheck</a>-->
+<!--            </p>-->
+<!--        </section>-->
 
         <!-- Part 1 - Challenges -->
         <section id="challenges">
-            <h1>OWS Monitoring Challenges</h1>
+            <section>
+                <h1>OGC OWS Monitoring Challenges</h1>
+            </section>
+
+            <!-- Challenges -->
+            <section>
+                <blockquote style="font-size: 4em">
+                    &ldquo;I see pink tiles!&rdquo;
+                </blockquote>
+            </section>
+
+            <!-- Challenges -->
+            <section data-background="media/ok-tiles.jpg">
+                <h1 style="color: green; background: white;">What we expect</h1>
+            </section>
+
+            <!-- Challenges -->
+            <section data-background="media/pink-tiles.jpg">
+                <h1 style="color: red; background: white">What we see</h1>
+            </section>
+
+            <!-- Challenges -->
+            <section data-background="media/except-xml.jpg">
+                <h2  style="color: red; background: white">What we received</h2>
+            </section>
+
+            <!-- Challenges -->
+            <section data-background="media/except-inimage.jpg">
+                <h2  style="color: red; background: white">In Image Error Message</h2>
+            </section>
+
+            <!-- Challenges -->
+            <section data-background="media/blank-map.jpg">
+                <h2  style="color: red; background: white">"The Blank Stare"</h2>
+            </section>
+
+            <!-- Challenges -->
+            <section>
+                <h1 style="color: green">But our HTTP Monitor said: </h1>
+                <h1 style="color: green">200 OK...</h1>
+            </section>
+
+            <!-- Challenges -->
+           <section style="text-align: left;">
+                <h2>GetCapabilities response OK,</h2>
+                <h2>but</h2>
+                    <h3>- Capabilities doc may be static file</h3>
+                    <h3>- No guarantee specific services will work:</h3>
+                    <h3>&nbsp;&nbsp; WMS GetMap, WFS GetFeature, ...</h3>
+             </section>
+
+            <!-- Challenges -->
+            <section style="text-align: left;">
+                 <h2>Time-based OGC Services</h2>
+                     <h3>- SensorWeb Enablement (SWE)</h3>
+                     <h3>&nbsp;&nbsp; Internet of Things (IoT)</h3>
+                     <h3>- Sensor Observation Service (SOS)</h3>
+                     <h3>- SensorThings API (STA)</h3>
+              </section>
+
+            <!-- Challenges -->
+            <section data-background="media/sos-viewer.jpg">
+                <h2 style="color: green; background: white">SOS Viewer (52North)</h2>
+            </section>
+
+            <!-- Challenges -->
+            <section data-background="media/sos-gaps.jpg">
+                <h2 style="color: red; background: white">Gaps in SOS-Data</h2>
+            </section>
+
+            <!-- Challenges -->
+            <section>
+                <h2>Public "Uptime" services</h2>
+                <h3>Generic HTTP checking (keywords)</h3>
+                <h3>&nbsp;</h3>
+                <h2>But: most critical OGC-services</h2>
+                <h2>run internally on intranets</h2>
+            </section>
+
+            <!-- Challenges - Conclusion -->
+            <section>
+                <h2>Conclusion</h2>
+                <h3 style="color: orange">Need (FOSS) OGC-Service (OWS)</h3>
+                <h3 style="color: orange">QoS Checking</h3>
+                <h3 style="color: orange">with History Capture</h3>
+            </section>
         </section>
-
-        <!-- Challenges -->
-        <section>
-            <blockquote style="font-size: 4em">
-                &ldquo;I see pink tiles!&rdquo;
-            </blockquote>
-        </section>
-
-        <!-- Challenges -->
-        <section data-background="media/ok-tiles.jpg">
-            <h1 style="color: green; background: white;">What we expect</h1>
-        </section>
-
-        <!-- Challenges -->
-        <section data-background="media/pink-tiles.jpg">
-            <h1 style="color: red; background: white">What we see</h1>
-        </section>
-
-        <!-- Challenges -->
-        <section data-background="media/except-xml.jpg">
-            <h2  style="color: red; background: white">What we received</h2>
-        </section>
-
-        <!-- Challenges -->
-        <section data-background="media/except-inimage.jpg">
-            <h2  style="color: red; background: white">In Image Error Message</h2>
-        </section>
-
-        <!-- Challenges -->
-        <section data-background="media/blank-map.jpg">
-            <h2  style="color: red; background: white">"The Blank Stare"</h2>
-        </section>
-
-        <!-- Challenges -->
-        <section>
-            <h1 style="color: green">But our HTTP Monitor said: </h1>
-            <h1 style="color: green">200 OK...</h1>
-        </section>
-
-        <!-- Challenges -->
-       <section style="text-align: left;">
-            <h2>GetCapabilities response OK,</h2>
-            <h2>but</h2>
-                <h3>- Capabilities doc may be static file</h3>
-                <h3>- No guarantee specific services will work:</h3>
-                <h3>&nbsp;&nbsp; WMS GetMap, WFS GetFeature, ...</h3>
-         </section>
-
-        <!-- Challenges -->
-        <section style="text-align: left;">
-             <h2>Time-based OGC Services</h2>
-                 <h3>- SensorWeb Enablement (SWE)</h3>
-                 <h3>&nbsp;&nbsp; Internet of Things (IoT)</h3>
-                 <h3>- Sensor Observation Service (SOS)</h3>
-                 <h3>- SensorThings API (STA)</h3>
-          </section>
-
-        <!-- Challenges -->
-        <section data-background="media/sos-viewer.jpg">
-            <h2 style="color: green; background: white">SOS Viewer (52North)</h2>
-        </section>
-
-        <!-- Challenges -->
-        <section data-background="media/sos-gaps.jpg">
-            <h2 style="color: red; background: white">Gaps in SOS-Data</h2>
-        </section>
-
-        <!-- Challenges -->
-        <section>
-            <h2>Public "Uptime" services</h2>
-            <h3>Generic HTTP checking (keywords)</h3>
-            <h3>&nbsp;</h3>
-            <h2>But: most critical OGC-services</h2>
-            <h2>run internally on intranets</h2>
-        </section>
-
-        <!-- Challenges - Conclusion -->
-        <section>
-            <h2>Conclusion</h2>
-            <h3 style="color: orange">Need (FOSS) OGC-Service (OWS)</h3>
-            <h3 style="color: orange">QoS Checking</h3>
-            <h3 style="color: orange">with History Capture</h3>
-        </section>
-
         <!-- Part 2 - Walkthrough -->
         <section id="walkthrough">
-            <h1>GeoHealthCheck</h1>
-            <h1>Walk-through</h1>
-            <h2><a href="https://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h2>
-        </section>
+            <section>
+                <h1>GeoHealthCheck</h1>
+                <h1>Walk-through</h1>
+                <h2><a href="https://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h2>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through1.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through1.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through2.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through2.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through3.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through3.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through4.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through4.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through5.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through5.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through6.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through6.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through7.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through7.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through8.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through8.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through9.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through9.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough -->
-        <section data-background="media/walk-through10.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough -->
+            <section data-background="media/walk-through10.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <section id="walkthrough-analysis">
-            <h1>Failing Resource!</h1>
-            <h2>Root Cause Analysis</h2>
-        </section>
-        <!-- Walkthrough notification email FAIL -->
-        <section data-background="media/walk-through-notif.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <section id="walkthrough-analysis">
+                <h1>Failing Resource!</h1>
+                <h2>Root Cause Analysis</h2>
+            </section>
+            <!-- Walkthrough notification email FAIL -->
+            <section data-background="media/walk-through-notif.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough analysis 1 -->
-        <section data-background="media/analysis-1-resource.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough analysis 1 -->
+            <section data-background="media/analysis-1-resource.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough analysis 2 -->
-        <section data-background="media/analysis-2-resource-history.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough analysis 2 -->
+            <section data-background="media/analysis-2-resource-history.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough analysis 3 -->
-        <section data-background="media/analysis-3-resource-history-detail.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
+            <!-- Walkthrough analysis 3 -->
+            <section data-background="media/analysis-3-resource-history-detail.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
 
-        <!-- Walkthrough notification OK -->
-        <section data-background="media/walk-through-notif-ok.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
+            <!-- Walkthrough notification OK -->
+            <section data-background="media/walk-through-notif-ok.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
         </section>
+        <!-- Part 3 - HL Architecture -->
+        <section id="hlarch">
+            <section>
+                <h1>GeoHealthCheck</h1>
+                <h1>Functional Architecture</h1>
+            </section>
 
-        <!-- Part 3 - Setup -->
-        <section id="setup">
-            <h1>GeoHealthCheck</h1>
-            <h1>Setup</h1>
+            <!-- Setup - Parts-->
+            <section style="text-align: left;">
+                <h2>GHC Parts</h2>
+                <h3>- Python Webapp (Dashboard)</h3>
+                <h3>- HealthCheck Runner (Plugins!)</h3>
+                <h3>- Database</h3>
+            </section>
+
+            <!--  Setup - Parts -->
+            <section data-background="media/ghc-parts.jpg">
+                <!-- for printing -->
+                <p>&nbsp;</p>
+            </section>
+
+            <!-- Setup -->
+            <section style="text-align: left;">
+                <h2>Dashboard</h2>
+                <h3>- Flask - web framework</h3>
+                <h3>- Standard Python WSGI</h3>
+                <h3>- Run w Nginx, Apache2, Gunicorn..</h3>
+                <h3>- Preferred: via Docker!</h3>
+            </section>
+
+            <!-- Setup -->
+            <section style="text-align: left;">
+                <h2>HealthCheck Runner</h2>
+                <h3>- Scheduled (cron)</h3>
+                <h3>- Run "Probes" and "Checks"</h3>
+                <h3>- Result reporting</h3>
+                <h3>- Notifications: email, webhook</h3>
+            </section>
+
+            <!-- Setup -->
+            <section style="text-align: left;">
+                <h2>Plugins - Probes and Checks</h2>
+                <h3>- Standard (included in GHC)</h3>
+                <h3>- Custom (include your own!)</h3>
+                <h3>- Configurable via Web UI</h3>
+                <h3>- More later on...</h3>
+            </section>
+
+            <!-- Setup -->
+            <section style="text-align: left;">
+                <h2>Database</h2>
+                <h3>- Entities: </h3>
+                <h3>&nbsp; &nbsp; &nbsp; Users, Resources, Runs, Tags</h3>
+                <h3>&nbsp; &nbsp; &nbsp; ProbeVars, CheckVars, Recipients</h3>
+                <h3>- Maintains history (Runs)</h3>
+                <h3>- Multiple backends</h3>
+                <h3>&nbsp;&nbsp;&nbsp; via SQLAlchemy: default SQLite</h3>
+            </section>
+
+            <!-- Setup -->
+            <section style="text-align: left;">
+                <h2>Tags</h2>
+                <h3>- For grouping Resources</h3>
+                <h3>- Provide in UI</h3>
+                <h3>- More later on...</h3>
+            </section>
         </section>
-
-        <!-- Setup - Parts-->
-        <section style="text-align: left;">
-            <h2>GHC Parts</h2>
-            <h3>- Python Webapp (Dashboard)</h3>
-            <h3>- HealthCheck Runner (Plugins!)</h3>
-            <h3>- Database</h3>
-        </section>
-
-        <!--  Setup - Parts -->
-        <section data-background="media/ghc-parts.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
-
         <!-- Setup -->
+        <section id="installation">
+            <section style="text-align: left;">
+                <h1>Installation</h1>
+            </section>
         <section style="text-align: left;">
-            <h2>Dashboard</h2>
-            <h3>- Flask - web framework</h3>
-            <h3>- Standard Python WSGI</h3>
-            <h3>- Run w Nginx, Apache2, Gunicorn..</h3>
-            <h3>- Preferred: via Docker!</h3>
-        </section>
-
-        <!-- Setup -->
-        <section style="text-align: left;">
-            <h2>HealthCheck Runner</h2>
-            <h3>- Scheduled (cron)</h3>
-            <h3>- Run "Probes" and "Checks"</h3>
-            <h3>- Result reporting</h3>
-            <h3>- Notifications: email, webhook</h3>
-        </section>
-
-        <!-- Setup -->
-        <section style="text-align: left;">
-            <h2>Plugins - Probes and Checks</h2>
-            <h3>- Standard (included in GHC)</h3>
-            <h3>- Custom (include your own!)</h3>
-            <h3>- Configurable via Web UI</h3>
-            <h3>- More later on...</h3>
-        </section>
-
-        <!-- Setup -->
-        <section style="text-align: left;">
-            <h2>Database</h2>
-            <h3>- Entities: </h3>
-            <h3>&nbsp; &nbsp; &nbsp; Users, Resources, Runs, Tags</h3>
-            <h3>&nbsp; &nbsp; &nbsp; ProbeVars, CheckVars, Recipients</h3>
-            <h3>- Maintains history (Runs)</h3>
-            <h3>- Multiple backends</h3>
-            <h3>&nbsp;&nbsp;&nbsp; via SQLAlchemy: default SQLite</h3>
-        </section>
-
-        <!-- Setup -->
-        <section style="text-align: left;">
-            <h2>Tags</h2>
-            <h3>- For grouping Resources</h3>
-            <h3>- Provide in UI</h3>
-            <h3>- More later on...</h3>
-        </section>
-
-        <!-- Setup -->
-        <section style="text-align: left;">
-            <h2>Installation</h2>
+            <h2>Standard</h2>
             <h3>- Standard Python setup - <a href="https://docs.geohealthcheck.org">Instructions</a></h3>
             <h3>- Paver for setup and management tasks</h3>
             <h3>- Alembic with Flask-Migrate</h3>
@@ -447,9 +394,11 @@ GHC_REQUIRE_WEBAPP_AUTH = False
             </pre>
 
         </section>
+        </section>
 
         <!-- Part 4 - Architecture -->
         <section id="architecture">
+        <section>
             <h1>GeoHealthCheck</h1>
             <h1>Architecture</h1>
         </section>
@@ -478,6 +427,12 @@ GHC_REQUIRE_WEBAPP_AUTH = False
             <h3>- All Checks: Probe Run Report (JSON)</h3>
         </section>
 
+        </section>
+        <section id="plugindev">
+            <section style="text-align: left;">
+                <h1>Extending GHC</h1>
+                <h2>Plugin Development</h2>
+            </section>
         <!-- Plugin model -->
         <section style="text-align: left;">
             <h2>Plugin Model</h2>
@@ -531,8 +486,10 @@ GHC_REQUIRE_WEBAPP_AUTH = False
             <p>&nbsp;</p>
         </section>
 
+        </section>
         <!-- Part 5 - Project -->
         <section id="project">
+        <section>
             <h1>GeoHealthCheck</h1>
             <h1>Project</h1>
             <h3><a href="https://code.geohealthcheck.org">Open Source (MIT) on GitHub</a></h3>
@@ -553,7 +510,7 @@ GHC_REQUIRE_WEBAPP_AUTH = False
 
         <!-- Project -->
         <section style="text-align: left;">
-            <h2>Current Status (June 23, 2019)</h2>
+            <h2>Current Status (August 27, 2019)</h2>
             <h3>- Release <a href="https://github.com/geopython/GeoHealthCheck/releases">v0.6.0</a></h3>
             <h3>- Demo <a href="https://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h3>
             <h3>- Docker: <a href="https://hub.docker.com/r/geopython/geohealthcheck" target="blank">Images on DockerHub</a></h3>
@@ -586,11 +543,18 @@ GHC_REQUIRE_WEBAPP_AUTH = False
             <h3>- Sponsored Development</h3>
             <h3>- Translation</h3>
 	    </section>
+        </section>
 
         <!-- geoqos.com shameless plug -->
-        <section>
-            <img src="media/geoqos.com_home.jpg" alt="geoqos.com" />
-            <h2 style="color: red; background: white">geoqos.com</h2>
+        <section id="cloud">
+            <section style="text-align: left;">
+                <h1>Shameless Plug</h1>
+                <h2>Cloud Subscription</h2>
+            </section>
+            <section>
+                <img src="media/geoqos.com_home.jpg" alt="geoqos.com" />
+                <h2 style="color: red; background: white">geoqos.com</h2>
+            </section>
         </section>
 
         <section style="text-align: left;">
@@ -604,6 +568,66 @@ GHC_REQUIRE_WEBAPP_AUTH = False
             </p>
         </section>
 
+        <section id="outro-credits">
+     				<section>
+     					<h1>Credits &amp; Authors</h1>
+     				</section>
+            <!-- Outro: Credits -->
+            <section>
+                <h2>Credits</h2>
+                <p>
+                    This presentation has been created with <br/>
+                    <a target="_new" href="https://github.com/hakimel/reveal.js">Reveal.js</a> by <a href="https://github.com/hakimel">Hakim El Hattab</a><br/>
+                    Create beautiful interactive slide decks using HTML.
+                </p>
+                <p>
+                    &nbsp;
+                </p>
+                <p>
+                    Use left/right arrow keys. ESC for slides overview
+                </p>
+                <p>
+                    <a href="index.html?print-pdf">PDF Print</a> then File|Print... (Chrome only)
+                </p>
+            </section>
+
+            <!-- Outro: About Authors: Just van den Broecke -->
+            <section style="text-align: left;">
+                <h2>Just van den Broecke
+                <a href="https://justobjects.nl" target="_blank"><img style="border: none;" src="media/fa-user.png"></a> <a href="https://wiki.osgeo.org/wiki/Just_van_den_Broecke" target="_blank"><img style="border: none;" src="media/fa-wikipedia-w.png"></a> <a href="https://github.com/justb4" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/justb4" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
+                <h3>- <a href="https://justobjects.nl">Open Source Geospatial Professional</a></h3>
+                <h3>- Core contributor GeoHealthCheck</h3>
+                <h3>- <a href="https://geoqos.com">GeoQoS</a> - hosted GeoHealthCheck</h3>
+                <h3>- <a href="https://map5.nl">Map5.nl</a> -  online maps</h3>
+                <h3>- Chair OSGeo.nl Dutch Local Chapter</h3>
+                <h3>- Founder <a href="https://www.stetl.org">Stetl</a></h3>
+                <h3>- Core contributor <a href="https://data.smartemission.nl">Smart Emission</a></h3>
+            </section>
+
+            <!-- Outro: About Authors: Tom Kralidis -->
+            <section style="text-align: left;">
+                <h2>Tom Kralidis
+                <a href="http://kralidis.ca" target="_blank"><img style="border: none;" src="media/fa-user.png"></a> <a href="https://en.wikipedia.org/wiki/User:Tomkralidis" target="_blank"><img style="border: none;" src="media/fa-wikipedia-w.png"></a> <a href="https://github.com/tomkralidis" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/tomkralidis" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
+                <h3>- Founder of <a href="http://pycsw.org">pycsw</a></h3>
+                <h3>- Founder of GeoHealthCheck</h3>
+                <h3>- <a href="https://geopython.github.io/OWSLib">OWSLib</a></h3>
+                <h3>- <a href="https://github.com/geopython/pygeometa">pygeometa</a></h3>
+                <h3>- <a href="http://geonode.org">GeoNode</a></h3>
+                <h3>- <a href="http://qgis.org">QGIS (MetaSearch)</a></h3>
+                <h3>- <a href="http://pywps.org">PyWPS</a></h3>
+                <h3>- <a href="http://mapserver.org">MapServer</a></h3>
+            </section>
+
+    	<!-- Outro: About Authors: Hannes I. Reuter -->
+            <section style="text-align: left;">
+                <h2>Hannes Isaak Reuter
+                <a href="http://gisxperts.de" target="_blank"><img style="border: none;" src="media/fa-user.png"></a>  <a href="https://github.com/hannesaddec" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/hireuter" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
+                <h3>- Geoecologist (GIS, Soil) and DEM Scientist</h3>
+                <h3>- Contributor to GHC and other OSS</h3>
+                <h3>- Long Term user of ArcInfo, QGIS, GDAL, Python, pyWPS</h3>
+                <h3>- Working in the <a href="http://ec.europa.eu/eurostat/web/gisco" target="_blank">GISCO Team</a></h3>
+            </section>
+        </section>
         <!-- Below Examples from Original Pres from reveal.js website, for inspiration...
 
         Example of nested vertical slides
