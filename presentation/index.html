@@ -36,10 +36,10 @@
 				<section>
 					<h1>GeoHealthCheck</h1>
 					<h2>A Quality of Service Monitor for Geospatial Web Services</h2>
-					<p><a href="https://geohealthcheck.org" target="_new">geohealthcheck.org</a></p>
+					<h3><a href="https://geohealthcheck.org" target="_new">geohealthcheck.org</a></h3>
 				</section>
 				<section id="table-of-contents">
-					<h1>Table of contents</h1>
+					<h2>Table of contents</h2>
 					<ul>
 						<li>OGC OWS Monitoring Challenges</li>
 						<li>GeoHealthCheck Overview and Tour</li>
@@ -81,7 +81,7 @@
 						<ul>
 							<li>Capabilities doc may be static file</li>
 							<li>No guarantee specific requests will work (WMS GetMap, WFS GetFeature, etc.)</li>
-						<ul>
+						</ul>
 					</section>
 					<section style="text-align: left;">
 						<h2>Time-based OGC Services</h2>
@@ -104,7 +104,7 @@
 							<li>Generic HTTP checking (keywords)</li>
 							<li>OWS specifics need deeper inspection</li>
 							<li>Not accessible: most critical OGC-services run internally on intranets</li>
-						<ul>
+						</ul>
 					</section>
 					<section>
 						<h2>Value proposition</h2>
@@ -117,7 +117,8 @@
 				</section>
 				<section id="geohealthcheck-overview-and-tour">
 					<section>
-						<h2>GeoHealthCheck Overview and Tour</h2>
+						<h1>GeoHealthCheck Overview</h1>
+						<h1>and Tour</h1>
 					</section>
 					<section>
 						<h2>Overview</h2>
@@ -219,21 +220,39 @@
 				<section style="text-align: left;">
 					<h2>Dashboard</h2>
 					<ul>
-						<li>Flask - web framework</li>
+						<li>Configure/Manage Healthchecks</li>
+						<li>Flask Webapp</li>
 						<li>Standard Python WSGI</li>
-						<li>Run w/ Nginx, Apache2, Gunicorn...</li>
-						<li>Preferred: via Docker!</li>
+						<li>Run with Nginx, Apache2, Gunicorn...</li>
 					</ul>
 				</section>
 				<section style="text-align: left;">
 					<h2>HealthCheck Runner</h2>
 					<ul>
-						<li>Scheduled (cron)</li>
-						<li>Run "Probes" and "Checks"</li>
-						<li>Result reporting</li>
-						<li>Notifications: email, webhook</li>
-					<ul>
+						<li>Runs Healthchecks (duh!)</li>
+						<li>Driven by Scheduler (APScheduler)</li>
+						<li>Reporting (Down/Up, Daily Status)</li>
+						<li>Notifications: email, webhook, ...</li>
+					</ul>
 				</section>
+					<section style="text-align: left;">
+						<h2>HealthCheck Model</h2>
+						<ul>
+							<li><strong>Resource</strong>: abstraction for (OWS or REST) API Endpoint</li>
+							<li><strong>Resource</strong>: has (API endpoint) <strong>URL</strong></li>
+							<li><strong>Probe</strong>: fires request(s) on (Resource) URL</li>
+							<li><strong>Resource</strong> has 1-N <strong>Probes</strong></li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>HealthCheck Model</h2>
+						<ul>
+							<li><strong>Probe</strong> has N <strong>Checks</strong> (checklist)</li>
+							<li>Each <strong>Check</strong>: evaluates <strong>Probe</strong> result aspect (e.g. response content)</li>
+							<li>Check gives boolean verdict (success/fail)</li>
+							<li>All Probe Checks: <strong>Probe Run Report</strong> (JSON)</li>
+						</ul>
+					</section>
 				<section style="text-align: left;">
 					<h2>Plugins - Probes and Checks</h2>
 					<ul>
@@ -241,6 +260,7 @@
 						<li>Custom (include your own!)</li>
 						<li>Configurable via Web UI</li>
 						<li>More later on...</li>
+					</ul>
 					</section>
 					<section style="text-align: left;">
 						<h2>Database</h2>
@@ -248,8 +268,9 @@
 							<li>Entities
 								<ul>
 									<li>Users, Resources, Runs, Tags</li>
-									<li>ProbeVars, CheckVars, Recipients</li>
+									<li>Probes, Checks, Recipients</li>
 								</ul>
+							<li>Per-Probe run schedule</li>
 							<li>Maintains history (Runs)</li>
 							<li>Multiple backends (via SQLAlchemy: default SQLite)</li>
 						</ul>
@@ -258,30 +279,12 @@
 						<h2>Tags</h2>
 						<ul>
 							<li>For grouping Resources</li>
-							<li>Provide in UI</li>
-							<li>More later on...</li>
+							<li>Provide/manage in Dashboard</li>
 						</ul>
 					</section>
 					<section style="text-align: left;">
 						<h2>Data Model</h2>
 						<img src="media/datamodel.png" alt="datamodel"/>
-					</section>
-					<section style="text-align: left;">
-						<h2>HealthCheck Model</h2>
-						<ul>
-							<li>Resource has URL</li>
-							<li>URL is usually OWS Endpoint</li>
-							<li>Probes: fire request(s) on URL</li>
-							<li>Resource has N Probes</li>
-						<ul>
-					</section>
-					<section style="text-align: left;">
-						<h2>HealthCheck Model</h2>
-						<ul>
-							<li>Probe has N Checks (checklist)</li>
-							<li>Each Check checks Probe result aspect</li>
-							<li>Check gives aspect verdict (success/fail)</li>
-							<li>All Checks: Probe Run Report (JSON)</li>
 					</section>
         			</section>
 				<section id="installation">
@@ -291,9 +294,9 @@
 					<section style="text-align: left;">
 						<h2>Standard</h2>
 						<ul>
-							<li>Standard Python setup - <a href="https://docs.geohealthcheck.org">Instructions</a></h3>
-							<li>Paver for setup and management tasks</h3>
-							<li>Alembic with Flask-Migrate (for DB upgrades)</h3>
+							<li>Standard Python setup - <a href="https://docs.geohealthcheck.org">Instructions</a></li>
+							<li>Paver for setup and management tasks</li>
+							<li>Alembic with Flask-Migrate (for DB upgrades)</li>
 						</ul>
 					</section>
 					<section style="text-align: left;">
@@ -347,7 +350,8 @@ GHC_REQUIRE_WEBAPP_AUTH = False
 						</ul>
 					</section>
 					<section style="text-align: left;">
-						<h2>Plugin Model - Probe Types</h2>
+						<h2>Plugin Model</h2>
+						<h3>Two Probe Types</h3>
 						<ul>
 							<li>Template (OWS) Requests</li>
 							<li>Free-form: Probe Anything!</li>
