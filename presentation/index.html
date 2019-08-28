@@ -1,379 +1,314 @@
 <!doctype html>
 <html lang="en">
+	<head>
+		<title>GeoHealthCheck - A Quality of Service Monitor for Geospatial Web Services</title>
+		<meta charset="utf-8">
+		<meta name="description" content="Monitor the health of your OGC OWS web services with GeoHealthCheck">
+		<meta name="author" content="Just van den Broecke">
+		<meta name="author" content="Tom Kralidis">
+		<meta name="author" content="Hannes I. Reuter">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-<head>
-    <meta charset="utf-8">
+		<link rel="stylesheet" href="revealjs/css/reveal.css">
+		<link rel="stylesheet" href="revealjs/css/theme/night.css" id="theme">
 
-    <title>GeoHealthCheck</title>
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="revealjs/lib/css/zenburn.css">
 
-    <meta name="description" content="Monitor the health of your OGC OWS web services with GeoHealthCheck">
-    <meta name="author" content="Just van den Broecke">
-    <meta name="author" content="Tom Kralidis">
-    <meta name="author" content="Hannes I. Reuter">
-	
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match(/print-pdf/gi) ? 'revealjs/css/print/pdf.css' : 'revealjs/css/print/paper.css';
+			document.getElementsByTagName('head')[0].appendChild(link);
+		</script>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-
-    <link rel="stylesheet" href="revealjs/css/reveal.css">
-    <link rel="stylesheet" href="revealjs/css/theme/night.css" id="theme">
-
-    <!-- Code syntax highlighting -->
-    <link rel="stylesheet" href="revealjs/lib/css/zenburn.css">
-
-    <!-- Printing and PDF exports -->
-    <!--<link rel="stylesheet" href="revealjs/css/print/pdf.css">-->
-    <script>
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = window.location.search.match(/print-pdf/gi) ? 'revealjs/css/print/pdf.css' : 'revealjs/css/print/paper.css';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
-
-    <!--[if lt IE 9]>
-    <script src="revealjs/lib/js/html5shiv.js"></script>
-    <![endif]-->
-</head>
-
-<body>
-
-<div class="reveal">
-
-    <!-- Any section element inside of this container is displayed as a slide -->
-    <div class="slides">
-        <!-- Front Page -->
-        <section>
-            <h1>GeoHealthCheck</h1>
-            <h3>QoS Monitor for (OGC OWS)</h3>
-            <h3>Geospatial Web Services</h3>
-            <p><a href="https://justobjects.nl" target="_new">Just van den Broecke</a></p>
-            <p><a href="http://kralidis.ca" target="_new">Tom Kralidis</a></p>
-	        <p><a href="http://www.gisxperts.de" target="_new">Hannes I. Reuter</a></p>
-            <!--<p>Put your name here if you edited these slides</p>-->
-            <p><a href="http://geohealthcheck.org" target="_new">geohealthcheck.org</a></p>
-            <h3><a href="https://github.com/geopython/GeoHealthCheck" target="_blank"><img style="border: none;" src="media/fa-github.png"></a></h3>
-            <p><a href="http://geohealthcheck.org/LICENSE.txt" target="_new"><img src="media/cc.png"/><img src="media/by.png"/></a></p>
-        </section>
-
-
-<!--        &lt;!&ndash; Intro: About OGC OWS &ndash;&gt;-->
-<!--        <section style="text-align: left;">-->
-<!--            <h2>OGC ? &nbsp;&nbsp;OWS?</h2>-->
-<!--            <h3>- OGC: <a target="_new" href="https://www.opengeospatial.org">Open Geospatial Consortium</a></h3>-->
-<!--            <h3>- OGC defines OWS standards</h3>-->
-<!--            <h3>- OWS: <a target="_new" href="https://www.opengeospatial.org">OGC Web Services</a></h3>-->
-<!--            <h3>- OWS standards include: </h3>-->
-<!--            <h3>&nbsp;&nbsp;&nbsp;WMS, WFS, WCS, CSW, SOS, WPS, WMTS</h3>-->
-<!--         </section>-->
-
-<!--        &lt;!&ndash; Intro: About OGC OWS &ndash;&gt;-->
-<!--        <section data-background="media/ogc-ows.jpg">-->
-<!--            &nbsp;-->
-<!--        </section>-->
-
-        <!-- Contents -->
-<!--        <section style="text-align: left;">-->
-<!--            <h1>Contents</h1>-->
-<!--                <h2>- <a href="?transition=slide#challenges">OWS Monitoring Challenges</a></h2>-->
-<!--                <h2>- <a href="?transition=slide#walkthrough">GHC Walk-through</a></h2>-->
-<!--                <h2>- <a href="?transition=slide#setup">GHC Setup</a></h2>-->
-<!--                <h2>- <a href="?transition=slide#architecture">GHC Architecture</a></h2>-->
-<!--                <h2>- <a href="?transition=slide#project">GHC Project</a></h2>-->
-<!--            <p>-->
-<!--                GHC=<a target="_new" href="https://github.com/geopython/GeoHealthCheck">GeoHealthCheck</a>-->
-<!--            </p>-->
-<!--        </section>-->
-
-        <!-- Part 1 - Challenges -->
-        <section id="challenges">
-            <section>
-                <h1>OGC OWS Monitoring Challenges</h1>
-            </section>
-
-            <!-- Challenges -->
-            <section>
-                <blockquote style="font-size: 4em">
-                    &ldquo;I see pink tiles!&rdquo;
-                </blockquote>
-            </section>
-
-            <!-- Challenges -->
-            <section data-background="media/ok-tiles.jpg">
-                <h1 style="color: green; background: white;">What we expect</h1>
-            </section>
-
-            <!-- Challenges -->
-            <section data-background="media/pink-tiles.jpg">
-                <h1 style="color: red; background: white">What we see</h1>
-            </section>
-
-            <!-- Challenges -->
-            <section data-background="media/except-xml.jpg">
-                <h2  style="color: red; background: white">What we received</h2>
-            </section>
-
-            <!-- Challenges -->
-            <section data-background="media/except-inimage.jpg">
-                <h2  style="color: red; background: white">In Image Error Message</h2>
-            </section>
-
-            <!-- Challenges -->
-            <section data-background="media/blank-map.jpg">
-                <h2  style="color: red; background: white">"The Blank Stare"</h2>
-            </section>
-
-            <!-- Challenges -->
-            <section>
-                <h1 style="color: green">But our HTTP Monitor said: </h1>
-                <h1 style="color: green">200 OK...</h1>
-            </section>
-
-            <!-- Challenges -->
-           <section style="text-align: left;">
-                <h2>GetCapabilities response OK,</h2>
-                <h2>but</h2>
-                    <h3>- Capabilities doc may be static file</h3>
-                    <h3>- No guarantee specific services will work:</h3>
-                    <h3>&nbsp;&nbsp; WMS GetMap, WFS GetFeature, ...</h3>
-             </section>
-
-            <!-- Challenges -->
-            <section style="text-align: left;">
-                 <h2>Time-based OGC Services</h2>
-                     <h3>- SensorWeb Enablement (SWE)</h3>
-                     <h3>&nbsp;&nbsp; Internet of Things (IoT)</h3>
-                     <h3>- Sensor Observation Service (SOS)</h3>
-                     <h3>- SensorThings API (STA)</h3>
-              </section>
-
-            <!-- Challenges -->
-            <section data-background="media/sos-viewer.jpg">
-                <h2 style="color: green; background: white">SOS Viewer (52North)</h2>
-            </section>
-
-            <!-- Challenges -->
-            <section data-background="media/sos-gaps.jpg">
-                <h2 style="color: red; background: white">Gaps in SOS-Data</h2>
-            </section>
-
-            <!-- Challenges -->
-            <section>
-                <h2>Public "Uptime" services</h2>
-                <h3>Generic HTTP checking (keywords)</h3>
-                <h3>&nbsp;</h3>
-                <h2>But: most critical OGC-services</h2>
-                <h2>run internally on intranets</h2>
-            </section>
-
-            <!-- Challenges - Conclusion -->
-            <section>
-                <h2>Conclusion</h2>
-                <h3 style="color: orange">Need (FOSS) OGC-Service (OWS)</h3>
-                <h3 style="color: orange">QoS Checking</h3>
-                <h3 style="color: orange">with History Capture</h3>
-            </section>
-        </section>
-        <!-- Part 2 - Walkthrough -->
-        <section id="walkthrough">
-            <section>
-                <h1>GeoHealthCheck</h1>
-                <h1>Walk-through</h1>
-                <h2><a href="https://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h2>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through1.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through2.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through3.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through4.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through5.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through6.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through7.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through8.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through9.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough -->
-            <section data-background="media/walk-through10.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <section id="walkthrough-analysis">
-                <h1>Failing Resource!</h1>
-                <h2>Root Cause Analysis</h2>
-            </section>
-            <!-- Walkthrough notification email FAIL -->
-            <section data-background="media/walk-through-notif.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough analysis 1 -->
-            <section data-background="media/analysis-1-resource.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough analysis 2 -->
-            <section data-background="media/analysis-2-resource-history.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough analysis 3 -->
-            <section data-background="media/analysis-3-resource-history-detail.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Walkthrough notification OK -->
-            <section data-background="media/walk-through-notif-ok.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-        </section>
-        <!-- Part 3 - HL Architecture -->
-        <section id="hlarch">
-            <section>
-                <h1>GeoHealthCheck</h1>
-                <h1>Functional Architecture</h1>
-            </section>
-
-            <!-- Setup - Parts-->
-            <section style="text-align: left;">
-                <h2>GHC Parts</h2>
-                <h3>- Python Webapp (Dashboard)</h3>
-                <h3>- HealthCheck Runner (Plugins!)</h3>
-                <h3>- Database</h3>
-            </section>
-
-            <!--  Setup - Parts -->
-            <section data-background="media/ghc-parts.jpg">
-                <!-- for printing -->
-                <p>&nbsp;</p>
-            </section>
-
-            <!-- Setup -->
-            <section style="text-align: left;">
-                <h2>Dashboard</h2>
-                <h3>- Flask - web framework</h3>
-                <h3>- Standard Python WSGI</h3>
-                <h3>- Run w Nginx, Apache2, Gunicorn..</h3>
-                <h3>- Preferred: via Docker!</h3>
-            </section>
-
-            <!-- Setup -->
-            <section style="text-align: left;">
-                <h2>HealthCheck Runner</h2>
-                <h3>- Scheduled (cron)</h3>
-                <h3>- Run "Probes" and "Checks"</h3>
-                <h3>- Result reporting</h3>
-                <h3>- Notifications: email, webhook</h3>
-            </section>
-
-            <!-- Setup -->
-            <section style="text-align: left;">
-                <h2>Plugins - Probes and Checks</h2>
-                <h3>- Standard (included in GHC)</h3>
-                <h3>- Custom (include your own!)</h3>
-                <h3>- Configurable via Web UI</h3>
-                <h3>- More later on...</h3>
-            </section>
-
-            <!-- Setup -->
-            <section style="text-align: left;">
-                <h2>Database</h2>
-                <h3>- Entities: </h3>
-                <h3>&nbsp; &nbsp; &nbsp; Users, Resources, Runs, Tags</h3>
-                <h3>&nbsp; &nbsp; &nbsp; ProbeVars, CheckVars, Recipients</h3>
-                <h3>- Maintains history (Runs)</h3>
-                <h3>- Multiple backends</h3>
-                <h3>&nbsp;&nbsp;&nbsp; via SQLAlchemy: default SQLite</h3>
-            </section>
-
-            <!-- Setup -->
-            <section style="text-align: left;">
-                <h2>Tags</h2>
-                <h3>- For grouping Resources</h3>
-                <h3>- Provide in UI</h3>
-                <h3>- More later on...</h3>
-            </section>
-        </section>
-        <!-- Setup -->
-        <section id="installation">
-            <section style="text-align: left;">
-                <h1>Installation</h1>
-            </section>
-        <section style="text-align: left;">
-            <h2>Standard</h2>
-            <h3>- Standard Python setup - <a href="https://docs.geohealthcheck.org">Instructions</a></h3>
-            <h3>- Paver for setup and management tasks</h3>
-            <h3>- Alembic with Flask-Migrate</h3>
-            <h3>&nbsp;&nbsp;&nbsp; for DB upgrades</h3>
-        </section>
-
-        <!-- Setup - Docker-->
-        <section style="text-align: left;">
-            <h2>Use Docker!</h2>
-            <h3>- <a href="https://hub.docker.com/r/geopython/geohealthcheck/" target="blank">Versioned GHC Images on DockerHub</a></h3>
-            <h3>- <a href="https://docs.docker.com/compose" target="blank">Docker Compose support:</a></h3>
-            <h3>&nbsp;&nbsp;&nbsp;&nbsp;complete stack: Webapp, DB and Jobs</h3>
-            <h3>- <a href="https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md" target="blank">Documentation</a></h3>
-            <h3>GHC Up &amp; Running in minutes!!</h3>
-        </section>
-
-        <!-- Setup -->
-        <section style="text-align: left;">
-            <h2>Settings</h2>
-            <pre>
- <code class="hljs" data-trim contenteditable>
-
+		<!--[if lt IE 9]>
+		<script src="revealjs/lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="reveal">
+    			<div class="slides">
+				<section>
+					<h1>GeoHealthCheck</h1>
+					<h2>A Quality of Service Monitor for Geospatial Web Services</h2>
+					<p><a href="https://geohealthcheck.org" target="_new">geohealthcheck.org</a></p>
+				</section>
+				<section id="table-of-contents">
+					<h1>Table of contents</h1>
+					<ul>
+						<li>OGC OWS Monitoring Challenges</li>
+						<li>GeoHealthCheck Overview and Tour</li>
+						<li>Architecture</li>
+						<li>Installation</li>
+						<li>Extending GHC</li>
+						<li>Roadmap</li>
+						<li>Support</li>
+					</ul>
+				</section>
+				<section id="ogc-ows-monitoring-challenges">
+					<section>
+						<h1>OGC OWS Monitoring Challenges</h1>
+					</section>
+					<section>
+						<blockquote style="font-size: 4em">&ldquo;I see pink tiles!&rdquo;</blockquote>
+					</section>
+					<section data-background="media/ok-tiles.jpg">
+						<h1 style="color: green; background: white;">What we expect</h1>
+					</section>
+					<section data-background="media/pink-tiles.jpg">
+						<h1 style="color: red; background: white">What we see</h1>
+					</section>
+					<section data-background="media/except-xml.jpg">
+						<h2 style="color: red; background: white">What we received</h2>
+					</section>
+					<section data-background="media/except-inimage.jpg">
+						<h2 style="color: red; background: white">In Image Error Message</h2>
+					</section>
+					<section data-background="media/blank-map.jpg">
+						<h2 style="color: red; background: white">"The Blank Stare"</h2>
+					</section>
+					<section>
+						<h1 style="color: green">But our HTTP Monitor said: </h1>
+						<h1 style="color: green">200 OK...</h1>
+					</section>
+					<section style="text-align: left;">
+						<h2>GetCapabilities response OK, but</h2>
+						<ul>
+							<li>Capabilities doc may be static file</li>
+							<li>No guarantee specific requests will work (WMS GetMap, WFS GetFeature, etc.)</li>
+						<ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>Time-based OGC Services</h2>
+						<h3>SensorWeb Enablement (SWE)</h3>
+						<ul>
+							<li>Internet of Things (IoT)</li>
+							<li>Sensor Observation Service (SOS)</li>
+							<li>SensorThings API (STA)</li>
+						</ul>
+					</section>
+					<section data-background="media/sos-viewer.jpg">
+						<h2 style="color: green; background: white">SOS Viewer (52North)</h2>
+					</section>
+					<section data-background="media/sos-gaps.jpg">
+						<h2 style="color: red; background: white">Gaps in SOS-Data</h2>
+					</section>
+					<section>
+						<h2>Public "Uptime" services</h2>
+						<ul>
+							<li>Generic HTTP checking (keywords)</li>
+							<li>OWS specifics need deeper inspection</li>
+							<li>Not accessible: most critical OGC-services run internally on intranets</li>
+						<ul>
+					</section>
+					<section>
+						<h2>Value proposition</h2>
+						<ul style="color: orange;">
+							<li>OWS Aware Web Service Monitor</li>
+							<li>Quality of Service (QoS) Checking</li>
+							<li>with History Capture</li>
+						</ul>
+					</section>
+				</section>
+				<section id="geohealthcheck-overview-and-tour">
+					<section>
+						<h2>GeoHealthCheck Overview and Tour</h2>
+					</section>
+					<section>
+						<h2>Overview</h2>
+						<ul>
+							<li>Founded by <a href="https://twitter.com/tomkralidis">Tom Kralidis</a></li>
+							<li>Started in the air, literally!</li>
+							<li>In flight en route to <a href="https://2014.foss4g.org">FOSS4G 2014</a> (YYZ -> YYC -> PDX)</li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>A <a href="https://geopython.github.io/">geopython</a> Project</h2>
+						<a href="https://geopython.github.io/"><img src="media/geopython.jpg" alt="geopython"/></a>
+					</section>
+					<section>
+						<h1>Tour</h1>
+						<h2><a href="https://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h2>
+					</section>
+					<section data-background="media/walk-through1.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through2.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through3.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through4.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through5.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through6.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through7.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through8.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through9.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through10.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section id="walkthrough-analysis">
+						<h1>Failing Resource!</h1>
+						<h2>Root Cause Analysis</h2>
+					</section>
+					<section data-background="media/walk-through-notif.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/analysis-1-resource.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/analysis-2-resource-history.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/analysis-3-resource-history-detail.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+					<section data-background="media/walk-through-notif-ok.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+				</section>
+				<section id="architecture">
+					<section>
+						<h1>Architecture</h1>
+					</section>
+				<section style="text-align: left;">
+					<h2>GHC Parts</h2>
+					<ul>
+						<li>Python Webapp (Dashboard)</li>
+						<li>HealthCheck Runner (Plugins!)</li>
+						<li>Database</li>
+					</ul>
+				</section>
+				<section data-background="media/ghc-parts.jpg">
+					<!-- for printing -->
+					<p>&nbsp;</p>
+				</section>
+				<section style="text-align: left;">
+					<h2>Dashboard</h2>
+					<ul>
+						<li>Flask - web framework</li>
+						<li>Standard Python WSGI</li>
+						<li>Run w/ Nginx, Apache2, Gunicorn...</li>
+						<li>Preferred: via Docker!</li>
+					</ul>
+				</section>
+				<section style="text-align: left;">
+					<h2>HealthCheck Runner</h2>
+					<ul>
+						<li>Scheduled (cron)</li>
+						<li>Run "Probes" and "Checks"</li>
+						<li>Result reporting</li>
+						<li>Notifications: email, webhook</li>
+					<ul>
+				</section>
+				<section style="text-align: left;">
+					<h2>Plugins - Probes and Checks</h2>
+					<ul>
+						<li>Standard (included in GHC)</li>
+						<li>Custom (include your own!)</li>
+						<li>Configurable via Web UI</li>
+						<li>More later on...</li>
+					</section>
+					<section style="text-align: left;">
+						<h2>Database</h2>
+						<ul>
+							<li>Entities
+								<ul>
+									<li>Users, Resources, Runs, Tags</li>
+									<li>ProbeVars, CheckVars, Recipients</li>
+								</ul>
+							<li>Maintains history (Runs)</li>
+							<li>Multiple backends (via SQLAlchemy: default SQLite)</li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>Tags</h2>
+						<ul>
+							<li>For grouping Resources</li>
+							<li>Provide in UI</li>
+							<li>More later on...</li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>Data Model</h2>
+						<img src="media/datamodel.png" alt="datamodel"/>
+					</section>
+					<section style="text-align: left;">
+						<h2>HealthCheck Model</h2>
+						<ul>
+							<li>Resource has URL</li>
+							<li>URL is usually OWS Endpoint</li>
+							<li>Probes: fire request(s) on URL</li>
+							<li>Resource has N Probes</li>
+						<ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>HealthCheck Model</h2>
+						<ul>
+							<li>Probe has N Checks (checklist)</li>
+							<li>Each Check checks Probe result aspect</li>
+							<li>Check gives aspect verdict (success/fail)</li>
+							<li>All Checks: Probe Run Report (JSON)</li>
+					</section>
+        			</section>
+				<section id="installation">
+					<section style="text-align: left;">
+						<h1>Installation</h1>
+					</section>
+					<section style="text-align: left;">
+						<h2>Standard</h2>
+						<ul>
+							<li>Standard Python setup - <a href="https://docs.geohealthcheck.org">Instructions</a></h3>
+							<li>Paver for setup and management tasks</h3>
+							<li>Alembic with Flask-Migrate (for DB upgrades)</h3>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>Use Docker!</h2>
+						<ul>
+							<li><a href="https://hub.docker.com/r/geopython/geohealthcheck/" target="blank">Versioned GHC Images on DockerHub</a></li>
+							<li><a href="https://docs.docker.com/compose" target="blank">Docker Compose support:</a> (complete stack: Webapp, DB and Jobs)</li>
+							<li><a href="https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md" target="blank">Documentation</a></li>
+							<li>GHC Up &amp; Running in minutes!!</li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>Settings</h2>
+						<pre>
+							<code class="hljs" data-trim contenteditable>
 GHC_RETENTION_DAYS = 30
 GHC_RUN_FREQUENCY = 'hourly'
 GHC_SELF_REGISTER = False
@@ -390,645 +325,153 @@ GHC_PLUGINS = (Built-in Probes and Checks)
 GHC_USER_PLUGINS = (Probes and Checks, YOURS!)
 GHC_PROBE_DEFAULTS = (Default Probe per Resource Type)
 GHC_REQUIRE_WEBAPP_AUTH = False
-            </code>
-            </pre>
-
-        </section>
-        </section>
-
-        <!-- Part 4 - Architecture -->
-        <section id="architecture">
-        <section>
-            <h1>GeoHealthCheck</h1>
-            <h1>Architecture</h1>
-        </section>
-
-        <!-- Data model -->
-        <section style="text-align: left;">
-            <h2>Data Model</h2>
-            <img src="media/datamodel.png" alt="datamodel"/>
-        </section>
-
-        <!-- Plugin model -->
-        <section style="text-align: left;">
-            <h2>HealthCheck Model</h2>
-            <h3>- Resource has URL</h3>
-            <h3>- URL is usually OWS Endpoint</h3>
-            <h3>- Probes: fire request(s) on URL</h3>
-            <h3>- Resource has N Probes</h3>
-        </section>
-
-        <!-- Plugin model -->
-        <section style="text-align: left;">
-            <h2>HealthCheck Model</h2>
-            <h3>- Probe has N Checks (checklist)</h3>
-            <h3>- Each Check checks Probe result aspect</h3>
-            <h3>- Check gives aspect verdict (success/fail)</h3>
-            <h3>- All Checks: Probe Run Report (JSON)</h3>
-        </section>
-
-        </section>
-        <section id="plugindev">
-            <section style="text-align: left;">
-                <h1>Extending GHC</h1>
-                <h2>Plugin Development</h2>
-            </section>
-        <!-- Plugin model -->
-        <section style="text-align: left;">
-            <h2>Plugin Model</h2>
-            <h3>- Probes and Checks are Plugins</h3>
-            <h3>- Plugin class and/or modules in config</h3>
-            <h3>&nbsp;&nbsp;&nbsp;&nbsp;* Built-in Plugins: GHC_PLUGINS=</h3>
-            <h3>&nbsp;&nbsp;&nbsp;&nbsp;* Your Plugins: GHC_USER_PLUGINS=</h3>
-            <h3>- Must be in $PYTHONPATH</h3>
-        </section>
-
-        <!-- Plugin model -->
-        <section style="text-align: left;">
-            <h2>Plugin Model - Probe Types</h2>
-            <h3>- Template (OWS) Requests</h3>
-            <h3>- Free-form: Probe Anything!</h3>
-        </section>
-
-        <!-- Plugin dev -->
-        <section style="text-align: left;">
-            <h2><a href="https://github.com/geopython/GeoHealthCheck/tree/master/GeoHealthCheck/plugins">Time for some code!</a></h2>
-            <h3>See also <a href="https://docs.geohealthcheck.org/en/latest/plugins.html">Plugin Docs</a></h3>
-        </section>
-
-        <!-- Plugin dev -->
-        <section style="text-align: left;">
-            <h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/probe/http.py">Simplest Probe Class</a></h2>
-            <img src="media/plugin-httpget.jpg" alt="plugin-httpget"/>
-        </section>
-
-        <!-- Plugin dev -->
-        <section style="text-align: left;">
-            <h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/check/checks.py">Check Class HTTP Status</a></h2>
-            <img src="media/plugin-checkstatus.jpg" alt="plugin-checkstatus"/>
-        </section>
-
-        <!-- Plugin dev -->
-        <section style="text-align: left;">
-            <h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/probe/owsgetcaps.py">Base GetCapabilities Probe</a></h2>
-            <img src="media/plugin-owscaps.jpg" alt="plugin-owscaps"/>
-        </section>
-
-        <!-- Plugin dev -->
-        <section style="text-align: left;">
-            <h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/probe/owsgetcaps.py#L62">WMS GetCapabilities Probe</a></h2>
-            <img src="media/plugin-wmscaps.jpg" alt="plugin-wmscaps"/>
-        </section>
-
-        <!-- Plugin dev -->
-        <section data-background="media/walk-through8.jpg">
-            <!-- for printing -->
-            <p>&nbsp;</p>
-        </section>
-
-        </section>
-        <!-- Part 5 - Project -->
-        <section id="project">
-        <section>
-            <h1>GeoHealthCheck</h1>
-            <h1>Project</h1>
-            <h3><a href="https://code.geohealthcheck.org">Open Source (MIT) on GitHub</a></h3>
-        </section>
-
-        <!-- Project -->
-        <section>
-            <h2>Founded by <a href="http://kralidis.ca">Tom Kralidis</a></h2>
-            <h2>- Started in the air, literally!</h2>
-            <h2>- In flight en route to <a href="http://2014.foss4g.org">FOSS4G 2014</a> (YYZ -> YYC -> PDX)</h2>
-        </section>
-
-        <!-- Project -->
-        <section style="text-align: left;">
-            <h2>A <a href="https://geopython.github.io/">geopython</a> Project</h2>
-            <a href="https://geopython.github.io/"><img src="media/geopython.jpg" alt="geopython"/></a>
-        </section>
-
-        <!-- Project -->
-        <section style="text-align: left;">
-            <h2>Current Status (August 27, 2019)</h2>
-            <h3>- Release <a href="https://github.com/geopython/GeoHealthCheck/releases">v0.6.0</a></h3>
-            <h3>- Demo <a href="https://demo.geohealthcheck.org">demo.geohealthcheck.org</a></h3>
-            <h3>- Docker: <a href="https://hub.docker.com/r/geopython/geohealthcheck" target="blank">Images on DockerHub</a></h3>
-        </section>
-
-        <!-- Project -->
-        <section style="text-align: left;">
-            <h2>Under Development</h2>
-            <h3>- See <a href="https://github.com/geopython/GeoHealthCheck/issues">Issue Tracker</a></h3>
-            <h3>- Documentation</h3>
-        </section>
-
-        <!-- Project -->
-        <section style="text-align: left;">
-            <h2>Planned</h2>
-            <h3>- REST API architecture </h3>
-            <h3>- UI improvements/redo (VuejS?)</h3>
-            <h3>- Python 2->3 migration</h3>
-            <h3>- Monitoring tools integration</h3>
-            <h3>&nbsp;&nbsp;&nbsp;(Icinga, Munin, Prometheus etc) </h3>
-        </section>
-
-        <!-- Project -->
-        <section style="text-align: left;">
-            <h2>You Can Help!</h2>
-            <h3>- Coding (Plugins!)</h3>
-            <h3>- Testing</h3>
-            <h3>- Documentation</h3>
-            <h3>- User Stories</h3>
-            <h3>- Sponsored Development</h3>
-            <h3>- Translation</h3>
-	    </section>
-        </section>
-
-        <!-- geoqos.com shameless plug -->
-        <section id="cloud">
-            <section style="text-align: left;">
-                <h1>Shameless Plug</h1>
-                <h2>Cloud Subscription</h2>
-            </section>
-            <section>
-                <img src="media/geoqos.com_home.jpg" alt="geoqos.com" />
-                <h2 style="color: red; background: white">geoqos.com</h2>
-            </section>
-        </section>
-
-        <section style="text-align: left;">
-            <h1>Thank You!</h1>
-            <p>
-                - Website: <a href="https://geohealthcheck.org">geohealthcheck.org</a> <br>
-                - Demo: <a href="https://demo.geohealthcheck.org">demo.geohealthcheck.org</a> <br>
-                - Sources: <a href="https://code.geohealthcheck.org">code.geohealthcheck.org</a>  <br>
-                - Docs: <a href="https://docs.geohealthcheck.org">docs.geohealthcheck.org</a>  <br>
-                - Presentation: <a href="https://geohealthcheck.org/presentation">geohealthcheck.org/presentation</a> <br>
-            </p>
-        </section>
-
-        <section id="outro-credits">
-     				<section>
-     					<h1>Credits &amp; Authors</h1>
-     				</section>
-            <!-- Outro: Credits -->
-            <section>
-                <h2>Credits</h2>
-                <p>
-                    This presentation has been created with <br/>
-                    <a target="_new" href="https://github.com/hakimel/reveal.js">Reveal.js</a> by <a href="https://github.com/hakimel">Hakim El Hattab</a><br/>
-                    Create beautiful interactive slide decks using HTML.
-                </p>
-                <p>
-                    &nbsp;
-                </p>
-                <p>
-                    Use left/right arrow keys. ESC for slides overview
-                </p>
-                <p>
-                    <a href="index.html?print-pdf">PDF Print</a> then File|Print... (Chrome only)
-                </p>
-            </section>
-
-            <!-- Outro: About Authors: Just van den Broecke -->
-            <section style="text-align: left;">
-                <h2>Just van den Broecke
-                <a href="https://justobjects.nl" target="_blank"><img style="border: none;" src="media/fa-user.png"></a> <a href="https://wiki.osgeo.org/wiki/Just_van_den_Broecke" target="_blank"><img style="border: none;" src="media/fa-wikipedia-w.png"></a> <a href="https://github.com/justb4" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/justb4" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
-                <h3>- <a href="https://justobjects.nl">Open Source Geospatial Professional</a></h3>
-                <h3>- Core contributor GeoHealthCheck</h3>
-                <h3>- <a href="https://geoqos.com">GeoQoS</a> - hosted GeoHealthCheck</h3>
-                <h3>- <a href="https://map5.nl">Map5.nl</a> -  online maps</h3>
-                <h3>- Chair OSGeo.nl Dutch Local Chapter</h3>
-                <h3>- Founder <a href="https://www.stetl.org">Stetl</a></h3>
-                <h3>- Core contributor <a href="https://data.smartemission.nl">Smart Emission</a></h3>
-            </section>
-
-            <!-- Outro: About Authors: Tom Kralidis -->
-            <section style="text-align: left;">
-                <h2>Tom Kralidis
-                <a href="http://kralidis.ca" target="_blank"><img style="border: none;" src="media/fa-user.png"></a> <a href="https://en.wikipedia.org/wiki/User:Tomkralidis" target="_blank"><img style="border: none;" src="media/fa-wikipedia-w.png"></a> <a href="https://github.com/tomkralidis" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/tomkralidis" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
-                <h3>- Founder of <a href="http://pycsw.org">pycsw</a></h3>
-                <h3>- Founder of GeoHealthCheck</h3>
-                <h3>- <a href="https://geopython.github.io/OWSLib">OWSLib</a></h3>
-                <h3>- <a href="https://github.com/geopython/pygeometa">pygeometa</a></h3>
-                <h3>- <a href="http://geonode.org">GeoNode</a></h3>
-                <h3>- <a href="http://qgis.org">QGIS (MetaSearch)</a></h3>
-                <h3>- <a href="http://pywps.org">PyWPS</a></h3>
-                <h3>- <a href="http://mapserver.org">MapServer</a></h3>
-            </section>
-
-    	<!-- Outro: About Authors: Hannes I. Reuter -->
-            <section style="text-align: left;">
-                <h2>Hannes Isaak Reuter
-                <a href="http://gisxperts.de" target="_blank"><img style="border: none;" src="media/fa-user.png"></a>  <a href="https://github.com/hannesaddec" target="_blank"><img style="border: none;" src="media/fa-github.png"></a> <a href="https://twitter.com/hireuter" target="_blank"><img style="border: none;" src="media/fa-twitter.png"></a></h2>
-                <h3>- Geoecologist (GIS, Soil) and DEM Scientist</h3>
-                <h3>- Contributor to GHC and other OSS</h3>
-                <h3>- Long Term user of ArcInfo, QGIS, GDAL, Python, pyWPS</h3>
-                <h3>- Working in the <a href="http://ec.europa.eu/eurostat/web/gisco" target="_blank">GISCO Team</a></h3>
-            </section>
-        </section>
-        <!-- Below Examples from Original Pres from reveal.js website, for inspiration...
-
-        Example of nested vertical slides
-        <section>
-            <section>
-                <h2>Vertical Slides</h2>
-                <p>Slides can be nested inside of each other.</p>
-                <p>Use the <em>Space</em> key to navigate through all slides.</p>
-                <br>
-                <a href="#" class="navigate-down">
-                    <img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png"
-                         alt="Down arrow">
-                </a>
-            </section>
-            <section>
-                <h2>Basement Level 1</h2>
-                <p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
-            </section>
-            <section>
-                <h2>Basement Level 2</h2>
-                <p>That's it, time to go back up.</p>
-                <br>
-                <a href="#/2">
-                    <img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png"
-                         alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
-                </a>
-            </section>
-        </section>
-
-        <section>
-            <h2>Point of View</h2>
-            <p>
-                Press <strong>ESC</strong> to enter the slide overview.
-            </p>
-            <p>
-                Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>.
-                Alt + click anywhere to zoom back out.
-            </p>
-        </section>
-
-        <section>
-            <h2>Touch Optimized</h2>
-            <p>
-                Presentations look great on touch devices, like mobile phones and tablets. Simply swipe through your
-                slides.
-            </p>
-        </section>
-
-        <section data-markdown>
-            <script type="text/template">
-                ## Markdown support
-
-                Write content using inline or external Markdown.
-                Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-
-                ```
-                <section data-markdown>
-                    ## Markdown support
-
-                    Write content using inline or external Markdown.
-                    Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-                </section>
-                ```
-            </script>
-        </section>
-
-        <section>
-            <section id="fragments">
-                <h2>Fragments</h2>
-                <p>Hit the next arrow...</p>
-                <p class="fragment">... to step through ...</p>
-                <p><span class="fragment">... a</span> <span class="fragment">fragmented</span> <span class="fragment">slide.</span>
-                </p>
-
-                <aside class="notes">
-                    This slide has fragments which are also stepped through in the notes window.
-                </aside>
-            </section>
-            <section>
-                <h2>Fragment Styles</h2>
-                <p>There's different types of fragments, like:</p>
-                <p class="fragment grow">grow</p>
-                <p class="fragment shrink">shrink</p>
-                <p class="fragment fade-out">fade-out</p>
-                <p class="fragment fade-up">fade-up (also down, left and right!)</p>
-                <p class="fragment current-visible">current-visible</p>
-                <p>Highlight <span class="fragment highlight-red">red</span> <span
-                        class="fragment highlight-blue">blue</span> <span class="fragment highlight-green">green</span>
-                </p>
-            </section>
-        </section>
-
-        <section id="transitions">
-            <h2>Transition Styles</h2>
-            <p>
-                You can select from different transitions, like: <br>
-                <a href="?transition=none#/transitions">None</a> -
-                <a href="?transition=fade#/transitions">Fade</a> -
-                <a href="?transition=slide#/transitions">Slide</a> -
-                <a href="?transition=convex#/transitions">Convex</a> -
-                <a href="?transition=concave#/transitions">Concave</a> -
-                <a href="?transition=zoom#/transitions">Zoom</a>
-            </p>
-        </section>
-
-        <section id="themes">
-            <h2>Themes</h2>
-            <p>
-                reveal.js comes with a few themes built in: <br>
-               <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/black.css'); return false;">Black
-                    (default)</a> -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/white.css'); return false;">White</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/league.css'); return false;">League</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/sky.css'); return false;">Sky</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/beige.css'); return false;">Beige</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/simple.css'); return false;">Simple</a>
-                <br>
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/serif.css'); return false;">Serif</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/blood.css'); return false;">Blood</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/night.css'); return false;">Night</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/moon.css'); return false;">Moon</a>
-                -
-                <a href="#"
-                   onclick="document.getElementById('theme').setAttribute('href','css/theme/solarized.css'); return false;">Solarized</a>
-            </p>
-        </section>
-
-        <section>
-            <section data-background="#dddddd">
-                <h2>Slide Backgrounds</h2>
-                <p>
-                    Set <code>data-background="#dddddd"</code> on a slide to change the background color. All CSS color
-                    formats are supported.
-                </p>
-                <a href="#" class="navigate-down">
-                    <img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png"
-                         alt="Down arrow">
-                </a>
-            </section>
-            <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png">
-                <h2>Image Backgrounds</h2>
-                <pre><code class="hljs">&lt;section data-background="image.png"&gt;</code></pre>
-            </section>
-            <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png"
-                     data-background-repeat="repeat" data-background-size="100px">
-                <h2>Tiled Backgrounds</h2>
-                <pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background="image.png"
-                    data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-            </section>
-            <section
-                    data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm"
-                    data-background-color="#000000">
-                <div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
-                    <h2>Video Backgrounds</h2>
-                    <pre><code class="hljs" style="word-wrap: break-word;">&lt;section
-                        data-background-video="video.mp4,video.webm"&gt;</code></pre>
-                </div>
-            </section>
-            <section data-background="http://i.giphy.com/90F8aUepslB84.gif">
-                <h2>... and GIFs!</h2>
-            </section>
-        </section>
-
-        <section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
-            <h2>Background Transitions</h2>
-            <p>
-                Different background transitions are available via the backgroundTransition option. This one's called
-                "zoom".
-            </p>
-            <pre><code class="hljs">Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
-        </section>
-
-        <section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
-            <h2>Background Transitions</h2>
-            <p>
-                You can override background transitions per-slide.
-            </p>
-            <pre><code class="hljs" style="word-wrap: break-word;">&lt;section
-                data-background-transition="zoom"&gt;</code></pre>
-        </section>
-
-        <section>
-            <h2>Pretty Code</h2>
-					<pre><code class="hljs" data-trim contenteditable>
-                        function linkify( selector ) {
-                        if( supports3DTransforms ) {
-
-                        var nodes = document.querySelectorAll( selector );
-
-                        for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-                        var node = nodes[i];
-
-                        if( !node.className ) {
-                        node.className += ' roll';
-                        }
-                        }
-                        }
-                        }
-                    </code></pre>
-            <p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.
-            </p>
-        </section>
-
-        <section>
-            <h2>Marvelous List</h2>
-            <ul>
-                <li>No order here</li>
-                <li>Or here</li>
-                <li>Or here</li>
-                <li>Or here</li>
-            </ul>
-        </section>
-
-
-        <section>
-            <h2>Tabular Tables</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Value</th>
-                    <th>Quantity</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Apples</td>
-                    <td>$1</td>
-                    <td>7</td>
-                </tr>
-                <tr>
-                    <td>Lemonade</td>
-                    <td>$2</td>
-                    <td>18</td>
-                </tr>
-                <tr>
-                    <td>Bread</td>
-                    <td>$3</td>
-                    <td>2</td>
-                </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section>
-            <h2>Clever Quotes</h2>
-            <p>
-                These guys come in two forms, inline: <q
-                    cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-                &ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-            </p>
-            <blockquote
-                    cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-                &ldquo;For years there has been a theory that millions of monkeys typing at random on millions of
-                typewriters would
-                reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-            </blockquote>
-        </section>
-
-        <section>
-            <h2>Intergalactic Interconnections</h2>
-            <p>
-                You can link between slides internally,
-                <a href="#/2/3">like this</a>.
-            </p>
-        </section>
-
-        <section>
-            <h2>Speaker View</h2>
-            <p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a
-                timer, preview of the upcoming slide as well as your speaker notes.</p>
-            <p>Press the <em>S</em> key to try it out.</p>
-
-            <aside class="notes">
-                Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open
-                the speaker notes window (hit 's' on your keyboard).
-            </aside>
-        </section>
-
-        <section>
-            <h2>Export to PDF</h2>
-            <p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>,
-                here's an example:</p>
-            <iframe src="https://www.slideshare.net/slideshow/embed_code/42840540" width="445" height="355"
-                    frameborder="0" marginwidth="0" marginheight="0" scrolling="no"
-                    style="border:3px solid #666; margin-bottom:5px; max-width: 100%;" allowfullscreen></iframe>
-        </section>
-
-        <section>
-            <h2>Global State</h2>
-            <p>
-                Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-                will be added as a class to the document element when the slide is open. This lets you
-                apply broader style changes, like switching the page background.
-            </p>
-        </section>
-
-        <section data-state="customevent">
-            <h2>State Events</h2>
-            <p>
-                Additionally custom events can be triggered on a per slide basis by binding to the
-                <code>data-state</code> name.
-            </p>
-					<pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
-                        Reveal.addEventListener( 'customevent', function() {
-                        console.log( '"customevent" has fired' );
-                        } );
-                    </code></pre>
-        </section>
-
-        <section>
-            <h2>Take a Moment</h2>
-            <p>
-                Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want
-                to take distracting slides off the screen.
-            </p>
-        </section>
-
-        <section>
-            <h2>Much more</h2>
-            <ul>
-                <li>Right-to-left support</li>
-                <li><a href="https://github.com/hakimel/reveal.js#api">Extensive JavaScript API</a></li>
-                <li><a href="https://github.com/hakimel/reveal.js#auto-sliding">Auto-progression</a></li>
-                <li><a href="https://github.com/hakimel/reveal.js#parallax-background">Parallax backgrounds</a></li>
-                <li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
-            </ul>
-        </section>
-        -->
-
-    </div>
-
-</div>
-
-<script src="revealjs/lib/js/head.min.js"></script>
-<script src="revealjs/js/reveal.js"></script>
-
-<script>
-
-    // Full list of configuration options available at:
-    // https://github.com/hakimel/reveal.js#configuration
-    Reveal.initialize({
-        controls: true,
-        progress: true,
-        history: true,
-        center: true,
-
-        transition: 'slide', // none/fade/slide/convex/concave/zoom
-
-        // Optional reveal.js plugins
-        dependencies: [
-            {
-                src: 'revealjs/lib/js/classList.js', condition: function () {
-                return !document.body.classList;
-            }
-            },
-            {
-                src: 'revealjs/plugin/markdown/marked.js', condition: function () {
-                return !!document.querySelector('[data-markdown]');
-            }
-            },
-            {
-                src: 'revealjs/plugin/markdown/markdown.js', condition: function () {
-                return !!document.querySelector('[data-markdown]');
-            }
-            },
-            {
-                src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function () {
-                hljs.initHighlightingOnLoad();
-            }
-            },
-            {src: 'revealjs/plugin/zoom-js/zoom.js', async: true},
-            {src: 'revealjs/plugin/notes/notes.js', async: true}
-        ]
-    });
-
-</script>
-
-<!-- Everything below this point is only used for the reveal.js demo page
-
-<a class="fork-reveal" style="display: none;" href="https://github.com/geopython/GeoHealthCheck"><img
-        style="position: absolute; top: 0; right: 0; border: 0;"
-        src="https://github-camo.global.ssl.fastly.net/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67"
-        alt="Fork GeoHealthCheck on GitHub"></a>
--->
-</body>
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section id="extending-ghc">
+					<section style="text-align: left;">
+						<h1>Extending GHC</h1>
+						<h2>Plugin Development</h2>
+					</section>
+					<section style="text-align: left;">
+						<h2>Plugin Model</h2>
+						<ul>
+							<li>Probes and Checks are Plugins</li>
+							<li>Plugin class and/or modules in config
+								<ul>
+									<li>Built-in Plugins: GHC_PLUGINS=</li>
+									<li>Your Plugins: GHC_USER_PLUGINS=</li>
+								</ul>
+							<li>Must be in $PYTHONPATH</li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>Plugin Model - Probe Types</h2>
+						<ul>
+							<li>Template (OWS) Requests</li>
+							<li>Free-form: Probe Anything!</li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+							<h2><a href="https://github.com/geopython/GeoHealthCheck/tree/master/GeoHealthCheck/plugins">Time for some code!</a></h2>
+							<h3>See also <a href="https://docs.geohealthcheck.org/en/latest/plugins.html">Plugin Docs</a></h3>
+					</section>
+					<section style="text-align: left;">
+						<h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/probe/http.py">Simplest Probe Class</a></h2>
+						<img src="media/plugin-httpget.jpg" alt="plugin-httpget"/>
+					</section>
+					<section style="text-align: left;">
+						<h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/check/checks.py">Check Class HTTP Status</a></h2>
+						<img src="media/plugin-checkstatus.jpg" alt="plugin-checkstatus"/>
+					</section>
+					<section style="text-align: left;">
+						<h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/probe/owsgetcaps.py">Base GetCapabilities Probe</a></h2>
+						<img src="media/plugin-owscaps.jpg" alt="plugin-owscaps"/>
+					</section>
+					<section style="text-align: left;">
+						<h2><a href="https://github.com/geopython/GeoHealthCheck/blob/master/GeoHealthCheck/plugins/probe/owsgetcaps.py#L62">WMS GetCapabilities Probe</a></h2>
+						<img src="media/plugin-wmscaps.jpg" alt="plugin-wmscaps"/>
+					</section>
+					<section data-background="media/walk-through8.jpg">
+						<!-- for printing -->
+						<p>&nbsp;</p>
+					</section>
+				</section>
+				<section id="roadmap">
+					<section>
+						<h1>Roadmap</h1>
+					</section>
+					<section style="text-align: left;">
+						<h2>Planned</h2>
+						<ul>
+							<li>REST API architecture</li>
+							<li>UI renewal (Vue.js)</li>
+							<li>Python 2->3 migration</li>
+							<li>Monitoring tools integration (Icinga, Munin, Prometheus etc.)</li>
+							<li>OGC Quality of Service and Experience Domain Working Group (QoSE DWG)</li>
+						</ul>
+					</section>
+					<section style="text-align: left;">
+						<h2>You Can Help!</h2>
+						<ul>
+							<li>Coding (Plugins!)</li>
+							<li>Testing</li>
+							<li>Documentation</li>
+							<li>User Stories</li>
+							<li>Sponsored Development</li>
+							<li>Translation</li>
+						</ul>
+					</section>
+				</section>
+				<section id="support">
+					<section>
+						<h1>Support</h1>
+					</section>
+					<section style="text-align: left;">
+						<h1>Shameless Plug</h1>
+						<h2>Cloud Subscription</h2>
+					</section>
+					<section>
+						<img src="media/geoqos.com_home.jpg" alt="geoqos.com" />
+						<h2 style="color: red; background: white">geoqos.com</h2>
+					</section>
+				</section>
+				<section>
+					<h2>Links</h2>
+					<ul>
+						<li>Home: <a href="https://geohealthcheck.org" target="_blank">https://geohealthcheck.org</a></li>
+						<li>Docs: <a href="https://docs.geohealthcheck.org" target="_blank">https://docs.geohealthcheck.org</a></li>
+						<li>Demo: <a href="https://demo.geohealthcheck.org" target="_blank">https://demo.geohealthcheck.org</a></li>
+						<li>GitHub: <a href="https://github.com/geopython/GeoHealthCheck" target="_blank">https://github.com/geopython/GeoHealthCheck</a></li>
+						<li>Docker: <a href="https://hub.docker.com/r/geopython/GeoHealthCheck" target="_blank">https://hub.docker.com/r/geopython/GeoHealthCheck</a></li>
+						<li>Chat: <a href="https://gitter.im/geopython/GeoHealthCheck" target="_blank">https://gitter.im/geopython/GeoHealthCheck</a></li>
+						<li>Presentation: <a href="https://geohealthcheck.org/presentation">geohealthcheck.org/presentation</a></li>
+					</ul>
+				</section>
+				<section>
+					<h1>Thank you!</h1>
+					<p>
+						<a href="https://twitter.com/tomkralidis">@tomkralidis</a>
+						<a href="https://twitter.com/justb4">@justb4</a>
+						<a href="https://twitter.com/hireuter">@hireuter</a>
+					</p>
+				</section>
+			</div>
+		</div>
+		<script src="revealjs/lib/js/head.min.js"></script>
+		<script src="revealjs/js/reveal.js"></script>
+		<script>
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+				// Optional reveal.js plugins
+				dependencies: [ {
+					src: 'revealjs/lib/js/classList.js', condition: function () {
+						return !document.body.classList;
+					}
+				}, {
+					src: 'revealjs/plugin/markdown/marked.js', condition: function () {
+						return !!document.querySelector('[data-markdown]');
+					}
+				}, {
+					src: 'revealjs/plugin/markdown/markdown.js', condition: function () {
+						return !!document.querySelector('[data-markdown]');
+						}
+				}, {
+					src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function () {
+						hljs.initHighlightingOnLoad();
+					}
+				},
+				{src: 'revealjs/plugin/zoom-js/zoom.js', async: true},
+				{src: 'revealjs/plugin/notes/notes.js', async: true}
+				]
+			});
+		</script>
+	</body>
 </html>
