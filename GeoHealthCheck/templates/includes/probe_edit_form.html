@@ -98,7 +98,7 @@
                           {% else %}
 
                           <table class="table">
-                         {% for check_class, check in probe_info.CHECKS_AVAIL.iteritems() %}
+                         {% for check_class, check in probe_info.CHECKS_AVAIL.items() %}
                            <tr>
                                <td>
                                    <strong>{{ check.NAME }}</strong>

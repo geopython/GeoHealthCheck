@@ -5,5 +5,4 @@ delete str.decode('utf-8')
 changed if-condition
 
 TODO:
-iteritems() -> items()
 search code for utf-8
