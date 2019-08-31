@@ -6,3 +6,8 @@ changed if-condition
 
 TODO:
 search code for utf-8
+delete `coding=utf-8` in header from python files
+
+ERRORS:
+something goes wrong with tags.
+Run > Run error
