@@ -58,7 +58,7 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ _('Language') }} <i class="fa fa-plus"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
                                 {% for member in languages %}
-                                <li><a href="{{ request.script_root+request.path }}?lang={{ member[0] }}">{{ member[1].decode('utf-8') }}</a></li>
+                                <li><a href="{{ request.script_root+request.path }}?lang={{ member[0] }}">{{ member[1] }}</a></li>
                                 {% endfor %}
                             </ul>
                         </li>

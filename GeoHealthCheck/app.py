@@ -33,7 +33,7 @@ import base64
 import csv
 import json
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 from flask import (abort, flash, g, jsonify, redirect,
                    render_template, request, url_for)
@@ -278,7 +278,7 @@ def export():
 
                 json_dict['resources'].append({
                     'resource_type': r.resource_type,
-                    'title': r.title.encode('utf-8'),
+                    'title': r.title,
                     'url': r.url,
                     'ghc_url': ghc_url,
                     'ghc_json': '%s/json' % ghc_url,
@@ -863,7 +863,6 @@ def get_check_edit_form(check_class):
     check_vars = CheckVars(
         None, check_class, check_obj.get_default_parameter_values())
 
-    # print(str(check_info))
     return render_template('includes/check_edit_form.html',
                            lang=g.current_lang,
                            check=check_vars, check_info=check_info)

@@ -30,8 +30,8 @@
 from datetime import datetime
 import logging
 import json
-from urllib2 import urlopen
-from urlparse import urlparse
+from urllib.request import urlopen
+from urllib.parse import urlparse
 from functools import partial
 from flask_babel import gettext
 
@@ -173,7 +173,7 @@ def sniff_test_resource(config, resource_type, url):
             try:
                 ows = ows_handler(url)
                 break
-            except Exception, err:
+            except Exception as err:
                 LOGGER.warning("Cannot use %s on %s: %s",
                                ows_handler, url, err, exc_info=err)
         if ows is None:
@@ -285,7 +285,7 @@ def geonode_get_ows(base_url):
 
     try:
         data = json.load(r)
-    except (TypeError, ValueError,), err:
+    except (TypeError, ValueError,) as err:
         msg = "Cannot decode response from GeoNode at {}: {}".format(base_url,
                                                                      err)
         raise ValueError(msg)

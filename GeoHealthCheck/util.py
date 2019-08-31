@@ -34,8 +34,8 @@ import os
 import smtplib
 import six
 import base64
-from urllib2 import urlopen
-from urlparse import urlparse
+from urllib.request import urlopen
+from urllib.parse import urlparse
 from gettext import translation
 from passlib.hash import pbkdf2_sha256
 

@@ -83,9 +83,9 @@ def list_resources(resource_type=None, query=None, tag=None):
     for resource in response['resources']:
         if resource.runs.count() > 0:
             # View should work even without Runs
-            if resource.first_run < first_run or first_run is None:
+            if  first_run is None or resource.first_run < first_run:
                 first_run = resource.first_run
-            if resource.last_run < last_run or last_run is None:
+            if last_run is None or resource.last_run < last_run:
                 last_run = resource.last_run
             response['first_run'] = first_run
             response['last_run'] = last_run

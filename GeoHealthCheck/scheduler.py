@@ -249,7 +249,7 @@ def add_job(resource):
     scheduler.add_job(
         run_job, 'interval', args=[resource.identifier, freq],
         minutes=freq, next_run_time=next_run_time, max_instances=1,
-        misfire_grace_time=(freq * 60) / 2, coalesce=True,
+        misfire_grace_time=round((freq * 60) / 2), coalesce=True,
         id=str(resource.identifier))
 
 

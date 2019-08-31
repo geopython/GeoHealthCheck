@@ -102,7 +102,7 @@ def do_email(config, resource, run, status_changed, result):
     try:
         if config['GHC_SMTP']['tls']:
             server.starttls()
-    except Exception, err:
+    except Exception as err:
         LOGGER.exception("Cannot connect to smtp: %s[:%s]: %s",
                          config['GHC_SMTP']['server'],
                          config['GHC_SMTP']['port'],
@@ -112,7 +112,7 @@ def do_email(config, resource, run, status_changed, result):
     try:
         server.login(config['GHC_SMTP']['username'],
                      config['GHC_SMTP']['password'])
-    except Exception, err:
+    except Exception as err:
         LOGGER.exception("Cannot log in to smtp: %s", err,
                          exc_info=err)
     try:
@@ -205,7 +205,7 @@ def do_webhook(config, resource, run, status_changed, result):
     for rcp in recipients:
         try:
             url, params = _parse_webhook_location(rcp)
-        except ValueError, err:
+        except ValueError as err:
             LOGGER.warning("Cannot send to {}: {}"
                            .format(rcp, err), exc_info=err)
 
@@ -223,7 +223,7 @@ def do_webhook(config, resource, run, status_changed, result):
             r = requests.post(url, params)
             LOGGER.info("webhook deployed, got %s as reposnse",
                         r)
-        except requests.exceptions.RequestException, err:
+        except requests.exceptions.RequestException as  err:
             LOGGER.warning("cannot deploy webhook %s: %s",
                            rcp, err, exc_info=err)
 
@@ -262,6 +262,6 @@ def notify(config, resource, run, last_run_success):
     for chann_handler in (do_email, do_webhook,):
         try:
             chann_handler(config, resource, run, status_changed, result)
-        except Exception, err:
+        except Exception as err:
             LOGGER.warning("couldn't run notification for %s: %s",
                            chann_handler.func_name, err, exc_info=err)
