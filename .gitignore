@@ -8,6 +8,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+venv/
 bin/
 build/
 develop-eggs/
@@ -59,3 +60,6 @@ GeoHealthCheck/static/docs
 GeoHealthCheck/static/lib
 GeoHealthCheck.wsgi
 GeoHealthCheck.conf
+
+# Data
+GeoHealthCheck/data.db
