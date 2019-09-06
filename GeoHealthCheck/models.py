@@ -94,6 +94,21 @@ class Run(DB.Model):
         self.message = result.message
         self.report = result.get_report()
 
+    def __lt__(self, other):
+        return self.identifier < other.identifier
+
+    def __le__(self, other):
+        return self.identifier <= other.identifier
+
+    def __eq__(self, other):
+        return self.identifier == other.identifier
+    
+    def __gt__(self, other):
+        return self.identifier > other.identifier
+
+    def __ge__(self, other):
+        return self.identifief >= other.identifier
+
     # JSON string object specifying report for the Run
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _report = DB.Column("report", DB.Text, default={})
