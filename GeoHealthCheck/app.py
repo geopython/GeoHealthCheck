@@ -240,7 +240,8 @@ def context_processors():
         'resource_types_counts': rtc['counts'],
         'resources_total': rtc['total'],
         'languages': LANGUAGES,
-        'tags': tags
+        'tags': tags,
+        'tagnames': list(tags.keys())
     }
 
 

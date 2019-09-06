@@ -690,7 +690,7 @@ class User(DB.Model):
         return False
 
     def get_id(self):
-        return unicode(self.identifier)
+        return self.identifier
 
     def set_password(self, password):
         self.password = self.encrypt(password)

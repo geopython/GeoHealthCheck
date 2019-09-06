@@ -200,7 +200,7 @@ or
 
 <script type="text/javascript">
 	{% if tags %}
-    	var all_tags = {{ tags.keys()|tojson }};
+    	var all_tags = {{ tagnames|tojson }};
 	{% else %}
 		var all_tages = {};
 	{% endif %}
