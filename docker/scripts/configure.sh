@@ -41,9 +41,9 @@ case ${DB_TYPE} in
 		export PGPASSWORD=${DB_PASSWD}
 
 		# We need to wait until PG Container available
-		echo "Check if Postgres is available..."
-		until psql -h "${DB_HOST}" -U "${DB_USER}" -c '\l'; do
-		  echo "Postgres is unavailable - sleeping"
+		echo "Check if Postgres is avail/ready..."
+		until pg_isready -h "${DB_HOST}"; do
+		  echo "Exit code=$? - Postgres not ready - sleeping"
 		  sleep 1
 		done
 
