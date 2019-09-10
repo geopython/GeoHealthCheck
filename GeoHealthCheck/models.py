@@ -38,11 +38,11 @@ from sqlalchemy import func, and_
 from sqlalchemy.orm import deferred
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-import util
-from enums import RESOURCE_TYPES
-from factory import Factory
-from init import App
-from resourceauth import ResourceAuth
+from . import util
+from .enums import RESOURCE_TYPES
+from .factory import Factory
+from .init import App
+from .resourceauth import ResourceAuth
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 

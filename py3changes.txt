@@ -3,11 +3,10 @@ update import urllib2 -> urllib.parse
 update catching exceptions to py3-style
 delete str.decode('utf-8')
 changed if-condition
+import relative
 
 TODO:
 search code for utf-8
 delete `coding=utf-8` in header from python files
-
-ERRORS:
-something goes wrong with tags.
-Run > Run error
+Check relative import is done for all files
+Fix deprecated tests

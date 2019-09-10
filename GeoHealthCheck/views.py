@@ -28,12 +28,12 @@
 # =================================================================
 
 import logging
-import models
-import util
+from . import models
+from . import util
 from sqlalchemy import text
-from plugin import Plugin
-from factory import Factory
-from init import App
+from .plugin import Plugin
+from .factory import Factory
+from .init import App
 APP = App.get_app()
 
 LOGGER = logging.getLogger(__name__)
