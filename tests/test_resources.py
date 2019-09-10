@@ -86,10 +86,10 @@ class GeoHealthCheckTest(unittest.TestCase):
         resources = Resource.query.all()
         for resource in resources:
             # Each Resource should have one Run
-            self.assertEquals(
+            self.assertEqual(
                 resource.runs.count(), 1,
                 'RunCount should be 1 for %s' % resource.url)
-            self.assertEquals(
+            self.assertEqual(
                 resource.runs[0].success, True,
                 'Run should be success for %s report=%s' %
                 (resource.url, str(resource.runs[0])))
