@@ -4,9 +4,10 @@ update catching exceptions to py3-style
 delete str.decode('utf-8')
 changed if-condition
 import relative
+raw_input -> input
 
 TODO:
 search code for utf-8
 delete `coding=utf-8` in header from python files
-Check relative import is done for all files
-Fix deprecated tests
+Fix tests (importing modules)
+Fix pavement.py
