@@ -4,10 +4,10 @@ import sys
 import datetime
 import requests
 
-from .factory import Factory
-from .init import App
-from .plugin import Plugin
-from .result import ProbeResult
+from factory import Factory
+from init import App
+from plugin import Plugin
+from result import ProbeResult
 
 LOGGER = logging.getLogger(__name__)
 

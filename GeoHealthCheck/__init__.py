@@ -27,7 +27,7 @@
 #
 # =================================================================
 
-from .util import read
+from util import read
 
 
 def get_package_version(file_):

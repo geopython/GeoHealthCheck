@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from .factory import Factory
+from factory import Factory
 import logging
 import inspect
 import collections
 import copy
-from .init import App
+from init import App
 
 LOGGER = logging.getLogger(__name__)
 

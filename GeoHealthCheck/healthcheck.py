@@ -44,12 +44,12 @@ from owslib.wps import WebProcessingService
 from owslib.csw import CatalogueServiceWeb
 from owslib.sos import SensorObservationService
 
-from .init import App
-from .enums import RESOURCE_TYPES
-from .models import Resource, Run
-from .probe import Probe
-from .result import ResourceResult
-from .notifications import notify
+from init import App
+from enums import RESOURCE_TYPES
+from models import Resource, Run
+from probe import Probe
+from result import ResourceResult
+from notifications import notify
 
 LOGGER = logging.getLogger(__name__)
 APP = App.get_app()

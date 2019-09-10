@@ -1,9 +1,9 @@
 import json
 import logging
-from .plugin import Plugin
-from .factory import Factory
-from .util import encode, decode
-from .init import App
+from plugin import Plugin
+from factory import Factory
+from util import encode, decode
+from init import App
 APP = App.get_app()
 LOGGER = logging.getLogger(__name__)
 

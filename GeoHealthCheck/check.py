@@ -1,5 +1,5 @@
-from .plugin import Plugin
-from .result import CheckResult
+from plugin import Plugin
+from result import CheckResult
 
 
 class Check(Plugin):

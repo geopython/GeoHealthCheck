@@ -38,11 +38,11 @@ from sqlalchemy import func, and_
 from sqlalchemy.orm import deferred
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-from . import util
-from .enums import RESOURCE_TYPES
-from .factory import Factory
-from .init import App
-from .resourceauth import ResourceAuth
+import util
+from enums import RESOURCE_TYPES
+from factory import Factory
+from init import App
+from resourceauth import ResourceAuth
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 
@@ -899,13 +899,13 @@ if __name__ == '__main__':
                 password1 = sys.argv[3]
                 email1 = sys.argv[4]
             else:
-                username = raw_input('Enter your username: ').strip()
-                password1 = raw_input('Enter your password: ').strip()
-                password2 = raw_input('Enter your password again: ').strip()
+                username = input('Enter your username: ').strip()
+                password1 = input('Enter your password: ').strip()
+                password2 = input('Enter your password again: ').strip()
                 if password1 != password2:
                     raise ValueError('Passwords must match')
-                email1 = raw_input('Enter your email: ').strip()
-                email2 = raw_input('Enter your email again: ').strip()
+                email1 = input('Enter your email: ').strip()
+                email2 = input('Enter your email again: ').strip()
                 if email1 != email2:
                     raise ValueError('Emails must match')
 
@@ -923,7 +923,7 @@ if __name__ == '__main__':
                 yesno = 'n'
                 if len(sys.argv) == 3:
                     print('WARNING: all DB data will be lost! Proceed?')
-                    yesno = raw_input(
+                    yesno = input(
                         'Enter y (proceed) or n (abort): ').strip()
                 elif len(sys.argv) == 4:
                     yesno = sys.argv[3]
