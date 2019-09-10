@@ -31,8 +31,8 @@ import glob
 import os
 import shutil
 import tempfile
-from StringIO import StringIO
-from urllib2 import urlopen
+from io import StringIO
+from urllib.request import urlopen
 import zipfile
 
 from paver.easy import (Bunch, call_task, cmdopts, info, options,
