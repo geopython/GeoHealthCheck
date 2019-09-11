@@ -34,11 +34,7 @@
 {% block extrafoot %}
 <script type="text/javascript">
 $('#tags').select2({
-	{% if tags %}
-    	var all_tags = {{ tagsnames|tojson }};
-	{% else %}
-		var all_tages = {};
-	{% endif %}
+    var all_tags = {{ tagsnames|tojson }};
     tags: true,
     placeholder: '{{ _('Enter tags') }}'
 });

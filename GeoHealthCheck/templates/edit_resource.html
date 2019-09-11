@@ -199,11 +199,7 @@ or
 <link href="{{ url_for('static', filename='lib/jqueryui/jquery-ui.theme.css') }}" rel="stylesheet">
 
 <script type="text/javascript">
-	{% if tags %}
-    	var all_tags = {{ tagnames|tojson }};
-	{% else %}
-		var all_tages = {};
-	{% endif %}
+    var all_tags = {{ tagnames|tojson }};
     $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
     // var probes_json = '{{ probes_avail|tojson }}';
     // probes_available = JSON.parse(probes_json);
