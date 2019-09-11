@@ -321,3 +321,8 @@ def sphinx_make():
     if os.name == 'nt':
         return 'make.bat'
     return 'make'
+
+@task
+def run_tests():
+    """Run all tests"""
+    sh('python %s' % path('tests/run_tests.py'))
