@@ -109,6 +109,9 @@ class Run(DB.Model):
     def __ge__(self, other):
         return self.identifief >= other.identifier
 
+    def __hash__(self):
+        return hash(f"{self.identifier}-{self.checked_datetime}-{self.resource}")
+
     # JSON string object specifying report for the Run
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _report = DB.Column("report", DB.Text, default={})
