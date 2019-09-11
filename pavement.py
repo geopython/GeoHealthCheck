@@ -27,11 +27,12 @@
 #
 # =================================================================
 
+import codecs
 import glob
 import os
 import shutil
 import tempfile
-from io import StringIO
+from io import BytesIO
 from urllib.request import urlopen
 import zipfile
 
@@ -89,7 +90,7 @@ def setup():
             need_to_fetch = True
 
     if need_to_fetch:
-        zipstr = StringIO(urlopen(skin).read())
+        zipstr = BytesIO(urlopen(skin).read())
         zipfile_obj = zipfile.ZipFile(zipstr)
         zipfile_obj.extractall(options.base.static_lib)
 
@@ -107,7 +108,7 @@ def setup():
 
     # install sparklines to static/site/js
     with open(path(options.base.static_lib / 'jspark.js'), 'w') as f:
-        content = urlopen('http://ejohn.org/files/jspark.js').read()
+        content = urlopen('http://ejohn.org/files/jspark.js').read().decode()
         content.replace('red', 'green')
         f.write(content)
 
@@ -115,7 +116,7 @@ def setup():
     info('Getting select2')
     select2 = 'https://github.com/select2/select2/archive/4.0.3.zip'
 
-    zipstr = StringIO(urlopen(select2).read())
+    zipstr = BytesIO(urlopen(select2).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(options.base.static_lib)
     dirname = glob.glob(options.base.static_lib / 'select2-*')[0]
@@ -130,20 +131,20 @@ def setup():
     info('Getting leaflet')
     leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'
 
-    zipstr = StringIO(urlopen(leafletjs).read())
+    zipstr = BytesIO(urlopen(leafletjs).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(options.base.static_lib / 'leaflet')
 
     # install html5shiv to static/lib
     with open(path(options.base.static_lib / 'html5shiv.min.js'), 'w') as f:
         url = 'http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
-        content = urlopen(url).read()
+        content = urlopen(url).read().decode()
         f.write(content)
 
     # install respond to static/lib
     with open(path(options.base.static_lib / 'respond.min.js'), 'w') as f:
         url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
-        content = urlopen(url).read()
+        content = urlopen(url).read().decode()
         f.write(content)
 
     # build i18n .mo files
@@ -161,7 +162,7 @@ def setup():
 @task
 def create_secret_key():
     """create secret key for SECRET_KEY in instance/config_site.py"""
-    info('Secret key: \'%s\'' % os.urandom(24).encode('hex'))
+    info('Secret key: \'%s\'' % codecs.encode(os.urandom(24), 'hex').decode())
     info('Copy/paste this key to set the SECRET_KEY')
     info('value in instance/config_site.py')
 
