@@ -39,7 +39,7 @@
 {% block body %}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header"><span id="resource_title_h1">{{ resource.title }}</span>    </h1>
-        {% if g.user.is_authenticated() %}
+        {% if g.user.is_authenticated %}
         <h1 class="page-header">
         <a href="{{ url_for('test', lang=g.current_lang, resource_identifier=resource.identifier) }}"><button type="button" class="btn btn-primary btn-sm">{{ _('Test Now') }}</button></a>
         {% if g.user.role == 'admin' or g.user.username == resource.owner.username %}
@@ -186,7 +186,7 @@
 <script type="text/javascript">
 
     $(window).on('load', function() {
-        {% if g.user.is_authenticated() %}
+        {% if g.user.is_authenticated %}
         $('#confirm-delete').click(function() {
             if (confirm('{{ _('Delete resource') }} "{{ resource.title }}"?') === false) {
                 return false;

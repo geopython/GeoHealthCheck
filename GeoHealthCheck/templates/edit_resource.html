@@ -208,7 +208,7 @@ or
     // var probes_json = '{{ probes_avail|tojson }}';
     // probes_available = JSON.parse(probes_json);
 
-    {% if g.user.is_authenticated() %}
+    {% if g.user.is_authenticated %}
 
     // Show input elements for selected Resource auth
     $('#select_resource_auth_type').change(function(){
