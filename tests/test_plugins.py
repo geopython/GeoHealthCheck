@@ -147,7 +147,7 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertEqual(
             len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
         self.assertEqual(parameters['strings']['type'], 'stringlist',
-                          'PARAM_DEFS.strings[type] should be stringlist')
+                         'PARAM_DEFS.strings[type] should be stringlist')
 
         plugin_obj = Factory.create_obj(
             'GeoHealthCheck.plugins.check.checks.NotContainsOwsException')

@@ -90,7 +90,7 @@ def db_commit():
     err = None
     try:
         DB.session.commit()
-    except Exception as err:
+    except Exception:
         DB.session.rollback()
     # finally:
     #     DB.session.close()

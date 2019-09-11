@@ -322,6 +322,7 @@ def sphinx_make():
         return 'make.bat'
     return 'make'
 
+
 @task
 def run_tests():
     """Run all tests"""

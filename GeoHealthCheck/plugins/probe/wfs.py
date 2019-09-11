@@ -148,7 +148,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                     # issue #243 this depends if lxml etree present
                     # and used by OWSLib ! Otherwise fall-back.
                     nsmap = wfs._capabilities.nsmap
-                except Exception as err:
+                except Exception:
                     # Fall-back
                     pass
 

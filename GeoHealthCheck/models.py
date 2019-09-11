@@ -102,7 +102,7 @@ class Run(DB.Model):
 
     def __eq__(self, other):
         return self.identifier == other.identifier
-    
+
     def __gt__(self, other):
         return self.identifier > other.identifier
 
@@ -110,7 +110,7 @@ class Run(DB.Model):
         return self.identifief >= other.identifier
 
     def __hash__(self):
-        return hash(f"{self.identifier}-{self.checked_datetime}-{self.resource}")
+        return hash(f"{self.identifier}{self.checked_datetime}{self.resource}")
 
     # JSON string object specifying report for the Run
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
