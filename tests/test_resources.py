@@ -32,17 +32,17 @@ import unittest
 import sys
 import os
 
-from GeoHealthCheck.init import App
-from GeoHealthCheck.models import (DB, Resource, Run, load_data,
-                                   Recipient)
-from GeoHealthCheck.healthcheck import run_test_resource
-from GeoHealthCheck.notifications import _parse_webhook_location
-from GeoHealthCheck.resourceauth import ResourceAuth
-
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
+GHC_DIR = TEST_DIR[:-5] + 'GeoHealthCheck'
 
 # Needed to find classes and plugins
-sys.path.append('%s/..' % TEST_DIR)
+sys.path.append(GHC_DIR)
+
+from init import App
+from models import (DB, Resource, Run, load_data, Recipient)
+from healthcheck import run_test_resource
+from notifications import _parse_webhook_location
+from resourceauth import ResourceAuth
 
 
 class GeoHealthCheckTest(unittest.TestCase):

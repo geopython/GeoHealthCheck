@@ -33,9 +33,10 @@ import sys
 import os
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
+GHC_DIR = TEST_DIR[:-5] + 'GeoHealthCheck'
 
 # Needed to find classes and plugins
-sys.path.append('%s/..' % TEST_DIR)
+sys.path.append(GHC_DIR)
 
 # Shorthand to run all test scripts in tests dir.
 # TODO use nose or more intelligent test_*.py discovery
