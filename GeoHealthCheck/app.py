@@ -826,6 +826,7 @@ def get_probe_edit_form(probe_class, resource_identifier=None):
     if resource_identifier:
         resource = views.get_resource_by_id(resource_identifier)
         if resource:
+            probe_obj._resource = resource
             probe_obj.expand_params(resource)
 
     probe_info = probe_obj.get_plugin_vars()
