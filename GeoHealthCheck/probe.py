@@ -79,6 +79,7 @@ class Probe(Plugin):
 
     def __init__(self):
         Plugin.__init__(self)
+        self._resource = None
 
     #
     # Lifecycle : optionally expand params from Resource metadata
@@ -228,6 +229,8 @@ class Probe(Plugin):
         pass
 
     def get_request_headers(self):
+        if not self._resource:
+            return dict()
         return self._resource.add_auth_header(self.REQUEST_HEADERS)
 
     def perform_request(self):
