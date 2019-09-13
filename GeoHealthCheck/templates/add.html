@@ -34,7 +34,7 @@
 {% block extrafoot %}
 <script type="text/javascript">
 $('#tags').select2({
-    data: {{ tagsnames|tojson }},
+    data: {{ tagnames|tojson }},
     tags: true,
     placeholder: '{{ _('Enter tags') }}'
 });
