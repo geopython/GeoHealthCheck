@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from factory import Factory
 import logging
 import inspect
