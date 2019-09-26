@@ -81,42 +81,42 @@ class WFS3Drilldown(Probe):
         # "full" could be all layers.
         result = Result(True, 'Test Collections')
         result.start()
-        coll_name = ''
+        coll_id = ''
         try:
             for collection in collections:
-                coll_name = collection['name']
-                coll_name = coll_name.encode('utf-8')
+                coll_id = collection['id']
+                coll_id = coll_id.encode('utf-8')
 
                 try:
-                    coll = wfs3.collection(coll_name)
+                    coll = wfs3.collection(coll_id)
 
                     # TODO: Maybe also add crs
-                    for attr in ['name', 'links']:
+                    for attr in ['id', 'links']:
                         val = coll.get(attr, None)
                         if val is None:
                             msg = '%s: missing attr: %s' \
-                                  % (coll_name, attr)
+                                  % (coll_id, attr)
                             result = push_result(
                                 self, result, False, msg, 'Test Collection')
                             continue
                 except Exception as e:
                     msg = 'GetCollection %s: OWSLib err: %s ' \
-                          % (str(e), coll_name)
+                          % (str(e), coll_id)
                     result = push_result(
                         self, result, False, msg, 'Test GetCollection')
                     continue
 
                 try:
-                    items = wfs3.collection_items(coll_name, limit=1)
+                    items = wfs3.collection_items(coll_id, limit=1)
                 except Exception as e:
-                    msg = 'GetItems %s: OWSLib err: %s ' % (str(e), coll_name)
+                    msg = 'GetItems %s: OWSLib err: %s ' % (str(e), coll_id)
                     result = push_result(
                         self, result, False, msg, 'Test GetItems')
                     continue
 
                 features = items.get('features', None)
                 if features is None:
-                    msg = 'GetItems %s: No features attr' % coll_name
+                    msg = 'GetItems %s: No features attr' % coll_id
                     result = push_result(
                         self, result, False, msg, 'Test GetItems')
                     continue
@@ -124,7 +124,7 @@ class WFS3Drilldown(Probe):
                 type = items.get('type', '')
                 if type != 'FeatureCollection':
                     msg = '%s:%s type not FeatureCollection: %s' \
-                          % (coll_name, type, val)
+                          % (coll_id, type, val)
                     result = push_result(
                         self, result, False, msg, 'Test GetItems')
                     continue
@@ -133,10 +133,10 @@ class WFS3Drilldown(Probe):
 
                     fid = items['features'][0]['id']
                     try:
-                        item = wfs3.collection_item(coll_name, fid)
+                        item = wfs3.collection_item(coll_id, fid)
                     except Exception as e:
                         msg = 'GetItem %s: OWSLib err: %s' \
-                              % (str(e), coll_name)
+                              % (str(e), coll_id)
                         result = push_result(
                             self, result, False, msg, 'Test GetItem')
                         continue
@@ -146,21 +146,21 @@ class WFS3Drilldown(Probe):
                         val = item.get(attr, None)
                         if val is None:
                             msg = '%s:%s missing attr: %s' \
-                                  % (coll_name, str(fid), attr)
+                                  % (coll_id, str(fid), attr)
                             result = push_result(
                                 self, result, False, msg, 'Test GetItem')
                             continue
 
                         if attr == 'type' and val != 'Feature':
                             msg = '%s:%s type not Feature: %s' \
-                                  % (coll_name, str(fid), val)
+                                  % (coll_id, str(fid), val)
                             result = push_result(
                                 self, result, False, msg, 'Test GetItem')
                             continue
 
         except Exception as err:
             result.set(False, 'Collection err: %s : e=%s'
-                       % (coll_name, str(err)))
+                       % (coll_id, str(err)))
 
         result.stop()
 
