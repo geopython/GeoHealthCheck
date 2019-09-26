@@ -65,7 +65,7 @@ class GeoHealthCheckTest(unittest.TestCase):
     def testResourcesPresent(self):
         resources = Resource.query.all()
 
-        self.assertEqual(len(resources), 7)
+        self.assertEqual(len(resources), 8)
 
     def testRunResoures(self):
         # Do the whole healthcheck for all Resources for now
