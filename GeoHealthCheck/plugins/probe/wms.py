@@ -106,7 +106,8 @@ class WmsGetMapV1(Probe):
         :param version:
         :return: Metadata object
         """
-        return WebMapService(resource.url, version=version)
+        return WebMapService(resource.url, version=version,
+                             headers=self.get_request_headers())
 
     # Overridden: expand param-ranges from WMS metadata
     def expand_params(self, resource):

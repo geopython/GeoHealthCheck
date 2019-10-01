@@ -229,10 +229,11 @@ def get_probes_avail(resource_type=None, resource=None):
         if probe:
             if resource:
                 try:
+                    probe._resource = resource
                     probe.expand_params(resource)
                 except Exception as err:
                     msg = 'Cannot expand plugin vars for %s err=%s' \
-                          % (probe_class, str(err))
+                          % (probe_class, repr(err))
                     LOGGER.warning(msg)
 
             result[probe_class] = probe.get_plugin_vars()

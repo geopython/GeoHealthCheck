@@ -35,6 +35,16 @@ class ESRIFSDrilldown(Probe):
     def __init__(self):
         Probe.__init__(self)
 
+    def get_request_headers(self):
+        headers = Probe.get_request_headers(self)
+        if 'Authorization' in headers:
+            # https://enterprise.arcgis.com/en/server/latest/
+            #     administer/linux/about-arcgis-tokens.htm
+            auth_val = headers['Authorization']
+            if 'Bearer' in auth_val:
+                headers['X-Esri-Authorization'] = headers['Authorization']
+        return headers
+
     def perform_request(self):
         """
         Perform the drilldown.

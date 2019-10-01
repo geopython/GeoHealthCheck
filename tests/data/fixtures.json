@@ -10,7 +10,8 @@
   "tags": {
     "ows": "ows",
     "tiling": "tiling",
-    "pdok": "pdok"
+    "pdok": "pdok",
+    "ogc": "ogc"
   },
   "resources": {
     "PDOK BAG WMS": {
@@ -83,6 +84,16 @@
       "tags": [
         "tiling",
         "pdok"
+      ]
+    },
+    "PYGEOAPI FEATURES": {
+      "owner": "admin",
+      "resource_type": "OSGeo:WFS3",
+      "active": true,
+      "title": "pygeoapi - master",
+      "url": "https://demo.pygeoapi.io/master",
+      "tags": [
+        "ogc"
       ]
     }
   },
@@ -200,6 +211,18 @@
         "y": "0",
         "extension" : "png"
       }
+    },
+    "PYGEOAPI - Drilldown": {
+      "resource": "PYGEOAPI FEATURES",
+      "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown",
+      "parameters": {
+        "drilldown_level": "full"
+      }
+    },
+    "PYGEOAPI - OpenAPI": {
+      "resource": "PYGEOAPI FEATURES",
+      "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3OpenAPIValidator",
+      "parameters": {}
     }
   },
   "check_vars": {
