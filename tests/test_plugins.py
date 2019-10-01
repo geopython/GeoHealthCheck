@@ -29,20 +29,15 @@
 # =================================================================
 
 import unittest
-import sys
 import os
-
-TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-GHC_DIR = TEST_DIR[:-5] + 'GeoHealthCheck'
-
-# Needed to find classes and plugins
-sys.path.append(GHC_DIR)
 
 from models import DB, load_data, Resource
 from views import get_probes_avail
 from plugin import Plugin
 from probe import Probe
 from factory import Factory
+
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class GeoHealthCheckTest(unittest.TestCase):
