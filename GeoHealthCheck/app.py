@@ -314,7 +314,7 @@ def export():
 
                 writer.writerow([
                     r.resource_type,
-                    r.title.encode('utf-8'),
+                    r.title,
                     r.url,
                     ghc_url,
                     '%s/json' % ghc_url,
@@ -361,7 +361,7 @@ def export_resource(identifier):
 
         json_dict = {
             'identifier': resource.identifier,
-            'title': resource.title.encode('utf-8'),
+            'title': resource.title,
             'url': resource.url,
             'resource_type': resource.resource_type,
             'owner': resource.owner.username,
@@ -390,7 +390,7 @@ def export_resource(identifier):
         writer.writerow(header)
         writer.writerow([
             resource.identifier,
-            resource.title.encode('utf-8'),
+            resource.title,
             resource.url,
             resource.resource_type,
             resource.owner.username,
@@ -424,7 +424,7 @@ def export_resource_history(identifier):
                 'owner': resource.owner.username,
                 'resource_type': resource.resource_type,
                 'checked_datetime': format_checked_datetime(run),
-                'title': resource.title.encode('utf-8'),
+                'title': resource.title,
                 'url': resource.url,
                 'response_time': round(run.response_time, 2),
                 'status': format_run_status(run)
@@ -443,7 +443,7 @@ def export_resource_history(identifier):
                 resource.owner.username,
                 resource.resource_type,
                 format_checked_datetime(run),
-                resource.title.encode('utf-8'),
+                resource.title,
                 resource.url,
                 round(run.response_time, 2),
                 format_run_status(run),
