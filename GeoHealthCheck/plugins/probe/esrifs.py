@@ -45,6 +45,27 @@ class ESRIFSDrilldown(Probe):
                 headers['X-Esri-Authorization'] = headers['Authorization']
         return headers
 
+    def perform_esrifs_get_request(self, url):
+        response = self.perform_get_request(url).json()
+        error_msg = 'code=%d message=%s'
+        # May have error like:
+        # {
+        #   "error" :
+        #   {
+        #     "code" : 499,
+        #     "message" : "Token Required",
+        #     "messageCode" : "GWM_0003",
+        #     "details" : [
+        #       "Token Required"
+        #     ]
+        #   }
+        # }
+        if 'error' in response:
+            err = response['error']
+            raise Exception(error_msg % (err['code'], err['message']))
+
+        return response
+
     def perform_request(self):
         """
         Perform the drilldown.
@@ -73,7 +94,7 @@ class ESRIFSDrilldown(Probe):
         result.start()
         layers = []
         try:
-            fs_caps = self.perform_get_request(req_tpl['fs_caps']).json()
+            fs_caps = self.perform_esrifs_get_request(req_tpl['fs_caps'])
             for attr in ['currentVersion', 'layers']:
                 val = fs_caps.get(attr, None)
                 if val is None:
@@ -94,6 +115,8 @@ class ESRIFSDrilldown(Probe):
             return
 
         # 2. Test each Layer Capabilities
+        result = Result(True, 'Test Layer Capabilities')
+        result.start()
         layer_ids = []
         layer_caps = []
         try:
@@ -102,8 +125,8 @@ class ESRIFSDrilldown(Probe):
                 layer_ids.append(layer['id'])
 
             for layer_id in layer_ids:
-                layer_caps.append(self.perform_get_request(
-                    req_tpl['layer_caps'] % layer_id).json())
+                layer_caps.append(self.perform_esrifs_get_request(
+                    req_tpl['layer_caps'] % layer_id))
 
         except Exception as err:
             result.set(False, str(err))
@@ -124,8 +147,8 @@ class ESRIFSDrilldown(Probe):
             for layer_id in layer_ids:
 
                 try:
-                    features = self.perform_get_request(
-                        req_tpl['get_features'] % layer_id).json()
+                    features = self.perform_esrifs_get_request(
+                        req_tpl['get_features'] % layer_id)
                     obj_id_field_name = features['objectIdFieldName']
                     features = features['features']
                     if len(features) == 0:
