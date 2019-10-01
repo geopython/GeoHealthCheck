@@ -11,7 +11,8 @@
     "ows": "ows",
     "tiling": "tiling",
     "pdok": "pdok",
-    "ogc": "ogc"
+    "ogc": "ogc",
+    "esri": "esri"
   },
   "resources": {
     "PDOK BAG WMS": {
@@ -95,7 +96,18 @@
       "tags": [
         "ogc"
       ]
+    },
+    "ESRI FEATURESERVER": {
+      "owner": "admin",
+      "resource_type": "ESRI:FS",
+      "active": true,
+      "title": "ESRI ArcGIS FeatureServer (FS)",
+      "url": "https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Fire/Sheep/FeatureServer",
+      "tags": [
+        "esri"
+      ]
     }
+
   },
   "probe_vars": {
     "PDOK BAG WMS - GetCaps": {
@@ -223,7 +235,15 @@
       "resource": "PYGEOAPI FEATURES",
       "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3OpenAPIValidator",
       "parameters": {}
+    },
+    "ESRIFS - Drilldown": {
+      "resource": "ESRI FEATURESERVER",
+      "probe_class": "GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown",
+      "parameters": {
+        "drilldown_level": "full"
+      }
     }
+
   },
   "check_vars": {
     "PDOK BAG WMS - GetCaps - XML Parse": {
