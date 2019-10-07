@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG] in GeoHealthCheck (replace with your title}"
+title: "(replace with your title)"
 labels: bug
 assignees: ''
 
