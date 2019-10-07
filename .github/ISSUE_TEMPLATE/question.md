@@ -1,7 +1,7 @@
 ---
 name: Question
 about: I have a question
-title: "[QUESTION] I have a question!"
+title: "(Put question subject here)"
 labels: question
 assignees: ''
 
