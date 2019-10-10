@@ -2,10 +2,7 @@ import sys
 from owslib.etree import etree
 from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.check import Check
-try:
-    from html import escape  # python 3.x
-except ImportError:
-    from cgi import escape  # python 2.x
+from html import escape
 
 
 """ Contains basic Check classes for a Probe object."""
