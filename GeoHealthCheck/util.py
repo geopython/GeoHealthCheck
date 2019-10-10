@@ -200,7 +200,7 @@ def geocode(value, spatial_keyword_type='hostname'):
             lat, lon = content['lat'], content['lon']
         except Exception as err:  # skip storage
             msg = 'Could not derive coordinates: %s' % err
-            LOGGER.exception(msg)
+            LOGGER.warning(msg)
     return lat, lon
 
 
