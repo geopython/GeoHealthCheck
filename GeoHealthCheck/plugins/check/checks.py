@@ -22,7 +22,7 @@ class HttpStatusNoError(Check):
     def perform(self):
         """Default check: Resource should at least give no error"""
         status = self.probe.response.status_code
-        overall_status = status / 100
+        overall_status = status // 100
         if overall_status in [4, 5]:
             self.set_result(False, 'HTTP Error status=%d' % status)
 
