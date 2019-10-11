@@ -102,7 +102,7 @@ class BasicAuth(ResourceAuth):
         # like: 'Basic base64encode(username + ':' + password)
         auth_creds = self.auth_dict['data']
         auth_val = base64.encodestring(
-            '%s:%s' % (auth_creds['username'], auth_creds['password']))
+            '{}:{}'.format(auth_creds['username'], auth_creds['password']).encode())
         auth_val = "Basic %s" % auth_val
         return auth_val
 
