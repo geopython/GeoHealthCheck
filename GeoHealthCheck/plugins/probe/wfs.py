@@ -139,7 +139,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
             ft_namespaces = set([name.split(':')[0] if ':' in name else None
                                  for name in feature_type_names])
-            ft_namespaces = filter(None, list(ft_namespaces))
+            ft_namespaces = list(filter(None, list(ft_namespaces)))
 
             # In some cases default NS is used: no FT NSs
             nsmap = None
