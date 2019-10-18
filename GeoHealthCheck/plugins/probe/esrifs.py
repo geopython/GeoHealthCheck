@@ -37,6 +37,12 @@ class ESRIFSDrilldown(Probe):
 
     def get_request_headers(self):
         headers = Probe.get_request_headers(self)
+
+        # Clear possibly dangling ESRI header
+        # https://github.com/geopython/GeoHealthCheck/issues/293
+        if 'X-Esri-Authorization' in headers:
+            del headers['X-Esri-Authorization']
+
         if 'Authorization' in headers:
             # https://enterprise.arcgis.com/en/server/latest/
             #     administer/linux/about-arcgis-tokens.htm
