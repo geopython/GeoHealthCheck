@@ -203,6 +203,11 @@
     }
   },
   "check_vars": {
+    "PDOK BAG WMS - GetCaps - No HTTP Error": {
+      "probe_vars": "PDOK BAG WMS - GetCaps",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpStatusNoError",
+      "parameters": {}
+    },
     "PDOK BAG WMS - GetCaps - XML Parse": {
       "probe_vars": "PDOK BAG WMS - GetCaps",
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",

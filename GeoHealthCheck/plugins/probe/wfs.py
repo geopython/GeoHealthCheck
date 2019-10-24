@@ -88,6 +88,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     """Param defs"""
 
     CHECKS_AVAIL = {
+        'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {
+            'default': True
+        },
         'GeoHealthCheck.plugins.check.checks.XmlParse': {
             'default': True
         },
