@@ -543,18 +543,6 @@ def add():
          title, success, response_time,
          message, start_time, resource_tags,) in sniffed_resources:
 
-        # sniffed_resources may return list of resource
-        # types different from initial one
-        # so we need to test each row separately
-        resource = Resource.query.filter_by(resource_type=resource_type,
-                                            url=url).first()
-        if resource is not None:
-            msg = gettext('Service already registered')
-            flash('%s (%s, %s)' % (msg, resource_type, url), 'danger')
-
-            if len(sniffed_resources) == 1 and 'resource_type' in request.args:
-                return redirect(url_for('add', lang=g.current_lang))
-
         tags_to_add = []
         for tag in chain(tags, resource_tags):
             tag_obj = tag
