@@ -20,8 +20,9 @@ class Result(object):
         self.results.append(result)
         if not result.success:
             self.success = False
-            self.message = result.message
             self.results_failed.append(result)
+            # First failed result is usually main failure reason
+            self.message = self.results_failed[0].message
 
     def get_report(self):
         return {
