@@ -27,7 +27,6 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-
 import unittest
 import os
 
@@ -112,7 +111,7 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertIsNotNone(plugin_obj)
 
         checks = plugin_obj.CHECKS_AVAIL
-        self.assertEquals(len(checks), 4, 'WmsGetCaps should have 4 Checks')
+        self.assertEqual(len(checks), 4, 'WmsGetCaps should have 4 Checks')
 
         parameters = plugin_obj.PARAM_DEFS
         self.assertEqual(
