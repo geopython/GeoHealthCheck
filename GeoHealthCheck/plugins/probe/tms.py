@@ -16,6 +16,9 @@ class TmsCaps(Probe):
         Probe.__init__(self)
 
     CHECKS_AVAIL = {
+        'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {
+            'default': True
+        },
         'GeoHealthCheck.plugins.check.checks.XmlParse': {
             'default': True
         },
@@ -24,7 +27,7 @@ class TmsCaps(Probe):
             'set_params': {
                 'strings': {
                     'name': 'Must contain TileMap Element',
-                    'value': ['<TileMap']
+                    'value': ['TileMap']
                 }
             }
         },

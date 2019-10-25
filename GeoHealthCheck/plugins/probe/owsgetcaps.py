@@ -36,6 +36,9 @@ class OwsGetCaps(Probe):
     """Param defs, to be specified in subclasses"""
 
     CHECKS_AVAIL = {
+        'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {
+            'default': True
+        },
         'GeoHealthCheck.plugins.check.checks.XmlParse': {
             'default': True
         },
