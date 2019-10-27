@@ -231,7 +231,8 @@ class Probe(Plugin):
     def get_request_headers(self):
         if not self._resource:
             return dict()
-        return self._resource.add_auth_header(self.REQUEST_HEADERS)
+        headers = Plugin.copy(self.REQUEST_HEADERS)
+        return self._resource.add_auth_header(headers)
 
     def perform_request(self):
         """ Perform actual request to service"""
