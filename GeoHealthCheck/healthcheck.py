@@ -61,7 +61,8 @@ def db_commit():
     err = None
     try:
         DB.session.commit()
-    except Exception:
+    except Exception as err:
+        LOGGER.warning("Cannot commit to database %s".format(err))
         DB.session.rollback()
     # finally:
     #     DB.session.close()

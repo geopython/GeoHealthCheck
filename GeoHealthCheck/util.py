@@ -228,7 +228,7 @@ def read(filename, encoding='utf-8'):
 
 # https://gist.github.com/gowhari/fea9c559f08a310e5cfd62978bc86a1a
 # with alterations to get return type of string, not bytes
-def encode(key: str, string: str) -> str:
+def encode(key, string):
     encoded_chars = []
     for i in range(len(string)):
         key_c = key[i % len(key)]
