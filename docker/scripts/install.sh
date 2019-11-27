@@ -1,8 +1,8 @@
 #!/bin/bash
 
 cd /
-virtualenv venv && cd /venv
-. bin/activate
+python3 -m venv venv
+source /venv/bin/activate
 
 # GHC Source was added in Dockerfile, install
 # NB we use gunicorn/eventlet async workers as some Probes may take a long time

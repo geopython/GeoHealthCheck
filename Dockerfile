@@ -1,4 +1,4 @@
-FROM python:2.7.15-alpine3.8
+FROM python:3.7.4-alpine3.10
 
 # Thanks to http://www.sandtable.com/reduce-docker-image-sizes-using-alpine
 # FROM debian:jessie
@@ -63,8 +63,7 @@ WSGI_WORKER_CLASS='eventlet' \
 GHC_USER_PLUGINS=''
 
 RUN apk add --no-cache --virtual .build-deps gcc build-base libxslt-dev libxml2-dev linux-headers postgresql-dev \
-    && apk add --no-cache bash postgresql-client libxslt libxml2 tzdata openntpd \
-    && pip install virtualenv \
+    && apk add --no-cache bash postgresql-client libxslt libxml2 tzdata openntpd python3 python3-dev \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
 # Add standard files and Add/override Plugins

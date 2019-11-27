@@ -114,7 +114,7 @@ class WFS3Drilldown(Probe):
         try:
             for collection in collections:
                 coll_id = collection['id']
-                coll_id = coll_id.encode('utf-8')
+                coll_id = coll_id
 
                 try:
                     coll = wfs3.collection(coll_id)

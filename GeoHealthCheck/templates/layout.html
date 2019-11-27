@@ -44,7 +44,7 @@
                                 {% endfor %}
                             </ul>
                         </li>
-                        {% if g.user.is_authenticated() %}
+                        {% if g.user.is_authenticated %}
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ g.user.username }} <i class="fa fa-caret-down"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
@@ -58,7 +58,7 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ _('Language') }} <i class="fa fa-plus"></i></a>
                             <ul class="dropdown-menu dropdown-messages">
                                 {% for member in languages %}
-                                <li><a href="{{ request.script_root+request.path }}?lang={{ member[0] }}">{{ member[1].decode('utf-8') }}</a></li>
+                                <li><a href="{{ request.script_root+request.path }}?lang={{ member[0] }}">{{ member[1] }}</a></li>
                                 {% endfor %}
                             </ul>
                         </li>
@@ -82,7 +82,7 @@
                                 {% endif %}
                                 {% endfor %}
                                 <li><i><a href="{{ url_for('resources', lang=g.current_lang) }}">{{ _('Show All') }}</a></i></li>
-                                {% if g.user.is_authenticated() %}
+                                {% if g.user.is_authenticated %}
                                 <li><i><a href="{{ url_for('resources', lang=g.current_lang, q='owner:%s' % g.user.username) }}">{{ _('Show Mine') }}</a></i></li>
                                 {% endif %}
                            </ul>

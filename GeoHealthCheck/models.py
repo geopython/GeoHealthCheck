@@ -94,6 +94,24 @@ class Run(DB.Model):
         self.message = result.message
         self.report = result.get_report()
 
+    def __lt__(self, other):
+        return self.identifier < other.identifier
+
+    def __le__(self, other):
+        return self.identifier <= other.identifier
+
+    def __eq__(self, other):
+        return self.identifier == other.identifier
+
+    def __gt__(self, other):
+        return self.identifier > other.identifier
+
+    def __ge__(self, other):
+        return self.identifief >= other.identifier
+
+    def __hash__(self):
+        return hash(f"{self.identifier}{self.checked_datetime}{self.resource}")
+
     # JSON string object specifying report for the Run
     # See http://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
     _report = DB.Column("report", DB.Text, default={})
@@ -222,7 +240,7 @@ def _validate_webhook(value):
     from GeoHealthCheck.notifications import _parse_webhook_location
     try:
         _parse_webhook_location(value)
-    except ValueError, err:
+    except ValueError as err:
         raise ValidationError('{}: {}'.format(value, err))
     return value
 
@@ -290,7 +308,7 @@ class Recipient(DB.Model):
         for v in validators:
             try:
                 v(value)
-            except (ValidationError, TypeError), err:
+            except (ValidationError, TypeError) as err:
                 raise ValueError("Bad value: {}".format(err), err)
 
     def is_email(self):
@@ -314,7 +332,7 @@ class Recipient(DB.Model):
     def get_or_create(cls, channel, location):
         try:
             cls.validate(channel, location)
-        except ValidationError, err:
+        except ValidationError as err:
             raise ValueError("invalid value {}: {}".format(location, err))
 
         try:
@@ -690,7 +708,7 @@ class User(DB.Model):
         return False
 
     def get_id(self):
-        return unicode(self.identifier)
+        return self.identifier
 
     def set_password(self, password):
         self.password = self.encrypt(password)
@@ -884,13 +902,13 @@ if __name__ == '__main__':
                 password1 = sys.argv[3]
                 email1 = sys.argv[4]
             else:
-                username = raw_input('Enter your username: ').strip()
-                password1 = raw_input('Enter your password: ').strip()
-                password2 = raw_input('Enter your password again: ').strip()
+                username = input('Enter your username: ').strip()
+                password1 = input('Enter your password: ').strip()
+                password2 = input('Enter your password again: ').strip()
                 if password1 != password2:
                     raise ValueError('Passwords must match')
-                email1 = raw_input('Enter your email: ').strip()
-                email2 = raw_input('Enter your email again: ').strip()
+                email1 = input('Enter your email: ').strip()
+                email2 = input('Enter your email again: ').strip()
                 if email1 != email2:
                     raise ValueError('Emails must match')
 
@@ -908,7 +926,7 @@ if __name__ == '__main__':
                 yesno = 'n'
                 if len(sys.argv) == 3:
                     print('WARNING: all DB data will be lost! Proceed?')
-                    yesno = raw_input(
+                    yesno = input(
                         'Enter y (proceed) or n (abort): ').strip()
                 elif len(sys.argv) == 4:
                     yesno = sys.argv[3]

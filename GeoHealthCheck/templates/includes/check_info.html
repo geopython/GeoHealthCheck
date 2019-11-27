@@ -16,7 +16,7 @@
                         <br/>This Check has no parameters.
                         {% else %}
                         <table class="table table-condensed table-bordered">
-                            {% for param, param_def in check_info.PARAM_DEFS.iteritems() %}
+                            {% for param, param_def in check_info.PARAM_DEFS.items() %}
                             <tr>
                                 <td width="30%">{{ param }}</td>
                                 <td>

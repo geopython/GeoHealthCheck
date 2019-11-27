@@ -27,20 +27,16 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-
 import unittest
-import sys
 import os
-from GeoHealthCheck.models import DB, load_data, Resource
-from GeoHealthCheck.views import get_probes_avail
-from GeoHealthCheck.plugin import Plugin
-from GeoHealthCheck.probe import Probe
-from GeoHealthCheck.factory import Factory
+
+from models import DB, load_data, Resource
+from views import get_probes_avail
+from plugin import Plugin
+from probe import Probe
+from factory import Factory
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Needed to find classes and plugins
-sys.path.append('%s/..' % TEST_DIR)
 
 
 class GeoHealthCheckTest(unittest.TestCase):
@@ -115,10 +111,10 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertIsNotNone(plugin_obj)
 
         checks = plugin_obj.CHECKS_AVAIL
-        self.assertEquals(len(checks), 4, 'WmsGetCaps should have 4 Checks')
+        self.assertEqual(len(checks), 4, 'WmsGetCaps should have 4 Checks')
 
         parameters = plugin_obj.PARAM_DEFS
-        self.assertEquals(
+        self.assertEqual(
             len(parameters), 2, 'WmsGetCaps should have 2 Parameters')
 
         probe_obj = Factory.create_obj(
@@ -142,19 +138,19 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.assertIsNotNone(plugin_vars)
 
         parameters = plugin_obj.PARAM_DEFS
-        self.assertEquals(
+        self.assertEqual(
             len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
-        self.assertEquals(parameters['strings']['type'], 'stringlist',
-                          'PARAM_DEFS.strings[type] should be stringlist')
+        self.assertEqual(parameters['strings']['type'], 'stringlist',
+                         'PARAM_DEFS.strings[type] should be stringlist')
 
         plugin_obj = Factory.create_obj(
             'GeoHealthCheck.plugins.check.checks.NotContainsOwsException')
         self.assertIsNotNone(plugin_obj)
 
         parameters = plugin_obj.PARAM_DEFS
-        self.assertEquals(
+        self.assertEqual(
             len(parameters), 1, 'PARAM_DEFS should have 1 Parameter')
-        self.assertEquals(
+        self.assertEqual(
             parameters['strings']['value'][0], 'ExceptionReport>',
             'PARAM_DEFS.strings[0] should be ExceptionReport>')
 
@@ -211,7 +207,7 @@ class GeoHealthCheckTest(unittest.TestCase):
         probe_class = 'GeoHealthCheck.plugins.probe.wms.WmsGetMapV1'
         plugin_obj = Factory.create_obj(probe_class)
         self.assertIsNotNone(plugin_obj)
-        self.assertEquals(
+        self.assertEqual(
             plugin_obj.layer_count, 0,
             'non-zero layer_count %s' % probe_class)
 
@@ -222,10 +218,10 @@ class GeoHealthCheckTest(unittest.TestCase):
                 md = plugin_obj.get_metadata(resource)
                 md_c1 = plugin_obj.get_metadata_cached(resource,
                                                        version='1.1.1')
-                self.assertNotEquals(md, md_c1)
+                self.assertNotEqual(md, md_c1)
                 md_c2 = plugin_obj.get_metadata_cached(resource,
                                                        version='1.1.1')
-                self.assertEquals(md_c1, md_c2)
+                self.assertEqual(md_c1, md_c2)
                 plugin_obj.expand_params(resource)
 
         for key in Probe.METADATA_CACHE:
