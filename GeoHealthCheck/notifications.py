@@ -28,7 +28,6 @@
 # =================================================================
 
 from email.mime.text import MIMEText
-import types
 import email.utils
 import logging
 import smtplib
@@ -46,7 +45,7 @@ def do_email(config, resource, run, status_changed, result):
     # comma-separated str "To" needs comma-separated list,
     # while sendmail() requires list...
 
-    if isinstance(config['GHC_NOTIFICATIONS_EMAIL'], types.StringTypes):
+    if isinstance(config['GHC_NOTIFICATIONS_EMAIL'], str):
         config['GHC_NOTIFICATIONS_EMAIL'] = \
             config['GHC_NOTIFICATIONS_EMAIL'].split(',')
 
@@ -253,7 +252,8 @@ def notify(config, resource, run, last_run_success):
     if not status_changed:
         return
 
-    print('Notifying: status changed: result=%s' % result)
+    LOGGER.info('Notifying: status changed resource=%d: result=%s'
+                % (resource.identifier, result))
 
     # run all channels, actual recipients will be filtered there
     for chann_handler in (do_email, do_webhook,):
@@ -261,4 +261,4 @@ def notify(config, resource, run, last_run_success):
             chann_handler(config, resource, run, status_changed, result)
         except Exception as err:
             LOGGER.warning("couldn't run notification for %s: %s",
-                           chann_handler.func_name, err, exc_info=err)
+                           chann_handler.__name__, err, exc_info=err)
