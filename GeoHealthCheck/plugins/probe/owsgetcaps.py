@@ -74,7 +74,7 @@ class WmsGetCaps(OwsGetCaps):
             'value': 'WMS'
         },
         'version': {
-            'default': '1.1.1',
+            'default': '1.3.0',
             'range': ['1.1.1', '1.3.0']
         }
     })
