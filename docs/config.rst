@@ -9,7 +9,9 @@ Configuration Parameters
 ------------------------
 
 The core configuration is in ``GeoHealthCheck/config_main.py``.
-Optionally override these settings for your instance in ``instance/config_site.py``:
+Optionally override these settings for your instance in ``instance/config_site.py``. You can specify
+a configuration file in the environment settings that will override settings in both previous files.
+The configuration options are:
 
 - **SQLALCHEMY_DATABASE_URI**: the database configuration.  See the SQLAlchemy documentation for more info
 - **SECRET_KEY**: secret key to set when enabling authentication. Use the output of ``paver create_secret_key`` to set this value
@@ -40,6 +42,17 @@ Optionally override these settings for your instance in ``instance/config_site.p
   - **centre_long**: Centre longitude for homepage map
   - **maxzoom**: maximum zoom level
   - **subdomains**: available subdomains to help with parallel requests
+
+Example on overriding the configuration with an environment variable: ::
+
+    export GHC_SETTINGS=/tmp/my_GHC_settings.py
+    paver run_tests
+
+As an example: the `my_GHC_settings.py` file can contain a single line to define a test database: ::
+
+    SQLALCHEMY_DATABASE_URI='sqlite:////tmp/GHCtest.db'
+
+**NOTE**: do not forget to reset the environment variable afterwards.
 
 Email Configuration
 -------------------
