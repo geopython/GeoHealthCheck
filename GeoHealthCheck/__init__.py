@@ -27,7 +27,10 @@
 #
 # =================================================================
 
-from util import read
+try:
+    from util import read
+except ImportError:
+    from .util import read
 
 
 def get_package_version(file_):

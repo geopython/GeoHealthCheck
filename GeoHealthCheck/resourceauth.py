@@ -1,9 +1,22 @@
 import json
 import logging
-from plugin import Plugin
-from factory import Factory
-from util import encode, decode
-from init import App
+try:
+    from plugin import Plugin
+except ImportError:
+    from GeoHealthCheck.plugin import Plugin
+try:
+    from factory import Factory
+except ImportError:
+    from GeoHealthCheck.factory import Factory
+try:
+    from util import encode, decode
+except ImportError:
+    from GeoHealthCheck.util import encode, decode
+try:
+    from init import App
+except ImportError:
+    from GeoHealthCheck.init import App
+
 APP = App.get_app()
 LOGGER = logging.getLogger(__name__)
 
