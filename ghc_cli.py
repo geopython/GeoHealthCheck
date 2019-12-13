@@ -425,5 +425,15 @@ def run_tests(ctx):
     os.system('python %s' % os.path.normpath('tests/run_tests.py'))
 
 
+@cli.command()
+@click.pass_context
+def build_wheel(ctx):
+    """Build a python wheel"""
+    verbose_echo(ctx, 'GeoHC: Build a python wheel')
+    from os import system
+    system('python setup.py bdist_wheel')
+    click.echo('GeoHC: Finished building a wheel.')
+
+
 if __name__ == '__main__':
     cli()
