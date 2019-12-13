@@ -41,6 +41,14 @@ def abort_if_false(ctx, _, value):
         ctx.abort()
 
 
+def sphinx_make():
+    """return what command Sphinx is using for make"""
+    from os import name
+    if name == 'nt':
+        return 'make.bat'
+    return 'make'
+
+
 @click.group()
 @click.pass_context
 @click.option('--verbose', '-v', is_flag=True, help='Verbose')
@@ -85,8 +93,9 @@ def serve(ctx, host, port):
     """
     verbose_echo(ctx, 'GeoHC: serve')
     click.echo('Press ctrl-c to exit.')
-    from os import system
-    system(f"python GeoHealthCheck/app.py {host}:{port}")
+    from os import system, chdir
+    chdir('GeoHealthCheck')
+    system(f"python app.py {host}:{port}")
 
 
 @cli.command()
@@ -181,6 +190,7 @@ def db_load(ctx, file):
     DB.session.remove()
     click.echo('Finished loading data.')
 
+
 @cli.command()
 @click.pass_context
 def db_flush(ctx):
@@ -191,10 +201,216 @@ def db_flush(ctx):
     flush_runs()
     click.echo('Finished flushing old runs from database.')
 
+
+@cli.command()
+@click.pass_context
+def create_secret_key(ctx):
+    """
+    Create a secret key for the application.
+    """
+    from codecs import encode
+    from os import urandom
+    click.echo('Secret key: \'%s\'' % encode(urandom(24), 'hex').decode())
+    click.echo('Copy/paste this key to set the SECRET_KEY value in instance/config_site.py')
+
+
+@cli.command()
+@click.option('-p', '--password', prompt=True, hide_input=True, help='password')
+@click.pass_context
+def create_hash(ctx, password):
+    """Create a password hash
+    """
+    from GeoHealthCheck.util import create_hash
+    token = create_hash(password)
+    click.echo('Copy/paste the entire token below for example to set password')
+    click.echo(token)
+
+
 @cli.command()
 @click.pass_context
 def db_upgrade(ctx):
+    """Upgrade the database
+    """
     verbose_echo(ctx, 'GeoHC: upgrade db')
+    from os import system, chdir
+    chdir('GeoHealthCheck')
+    system('python manage.py db upgrade')
+    click.echo('Upgrade DB finished.')
+
+
+@cli.command()
+@click.pass_context
+def create_wsgi(ctx):
+    """Create an apache wsgi and conf file"""
+    verbose_echo(ctx, 'GeoHC: creating apache wsgi and conf files.')
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    instance = '%s%sinstance' % (basedir, os.sep)
+    verbose_echo(ctx, 'GeoHC: Files will be created in: %s' % instance)
+
+    wsgi_script = '%s%sGeoHealthCheck.wsgi' % (instance, os.sep)
+    with open(wsgi_script, 'w') as ff:
+        ff.write('import sys\n')
+        ff.write('sys.path.insert(0, \'%s\')\n' % basedir)
+        ff.write('from GeoHealthCheck.app import APP as application')
+    verbose_echo(ctx, 'GeoHC: finished wsgi script.')
+
+    wsgi_conf = '%s%sGeoHealthCheck.conf' % (instance, os.sep)
+    with open(wsgi_conf, 'w') as ff:
+        ff.write('WSGIScriptAlias / %s%sGeoHealthCheck.wsgi\n' % (instance, os.sep))
+        ff.write('<Directory %s%s>\n' % (basedir, os.sep))
+        ff.write('Order deny,allow\n')
+        ff.write('Allow from all\n')
+        ff.write('</Directory>')
+    verbose_echo(ctx, 'GeoHC: finished conf file.')
+
+
+@cli.command()
+@click.pass_context
+def update_docs(ctx):
+    """Update the spinx build of the documentation."""
+    verbose_echo(ctx, 'GeoHC: start building documentation.')
+
+    import os
+    import shutil
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    static_docs = os.path.normpath('%s/GeoHealthCheck/static/docs' % basedir)
+    docs = os.path.normpath('%s/docs' % basedir)
+
+    if os.path.exists(static_docs):
+        verbose_echo(ctx, 'GeoHC: deleting previous doc directory.')
+        shutil.rmtree(static_docs)
+
+    os.chdir(docs)
+    make = sphinx_make()
+    verbose_echo(ctx, 'GeoHC: cleaning old documentation.')
+    os.system('%s clean' % make)
+    verbose_echo(ctx, 'GeoHC: building new documentation.')
+    os.system('%s html' % make)
+    os.chdir(basedir)
+
+    verbose_echo(ctx, 'GeoHC: copying documentation to build folder.')
+    source_html_dir = os.path.normpath('%s/docs/_build/html' % basedir)
+    shutil.copytree(source_html_dir, static_docs)
+    click.echo('GeoHC: finished refreshing documentation.')
+
+
+@cli.command()
+@click.pass_context
+def clean(ctx):
+    """Clean Environment
+    """
+    import os
+    import shutil
+    import tempfile
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    static_docs = os.path.normpath('%s/GeoHealthCheck/static/docs' % basedir)
+    static_lib = os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir)
+    tmp = os.path.normpath(tempfile.mkdtemp())
+
+    try:
+        shutil.rmtree(static_lib)
+        verbose_echo(ctx, 'GeoHC: removed %s' % static_lib)
+    except FileNotFoundError:
+        pass
+    try:
+        shutil.rmtree(tmp)
+        verbose_echo(ctx, 'GeoHC: removed temp directory: %s' % tmp)
+    except FileNotFoundError:
+        pass
+    try:
+        shutil.rmtree(static_docs)
+        verbose_echo(ctx, 'GeoHC: removed %s' % static_docs)
+    except FileNotFoundError:
+        pass
+
+    click.echo('GeoHC: finished cleaning environment.')
+
+
+@cli.command()
+@click.pass_context
+def extract_translations(ctx):
+    """extract translations wrapped in _() or gettext()"""
+    verbose_echo(ctx, 'GeoHC: extracting translations')
+    import os
+
+    pot_dir = os.path.normpath('GeoHealthCheck/translations/en/LC_MESSAGES')
+    verbose_echo(ctx, 'GeoHC: Translations directory: %s' % pot_dir)
+    if not os.path.exists(pot_dir):
+        pot_dir.makedirs()
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    base_pot = os.path.normpath('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' % basedir)
+    verbose_echo(ctx, 'GeoHC: starting translation')
+    os.system('pybabel extract -F babel.cfg -o %s GeoHealthCheck' % base_pot)
+    click.echo('GeoHC: finished extracting translations.')
+
+
+@cli.command()
+@click.option('-l', '--lang', required=True, help='2-letter language code')
+@click.pass_context
+def add_language_catalogue(ctx, lang):
+    """adds new language profile"""
+    verbose_echo(ctx, 'GeoHC: Adding language catalogue.')
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    base_pot = os.path.normpath(
+        '%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' % basedir)
+    translations = os.path.normpath('%s/GeoHealthCheck/translations' % basedir)
+    verbose_echo(ctx, 'GeoHC: Base translation set: %s' % base_pot)
+    os.system('pybabel init -i %s -d %s -l %s' % (
+        base_pot, translations, lang))
+    click.echo('GeoHC: Finished translating: %s' % lang)
+
+
+@cli.command()
+@click.pass_context
+def compile_translations(ctx):
+    """build language files"""
+    verbose_echo(ctx, 'GeoHC: start building language files.')
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    translations = os.path.normpath('%s/GeoHealthCheck/translations' % basedir)
+    os.system('pybabel compile -d %s' % translations)
+    click.echo('GeoHC: Finished building language files.')
+
+
+@cli.command()
+@click.pass_context
+def update_translations(ctx):
+    """update language strings"""
+    verbose_echo(ctx, 'GeoHC: update translations.')
+    extract_translations(ctx)
+
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    base_pot = os.path.normpath(
+        '%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' % basedir)
+    translations = os.path.normpath('%s/GeoHealthCheck/translations' % basedir)
+    os.system('pybabel update -i %s -d %s' % (base_pot, translations))
+    click.echo('GeoHC: Finished updating translations.')
+
+
+@cli.command()
+@click.pass_context
+def runner_daemon(ctx):
+    """Run the HealthCheck runner daemon scheduler"""
+    verbose_echo(ctx, 'GeoHC: going to run the scheduler daemon. Press ctrl-c to stop.')
+    import os
+    os.system('python %s' % os.path.normpath('GeoHealthCheck/scheduler.py'))
+
+
+@cli.command()
+@click.pass_context
+def run_healthchecks(ctx):
+    """Run all HealthChecks directly"""
+    verbose_echo(ctx, 'GeoHC: going to run all the healthchecks once.')
+    import os
+    os.system('python %s' % os.path.normpath('GeoHealthCheck/healthcheck.py'))
+    click.echo('GeoHC: Finished running the healthchecks.')
+
 
 @cli.command()
 @click.pass_context

@@ -160,14 +160,6 @@ def setup():
 
 
 @task
-def create_secret_key():
-    """create secret key for SECRET_KEY in instance/config_site.py"""
-    info('Secret key: \'%s\'' % codecs.encode(os.urandom(24), 'hex').decode())
-    info('Copy/paste this key to set the SECRET_KEY')
-    info('value in instance/config_site.py')
-
-
-@task
 @cmdopts([
     ('email=', 'e', 'email'),
     ('username=', 'u', 'username'),
@@ -175,15 +167,26 @@ def create_secret_key():
 ])
 def create(options):
     """create database objects and superuser account"""
-
+    info('Warning!: create_secret_key is deprecated since 0.8.0. Please use cli: '
+         '`geohc db-create` and `geohc db-adduser`')
     args = ''
     username = options.get('username', None)
     password = options.get('password', None)
     email = options.get('email', None)
-
+    info(username)
     if all([username, password, email]):
         args = '%s %s %s' % (username, password, email)
     sh('python %s create %s' % (path('GeoHealthCheck/models.py'), args))
+
+
+@task
+def create_secret_key():
+    """create secret key for SECRET_KEY in instance/config_site.py"""
+    info('Warning!: create_secret_key is deprecated since 0.8.0. Please use cli: '
+         '`geohc create-secret-key`')
+    info('Secret key: \'%s\'' % codecs.encode(os.urandom(24), 'hex').decode())
+    info('Copy/paste this key to set the SECRET_KEY')
+    info('value in instance/config_site.py')
 
 
 @task
@@ -195,7 +198,8 @@ def create_hash(options):
     Create hash, mainly for passwords.
     Usage: paver create_hash -p mypass
     """
-
+    info('Warning!: create_hash is deprecated since 0.8.0. Please use cli: '
+         '`geohc create-hash`')
     import sys
     sys.path.insert(0, BASEDIR + '/GeoHealthCheck')
     from util import create_hash
@@ -207,7 +211,8 @@ def create_hash(options):
 @task
 def upgrade():
     """upgrade database if changed; be sure to backup first!"""
-
+    info('Warning!: upgrade is deprecated since 0.8.0. Please use cli: '
+         '`geohc db-upgrade`')
     info('Upgrading database...')
     with pushd(path('%s/GeoHealthCheck' % BASEDIR)):
         sh('python manage.py db upgrade')
@@ -216,6 +221,8 @@ def upgrade():
 @task
 def create_wsgi():
     """create WSGI wrapper and Apache2 configuration"""
+    info('Warning!: create_wsgi is deprecated since 0.8.0. Please use cli: '
+         '`geohc create-wsgi`')
     wsgi_script = '%s%sGeoHealthCheck.wsgi' % (options.base.instance, os.sep)
     with open(wsgi_script, 'w') as ff:
         ff.write('import sys\n')
@@ -235,6 +242,8 @@ def create_wsgi():
 @task
 def refresh_docs():
     """Build sphinx docs from scratch"""
+    info('Warning!: refresh_docs is deprecated since 0.8.0. Please use cli: '
+         '`geohc refresh-docs`')
 
     make = sphinx_make()
 
@@ -251,6 +260,8 @@ def refresh_docs():
 @task
 def clean():
     """clean environment"""
+    info('Warning!: clean is deprecated since 0.8.0. Please use cli: '
+         '`geohc clean`')
 
     if os.path.exists(options.base.static_lib):
         shutil.rmtree(options.base.static_lib)
@@ -264,6 +275,8 @@ def clean():
 def extract_translations():
     """extract translations wrapped in _() or gettext()"""
 
+    info('Warning!: extract_translations is deprecated since 0.8.0. Please use cli: '
+         '`geohc extract-translations`')
     pot_dir = path('GeoHealthCheck/translations/en/LC_MESSAGES')
     if not os.path.exists(pot_dir):
         pot_dir.makedirs()
@@ -278,6 +291,8 @@ def extract_translations():
 def add_language_catalogue(options):
     """adds new language profile"""
 
+    info('Warning!: add_language_catalogue is deprecated since 0.8.0. Please use cli: '
+         '`geohc add-language-catalogue`')
     lang = options.get('lang', None)
 
     if lang is None:
@@ -290,14 +305,16 @@ def add_language_catalogue(options):
 @task
 def compile_translations():
     """build .mo files"""
-
+    info('Warning!: compile_translations is deprecated since 0.8.0. Please use cli: '
+         '`geohc compile-translations`')
     sh('pybabel compile -d %s' % options.base.translations)
 
 
 @task
 def update_translations():
     """update language strings"""
-
+    info('Warning!: update_translations is deprecated since 0.8.0. Please use cli: '
+         '`geohc update-translations`')
     call_task('extract_translations')
     sh('pybabel update -i %s -d %s' % (
         options.base.pot, options.base.translations))
@@ -306,6 +323,8 @@ def update_translations():
 @task
 def runner_daemon():
     """Run the HealthCheck runner daemon scheduler"""
+    info('Warning!: runner_daemon is deprecated since 0.8.0. Please use cli: '
+         '`geohc runner-daemon`')
     sh('python %s' % path('GeoHealthCheck/scheduler.py'))
 
 

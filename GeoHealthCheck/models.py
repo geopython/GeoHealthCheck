@@ -940,7 +940,7 @@ if __name__ == '__main__':
             print('Dropping database objects')
             DB.drop_all()
             db_commit()
-            
+
         elif sys.argv[1] == 'load':
             warnings.warn('models.py load is deprecated since 0.8.0. Please use cli: '
                           '`geohc db-load`', DeprecationWarning)
