@@ -276,7 +276,7 @@ def extract_translations():
     """extract translations wrapped in _() or gettext()"""
 
     info('Warning!: extract_translations is deprecated since 0.8.0. Please use cli: '
-         '`geohc extract-translations`')
+         '`geohc lang-extract-translations`')
     pot_dir = path('GeoHealthCheck/translations/en/LC_MESSAGES')
     if not os.path.exists(pot_dir):
         pot_dir.makedirs()
@@ -292,7 +292,7 @@ def add_language_catalogue(options):
     """adds new language profile"""
 
     info('Warning!: add_language_catalogue is deprecated since 0.8.0. Please use cli: '
-         '`geohc add-language-catalogue`')
+         '`geohc lang-add-language-catalogue`')
     lang = options.get('lang', None)
 
     if lang is None:
@@ -306,7 +306,7 @@ def add_language_catalogue(options):
 def compile_translations():
     """build .mo files"""
     info('Warning!: compile_translations is deprecated since 0.8.0. Please use cli: '
-         '`geohc compile-translations`')
+         '`geohc lang-compile-translations`')
     sh('pybabel compile -d %s' % options.base.translations)
 
 
@@ -314,7 +314,7 @@ def compile_translations():
 def update_translations():
     """update language strings"""
     info('Warning!: update_translations is deprecated since 0.8.0. Please use cli: '
-         '`geohc update-translations`')
+         '`geohc lang-update-translations`')
     call_task('extract_translations')
     sh('pybabel update -i %s -d %s' % (
         options.base.pot, options.base.translations))
@@ -331,6 +331,8 @@ def runner_daemon():
 @task
 def run_healthchecks():
     """Run all HealthChecks directly"""
+    info('Warning!: run_healthchecks is deprecated since 0.8.0. Please use cli: '
+         '`geohc run-healthchecks`')
     sh('python %s' % path('GeoHealthCheck/healthcheck.py'))
 
 

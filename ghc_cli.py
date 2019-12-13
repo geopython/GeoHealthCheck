@@ -331,7 +331,7 @@ def clean(ctx):
 
 @cli.command()
 @click.pass_context
-def extract_translations(ctx):
+def lang_extract_translations(ctx):
     """extract translations wrapped in _() or gettext()"""
     verbose_echo(ctx, 'GeoHC: extracting translations')
     import os
@@ -351,7 +351,7 @@ def extract_translations(ctx):
 @cli.command()
 @click.option('-l', '--lang', required=True, help='2-letter language code')
 @click.pass_context
-def add_language_catalogue(ctx, lang):
+def lang_add_language_catalogue(ctx, lang):
     """adds new language profile"""
     verbose_echo(ctx, 'GeoHC: Adding language catalogue.')
     import os
@@ -367,7 +367,7 @@ def add_language_catalogue(ctx, lang):
 
 @cli.command()
 @click.pass_context
-def compile_translations(ctx):
+def lang_compile_translations(ctx):
     """build language files"""
     verbose_echo(ctx, 'GeoHC: start building language files.')
     import os
@@ -379,10 +379,10 @@ def compile_translations(ctx):
 
 @cli.command()
 @click.pass_context
-def update_translations(ctx):
+def lang_update_translations(ctx):
     """update language strings"""
     verbose_echo(ctx, 'GeoHC: update translations.')
-    extract_translations(ctx)
+    lang_extract_translations(ctx)
 
     import os
     basedir = os.path.abspath(os.path.dirname(__file__))
