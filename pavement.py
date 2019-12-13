@@ -347,4 +347,6 @@ def sphinx_make():
 @task
 def run_tests():
     """Run all tests"""
+    info('Warning!: run_tests is deprecated since 0.8.0. Please use cli: '
+         '`geohc run-tests`')
     sh('python %s' % path('tests/run_tests.py'))

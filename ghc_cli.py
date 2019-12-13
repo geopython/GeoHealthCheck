@@ -415,7 +415,14 @@ def run_healthchecks(ctx):
 @cli.command()
 @click.pass_context
 def db_export(ctx):
-    pass
+    click.exho('GeoHC: todo- write export.')
+
+@cli.command()
+@click.pass_context
+def run_tests(ctx):
+    """Run all tests"""
+    import os
+    os.system('python %s' % os.path.normpath('tests/run_tests.py'))
 
 
 if __name__ == '__main__':

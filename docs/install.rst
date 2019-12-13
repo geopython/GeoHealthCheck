@@ -27,9 +27,8 @@ GeoHealthCheck is built on the awesome Flask micro-framework and uses
 
 `APScheduler` is used to run scheduled healthchecks.
 
-These dependencies are automatically installed (see below). ``Paver`` is used
-for installation and management. ``Cron`` was used for scheduling the actual
-healthchecks before v0.5.0.
+These dependencies are automatically installed (see below). A command line interface is provided
+ with `click`. ``Cron`` was used for scheduling the actual healthchecks before v0.5.0.
 
 Starting from version v0.8.0.0 GeoHealthCheck requires **python 3**. Previous
 versions require **python 2**.
@@ -56,13 +55,13 @@ Install
   cd GeoHealthCheck
 
   # install paver dependency for admin tool
-  pip install Paver
+  pip install .
 
   # setup app
-  paver setup
+  geohc create-instance
 
   # create secret key to use for auth
-  paver create_secret_key
+  geohc create-secret-key
 
   # almost there!  Customize config
   vi instance/config_site.py
@@ -83,10 +82,10 @@ Install
   # - GHC_MAP  # or use default settings
 
   # init database
-  python GeoHealthCheck/models.py create
+  geohc db-create
 
   # start web-app
-  python GeoHealthCheck/app.py  # http://localhost:8000/
+  geohc serve
 
   # when you are done, you can exit the virtualenv
   deactivate
@@ -103,7 +102,7 @@ An existing GHC database installation can be upgraded with:
 .. code-block:: bash
 
   # In the top directory (e.g. the topdir cloned from github)
-  paver upgrade
+  geohc db-upgrade
 
   # Notice any output, in particular errors
 
@@ -119,7 +118,7 @@ Notes:
 
 When running with Docker see the
 `Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
-how to run `paver upgrade` within your Docker Container.
+how to run `geohc upgrade` within your Docker Container.
 
 Upgrade notes v0.5.0
 ....................
@@ -144,9 +143,9 @@ Start using Flask's built-in WSGI server:
 
 .. code-block:: bash
 
-  python GeoHealthCheck/app.py  # http://localhost:8000
-  python GeoHealthCheck/app.py 0.0.0.0:8881  # http://localhost:8881
-  python GeoHealthCheck/app.py 192.168.0.105:8957  # http://192.168.0.105:8957
+  geohc serve  # http://localhost:8000
+  geohc serve --port 8881  # http://localhost:8881
+  geohc serve --host 192.168.0.105 --port 8957  # http://192.168.0.105:8957
 
 
 This runs the (Flask) **GHC Webapp**, by default with the **GHC Runner** (scheduled healthchecker) internally.
@@ -157,10 +156,10 @@ From the command-line run both processes, e.g. in background or different termin
 .. code-block:: bash
 
   # run GHC Runner, here in background
-  python GeoHealthCheck/scheduler.py &
+  geohc runner-daemon &
 
   # run GHC Webapp for http://localhost:8000
-  python GeoHealthCheck/app.py
+  geohc serve
 
 
 To enable in Apache, use ``GeoHealthCheck.wsgi`` and configure in Apache
