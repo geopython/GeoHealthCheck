@@ -13,8 +13,8 @@ Easiest is [to run GHC using Docker](https://github.com/geopython/GeoHealthCheck
 Below a quick overview of a manual install on Unix-based systems like Apple Mac and Linux.
 
 ```bash
-python3 -m venv venv
-. bin/activate
+python3 -m venv ghc_venv
+. ghc_venv/bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
 pip install .
