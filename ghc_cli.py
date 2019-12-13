@@ -27,15 +27,18 @@
 #
 # =================================================================
 import click
-import os
 
 from GeoHealthCheck.__init__ import __version__
 
 
-@click.command()
-def cli():
-    """Example thingy"""
-    click.echo('Hello there!')
+def verbose_echo(ctx, verbose_text):
+    if ctx.obj['VERBOSE']:
+        click.echo(verbose_text)
+
+
+def abort_if_false(ctx, _, value):
+    if not value:
+        ctx.abort()
 
 
 @click.group()
@@ -65,7 +68,9 @@ def create_instance(ctx):
     verbose_echo(ctx, 'GeoHC: create instance')
     # calling paver for the setup
     # TODO: phase out paver and switch to click
-    os.system('paver setup')
+    from os import system
+    system('paver setup')
+    verbose_echo(ctx, 'GeoHC: finished creating the instance.')
 
 
 @cli.command()
@@ -80,7 +85,8 @@ def serve(ctx, host, port):
     """
     verbose_echo(ctx, 'GeoHC: serve')
     click.echo('Press ctrl-c to exit.')
-    os.system(f"python GeoHealthCheck/app.py {host}:{port}")
+    from os import system
+    system(f"python GeoHealthCheck/app.py {host}:{port}")
 
 
 @cli.command()
@@ -92,36 +98,98 @@ def db_create(ctx):
     """
     verbose_echo(ctx, 'GeoHC: create db')
     from GeoHealthCheck.init import App
+    from GeoHealthCheck.models import db_commit
+    verbose_echo(ctx, 'GeoHC: get database')
     DB = App.get_db()
+    verbose_echo(ctx, 'GeoHC: create all tables')
     DB.create_all()
+    db_commit()
     DB.session.remove()
+    click.echo('Database is created. Use `geohc db-adduser` to add users to the database.')
 
 
 @cli.command()
 @click.pass_context
-def db_adduser(ctx):
+@click.option('-u', '--user', type=str, help='username', prompt=True)
+@click.option('-e', '--email', type=str, help='email address', prompt=True)
+@click.option('-p', '--password', type=str, help='password', prompt=True, hide_input=True,
+              confirmation_prompt=True)
+@click.option('-r', '--role', type=click.Choice(['admin', 'user']), prompt=True,
+              help='role for this user')
+def db_adduser(ctx, user, email, password, role):
     """Add an user to the database
     """
     verbose_echo(ctx, 'GeoHC: add user to database')
     from GeoHealthCheck.init import App
     from GeoHealthCheck.models import User, db_commit
+    verbose_echo(ctx, 'GeoHC: get database')
     DB = App.get_db()
-    user_to_add = User('rob', 'bor', 'rob.v.loon@gmail.com', role='admin')
+    verbose_echo(ctx, 'GeoHC: create user')
+    user_to_add = User(user, password, email, role=role)
+    verbose_echo(ctx, 'GeoHC: adding user to database')
     DB.session.add(user_to_add)
     db_commit()
     DB.session.remove()
+    click.echo(f'User {user} is added.')
 
 
 @cli.command()
 @click.pass_context
+@click.option('-y', '--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False, help='Confirm dropping tables',
+              prompt='This will drop the tables in the database. Are you sure?')
 def db_drop(ctx):
+    """Drop the current database
+    """
     verbose_echo(ctx, 'GeoHC: drop db')
-    #drop_db()
+    click.confirm("This will drop the tables in the database. Are you sure?", abort=True)
+    verbose_echo(ctx, 'User confirmed dropping tables')
+    from GeoHealthCheck.init import App
+    from GeoHealthCheck.models import db_commit
+    verbose_echo(ctx, 'GeoHC: get database')
+    DB = App.get_db()
+    verbose_echo(ctx, 'GeoHC: dropping all tables')
+    DB.drop_all()
+    db_commit()
+    DB.session.remove()
+    click.echo('Database dropped all tables.')
+
 
 @cli.command()
 @click.pass_context
-def db_init(ctx):
-    verbose_echo(ctx, 'GeoHC: init db')
+@click.option('-f', '--file', type=click.Path(), multiple=False, required=True,
+              help='Path to the file to load into the database. MUST be JSON.')
+@click.option('-y', '--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False, help='Confirm dropping old content.',
+              prompt='WARNING: all database data will be lost. Proceed?')
+def db_load(ctx, file):
+    """Load JSON into the database
+
+    e.g. test/data/fixtures.json
+    """
+    verbose_echo(ctx, 'GeoHC: load data into db')
+    verbose_echo(ctx, 'User confirmed loading new data and losing old data.')
+    from GeoHealthCheck.init import App
+    from GeoHealthCheck.models import load_data
+    DB = App.get_db()
+    if file[-5:].lower() != '.json':
+        click.echo("File must have '.json' file extension. Aborting import.")
+        ctx.exit()
+    verbose_echo(ctx, 'Start loading file.')
+    load_data(file)
+    verbose_echo(ctx, 'Data loaded!')
+    DB.session.remove()
+    click.echo('Finished loading data.')
+
+@cli.command()
+@click.pass_context
+def db_flush(ctx):
+    """Flush runs: remove old data over retention date.
+    """
+    verbose_echo(ctx, 'GeoHC: flush old runs from database.')
+    from GeoHealthCheck.models import flush_runs
+    flush_runs()
+    click.echo('Finished flushing old runs from database.')
 
 @cli.command()
 @click.pass_context
@@ -132,10 +200,6 @@ def db_upgrade(ctx):
 @click.pass_context
 def db_export(ctx):
     pass
-
-def verbose_echo(ctx, verbose_text):
-    if ctx.obj['VERBOSE']:
-        click.echo(verbose_text)
 
 
 if __name__ == '__main__':
