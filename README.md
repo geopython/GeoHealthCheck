@@ -13,15 +13,15 @@ Easiest is [to run GHC using Docker](https://github.com/geopython/GeoHealthCheck
 Below a quick overview of a manual install on Unix-based systems like Apple Mac and Linux.
 
 ```bash
-virtualenv GeoHealthCheck && cd $_
+python3 -m venv venv
 . bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
-pip install Paver
+pip install .
 # setup installation
-paver setup
+geohc create-instance
 # generate secret key
-paver create_secret_key
+geohc create-secret-key
 # setup local configuration (overrides GeoHealthCheck/config_main.py)
 vi instance/config_site.py
 # edit at least secret key:
@@ -36,33 +36,42 @@ vi instance/config_site.py
 # - GHC_SITE_TITLE
 # - GHC_MAP (or use default settings)
 
-# setup database and superuser account interactively 
-paver create
+# setup database 
+geohc db-create
+
+# create superuser account interactively
+geohc db-adduser
 
 # start webserver with healthcheck runner daemon inside 
 # (default is 0.0.0.0:8000)
-python GeoHealthCheck/app.py  
+geohc serve  
 # or start webserver on another port
-python GeoHealthCheck/app.py 0.0.0.0:8881
+geohc serve -p 8881
 # or start webserver on another IP
-python GeoHealthCheck/app.py 192.168.0.105:8001
+geohc serve -h 192.168.0.105 -p 8001
 
 # OR start webserver and separate runner daemon (scheduler) process
 vi instance/config_site.py
 # GHC_RUNNER_IN_WEBAPP = False
-python GeoHealthCheck/scheduler.py & 
-python GeoHealthCheck/app.py  
+geohc runner-daemon & 
+geohc serve
 
 # next: use a real webserver or preferably Docker for production
 
 # other commands
 #
 # drop database
-python GeoHealthCheck/models.py drop
+geohc db-drop
 
 # load data in database (WARN: deletes existing data!)
 # See example data .json files in tests/data
-python GeoHealthCheck/models.py load <.json data file> [y/n]
+geohc db-load -f <.json data file> -y
+
+# More help on the `geohc` cli command:
+geohc --help
+
+# More help on a specific command
+geohc db-load --help
 
 ```
 
