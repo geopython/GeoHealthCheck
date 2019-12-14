@@ -16,7 +16,7 @@ export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
 
-paver upgrade
+geohc db-upgrade
 
 # SCRIPT_NAME should not have value '/'
 [ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"

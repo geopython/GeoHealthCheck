@@ -16,6 +16,6 @@ source /venv/bin/activate .
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
-paver runner_daemon
+geohc runner-daemon
 
 echo "END /run-runner.sh"

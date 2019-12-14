@@ -11,6 +11,7 @@ source /venv/bin/activate
 pip install -I -r /GeoHealthCheck/docker/scripts/requirements.txt
 
 cd /GeoHealthCheck
+pip install .
 
 # Sets up GHC itself
 paver setup
