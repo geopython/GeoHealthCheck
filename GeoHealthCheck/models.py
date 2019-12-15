@@ -909,8 +909,9 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1:
         if sys.argv[1] == 'create':
-            warnings.warn('models.py create is deprecated since 0.8.0. Please use cli: '
-                          '`geohc db-create` and `geohc db-adduser`', DeprecationWarning)
+            warnings.warn('models.py create is deprecated since 0.8.0. Please'
+                          ' use cli: `geohc db-create` and `geohc db-adduser`',
+                          DeprecationWarning)
             print('Creating database objects')
             DB.create_all()
 
@@ -935,15 +936,15 @@ if __name__ == '__main__':
             db_commit()
 
         elif sys.argv[1] == 'drop':
-            warnings.warn('models.py drop is deprecated since 0.8.0. Please use cli: '
-                          '`geohc db-drop`', DeprecationWarning)
+            warnings.warn('models.py drop is deprecated since 0.8.0. Please '
+                          'use cli: `geohc db-drop`', DeprecationWarning)
             print('Dropping database objects')
             DB.drop_all()
             db_commit()
 
         elif sys.argv[1] == 'load':
-            warnings.warn('models.py load is deprecated since 0.8.0. Please use cli: '
-                          '`geohc db-load`', DeprecationWarning)
+            warnings.warn('models.py load is deprecated since 0.8.0. Please '
+                          'use cli: `geohc db-load`', DeprecationWarning)
             print('Load database from JSON file (e.g. tests/fixtures.json)')
             if len(sys.argv) > 2:
                 file_path = sys.argv[2]
@@ -967,12 +968,12 @@ if __name__ == '__main__':
                 print('Provide path to JSON file, e.g. tests/fixtures.json')
 
         elif sys.argv[1] == 'run':
-            warnings.warn('models.py run is deprecated. Please use `python healthcheck.py`',
-                          DeprecationWarning)
+            warnings.warn('models.py run is deprecated. Please use `python '
+                          'healthcheck.py`', DeprecationWarning)
 
         elif sys.argv[1] == 'flush':
-            warnings.warn('models.py flush is deprecated since 0.8.0. Please use cli: '
-                          '`geohc db-flush`', DeprecationWarning)
+            warnings.warn('models.py flush is deprecated since 0.8.0. Please '
+                          'use cli: `geohc db-flush`', DeprecationWarning)
             flush_runs()
 
         DB.session.remove()

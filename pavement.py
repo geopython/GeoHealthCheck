@@ -167,8 +167,8 @@ def setup():
 ])
 def create(options):
     """create database objects and superuser account"""
-    info('Warning!: create_secret_key is deprecated since 0.8.0. Please use cli: '
-         '`geohc db-create` and `geohc db-adduser`')
+    info('Warning!: create_secret_key is deprecated since 0.8.0. Please use '
+         'cli: `geohc db-create` and `geohc db-adduser`')
     args = ''
     username = options.get('username', None)
     password = options.get('password', None)
@@ -182,8 +182,8 @@ def create(options):
 @task
 def create_secret_key():
     """create secret key for SECRET_KEY in instance/config_site.py"""
-    info('Warning!: create_secret_key is deprecated since 0.8.0. Please use cli: '
-         '`geohc create-secret-key`')
+    info('Warning!: create_secret_key is deprecated since 0.8.0. Please use '
+         'cli: `geohc create-secret-key`')
     info('Secret key: \'%s\'' % codecs.encode(os.urandom(24), 'hex').decode())
     info('Copy/paste this key to set the SECRET_KEY')
     info('value in instance/config_site.py')
@@ -275,8 +275,8 @@ def clean():
 def extract_translations():
     """extract translations wrapped in _() or gettext()"""
 
-    info('Warning!: extract_translations is deprecated since 0.8.0. Please use cli: '
-         '`geohc lang-extract-translations`')
+    info('Warning!: extract_translations is deprecated since 0.8.0. Please use'
+         ' cli: `geohc lang-extract-translations`')
     pot_dir = path('GeoHealthCheck/translations/en/LC_MESSAGES')
     if not os.path.exists(pot_dir):
         pot_dir.makedirs()
@@ -291,8 +291,8 @@ def extract_translations():
 def add_language_catalogue(options):
     """adds new language profile"""
 
-    info('Warning!: add_language_catalogue is deprecated since 0.8.0. Please use cli: '
-         '`geohc lang-add-language-catalogue`')
+    info('Warning!: add_language_catalogue is deprecated since 0.8.0. Please '
+         'use cli: `geohc lang-add-language-catalogue`')
     lang = options.get('lang', None)
 
     if lang is None:
@@ -305,16 +305,16 @@ def add_language_catalogue(options):
 @task
 def compile_translations():
     """build .mo files"""
-    info('Warning!: compile_translations is deprecated since 0.8.0. Please use cli: '
-         '`geohc lang-compile-translations`')
+    info('Warning!: compile_translations is deprecated since 0.8.0. Please use'
+         ' cli: `geohc lang-compile-translations`')
     sh('pybabel compile -d %s' % options.base.translations)
 
 
 @task
 def update_translations():
     """update language strings"""
-    info('Warning!: update_translations is deprecated since 0.8.0. Please use cli: '
-         '`geohc lang-update-translations`')
+    info('Warning!: update_translations is deprecated since 0.8.0. Please use '
+         'cli: `geohc lang-update-translations`')
     call_task('extract_translations')
     sh('pybabel update -i %s -d %s' % (
         options.base.pot, options.base.translations))
@@ -331,8 +331,8 @@ def runner_daemon():
 @task
 def run_healthchecks():
     """Run all HealthChecks directly"""
-    info('Warning!: run_healthchecks is deprecated since 0.8.0. Please use cli: '
-         '`geohc run-healthchecks`')
+    info('Warning!: run_healthchecks is deprecated since 0.8.0. Please use '
+         'cli: `geohc run-healthchecks`')
     sh('python %s' % path('GeoHealthCheck/healthcheck.py'))
 
 

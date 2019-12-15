@@ -114,17 +114,18 @@ def db_create(ctx):
     DB.create_all()
     db_commit()
     DB.session.remove()
-    click.echo('Database is created. Use `geohc db-adduser` to add users to the database.')
+    click.echo('Database is created. Use `geohc db-adduser` to add users to '
+               'the database.')
 
 
 @cli.command()
 @click.pass_context
 @click.option('-u', '--user', type=str, help='username', prompt=True)
 @click.option('-e', '--email', type=str, help='email address', prompt=True)
-@click.option('-p', '--password', type=str, help='password', prompt=True, hide_input=True,
-              confirmation_prompt=True)
-@click.option('-r', '--role', type=click.Choice(['admin', 'user']), prompt=True,
-              help='role for this user')
+@click.option('-p', '--password', type=str, help='password', prompt=True,
+              hide_input=True, confirmation_prompt=True)
+@click.option('-r', '--role', type=click.Choice(['admin', 'user']),
+              prompt=True, help='role for this user')
 def db_adduser(ctx, user, email, password, role):
     """Add an user to the database
     """
@@ -146,12 +147,14 @@ def db_adduser(ctx, user, email, password, role):
 @click.pass_context
 @click.option('-y', '--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, help='Confirm dropping tables',
-              prompt='This will drop the tables in the database. Are you sure?')
+              prompt='This will drop the tables in the database. Are you '
+                     'sure?')
 def db_drop(ctx):
     """Drop the current database
     """
     verbose_echo(ctx, 'GeoHC: drop db')
-    click.confirm("This will drop the tables in the database. Are you sure?", abort=True)
+    click.confirm("This will drop the tables in the database. Are you sure?",
+                  abort=True)
     verbose_echo(ctx, 'User confirmed dropping tables')
     from GeoHealthCheck.init import App
     from GeoHealthCheck.models import db_commit
@@ -211,11 +214,13 @@ def create_secret_key(ctx):
     from codecs import encode
     from os import urandom
     click.echo('Secret key: \'%s\'' % encode(urandom(24), 'hex').decode())
-    click.echo('Copy/paste this key to set the SECRET_KEY value in instance/config_site.py')
+    click.echo('Copy/paste this key to set the SECRET_KEY value in '
+               'instance/config_site.py')
 
 
 @cli.command()
-@click.option('-p', '--password', prompt=True, hide_input=True, help='password')
+@click.option('-p', '--password', prompt=True, hide_input=True,
+              help='password')
 @click.pass_context
 def create_hash(ctx, password):
     """Create a password hash
@@ -257,7 +262,8 @@ def create_wsgi(ctx):
 
     wsgi_conf = '%s%sGeoHealthCheck.conf' % (instance, os.sep)
     with open(wsgi_conf, 'w') as ff:
-        ff.write('WSGIScriptAlias / %s%sGeoHealthCheck.wsgi\n' % (instance, os.sep))
+        ff.write('WSGIScriptAlias / %s%sGeoHealthCheck.wsgi\n' % (instance,
+                                                                  os.sep))
         ff.write('<Directory %s%s>\n' % (basedir, os.sep))
         ff.write('Order deny,allow\n')
         ff.write('Allow from all\n')
@@ -342,7 +348,8 @@ def lang_extract_translations(ctx):
         pot_dir.makedirs()
 
     basedir = os.path.abspath(os.path.dirname(__file__))
-    base_pot = os.path.normpath('%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' % basedir)
+    base_pot = os.path.normpath('%s/GeoHealthCheck/translations/en/'
+                                'LC_MESSAGES/messages.po' % basedir)
     verbose_echo(ctx, 'GeoHC: starting translation')
     os.system('pybabel extract -F babel.cfg -o %s GeoHealthCheck' % base_pot)
     click.echo('GeoHC: finished extracting translations.')
@@ -397,7 +404,8 @@ def lang_update_translations(ctx):
 @click.pass_context
 def runner_daemon(ctx):
     """Run the HealthCheck runner daemon scheduler"""
-    verbose_echo(ctx, 'GeoHC: going to run the scheduler daemon. Press ctrl-c to stop.')
+    verbose_echo(ctx, 'GeoHC: going to run the scheduler daemon. Press ctrl-c '
+                      'to stop.')
     import os
     os.system('python %s' % os.path.normpath('GeoHealthCheck/scheduler.py'))
 
@@ -416,6 +424,7 @@ def run_healthchecks(ctx):
 @click.pass_context
 def db_export(ctx):
     click.exho('GeoHC: todo- write export.')
+
 
 @cli.command()
 @click.pass_context
