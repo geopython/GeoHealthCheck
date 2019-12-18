@@ -84,6 +84,9 @@ Install
   # init database
   geohc db-create
 
+  # create an (admin) user account
+  geohc db-adduser -u my_user_name -p my_pass -e e@mail.com -r admin
+
   # start web-app
   geohc serve
 

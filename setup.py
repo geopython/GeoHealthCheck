@@ -39,12 +39,14 @@ def read(filename, encoding='utf-8'):
         contents = fh.read().strip()
     return contents
 
+
 def get_package_version():
     """get version from top-level package init"""
     version_file = read('VERSION')
     if version_file:
         return version_file
     raise RuntimeError("Unable to find version string.")
+
 
 LONG_DESCRIPTION = read('README.md')
 
