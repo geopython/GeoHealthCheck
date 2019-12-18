@@ -14,7 +14,7 @@ cd /GeoHealthCheck
 pip install .
 
 # Sets up GHC itself
-paver setup
+geohc create-instance
 mv /config_site.py /GeoHealthCheck/instance/config_site.py
 
 # Copy possible Plugins into app tree

@@ -235,8 +235,8 @@ docker exec -it docker_geohealthcheck_1 bash
 source /venv/bin/activate .
 cd /GeoHealthCheck/
  
-# next can use Paver commands e.g. DB upgrade
-paver upgrade
+# next can use cli commands e.g. DB upgrade
+geohc db-upgrade
 
 etc
 ```
