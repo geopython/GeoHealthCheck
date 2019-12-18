@@ -67,7 +67,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'geohc=ghc_cli:cli',
+            'geohc=geohc_cli:cli',
         ]
     },
     classifiers=[
