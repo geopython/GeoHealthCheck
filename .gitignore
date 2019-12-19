@@ -63,3 +63,6 @@ GeoHealthCheck.conf
 
 # Data
 GeoHealthCheck/data.db
+
+# IDE
+.idea
