@@ -1,7 +1,4 @@
-try:
-    from factory import Factory
-except ImportError:
-    from GeoHealthCheck.factory import Factory
+from GeoHealthCheck.factory import Factory
 import logging
 import inspect
 from collections.abc import Mapping

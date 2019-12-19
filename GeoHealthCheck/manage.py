@@ -39,7 +39,7 @@
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from init import App
+from GeoHealthCheck.init import App
 
 DB = App.get_db()
 APP = App.get_app()

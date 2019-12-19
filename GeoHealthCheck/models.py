@@ -39,26 +39,11 @@ from sqlalchemy import func, and_
 from sqlalchemy.orm import deferred
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-try:
-    import util
-except ImportError:
-    from GeoHealthCheck import util
-try:
-    from enums import RESOURCE_TYPES
-except ImportError:
-    from GeoHealthCheck.enums import RESOURCE_TYPES
-try:
-    from factory import Factory
-except ImportError:
-    from GeoHealthCheck.factory import Factory
-try:
-    from init import App
-except ImportError:
-    from GeoHealthCheck.init import App
-try:
-    from resourceauth import ResourceAuth
-except ImportError:
-    from GeoHealthCheck.resourceauth import ResourceAuth
+from GeoHealthCheck import util
+from GeoHealthCheck.enums import RESOURCE_TYPES
+from GeoHealthCheck.factory import Factory
+from GeoHealthCheck.init import App
+from GeoHealthCheck.resourceauth import ResourceAuth
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 

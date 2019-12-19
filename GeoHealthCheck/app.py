@@ -42,14 +42,14 @@ from flask_login import (LoginManager, login_user, logout_user,
 from flask_migrate import Migrate
 from itertools import chain
 
-import views
-from __init__ import __version__
-from enums import RESOURCE_TYPES
-from factory import Factory
-from init import App
-from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
-from resourceauth import ResourceAuth
-from util import send_email, geocode, format_checked_datetime, \
+from GeoHealthCheck import views
+from GeoHealthCheck.__init__ import __version__
+from GeoHealthCheck.enums import RESOURCE_TYPES
+from GeoHealthCheck.factory import Factory
+from GeoHealthCheck.init import App
+from GeoHealthCheck.models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
+from GeoHealthCheck.resourceauth import ResourceAuth
+from GeoHealthCheck.util import send_email, geocode, format_checked_datetime, \
     format_run_status, format_obj_value
 
 # Module globals for convenience

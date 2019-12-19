@@ -15,6 +15,7 @@ echo "Using DB_TYPE=${DB_TYPE}"
 # Create DB shorthand
 function create_db() {
 	pushd /GeoHealthCheck/
+  geohc db-create
 	geohc db-adduser -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL} -r admin
 	popd
 }
@@ -29,6 +30,7 @@ case ${DB_TYPE} in
 			create_db
 		else
 			echo "NOT creating SQLite DB tables..."
+			geohc db-create #hoort hier niet
 		fi
 	    ;;
 

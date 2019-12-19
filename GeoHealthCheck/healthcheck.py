@@ -44,12 +44,12 @@ from owslib.wps import WebProcessingService
 from owslib.csw import CatalogueServiceWeb
 from owslib.sos import SensorObservationService
 
-from init import App
-from enums import RESOURCE_TYPES
-from models import Resource, Run
-from probe import Probe
-from result import ResourceResult
-from notifications import notify
+from GeoHealthCheck.init import App
+from GeoHealthCheck.enums import RESOURCE_TYPES
+from GeoHealthCheck.models import Resource, Run
+from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.result import ResourceResult
+from GeoHealthCheck.notifications import notify
 
 LOGGER = logging.getLogger(__name__)
 APP = App.get_app()

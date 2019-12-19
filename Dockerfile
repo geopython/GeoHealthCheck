@@ -17,6 +17,7 @@ ENV LC_ALL="en_US.UTF-8" \
     \
 	\
 	# GHC ENV settings\
+	GHC_SETTINGS_FILE='/GeoHealthCheck/instance/config_site.py' \
 	ADMIN_NAME=admin \
 	ADMIN_PWD=admin \
 	ADMIN_EMAIL=admin.istrator@mydomain.com \

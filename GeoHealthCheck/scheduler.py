@@ -33,14 +33,14 @@ import os
 import random
 import string
 from datetime import datetime, timedelta
-from models import Resource, ResourceLock, flush_runs
-from healthcheck import run_resource
+from GeoHealthCheck.models import Resource, ResourceLock, flush_runs
+from GeoHealthCheck.healthcheck import run_resource
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.base import JobLookupError
 from apscheduler.events import \
     EVENT_SCHEDULER_STARTED, EVENT_SCHEDULER_SHUTDOWN, \
     EVENT_JOB_MISSED, EVENT_JOB_ERROR
-from init import App
+from GeoHealthCheck.init import App
 
 LOGGER = logging.getLogger(__name__)
 DB = App.get_db()

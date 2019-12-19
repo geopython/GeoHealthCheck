@@ -35,7 +35,7 @@ from setuptools import find_packages, setup
 def read(filename, encoding='utf-8'):
     """read file contents"""
     full_path = os.path.join(os.path.dirname(__file__), filename)
-    with io.open(full_path, encoding=encoding) as fh:
+    with io.open(filename, encoding=encoding) as fh:
         contents = fh.read().strip()
     return contents
 
@@ -69,7 +69,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'geohc=geohc_cli:cli',
+            'geohc=GeoHealthCheck.geohc_cli:cli',
         ]
     },
     classifiers=[

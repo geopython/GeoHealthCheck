@@ -67,7 +67,11 @@ class App:
 
         # Read and override configs
         app.config.from_pyfile('config_main.py')
-        app.config.from_pyfile('../instance/config_site.py')
+        try:
+            app.config.from_pyfile('../instance/config_site.py')
+        except FileNotFoundError:
+            # for Docker build
+            app.config.from_pyfile('/GeoHealthCheck/instance/config_site.py')
         app.config.from_envvar('GHC_SETTINGS', silent=True)
 
         # Global Logging config

@@ -4,10 +4,10 @@ import sys
 import datetime
 import requests
 
-from factory import Factory
-from init import App
-from plugin import Plugin
-from result import ProbeResult
+from GeoHealthCheck.factory import Factory
+from GeoHealthCheck.init import App
+from GeoHealthCheck.plugin import Plugin
+from GeoHealthCheck.result import ProbeResult
 
 LOGGER = logging.getLogger(__name__)
 

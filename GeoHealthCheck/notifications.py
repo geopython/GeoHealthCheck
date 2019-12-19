@@ -35,7 +35,7 @@ import json
 
 import requests
 from flask_babel import gettext
-from util import render_template2
+from GeoHealthCheck.util import render_template2
 
 LOGGER = logging.getLogger(__name__)
 
