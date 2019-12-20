@@ -15,7 +15,6 @@ source /venv/bin/activate .
 # Make sure PYTHONPATH includes GeoHealthCheck
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
-cd /GeoHealthCheck
 geohc runner-daemon
 
 echo "END /run-runner.sh"

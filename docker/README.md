@@ -97,6 +97,9 @@ docker-compose -f docker-compose.yml up  [-d]
 # go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host)
 
 ```
+This setup maps the sqlite database to a docker volume (`ghc_sqlitedb`) that is stored on the
+machine (outside the docker container). To get more information about the volume, run
+`docker volume inspect ghc_sqlitedb`.
   
 ### Using PostGIS DB
 

@@ -14,8 +14,6 @@ source /venv/bin/activate .
 # Make sure PYTHONPATH includes GeoHealthCheck
 export PYTHONPATH=/GeoHealthCheck:$PYTHONPATH
 
-cd /GeoHealthCheck
-
 geohc db-upgrade
 
 # SCRIPT_NAME should not have value '/'

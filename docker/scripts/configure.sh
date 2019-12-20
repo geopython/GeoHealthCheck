@@ -30,7 +30,6 @@ case ${DB_TYPE} in
 			create_db
 		else
 			echo "NOT creating SQLite DB tables..."
-			geohc db-create #hoort hier niet
 		fi
 	    ;;
 
