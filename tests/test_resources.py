@@ -31,11 +31,11 @@
 import unittest
 import os
 
-from init import App
-from models import (DB, Resource, Run, load_data, Recipient)
-from healthcheck import run_test_resource
-from notifications import _parse_webhook_location
-from resourceauth import ResourceAuth
+from GeoHealthCheck.init import App
+from GeoHealthCheck.models import (DB, Resource, Run, load_data, Recipient)
+from GeoHealthCheck.healthcheck import run_test_resource
+from GeoHealthCheck.notifications import _parse_webhook_location
+from GeoHealthCheck.resourceauth import ResourceAuth
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
