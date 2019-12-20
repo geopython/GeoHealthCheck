@@ -76,7 +76,7 @@ LANGUAGES = (
 # Should GHC Runner be run within GHC webapp?
 if CONFIG['GHC_RUNNER_IN_WEBAPP'] is True:
     LOGGER.info('Running GHC Scheduler in WebApp')
-    from scheduler import start_schedule
+    from GeoHealthCheck.scheduler import start_schedule
 
     # Start scheduler
     start_schedule()
@@ -531,7 +531,7 @@ def add():
     url = request.form['url'].strip()
     resources_to_add = []
 
-    from healthcheck import sniff_test_resource, run_test_resource
+    from GeoHealthCheck.healthcheck import sniff_test_resource, run_test_resource
     sniffed_resources = sniff_test_resource(CONFIG, resource_type, url)
 
     if not sniffed_resources:
@@ -734,7 +734,7 @@ def test(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    from healthcheck import run_test_resource
+    from GeoHealthCheck.healthcheck import run_test_resource
     result = run_test_resource(
         resource)
 
