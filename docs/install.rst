@@ -54,7 +54,7 @@ Install
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
 
-  # install paver dependency for admin tool
+  # install
   pip install .
 
   # setup app
@@ -94,6 +94,12 @@ Install
   deactivate
 
 NB GHC supports internal scheduling, no cronjobs required.
+
+Developing
+..........
+If you plan to develop with the GeoHealthCheck code base, you might want to install with the
+*editable* option specified: `pip install -e`. This gives you access to the command line interface,
+and you can still edit and run the code.
 
 .. _upgrade:
 

@@ -75,4 +75,7 @@ geohc db-load --help
 
 ```
 
+**Note for developers:** instead of `pip install .`, you might want to install with the *editable*
+option specified: `pip install -e .`
+
 More in the [full GHC documentation](http://docs.geohealthcheck.org/).
