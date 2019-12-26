@@ -74,10 +74,104 @@ def create_instance(ctx):
     This command is a copy of `paver setup`
     """
     verbose_echo(ctx, 'GeoHC: create instance')
-    # calling paver for the setup
-    # TODO: phase out paver and switch to click
-    from os import system
-    system('paver setup')
+    import glob, os, shutil
+    from io import BytesIO
+    from urllib.request import urlopen
+    import zipfile
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    config_file = os.path.normpath('%s/GeoHealthCheck/config_main.py' % basedir)
+    config_site = os.path.normpath('%s/config_site.py' % basedir)
+
+    # setup dirs
+    if not os.path.exists(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir)):
+        os.mkdir(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir))
+    if not os.path.exists(os.path.normpath('%s/instance' % basedir)):
+        os.mkdir(os.path.normpath('%s/instance' % basedir))
+        data_dir = os.path.normpath('%s/instance/data' % basedir)
+        os.mkdir(data_dir, mode=0o777)
+        # setup config
+        config_file.copy(config_site)
+
+    skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
+
+    skin_dirs = ['dist', 'vendor']
+    need_to_fetch = False
+
+    for skin_dir in skin_dirs:
+        skin_dir_path = os.sep.join(
+            ['startbootstrap-sb-admin-2-3.3.7-1', skin_dir])
+        if not os.path.exists(skin_dir_path):
+            need_to_fetch = True
+
+    if need_to_fetch:
+        zipstr = BytesIO(urlopen(skin).read())
+        zipfile_obj = zipfile.ZipFile(zipstr)
+        zipfile_obj.extractall(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir))
+
+        for zf_mem in skin_dirs:
+            src_loc = os.path.normpath('%s/GeoHealthCheck/static/lib' 
+                           'startbootstrap-sb-admin-2-3.3.7-1/%s' %basedir, zf_mem)
+            dest_loc = os.path.normpath('%s/GeoHealthCheck/static/lib%s' %basedir, zf_mem)
+            if not os.path.exists(dest_loc):
+                src_loc.move(dest_loc)
+            else:
+                click.echo('directory already exists.  Skipping')
+
+        shutil.rmtree(os.path.normpath('%s/GeoHealthCheck/static/lib' 
+                           'startbootstrap-sb-admin-2-3.3.7-1' %basedir))
+
+    # install sparklines to static/site/js
+    with open(os.path.normpath('%s/GeoHealthCheck/static/lib' 
+                           'startbootstrap-sb-admin-2-3.3.7-1/jspark.js' %basedir ), 'w') as f:
+        content = urlopen('http://ejohn.org/files/jspark.js').read().decode()
+        content.replace('red', 'green')
+        f.write(content)
+
+    # install bootstrap-tagsinput to static/lib
+    click.echo('Getting select2')
+    select2 = 'https://github.com/select2/select2/archive/4.0.3.zip'
+
+    zipstr = BytesIO(urlopen(select2).read())
+    zipfile_obj = zipfile.ZipFile(zipstr)
+    zipfile_obj.extractall(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir))
+    dirname = glob.glob(os.path.normpath('%s/GeoHealthCheck/static/lib/select2-*' % basedir))[0]
+    dstdir = ''.join(dirname.rsplit('-', 1)[:-1])
+    try:
+        os.rename(dirname, dstdir)
+    except OSError:
+        shutil.rmtree(dstdir)
+        os.rename(dirname, dstdir)
+
+    # install leafletjs to static/lib
+    click.echo('Getting leaflet')
+    leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'
+
+    zipstr = BytesIO(urlopen(leafletjs).read())
+    zipfile_obj = zipfile.ZipFile(zipstr)
+    zipfile_obj.extractall(os.path.normpath('%s/GeoHealthCheck/static/lib/leaflet' % basedir))
+
+    # install html5shiv to static/lib
+    with open(os.path.normpath('%s/GeoHealthCheck/static/lib/html5shiv.min.js' % basedir), 'w') as f:
+        url = 'http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
+        content = urlopen(url).read().decode()
+        f.write(content)
+
+    # install respond to static/lib
+    with open(os.path.normpath('%s/GeoHealthCheck/static/lib/respond.min.js' % basedir), 'w') as f:
+        url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
+        content = urlopen(url).read().decode()
+        f.write(content)
+
+    # build i18n .mo files
+    lang_compile_translations(ctx)
+
+    # build local docs
+    update_docs(ctx)
+
+    # message user
+    click.echo('GeoHealthCheck is now built. Edit settings in %s' % config_site)
+    click.echo('before deploying the application. Alternatively, you can start a')
+    click.echo('development instance with "python GeoHealthCheck/app.py"')
     verbose_echo(ctx, 'GeoHC: finished creating the instance.')
 
 
