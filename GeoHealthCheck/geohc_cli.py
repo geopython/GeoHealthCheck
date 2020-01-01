@@ -76,21 +76,24 @@ def create_instance(ctx):
     verbose_echo(ctx, 'GeoHC: create instance')
     import glob, os, shutil
     from io import BytesIO
+    from pathlib import Path
     from urllib.request import urlopen
     import zipfile
     basedir = os.path.abspath(os.path.dirname(__file__))
-    config_file = os.path.normpath('%s/GeoHealthCheck/config_main.py' % basedir)
-    config_site = os.path.normpath('%s/config_site.py' % basedir)
+    config_file = os.path.normpath('%s/config_main.py' % basedir)
+    config_site = os.path.normpath(str(Path(os.path.normpath('%s' % basedir)).
+                                       parent)
+                                   + '/instance/config_site.py')
 
     # setup dirs
-    if not os.path.exists(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir)):
-        os.mkdir(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir))
+    if not os.path.exists(os.path.normpath('%s/static/lib' % basedir)):
+        os.mkdir(os.path.normpath('%s/static/lib' % basedir))
     if not os.path.exists(os.path.normpath('%s/instance' % basedir)):
         os.mkdir(os.path.normpath('%s/instance' % basedir))
         data_dir = os.path.normpath('%s/instance/data' % basedir)
         os.mkdir(data_dir, mode=0o777)
         # setup config
-        config_file.copy(config_site)
+        shutil.copy(config_file, config_site)
 
     skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
 
@@ -106,23 +109,23 @@ def create_instance(ctx):
     if need_to_fetch:
         zipstr = BytesIO(urlopen(skin).read())
         zipfile_obj = zipfile.ZipFile(zipstr)
-        zipfile_obj.extractall(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir))
+        zipfile_obj.extractall(os.path.normpath('%s/static/lib' % basedir))
 
         for zf_mem in skin_dirs:
-            src_loc = os.path.normpath('%s/GeoHealthCheck/static/lib' 
-                           'startbootstrap-sb-admin-2-3.3.7-1/%s' %basedir, zf_mem)
-            dest_loc = os.path.normpath('%s/GeoHealthCheck/static/lib%s' %basedir, zf_mem)
+            src_loc = os.path.normpath('%s/static/lib/'
+                           'startbootstrap-sb-admin-2-3.3.7-1/%s' %(basedir, zf_mem))
+            dest_loc = os.path.normpath('%s/static/lib/%s' %(basedir, zf_mem))
             if not os.path.exists(dest_loc):
-                src_loc.move(dest_loc)
+                shutil.move(src_loc, dest_loc)
             else:
                 click.echo('directory already exists.  Skipping')
 
-        shutil.rmtree(os.path.normpath('%s/GeoHealthCheck/static/lib' 
+        shutil.rmtree(os.path.normpath('%s/static/lib/' 
                            'startbootstrap-sb-admin-2-3.3.7-1' %basedir))
 
     # install sparklines to static/site/js
-    with open(os.path.normpath('%s/GeoHealthCheck/static/lib' 
-                           'startbootstrap-sb-admin-2-3.3.7-1/jspark.js' %basedir ), 'w') as f:
+    with open(os.path.normpath('%s/static/lib/' 
+                           'jspark.js' %basedir ), 'w') as f:
         content = urlopen('http://ejohn.org/files/jspark.js').read().decode()
         content.replace('red', 'green')
         f.write(content)
@@ -133,14 +136,14 @@ def create_instance(ctx):
 
     zipstr = BytesIO(urlopen(select2).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
-    zipfile_obj.extractall(os.path.normpath('%s/GeoHealthCheck/static/lib' % basedir))
-    dirname = glob.glob(os.path.normpath('%s/GeoHealthCheck/static/lib/select2-*' % basedir))[0]
+    zipfile_obj.extractall(os.path.normpath('%s/static/lib' % basedir))
+    dirname = glob.glob(os.path.normpath('%s/static/lib/select2-*' % basedir))[0]
     dstdir = ''.join(dirname.rsplit('-', 1)[:-1])
     try:
-        os.rename(dirname, dstdir)
+        shutil.move(dirname, dstdir)
     except OSError:
         shutil.rmtree(dstdir)
-        os.rename(dirname, dstdir)
+        shutil.move(dirname, dstdir)
 
     # install leafletjs to static/lib
     click.echo('Getting leaflet')
@@ -148,25 +151,25 @@ def create_instance(ctx):
 
     zipstr = BytesIO(urlopen(leafletjs).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
-    zipfile_obj.extractall(os.path.normpath('%s/GeoHealthCheck/static/lib/leaflet' % basedir))
+    zipfile_obj.extractall(os.path.normpath('%s/static/lib/leaflet' % basedir))
 
     # install html5shiv to static/lib
-    with open(os.path.normpath('%s/GeoHealthCheck/static/lib/html5shiv.min.js' % basedir), 'w') as f:
+    with open(os.path.normpath('%s/static/lib/html5shiv.min.js' % basedir), 'w') as f:
         url = 'http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
         content = urlopen(url).read().decode()
         f.write(content)
 
     # install respond to static/lib
-    with open(os.path.normpath('%s/GeoHealthCheck/static/lib/respond.min.js' % basedir), 'w') as f:
+    with open(os.path.normpath('%s/static/lib/respond.min.js' % basedir), 'w') as f:
         url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
         content = urlopen(url).read().decode()
         f.write(content)
 
     # build i18n .mo files
-    lang_compile_translations(ctx)
+    compile_translations(ctx)
 
     # build local docs
-    update_docs(ctx)
+    update_documentation(ctx)
 
     # message user
     click.echo('GeoHealthCheck is now built. Edit settings in %s' % config_site)
@@ -369,12 +372,16 @@ def create_wsgi(ctx):
 @click.pass_context
 def update_docs(ctx):
     """Update the spinx build of the documentation."""
+    update_documentation(ctx)
+
+def update_documentation(ctx):
     verbose_echo(ctx, 'GeoHC: start building documentation.')
 
     import os
     import shutil
+    from pathlib import Path
 
-    basedir = os.path.abspath(os.path.dirname(__file__))
+    basedir = str(Path(os.path.abspath(os.path.dirname(__file__))).parent)
     static_docs = os.path.normpath('%s/GeoHealthCheck/static/docs' % basedir)
     docs = os.path.normpath('%s/docs' % basedir)
 
@@ -458,8 +465,8 @@ def lang_add_language_catalogue(ctx, lang):
     import os
     basedir = os.path.abspath(os.path.dirname(__file__))
     base_pot = os.path.normpath(
-        '%s/GeoHealthCheck/translations/en/LC_MESSAGES/messages.po' % basedir)
-    translations = os.path.normpath('%s/GeoHealthCheck/translations' % basedir)
+        '%s/translations/en/LC_MESSAGES/messages.po' % basedir)
+    translations = os.path.normpath('%s/translations' % basedir)
     verbose_echo(ctx, 'GeoHC: Base translation set: %s' % base_pot)
     os.system('pybabel init -i %s -d %s -l %s' % (
         base_pot, translations, lang))
@@ -469,11 +476,14 @@ def lang_add_language_catalogue(ctx, lang):
 @cli.command()
 @click.pass_context
 def lang_compile_translations(ctx):
+    compile_translations(ctx)
+
+def compile_translations(ctx):
     """build language files"""
     verbose_echo(ctx, 'GeoHC: start building language files.')
     import os
     basedir = os.path.abspath(os.path.dirname(__file__))
-    translations = os.path.normpath('%s/GeoHealthCheck/translations' % basedir)
+    translations = os.path.normpath('%s/translations' % basedir)
     os.system('pybabel compile -d %s' % translations)
     click.echo('GeoHC: Finished building language files.')
 
