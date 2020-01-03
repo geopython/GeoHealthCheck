@@ -80,17 +80,16 @@ def create_instance(ctx):
     from urllib.request import urlopen
     import zipfile
     basedir = os.path.abspath(os.path.dirname(__file__))
+    basedir_parent = os.path.normpath(str(Path(basedir)))
     config_file = os.path.normpath('%s/config_main.py' % basedir)
-    config_site = os.path.normpath(str(Path(os.path.normpath('%s' % basedir)).
-                                       parent)
-                                   + '/instance/config_site.py')
+    config_site = os.path.normpath(basedir_parent + '/instance/config_site.py')
 
     # setup dirs
     if not os.path.exists(os.path.normpath('%s/static/lib' % basedir)):
         os.mkdir(os.path.normpath('%s/static/lib' % basedir))
     if not os.path.exists(os.path.normpath('%s/instance' % basedir)):
-        os.mkdir(os.path.normpath('%s/instance' % basedir))
-        data_dir = os.path.normpath('%s/instance/data' % basedir)
+        os.mkdir(os.path.normpath('%s/instance' % basedir_parent))
+        data_dir = os.path.normpath('%s/instance/data' % basedir_parent)
         os.mkdir(data_dir, mode=0o777)
         # setup config
         shutil.copy(config_file, config_site)
