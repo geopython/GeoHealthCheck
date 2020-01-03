@@ -47,7 +47,8 @@ from GeoHealthCheck.__init__ import __version__
 from GeoHealthCheck.enums import RESOURCE_TYPES
 from GeoHealthCheck.factory import Factory
 from GeoHealthCheck.init import App
-from GeoHealthCheck.models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
+from GeoHealthCheck.models import Resource, Run, ProbeVars, CheckVars, Tag, \
+    User, Recipient
 from GeoHealthCheck.resourceauth import ResourceAuth
 from GeoHealthCheck.util import send_email, geocode, format_checked_datetime, \
     format_run_status, format_obj_value
@@ -531,7 +532,8 @@ def add():
     url = request.form['url'].strip()
     resources_to_add = []
 
-    from GeoHealthCheck.healthcheck import sniff_test_resource, run_test_resource
+    from GeoHealthCheck.healthcheck import sniff_test_resource, \
+        run_test_resource
     sniffed_resources = sniff_test_resource(CONFIG, resource_type, url)
 
     if not sniffed_resources:

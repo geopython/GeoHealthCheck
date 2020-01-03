@@ -74,7 +74,9 @@ def create_instance(ctx):
     This command is a copy of `paver setup`
     """
     verbose_echo(ctx, 'GeoHC: create instance')
-    import glob, os, shutil
+    import glob
+    import os
+    import shutil
     from io import BytesIO
     from pathlib import Path
     from urllib.request import urlopen
@@ -112,19 +114,21 @@ def create_instance(ctx):
 
         for zf_mem in skin_dirs:
             src_loc = os.path.normpath('%s/static/lib/'
-                           'startbootstrap-sb-admin-2-3.3.7-1/%s' %(basedir, zf_mem))
-            dest_loc = os.path.normpath('%s/static/lib/%s' %(basedir, zf_mem))
+                                       'startbootstrap-sb-admin-2-3.3.7-1/%s'
+                                       % (basedir, zf_mem))
+            dest_loc = os.path.normpath('%s/static/lib/%s' % (basedir, zf_mem))
             if not os.path.exists(dest_loc):
                 shutil.move(src_loc, dest_loc)
             else:
                 click.echo('directory already exists.  Skipping')
 
-        shutil.rmtree(os.path.normpath('%s/static/lib/' 
-                           'startbootstrap-sb-admin-2-3.3.7-1' %basedir))
+        shutil.rmtree(os.path.normpath('%s/static/lib/'
+                                       'startbootstrap-sb-admin-2-3.3.7-1'
+                                       % basedir))
 
     # install sparklines to static/site/js
-    with open(os.path.normpath('%s/static/lib/' 
-                           'jspark.js' %basedir ), 'w') as f:
+    with open(os.path.normpath('%s/static/lib/'
+                               'jspark.js' % basedir), 'w') as f:
         content = urlopen('http://ejohn.org/files/jspark.js').read().decode()
         content.replace('red', 'green')
         f.write(content)
@@ -136,7 +140,8 @@ def create_instance(ctx):
     zipstr = BytesIO(urlopen(select2).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(os.path.normpath('%s/static/lib' % basedir))
-    dirname = glob.glob(os.path.normpath('%s/static/lib/select2-*' % basedir))[0]
+    dirname = glob.glob(os.path.normpath('%s/static/lib/select2-*'
+                                         % basedir))[0]
     dstdir = ''.join(dirname.rsplit('-', 1)[:-1])
     try:
         shutil.move(dirname, dstdir)
@@ -153,13 +158,15 @@ def create_instance(ctx):
     zipfile_obj.extractall(os.path.normpath('%s/static/lib/leaflet' % basedir))
 
     # install html5shiv to static/lib
-    with open(os.path.normpath('%s/static/lib/html5shiv.min.js' % basedir), 'w') as f:
+    with open(os.path.normpath('%s/static/lib/html5shiv.min.js' % basedir),
+              'w') as f:
         url = 'http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
         content = urlopen(url).read().decode()
         f.write(content)
 
     # install respond to static/lib
-    with open(os.path.normpath('%s/static/lib/respond.min.js' % basedir), 'w') as f:
+    with open(os.path.normpath('%s/static/lib/respond.min.js' % basedir),
+              'w') as f:
         url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
         content = urlopen(url).read().decode()
         f.write(content)
@@ -171,9 +178,11 @@ def create_instance(ctx):
     update_documentation(ctx)
 
     # message user
-    click.echo('GeoHealthCheck is now built. Edit settings in %s' % config_site)
-    click.echo('before deploying the application. Alternatively, you can start a')
-    click.echo('development instance with "python GeoHealthCheck/app.py"')
+    click.echo('GeoHealthCheck is now built. Edit settings in %s'
+               % config_site)
+    click.echo('before deploying the application. Alternatively, you can')
+    click.echo('start a development instance with ')
+    click.echo('"python GeoHealthCheck/app.py"')
     verbose_echo(ctx, 'GeoHC: finished creating the instance.')
 
 
@@ -373,6 +382,7 @@ def update_docs(ctx):
     """Update the spinx build of the documentation."""
     update_documentation(ctx)
 
+
 def update_documentation(ctx):
     verbose_echo(ctx, 'GeoHC: start building documentation.')
 
@@ -476,6 +486,7 @@ def lang_add_language_catalogue(ctx, lang):
 @click.pass_context
 def lang_compile_translations(ctx):
     compile_translations(ctx)
+
 
 def compile_translations(ctx):
     """build language files"""
