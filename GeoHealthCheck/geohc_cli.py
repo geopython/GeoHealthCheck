@@ -68,7 +68,8 @@ def version(ctx):
 
 @cli.command()
 @click.pass_context
-def create_instance(ctx):
+@click.option('--basepath', '-p', type=str, help='path to the directory to install the instance data and help files.')
+def create_instance(ctx, basepath):
     """Create an instance of GeoHealthCheck App
 
     This command is a copy of `paver setup`
@@ -82,6 +83,9 @@ def create_instance(ctx):
     from urllib.request import urlopen
     import zipfile
     basedir = os.path.abspath(os.path.dirname(__file__))
+    if (basepath != None):
+        basedir = os.path.abspath(basepath)
+        verbose_echo(ctx, 'Setting base install directory to %s' %basedir)
     basedir_parent = os.path.normpath(str(Path(basedir)))
     config_file = os.path.normpath('%s/config_main.py' % basedir)
     config_site = os.path.normpath(basedir_parent + '/instance/config_site.py')
@@ -175,7 +179,7 @@ def create_instance(ctx):
     compile_translations(ctx)
 
     # build local docs
-    update_documentation(ctx)
+    update_documentation(ctx, basedir_parent)
 
     # message user
     click.echo('GeoHealthCheck is now built. Edit settings in %s'
@@ -383,7 +387,7 @@ def update_docs(ctx):
     update_documentation(ctx)
 
 
-def update_documentation(ctx):
+def update_documentation(ctx, basepath=None):
     verbose_echo(ctx, 'GeoHC: start building documentation.')
 
     import os
@@ -391,6 +395,8 @@ def update_documentation(ctx):
     from pathlib import Path
 
     basedir = str(Path(os.path.abspath(os.path.dirname(__file__))).parent)
+    if basepath:
+        basedir = os.path.abspath(basepath)
     static_docs = os.path.normpath('%s/GeoHealthCheck/static/docs' % basedir)
     docs = os.path.normpath('%s/docs' % basedir)
 
