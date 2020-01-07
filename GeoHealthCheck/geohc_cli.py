@@ -86,7 +86,7 @@ def create_instance(ctx, basepath):
     if (basepath != None):
         basedir = os.path.abspath(basepath)
         verbose_echo(ctx, 'Setting base install directory to %s' %basedir)
-    basedir_parent = os.path.normpath(str(Path(basedir)))
+    basedir_parent = os.path.normpath(str(Path(basedir).parent))
     config_file = os.path.normpath('%s/config_main.py' % basedir)
     config_site = os.path.normpath(basedir_parent + '/instance/config_site.py')
 
@@ -176,10 +176,10 @@ def create_instance(ctx, basepath):
         f.write(content)
 
     # build i18n .mo files
-    compile_translations(ctx)
+    compile_translations(ctx, path=basedir)
 
     # build local docs
-    update_documentation(ctx, basedir_parent)
+    update_documentation(ctx, basepath=basedir_parent)
 
     # message user
     click.echo('GeoHealthCheck is now built. Edit settings in %s'
@@ -494,11 +494,11 @@ def lang_compile_translations(ctx):
     compile_translations(ctx)
 
 
-def compile_translations(ctx):
+def compile_translations(ctx, path=None):
     """build language files"""
     verbose_echo(ctx, 'GeoHC: start building language files.')
     import os
-    basedir = os.path.abspath(os.path.dirname(__file__))
+    basedir = path if path else os.path.abspath(os.path.dirname(__file__))
     translations = os.path.normpath('%s/translations' % basedir)
     os.system('pybabel compile -d %s' % translations)
     click.echo('GeoHC: Finished building language files.')
