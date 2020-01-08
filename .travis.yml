@@ -6,8 +6,8 @@ python:
 sudo: false
 
 install:
-  - pip install .
-  - geohc create-instance -p /home/travis/geopython/geohealthcheck
+  - pip install -e .
+  - geohc create-instance
 
 script:
   - geohc db-create
