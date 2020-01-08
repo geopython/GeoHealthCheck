@@ -7,13 +7,14 @@ sudo: false
 
 install:
   - pip install -e .
+  - pip install -r requirements-dev.txt
   - geohc create-instance
 
 script:
   - geohc db-create
   - geohc db-adduser -u admin -p test -e you@example.com -r admin
   - flake8
-  - geohc db-load -y tests/data/fixtures.json -y
+  - geohc db-load -f tests/data/fixtures.json -y
   - geohc run-healthchecks
   - geohc run-tests
   - cd docs && make html
