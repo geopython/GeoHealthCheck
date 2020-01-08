@@ -34,7 +34,8 @@ from setuptools import find_packages, setup
 
 def read(filename, encoding='utf-8'):
     """read file contents"""
-    full_path = os.path.join(os.path.dirname(__file__), filename)
+    full_path = os.path.join(os.path.dirname(__file__),
+                             filename)
     with io.open(filename, encoding=encoding) as fh:
         contents = fh.read().strip()
     return contents
@@ -50,7 +51,8 @@ def get_package_version():
 
 LONG_DESCRIPTION = read('README.md')
 
-DESCRIPTION = 'GeoHealthCheck is a Quality of Service Checker for OGC Web Services and web APIs.'
+DESCRIPTION = 'GeoHealthCheck is a Quality of Service Checker for OGC Web' \
+              'Services and web APIs.'
 
 setup(
     name='geohealthcheck',
