@@ -28,14 +28,11 @@
 #
 # =================================================================
 import io
-import os
 from setuptools import find_packages, setup
 
 
 def read(filename, encoding='utf-8'):
     """read file contents"""
-    full_path = os.path.join(os.path.dirname(__file__),
-                             filename)
     with io.open(filename, encoding=encoding) as fh:
         contents = fh.read().strip()
     return contents
