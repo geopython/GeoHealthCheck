@@ -28,6 +28,7 @@
 #
 # =================================================================
 import io
+import re
 from setuptools import find_packages, setup
 
 
@@ -40,9 +41,11 @@ def read(filename, encoding='utf-8'):
 
 def get_package_version():
     """get version from top-level package init"""
-    version_file = read('VERSION')
-    if version_file:
-        return version_file
+    version_file = read('GeoHealthCheck/__init__.py')
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
 
