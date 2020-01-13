@@ -55,7 +55,7 @@ DESCRIPTION = 'GeoHealthCheck is a Quality of Service Checker for OGC Web' \
               'Services and web APIs.'
 
 setup(
-    name='geohealthcheck',
+    name='GeoHealthCheck',
     version=get_package_version(),
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
