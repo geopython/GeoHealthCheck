@@ -14,6 +14,7 @@
 
 import sys
 import os
+import re
 
 # indicate Sphinx is building (to replace @Config decorators)
 os.environ['SPHINX_BUILD'] = '1'
@@ -55,8 +56,10 @@ copyright = u'2014, Tom Kralidis'
 # built documents.
 #
 # The short X.Y version.
-with open('../VERSION') as ff:
-    version = ff.read().strip()
+with open('../GeoHealthCheck/__init__.py') as ff:
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              ff.read(), re.M)
+    version = version_match.group(1)
 # The full version, including alpha/beta/rc tags.
 release = version
 
