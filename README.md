@@ -37,10 +37,10 @@ vi instance/config_site.py
 # - GHC_MAP (or use default settings)
 
 # setup database 
-geohc db-create
+geohc db create
 
 # create superuser account interactively
-geohc db-adduser
+geohc db adduser
 
 # start webserver with healthcheck runner daemon inside 
 # (default is 0.0.0.0:8000)
@@ -61,17 +61,17 @@ geohc serve
 # other commands
 #
 # drop database
-geohc db-drop
+geohc db drop
 
 # load data in database (WARN: deletes existing data!)
 # See example data .json files in tests/data
-geohc db-load -f <.json data file> -y
+geohc db load -f <.json data file> -y
 
 # More help on the `geohc` cli command:
 geohc --help
 
 # More help on a specific command
-geohc db-load --help
+geohc db load --help
 
 ```
 

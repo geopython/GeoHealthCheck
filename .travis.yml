@@ -11,13 +11,13 @@ install:
   - geohc create-instance
 
 script:
-  - geohc db-create
-  - geohc db-adduser -u admin -p test -e you@example.com -r admin
+  - geohc db create
+  - geohc db adduser -u admin -p test -e you@example.com -r admin
   - flake8
-  - geohc db-load -f tests/data/fixtures.json -y
+  - geohc db load -f tests/data/fixtures.json -y
   - geohc run-healthchecks
   - geohc run-tests
   - cd docs && make html
 
 after-script:
-  - geohc db-drop
+  - geohc db drop

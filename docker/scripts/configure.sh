@@ -15,8 +15,8 @@ echo "Using DB_TYPE=${DB_TYPE}"
 # Create DB shorthand
 function create_db() {
 	pushd /GeoHealthCheck/
-  geohc db-create
-	geohc db-adduser -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL} -r admin
+  geohc db create
+	geohc db adduser -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL} -r admin
 	popd
 }
 

@@ -16,7 +16,7 @@ acces to the command line interface `geohc`. You can get help from the cli via :
 This will list all available commands. To get help with a specific command, run
 `geohc <<command>> --help`, e.g. ::
 
-    geohc db-adduser --help
+    geohc db adduser --help
 
 This will show you all the (required) options to add a user to the database.
 
@@ -32,7 +32,7 @@ To create the database execute the following:
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    geohc db-create
+    geohc db create
 
 add user
 ........
@@ -41,9 +41,9 @@ To add a new user to the database:
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    geohc db-adduser
+    geohc db adduser
     # or
-    geohc db-adduser -u username -p password -e email@address.com -r admin
+    geohc db adduser -u username -p password -e email@address.com -r admin
 
 drop db
 .......
@@ -52,7 +52,7 @@ To delete the database execute the following, however you will loose all your in
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    geohc db-drop
+    geohc db drop
 
 Note: you need to create a Database again before you can start GHC again.
 
@@ -61,7 +61,7 @@ load data
 
 To load a JSON data file, do (WARN: deletes existing data!) ::
 
-    geohc db-load --file my_data.json
+    geohc db load --file my_data.json
 
 You will be asked for confirmation. You can also specify the `-y` or `--yes`
 flag to indicate you are sure and to skip the confirmation question.
@@ -73,14 +73,14 @@ flush
 
 To flush the old records from the system, you can flush the records ::
 
-    geohc db-flush
+    geohc db flush
 
 upgrade
 .......
 
 To upgrade the database structure (might be necessary with a new release of GeoHealthCheck) ::
 
-    geohc db-upgrade
+    geohc db upgrade
 
 export data
 ...........

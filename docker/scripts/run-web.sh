@@ -14,7 +14,7 @@ source /venv/bin/activate .
 # Make sure PYTHONPATH includes GeoHealthCheck
 export PYTHONPATH=/GeoHealthCheck:$PYTHONPATH
 
-geohc db-upgrade
+geohc db upgrade
 
 # SCRIPT_NAME should not have value '/'
 [ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
