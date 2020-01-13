@@ -68,7 +68,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'geohc=GeoHealthCheck.geohc_cli:cli',
+            'geohc=GeoHealthCheck.cli:cli',
         ]
     },
     classifiers=[
