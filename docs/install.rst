@@ -67,7 +67,7 @@ Install
   vi instance/config_site.py
   # edit:
   # - SQLALCHEMY_DATABASE_URI
-  # - SECRET_KEY  # from paver create_secret_key
+  # - SECRET_KEY  # from geohc create-secret-key
   # - GHC_RETENTION_DAYS
   # - GHC_SELF_REGISTER
   # - GHC_NOTIFICATIONS
@@ -118,8 +118,8 @@ An existing GHC database installation can be upgraded with:
 Notes:
 
 * **Always backup your database first!!**
-* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.5.2`, but best is to run `paver setup` also for other dependencies
-* upgrading is "smart": you can always run `paver upgrade`, it has no effect when DB is already up to date
+* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.5.2`, but best is to run `geohc create-instance` also for other dependencies
+* upgrading is "smart": you can always run `geohc db upgrade`, it has no effect when DB is already up to date
 * when upgrading from earlier versions without Plugin-support:
 
   - adapt your `config_site.py` to Plugin settings from `config_main.py`
@@ -143,6 +143,13 @@ In GHC v0.6.0 encryption was added for password storage. Existing passwords shou
 the `paver upgrade` command. Also password recovery was changed: a user can create a new password via
 a unique, personal URL that GHC sends by email. This requires a working email configuration and a reachable
 `SITE_URL` config value. See :ref:`admin_user_mgt` for solving password problems.
+
+Upgrade notes v0.8.0
+....................
+
+In previous version GHC used `paver` to control the setup and administration of
+the application. With this version GHC switched `click` and the cli commands
+changed to `geohc`. Type `geohc --help` to get more information.
 
 
 Running

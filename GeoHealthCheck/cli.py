@@ -72,8 +72,6 @@ def version(ctx):
               'install the instance data and help files.')
 def create_instance(ctx, basepath):
     """Create an instance of GeoHealthCheck App
-
-    This command is a copy of `paver setup`
     """
     verbose_echo(ctx, 'GeoHC: create instance')
     import glob

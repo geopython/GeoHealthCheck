@@ -14,7 +14,7 @@ a configuration file in the environment settings that will override settings in 
 The configuration options are:
 
 - **SQLALCHEMY_DATABASE_URI**: the database configuration.  See the SQLAlchemy documentation for more info
-- **SECRET_KEY**: secret key to set when enabling authentication. Use the output of ``paver create_secret_key`` to set this value
+- **SECRET_KEY**: secret key to set when enabling authentication. Use the output of ``geohc create-secret-key`` to set this value
 - **GHC_RETENTION_DAYS**: the number of days to keep Run history
 - **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a Probe response after the given number of seconds
 - **GHC_MINIMAL_RUN_FREQUENCY_MINS**: minimal run frequency for Resource that can be set in web UI
@@ -106,7 +106,7 @@ This is the preferred mode as each `Resource` can have its own schedule (configu
 via Dashboard) and `cron` has dependencies on local environment.
 Later versions may phase out cron-scheduling completely.
 
-The **GHC Runner** can be run via the command `paver runner_daemon` or can run internally within
+The **GHC Runner** can be run via the command `geohc runner-daemon` or can run internally within
 the **GHC Webapp** by setting the config variable **GHC_RUNNER_IN_WEBAPP** to `True` (the default).
 NB it is still possible to run GHC as in the pre-v0.5.0 mode using cron-jobs: just run the
 **GHC Webapp** with **GHC_RUNNER_IN_WEBAPP** set to `False` and have your cron-jobs scheduled.

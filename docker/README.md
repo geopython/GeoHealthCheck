@@ -244,5 +244,5 @@ geohc db-upgrade
 etc
 ```
 
-NB: database upgrades (`paver upgrade`)
+NB: database upgrades (`geohc db upgrade`)
 are always performed automatically when running GHC via Docker.
