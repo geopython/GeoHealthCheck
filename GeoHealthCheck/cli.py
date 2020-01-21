@@ -92,12 +92,14 @@ def create_instance(ctx, basepath):
     # setup dirs
     if not os.path.exists(os.path.normpath('%s/static/lib' % basedir)):
         os.mkdir(os.path.normpath('%s/static/lib' % basedir))
-    if not os.path.exists(os.path.normpath('%s/instance' % basedir)):
+    if not os.path.exists(os.path.normpath('%s/instance' % basedir_parent)):
         os.mkdir(os.path.normpath('%s/instance' % basedir_parent))
-        data_dir = os.path.normpath('%s/instance/data' % basedir_parent)
-        os.mkdir(data_dir, mode=0o777)
         # setup config
         shutil.copy(config_file, config_site)
+    if not os.path.exists(os.path.normpath('%s/instance/data'
+                          % basedir_parent)):
+        data_dir = os.path.normpath('%s/instance/data' % basedir_parent)
+        os.mkdir(data_dir, mode=0o777)
 
     skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
 
@@ -181,8 +183,8 @@ def create_instance(ctx, basepath):
     update_documentation(ctx, basepath=basedir_parent)
 
     # message user
-    click.echo('GeoHealthCheck is now built. Edit settings in %s'
-               % config_site)
+    click.echo('GeoHealthCheck is now built. Edit settings like the secret-key'
+               ' and the database connection string in %s' % config_site)
     click.echo('before deploying the application. Alternatively, you can')
     click.echo('start a development instance with ')
     click.echo('"python GeoHealthCheck/app.py"')
