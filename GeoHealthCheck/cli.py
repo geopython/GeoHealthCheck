@@ -409,7 +409,9 @@ def runner_daemon(ctx):
     verbose_echo(ctx, 'GeoHC: going to run the scheduler daemon. Press ctrl-c '
                       'to stop.')
     import os
-    os.system('python %s' % os.path.normpath('GeoHealthCheck/scheduler.py'))
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    scheduler = basedir + '/scheduler.py'
+    os.system('python %s' % os.path.normpath(scheduler))
 
 
 @cli.command()
@@ -418,7 +420,9 @@ def run_healthchecks(ctx):
     """Run all HealthChecks directly"""
     verbose_echo(ctx, 'GeoHC: going to run all the healthchecks once.')
     import os
-    os.system('python %s' % os.path.normpath('GeoHealthCheck/healthcheck.py'))
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    healtcheck = basedir + '/healtcheck.py'
+    os.system('python %s' % os.path.normpath(healtcheck))
     click.echo('GeoHC: Finished running the healthchecks.')
 
 
@@ -427,7 +431,9 @@ def run_healthchecks(ctx):
 def run_tests(ctx):
     """Run all tests"""
     import os
-    os.system('python %s' % os.path.normpath('tests/run_tests.py'))
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    tests = basedir + '/run_tests.py'
+    os.system('python %s' % os.path.normpath(tests))
 
 
 @cli.command()
