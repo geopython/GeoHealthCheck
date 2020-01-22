@@ -42,14 +42,15 @@ from flask_login import (LoginManager, login_user, logout_user,
 from flask_migrate import Migrate
 from itertools import chain
 
-import views
-from __init__ import __version__
-from enums import RESOURCE_TYPES
-from factory import Factory
-from init import App
-from models import Resource, Run, ProbeVars, CheckVars, Tag, User, Recipient
-from resourceauth import ResourceAuth
-from util import send_email, geocode, format_checked_datetime, \
+from GeoHealthCheck import views
+from GeoHealthCheck.__init__ import __version__
+from GeoHealthCheck.enums import RESOURCE_TYPES
+from GeoHealthCheck.factory import Factory
+from GeoHealthCheck.init import App
+from GeoHealthCheck.models import Resource, Run, ProbeVars, CheckVars, Tag, \
+    User, Recipient
+from GeoHealthCheck.resourceauth import ResourceAuth
+from GeoHealthCheck.util import send_email, geocode, format_checked_datetime, \
     format_run_status, format_obj_value
 
 # Module globals for convenience
@@ -76,7 +77,7 @@ LANGUAGES = (
 # Should GHC Runner be run within GHC webapp?
 if CONFIG['GHC_RUNNER_IN_WEBAPP'] is True:
     LOGGER.info('Running GHC Scheduler in WebApp')
-    from scheduler import start_schedule
+    from GeoHealthCheck.scheduler import start_schedule
 
     # Start scheduler
     start_schedule()
@@ -531,7 +532,8 @@ def add():
     url = request.form['url'].strip()
     resources_to_add = []
 
-    from healthcheck import sniff_test_resource, run_test_resource
+    from GeoHealthCheck.healthcheck import sniff_test_resource, \
+        run_test_resource
     sniffed_resources = sniff_test_resource(CONFIG, resource_type, url)
 
     if not sniffed_resources:
@@ -734,7 +736,7 @@ def test(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    from healthcheck import run_test_resource
+    from GeoHealthCheck.healthcheck import run_test_resource
     result = run_test_resource(
         resource)
 

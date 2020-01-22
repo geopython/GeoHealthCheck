@@ -6,7 +6,7 @@ and Flask-Script.
 Users should be able to upgrade existing installs via: 
 
 	# In top dir of installation
-	paver upgrade
+	geohc db upgrade
 	
 The `versions` dir contains the various upgrades. These were
 initially created using the Alembic `autogenerate` facility
@@ -39,7 +39,7 @@ Subsequently the upgrade can be performed using:
 
 	python manage.py db upgrade
 	# or the equivalent (for users) 
-	paver upgrade
+	geohc db upgrade
 
 ## Revisions
 

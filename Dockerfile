@@ -45,22 +45,22 @@ ENV LC_ALL="en_US.UTF-8" \
 	GHC_SMTP_PASSWORD=None \
 	GHC_METADATA_CACHE_SECS=900 \
     \
-# WSGI server settings, assumed is gunicorn  \
-HOST=0.0.0.0 \
-PORT=80 \
-WSGI_WORKERS=4 \
-WSGI_WORKER_TIMEOUT=6000 \
-WSGI_WORKER_CLASS='eventlet' \
-\
-# GHC Core Plugins modules and/or classes, seldom needed to set:  \
-# if not specified here or in Container environment  \
-# all GHC built-in Plugins will be active.  \
-#ENV GHC_PLUGINS 'GeoHealthCheck.plugins.probe.owsgetcaps,\
-#        GeoHealthCheck.plugins.probe.wms, ...., ...\
-#        GeoHealthCheck.plugins.check.checks' \
-\
-# GHC User Plugins, best be overridden via Container environment \
-GHC_USER_PLUGINS=''
+    # WSGI server settings, assumed is gunicorn  \
+    HOST=0.0.0.0 \
+    PORT=80 \
+    WSGI_WORKERS=4 \
+    WSGI_WORKER_TIMEOUT=6000 \
+    WSGI_WORKER_CLASS='eventlet' \
+    \
+    # GHC Core Plugins modules and/or classes, seldom needed to set:  \
+    # if not specified here or in Container environment  \
+    # all GHC built-in Plugins will be active.  \
+    #ENV GHC_PLUGINS 'GeoHealthCheck.plugins.probe.owsgetcaps,\
+    #        GeoHealthCheck.plugins.probe.wms, ...., ...\
+    #        GeoHealthCheck.plugins.check.checks' \
+    \
+    # GHC User Plugins, best be overridden via Container environment \
+    GHC_USER_PLUGINS=''
 
 RUN apk add --no-cache --virtual .build-deps gcc build-base libxslt-dev libxml2-dev linux-headers postgresql-dev \
     && apk add --no-cache bash postgresql-client libxslt libxml2 tzdata openntpd python3 python3-dev \

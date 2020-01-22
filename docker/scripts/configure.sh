@@ -15,7 +15,8 @@ echo "Using DB_TYPE=${DB_TYPE}"
 # Create DB shorthand
 function create_db() {
 	pushd /GeoHealthCheck/
-	paver create -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL}
+  geohc db create
+	geohc db adduser -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL} -r admin
 	popd
 }
 

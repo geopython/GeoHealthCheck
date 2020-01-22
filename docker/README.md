@@ -97,6 +97,9 @@ docker-compose -f docker-compose.yml up  [-d]
 # go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host)
 
 ```
+This setup maps the sqlite database to a docker volume (`ghc_sqlitedb`) that is stored on the
+machine (outside the docker container). To get more information about the volume, run
+`docker volume inspect ghc_sqlitedb`.
   
 ### Using PostGIS DB
 
@@ -235,11 +238,11 @@ docker exec -it docker_geohealthcheck_1 bash
 source /venv/bin/activate .
 cd /GeoHealthCheck/
  
-# next can use Paver commands e.g. DB upgrade
-paver upgrade
+# next can use cli commands e.g. DB upgrade
+geohc db-upgrade
 
 etc
 ```
 
-NB: database upgrades (`paver upgrade`)
+NB: database upgrades (`geohc db upgrade`)
 are always performed automatically when running GHC via Docker.

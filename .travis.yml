@@ -6,17 +6,18 @@ python:
 sudo: false
 
 install:
-  - pip install -r requirements.txt
+  - pip install -e .
   - pip install -r requirements-dev.txt
-  - paver setup
+  - geohc create-instance
 
 script:
-  - echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
+  - geohc db create
+  - geohc db adduser -u admin -p test -e you@example.com -r admin
   - flake8
-  - python GeoHealthCheck/models.py load tests/data/fixtures.json y
-  - python GeoHealthCheck/healthcheck.py
-  - python tests/run_tests.py
+  - geohc db load -f tests/data/fixtures.json -y
+  - geohc run-healthchecks
+  - geohc run-tests
   - cd docs && make html
 
 after-script:
-  - python GeoHealthCheck/models.py drop
+  - geohc db drop

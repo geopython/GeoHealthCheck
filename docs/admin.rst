@@ -7,12 +7,23 @@ This chapter describes maintenance tasks for the administrator of a GHC instance
 There is a separate :ref:`userguide` that provides guidance to the end-user to
 configure the actual Resource healthchecks.
 
-Each of the sections below is geared at a specific administrative task area.
+Each of the sections below is geared at a specific administrative task area. We
+assume you have installed GeoHealthCheck with `pip install`, and that you have
+acces to the command line interface `geohc`. You can get help from the cli via ::
+
+    geohc --help
+
+This will list all available commands. To get help with a specific command, run
+`geohc <<command>> --help`, e.g. ::
+
+    geohc db adduser --help
+
+This will show you all the (required) options to add a user to the database.
 
 Database
 --------
 
-For database administration the following commands are available.
+For database administration the following commands are available:
 
 create db
 .........
@@ -21,7 +32,18 @@ To create the database execute the following:
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python GeoHealthCheck/models.py create
+    geohc db create
+
+add user
+........
+
+To add a new user to the database:
+
+Open a command line, (if needed activate your virtualenv), and do ::
+
+    geohc db adduser
+    # or
+    geohc db adduser -u username -p password -e email@address.com -r admin
 
 drop db
 .......
@@ -30,7 +52,7 @@ To delete the database execute the following, however you will loose all your in
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python GeoHealthCheck/models.py drop
+    geohc db drop
 
 Note: you need to create a Database again before you can start GHC again.
 
@@ -39,9 +61,26 @@ load data
 
 To load a JSON data file, do (WARN: deletes existing data!) ::
 
-    python GeoHealthCheck/models.py load <datafile.json> [y/n]
+    geohc db load --file my_data.json
 
+You will be asked for confirmation. You can also specify the `-y` or `--yes`
+flag to indicate you are sure and to skip the confirmation question.
 Hint: see `tests/data` for example JSON data files.
+
+
+flush
+.....
+
+To flush the old records from the system, you can flush the records ::
+
+    geohc db flush
+
+upgrade
+.......
+
+To upgrade the database structure (might be necessary with a new release of GeoHealthCheck) ::
+
+    geohc db upgrade
 
 export data
 ...........
@@ -92,10 +131,9 @@ Or more compact within the root dir of your GHC installation: ::
 	>>> create_hash('mynewpassword')
 	'$pbkdf2-sha256$29000$8X4PAUAIAcC4V2rNea9Vqg$XnMx1SfEiBzBAMOQOOC7uxCcyzVuKaHENLj3IfXvfu0'
 
-Or even more compact within the root dir of your GHC installation via Paver: ::
+Or even more compact within the root dir of your GHC installation via the cli: ::
 
-	$ paver create_hash -p mypass
-	---> pavement.create_hash
+	$ geohc create_hash -p mypass
 	Copy/paste the entire token below for example to set password
 	$pbkdf2-sha256$29000$FkJoTYnxPqc0pjQG4HxP6Q$C3SZb8jqtM7zKS1DSLcouc/CL9XMI9cL5xT6DRTOEd4
 
@@ -110,4 +148,5 @@ Build Documentation
 -------------------
 
 Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``.
-In there, type ``make html`` plus ENTER and the documentation should be built locally.
+In there, type ``make html`` plus ENTER and the documentation should be built locally. Or you can
+use the cli: `geohc refresh-docs`.
