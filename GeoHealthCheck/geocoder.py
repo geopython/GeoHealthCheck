@@ -11,7 +11,7 @@ class Geocoder(Plugin):
     """
 
     def __init__(self):
-        Plugin.__init__(self)
+        super().__init__()
 
     def init(self, geocoder_vars):
         self._geocoder_vars = geocoder_vars
