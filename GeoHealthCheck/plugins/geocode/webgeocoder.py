@@ -61,8 +61,7 @@ class HttpGeocoder(Geocoder):
         # by substitution in template.
         request_string = self.get_request_string()
 
-        hostname = urlparse(ip).hostname
-        base_url = self._geocoder_url.format(hostname=hostname) if hostname else self._geocoder_url
+        base_url = self._geocoder_url.format(hostname=ip) if ip else self._geocoder_url
         self.log('Requesting: url=%s' % (base_url))
 
         try:
