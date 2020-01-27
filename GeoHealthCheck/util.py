@@ -33,13 +33,17 @@ import logging
 import os
 import smtplib
 import base64
+from factory import Factory
 from urllib.request import urlopen
 from urllib.parse import urlparse
 from gettext import translation
 from passlib.hash import pbkdf2_sha256
+from init import App
 
 from jinja2 import Environment, FileSystemLoader
 
+APP = App.get_app()
+CONFIG = App.get_config()
 LOGGER = logging.getLogger(__name__)
 
 
@@ -190,16 +194,13 @@ def send_email(mail_config, fromaddr, toaddr, msg):
 def geocode(value, spatial_keyword_type='hostname'):
     """convenience function to geocode a value"""
     lat, lon = 0.0, 0.0
-    if spatial_keyword_type == 'hostname':
-        try:
-            hostname = urlparse(value).hostname
-            url = 'http://ip-api.com/json/%s' % hostname
-            LOGGER.info('Geocoding %s with %s', hostname, url)
-            content = json.loads(urlopen(url).read())
-            lat, lon = content['lat'], content['lon']
-        except Exception as err:  # skip storage
-            msg = 'Could not derive coordinates: %s' % err
-            LOGGER.warning(msg)
+    geocoder = Factory.create_obj(CONFIG['GEOIP']['plugin'])
+    geocoder.init(CONFIG['GEOIP']['parameters'])
+    try:
+        lat, lon = geocoder.locate(urlparse(value).hostname)
+    except Exception as err:  # skip storage
+        msg = 'Could not derive coordinates: %s' % err
+        LOGGER.warning(msg)
     return lat, lon
 
 
