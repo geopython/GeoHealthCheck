@@ -36,32 +36,30 @@ class HttpGeocoder(Geocoder):
         """ After running actual request to service"""
         pass
 
+    def get_request_string(self):
+        request_string = None
+        if self._template:
+            request_string = self._template
+            if '?' in self._geocoder_url and self._template[0] == '?':
+                self._template = '&' + self._template[1:]
+            
+            if self._parameters:
+                params_names = self._parameters.keys()
+                params = {}
+                for param in params_names:
+                    params.update({param: self._parameters.get(param).get('value')})
+                    if self._parameters.get(param).get('type') == 'stringlist':
+                        params.update({param: ','.join(params.get(param))})
+                request_string = self._template.format(** params)
+        return request_string
+
     def run_request(self, ip):
         """ Prepare actual request to service"""
 
         self._response = None
         # Actualize request query string or POST body
         # by substitution in template.
-        request_string = None
-
-        if self._template:
-            request_string = self._template
-            if '?' in self._geocoder_url and self._template[0] == '?':
-                self._template = '&' + self._template[1:]
-
-            if self._parameters:
-                params_names = self._parameters.keys()
-                # TODO: map params
-                params = 'TODO: map params to vars'
-                request_parms = self._parameters
-                param_defs = self.get_param_defs()
-
-                # Expand string list array to comma separated string
-                for param in request_parms:
-                    if param_defs[param]['type'] == 'stringlist':
-                        request_parms[param] = ','.join(request_parms[param])
-
-                request_string = self._template.format(**request_parms)
+        request_string = self.get_request_string()
 
         hostname = urlparse(ip).hostname
         base_url = self._geocoder_url.format(hostname=hostname) if hostname else self._geocoder_url
