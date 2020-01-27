@@ -37,7 +37,7 @@ class FixedLocation(Geocoder):
         When the dictionary contains the element `lat` and/or `lon`, then these
         values are used to position the server.
         """
-        super().init(geocoder_vars)
+        super().init(geocode_vars)
         self._lat = geocode_vars.get('lat', self.LATITUDE)
         self._lon = geocode_vars.get('lon', self.LONGITUDE)
 
