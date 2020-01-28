@@ -192,4 +192,4 @@ GEOIP = {
         'geocoder_url': 'http://ip-api.com/json/{hostname}',
         'lat_field': 'lat',
         'lon_field': 'lon'
-    }
+}

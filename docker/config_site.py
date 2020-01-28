@@ -103,3 +103,11 @@ GHC_MAP = {
     'maxzoom': 18,
     'subdomains': 1234,
 }
+
+GEOIP = {
+    'plugin': 'GeoHealthCheck.plugins.geocode.webgeocoder.HttpGetGeocoder',
+    'parameters': {
+        'geocoder_url': 'http://ip-api.com/json/{hostname}',
+        'lat_field': 'lat',
+        'lon_field': 'lon'
+}
