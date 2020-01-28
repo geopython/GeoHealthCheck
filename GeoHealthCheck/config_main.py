@@ -175,3 +175,21 @@ GHC_PROBE_DEFAULTS = {
             'GeoHealthCheck.plugins.probe.ghcreport.GHCEmailReporter'
     }
 }
+
+# Entry for Geocoder plugin
+# Use this service to locate the configured servers on a map. In case you want
+# to use fixed location (i.e. no geolocater service), use the `FixedLocation`:
+# GEOIP = {
+#     'plugin': 'GeoHealthCheck.plugins.geocode.fixedlocation.FixedLocation',
+#     'parameters': {
+#         'lat': 50,
+#         'lon': 5
+#     }
+# }
+GEOIP = {
+    'plugin': 'GeoHealthCheck.plugins.geocode.webgeocoder.HttpGetGeocoder',
+    'parameters': {
+        'geocoder_url': 'http://ip-api.com/json/{hostname}',
+        'lat_field': 'lat',
+        'lon_field': 'lon'
+    }
