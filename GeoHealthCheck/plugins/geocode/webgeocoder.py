@@ -7,7 +7,12 @@ from GeoHealthCheck.geocoder import Geocoder
 
 
 class HttpGeocoder(Geocoder):
-    """ A base class for geocoders on the web.  """
+    """
+    A base class for geocoders on the web.
+    
+    It is intended to use a *subclass* of this class and implement the
+    `make_call` method.
+    """
 
     PARAM_DEFS = {}
     REQUEST_TEMPLATE = ''
@@ -128,7 +133,17 @@ class HttpGeocoder(Geocoder):
 
 
 class HttpGetGeocoder(HttpGeocoder):
+    """
+    A geocoder plugin using a http GET request.
 
+    Use the `init` method (**not** the dunder methode) to initialise the
+    geocoder. Provide a dict with keys: `geocoder_url`, `lat_field`,
+    `lon_field`, and optional `template` and `parameters`. The `geocoder_url`
+    parameter should include `{hostname}` where the `locate` function will
+    substitute the server name that needs to be located. The `lat_field` and
+    `lon_field` parameters specify the field names of the lat/lon in the json
+    response.
+    """
     def __init__(self):
         super().__init__()
 
@@ -141,6 +156,17 @@ class HttpGetGeocoder(HttpGeocoder):
 
 
 class HttpPostGeocoder(HttpGeocoder):
+    """
+    A geocoder plugin using a http POST request.
+
+    Use the `init` method (**not** the dunder methode) to initialise the
+    geocoder. Provide a dict with keys: `geocoder_url`, `lat_field`,
+    `lon_field`, and optional `template` and `parameters`. The `geocoder_url`
+    parameter should include `{hostname}` where the `locate` function will
+    substitute the server name that needs to be located. The `lat_field` and
+    `lon_field` parameters specify the field names of the lat/lon in the json
+    response.
+    """
 
     def __init__(self):
         super().__init__()

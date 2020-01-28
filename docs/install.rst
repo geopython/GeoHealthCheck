@@ -81,6 +81,7 @@ Install
   # - GHC_REQUIRE_WEBAPP_AUTH  # optional: to require authentication to access webapp
   # - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled
   # - GHC_MAP  # or use default settings
+  # - GEOIP  # or use the feault settings
 
   # init database
   python GeoHealthCheck/models.py create

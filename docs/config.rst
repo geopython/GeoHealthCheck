@@ -42,6 +42,7 @@ The configuration options are:
   - **centre_long**: Centre longitude for homepage map
   - **maxzoom**: maximum zoom level
   - **subdomains**: available subdomains to help with parallel requests
+- **GEOIP**: configuration for the geolocater service plugin. Default is the ip-api.com api.
 
 Example on overriding the configuration with an environment variable: ::
 

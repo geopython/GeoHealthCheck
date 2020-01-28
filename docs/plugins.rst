@@ -10,7 +10,8 @@ one may want to perform. Hence developers can extend or even replace
 the GHC standard Plugins with custom implementations.
 
 Two Plugin types exist that can be extended: the `Probe` and `Check` class.
-In v0.7.0 also plugins for Resource Authentication, `ResourceAuth`, were added.
+In v0.7.0 also plugins for Resource Authentication, `ResourceAuth`, were added
+and in v0.8.0 the geocoder plugin was introduced.
 
 Concepts
 --------
@@ -476,6 +477,18 @@ any (UI) configuration, encoding and execution of specific HTTP authentication m
    :members:
    :show-inheritance:
 
+Plugins - Geocoder
+..................
+
+`Geocoder` apply to geocoder services. They are responsible for geolocating a server on a map.
+
+.. automodule:: GeoHealthCheck.plugins.geocode.fixedlocation
+   :members:
+   :show-inheritance:
+
+.. automodule:: GeoHealthCheck.plugins.geocode.webgeocoder
+   :members:
+   :show-inheritance:
 
 
 
