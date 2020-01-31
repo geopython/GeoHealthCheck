@@ -1,5 +1,4 @@
-from urllib.parse import urlparse
-import requests
+from urllib.parse import urlparse import requests
 import json
 
 from GeoHealthCheck.init import App
@@ -9,10 +8,15 @@ from GeoHealthCheck.geocoder import Geocoder
 class HttpGeocoder(Geocoder):
     """
     A base class for geocoders on the web.
-    
+
     It is intended to use a *subclass* of this class and implement the
     `make_call` method.
     """
+
+    NAME = 'Http geocoder plugin'
+
+    DESCRIPTION = 'Geolocater service via a http request. Use a subclass of '
+                  'this plugin and implement the make_call function.'
 
     PARAM_DEFS = {}
     REQUEST_TEMPLATE = ''
@@ -33,10 +37,12 @@ class HttpGeocoder(Geocoder):
         headers = Geocoder.copy(self.REQUEST_HEADERS)
         return headers
 
+    # Lifecycle
     def before_request(self):
         """ Before running actual request to service"""
         pass
 
+    # Lifecycle
     def after_request(self):
         """ After running actual request to service"""
         pass
@@ -58,6 +64,7 @@ class HttpGeocoder(Geocoder):
                 request_string = self._template.format(** params)
         return request_string
 
+    # Lifecycle
     def run_request(self, ip):
         """ Prepare actual request to service"""
 
@@ -80,15 +87,17 @@ class HttpGeocoder(Geocoder):
             if self._response.status_code // 100 in [4, 5]:
                 self.log('Error response: %s' % (str(self._response.text)))
     
+    # Lifecycle
     def make_call(self, base_url, request_string):
         pass
     
+    # Lifecycle
     def perform_request(self, ip):
         try:
             self.before_request()
     
             try:
-                self.perform_request(ip)
+                self.run_request(ip)
             except Exception as e:
                 msg = "Perform_request Err: %s %s" % \
                       (e.__class__.__name__, str(e))
@@ -100,6 +109,7 @@ class HttpGeocoder(Geocoder):
             msg = "GeoLocator Err: %s %s" % (e.__class__.__name__, str(e))
             self.log(msg)
 
+    # Lifecycle
     def parse_result(self):
         self._lat = 0
         self._lon = 0
@@ -123,7 +133,7 @@ class HttpGeocoder(Geocoder):
         self._result = (0, 0)
 
         # Perform request
-        self.run_request(ip)
+        self.perform_request(ip)
 
         # Determine result
         self.parse_result()
@@ -144,6 +154,11 @@ class HttpGetGeocoder(HttpGeocoder):
     `lon_field` parameters specify the field names of the lat/lon in the json
     response.
     """
+
+    NAME = 'Http geocoder plugin based on a GET request.'
+
+    DESCRIPTION = 'Geolocater service via a http GET request.'
+
     def __init__(self):
         super().__init__()
 
@@ -167,6 +182,10 @@ class HttpPostGeocoder(HttpGeocoder):
     `lon_field` parameters specify the field names of the lat/lon in the json
     response.
     """
+
+    NAME = 'Http geocoder plugin based on a POST request.'
+
+    DESCRIPTION = 'Geolocater service via a http POST request.'
 
     def __init__(self):
         super().__init__()

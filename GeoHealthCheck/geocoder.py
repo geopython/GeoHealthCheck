@@ -7,7 +7,7 @@ LOGGER = logging.getLogger(__name__)
 
 class Geocoder(Plugin):
     """
-    Base class for specifiv Geocode plugin to locate servers by their hostname
+    Base class for specific Geocode plugins to locate servers by their hostname
     """
 
     def __init__(self):
@@ -16,11 +16,14 @@ class Geocoder(Plugin):
     def init(self, geocoder_vars):
         self._geocoder_vars = geocoder_vars
 
-    def locate(self, host):
+    def locate(self, hostname):
         """
         Perform a locate on the host.
 
-        TOOD: return result tuple like (52.4, 21.0)
+        :param hostname string: the hostname of the server for which we want
+                                the coords.
+
+        TOOD: return result as tuple with locatin in lat-lon like: (52.4, 21.0)
         """
         pass
 
