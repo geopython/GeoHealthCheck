@@ -28,13 +28,11 @@
 # =================================================================
 
 import io
-import json
 import logging
 import os
 import smtplib
 import base64
 from factory import Factory
-from urllib.request import urlopen
 from urllib.parse import urlparse
 from gettext import translation
 from passlib.hash import pbkdf2_sha256

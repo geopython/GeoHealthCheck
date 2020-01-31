@@ -1,4 +1,4 @@
-from urllib.parse import urlparse import requests
+import requests
 import json
 
 from GeoHealthCheck.init import App
@@ -15,7 +15,7 @@ class HttpGeocoder(Geocoder):
 
     NAME = 'Http geocoder plugin'
 
-    DESCRIPTION = 'Geolocater service via a http request. Use a subclass of '
+    DESCRIPTION = 'Geolocater service via a http request. Use a subclass of ' \
                   'this plugin and implement the make_call function.'
 
     PARAM_DEFS = {}
@@ -53,12 +53,13 @@ class HttpGeocoder(Geocoder):
             request_string = self._template
             if '?' in self._geocoder_url and self._template[0] == '?':
                 self._template = '&' + self._template[1:]
-            
+
             if self._parameters:
                 params_names = self._parameters.keys()
                 params = {}
                 for param in params_names:
-                    params.update({param: self._parameters.get(param).get('value')})
+                    params.update({param: self._parameters.get(param).
+                                   get('value')})
                     if self._parameters.get(param).get('type') == 'stringlist':
                         params.update({param: ','.join(params.get(param))})
                 request_string = self._template.format(** params)
@@ -73,29 +74,30 @@ class HttpGeocoder(Geocoder):
         # by substitution in template.
         request_string = self.get_request_string()
 
-        base_url = self._geocoder_url.format(hostname=ip) if ip else self._geocoder_url
+        base_url = self._geocoder_url.format(hostname=ip) if ip \
+            else self._geocoder_url
         self.log('Requesting: url=%s' % (base_url))
 
         try:
             self.make_call(base_url, request_string)
         except requests.exceptions.RequestException as e:
-            msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
+            self.log("Request Err: %s %s" % (e.__class__.__name__, str(e)))
 
         if self._response:
             self.log('response: status=%d' % self._response.status_code)
 
             if self._response.status_code // 100 in [4, 5]:
                 self.log('Error response: %s' % (str(self._response.text)))
-    
+
     # Lifecycle
     def make_call(self, base_url, request_string):
         pass
-    
+
     # Lifecycle
     def perform_request(self, ip):
         try:
             self.before_request()
-    
+
             try:
                 self.run_request(ip)
             except Exception as e:
@@ -194,6 +196,5 @@ class HttpPostGeocoder(HttpGeocoder):
         self._response = requests.post(
             base_url,
             timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
-            data=requests_string,
+            data=request_string,
             headers=self.get_request_headers())
-

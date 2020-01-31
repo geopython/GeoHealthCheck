@@ -18,7 +18,7 @@ class FixedLocation(Geocoder):
     Parameter with the default latitude position. This is overruled when the
     latitude option is provided in the init step.
     """
-    
+
     LONGITUDE = 0
     """
     Parameter with the default longitude position. This is overruled when the
@@ -33,7 +33,7 @@ class FixedLocation(Geocoder):
     def init(self, geocode_vars={}):
         """
         Initialise the geocoder service with an optional dictionary.
-        
+
         When the dictionary contains the element `lat` and/or `lon`, then these
         values are used to position the server.
         """
@@ -47,4 +47,3 @@ class FixedLocation(Geocoder):
         fixed position, so provinding the adress of the server is optional.
         """
         return (self._lat, self._lon)
-

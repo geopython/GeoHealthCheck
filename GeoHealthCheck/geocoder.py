@@ -29,4 +29,3 @@ class Geocoder(Plugin):
 
     def log(self, text):
         LOGGER.info(text)
-
