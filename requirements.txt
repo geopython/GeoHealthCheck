@@ -15,4 +15,4 @@ requests>=2.20.0
 WTForms==2.2.1
 APScheduler==3.6.1
 passlib==1.7.1
-Werkzeug==1.0.0 
+Werkzeug==0.16.1
