@@ -261,6 +261,7 @@ def decode(key: str, string: str) -> str:
 # print([e])
 # print([d])
 
+
 # https://www.peterbe.com/plog/best-practice-with-retries-with-requests
 # Provides a requests Session object with requests' Retry capabilities.
 # TODO: may make numbers below configurable
