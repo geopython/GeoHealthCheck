@@ -33,6 +33,9 @@ import logging
 import os
 import smtplib
 import base64
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from urllib.request import urlopen
 from urllib.parse import urlparse
 from gettext import translation
@@ -257,3 +260,25 @@ def decode(key: str, string: str) -> str:
 # d = decode('a key', e)
 # print([e])
 # print([d])
+
+# https://www.peterbe.com/plog/best-practice-with-retries-with-requests
+# Provides a requests Session object with requests' Retry capabilities.
+# TODO: may make numbers below configurable
+def create_requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
