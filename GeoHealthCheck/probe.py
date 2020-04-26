@@ -8,6 +8,7 @@ from factory import Factory
 from init import App
 from plugin import Plugin
 from result import ProbeResult
+from util import create_requests_retry_session
 
 LOGGER = logging.getLogger(__name__)
 
@@ -80,6 +81,7 @@ class Probe(Plugin):
     def __init__(self):
         Plugin.__init__(self)
         self._resource = None
+        self._session = create_requests_retry_session()
 
     #
     # Lifecycle : optionally expand params from Resource metadata
@@ -284,14 +286,14 @@ class Probe(Plugin):
 
     def perform_get_request(self, url):
         """ Perform actual HTTP GET request to service"""
-        return requests.get(
+        return self._session.get(
             url,
             timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
             headers=self.get_request_headers())
 
     def perform_post_request(self, url_base, request_string):
         """ Perform actual HTTP POST request to service"""
-        return requests.post(
+        return self._session.post(
             url_base,
             timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
             data=request_string,
