@@ -279,9 +279,9 @@ def wfs3_api_doc(wfs3):
 
     api_url = None
 
-    for l in wfs3.links:
-        if l['rel'] == 'service-desc':
-            api_url = l['href']
+    for link in wfs3.links:
+        if link['rel'] == 'service-desc':
+            api_url = link['href']
 
     if not api_url:
         raise RuntimeError('Did not find service-desc link in landing page')
