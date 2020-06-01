@@ -76,8 +76,8 @@ services:
       - ghc_pgdb:/var/lib/postgresql/data
 
 # If you ever need to expose PG ports on host externally
-#    ports:
-#      - 5432:5432
+    ports:
+      - 5432:5432
 
     expose:
       - 5432
