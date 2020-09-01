@@ -20,8 +20,9 @@ class Result(object):
         self.results.append(result)
         if not result.success:
             self.success = False
-            self.message = result.message
             self.results_failed.append(result)
+            # First failed result is usually main failure reason
+            self.message = self.results_failed[0].message
 
     def get_report(self):
         return {
@@ -46,7 +47,7 @@ class Result(object):
 
     def __str__(self):
         if self.message:
-            self.message = self.message.encode('utf-8')
+            self.message = self.message
         return "success=%s msg=%s response_time=%s" % \
                (self.success, self.message, self.response_time_str)
 

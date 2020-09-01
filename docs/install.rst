@@ -31,6 +31,9 @@ These dependencies are automatically installed (see below). ``Paver`` is used
 for installation and management. ``Cron`` was used for scheduling the actual
 healthchecks before v0.5.0.
 
+Starting from version v0.8.0.0 GeoHealthCheck requires **python 3**. Previous
+versions require **python 2**.
+
 Install
 -------
 
@@ -47,8 +50,8 @@ Install
 
 .. code-block:: bash
 
-  virtualenv ghc && cd ghc
-  . bin/activate
+  python3 -m venv ghc && cd ghc
+  source ghc/bin/activate
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
 
@@ -85,6 +88,9 @@ Install
   # start web-app
   python GeoHealthCheck/app.py  # http://localhost:8000/
 
+  # when you are done, you can exit the virtualenv
+  deactivate
+
 NB GHC supports internal scheduling, no cronjobs required.
 
 .. _upgrade:
@@ -104,7 +110,7 @@ An existing GHC database installation can be upgraded with:
 Notes:
 
 * **Always backup your database first!!**
-* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.0.3`, but best is to run `paver setup` also for other dependencies
+* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.5.2`, but best is to run `paver setup` also for other dependencies
 * upgrading is "smart": you can always run `paver upgrade`, it has no effect when DB is already up to date
 * when upgrading from earlier versions without Plugin-support:
 
@@ -130,6 +136,20 @@ the `paver upgrade` command. Also password recovery was changed: a user can crea
 a unique, personal URL that GHC sends by email. This requires a working email configuration and a reachable
 `SITE_URL` config value. See :ref:`admin_user_mgt` for solving password problems.
 
+See [closed issues for related Milestone 0.6.0](https://github.com/geopython/GeoHealthCheck/milestone/6?closed=1)
+
+Upgrade notes v0.7.0
+....................
+
+No database changes. Many fixes and enhancements, see [closed issues for related Milestone 0.7.0](https://github.com/geopython/GeoHealthCheck/milestone/7?closed=1).
+
+Upgrade notes v0.8.0
+....................
+
+Main change: migrated from Python 2 to Python 3. No DB upgrades required.
+One major improvement was more robust (HTTP) retries using the `requests` `Session` object.
+
+See [closed issues for related Milestone 0.8.0](https://github.com/geopython/GeoHealthCheck/milestone/8?closed=1)
 
 Running
 -------
@@ -218,7 +238,9 @@ to run the scheduled healthchecks.
 Use virtualenv
 ..............
 
-This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`!
+This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`! Starting with python 3.3
+a `venv script <https://docs.python.org/3.3/library/venv.html>` is provided and from python 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`
+is included in the standard library.
 
 Use SSL (HTTPS)
 ...............

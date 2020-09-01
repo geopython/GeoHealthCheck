@@ -5,6 +5,9 @@ echo "START /configure.sh"
 
 source /venv/bin/activate .
 
+# Make sure PYTHONPATH includes GeoHealthCheck
+export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
+
 # Determine database type from DB URI
 DB_TYPE=$(echo ${SQLALCHEMY_DATABASE_URI} | cut -f1 -d:)
 echo "Using DB_TYPE=${DB_TYPE}"

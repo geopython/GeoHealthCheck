@@ -11,6 +11,8 @@ echo "START /run-web.sh"
 /configure.sh
 
 source /venv/bin/activate .
+# Make sure PYTHONPATH includes GeoHealthCheck
+export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
 

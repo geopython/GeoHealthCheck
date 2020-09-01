@@ -82,10 +82,13 @@ class WmsGetMapV1(Probe):
     """Param defs"""
 
     CHECKS_AVAIL = {
-        'GeoHealthCheck.plugins.check.checks.HttpHasImageContentType': {
+        'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {
             'default': True
         },
         'GeoHealthCheck.plugins.check.checks.NotContainsOwsException': {
+            'default': True
+        },
+        'GeoHealthCheck.plugins.check.checks.HttpHasImageContentType': {
             'default': True
         }
     }

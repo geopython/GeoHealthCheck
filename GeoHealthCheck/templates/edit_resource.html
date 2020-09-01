@@ -153,7 +153,7 @@ or
                 <th>Probes<br/>Available</th>
 
                 <td>
-                    {% for probe_class, probe_avail in probes_avail.iteritems() %}
+                    {% for probe_class, probe_avail in probes_avail.items() %}
                         {% include 'includes/probe_info.html' %}
                     {% endfor %}
                 </td>
@@ -199,12 +199,12 @@ or
 <link href="{{ url_for('static', filename='lib/jqueryui/jquery-ui.theme.css') }}" rel="stylesheet">
 
 <script type="text/javascript">
-    var all_tags = {{ tags.keys()|tojson }};
+    var all_tags = {{ tagnames|tojson }};
     $('#resource_tags').select2({data: all_tags, tags: true, disabled: false});
     // var probes_json = '{{ probes_avail|tojson }}';
     // probes_available = JSON.parse(probes_json);
 
-    {% if g.user.is_authenticated() %}
+    {% if g.user.is_authenticated %}
 
     // Show input elements for selected Resource auth
     $('#select_resource_auth_type').change(function(){

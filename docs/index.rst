@@ -1,6 +1,8 @@
 GeoHealthCheck
 ==============
 
+.. image:: _static/logo_medium.png
+
 Overview
 --------
 

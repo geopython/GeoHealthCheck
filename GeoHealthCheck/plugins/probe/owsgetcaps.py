@@ -36,6 +36,9 @@ class OwsGetCaps(Probe):
     """Param defs, to be specified in subclasses"""
 
     CHECKS_AVAIL = {
+        'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {
+            'default': True
+        },
         'GeoHealthCheck.plugins.check.checks.XmlParse': {
             'default': True
         },
@@ -71,7 +74,7 @@ class WmsGetCaps(OwsGetCaps):
             'value': 'WMS'
         },
         'version': {
-            'default': '1.1.1',
+            'default': '1.3.0',
             'range': ['1.1.1', '1.3.0']
         }
     })

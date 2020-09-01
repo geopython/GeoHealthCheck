@@ -80,7 +80,7 @@ class ResourceAuth(Plugin):
             return None
 
         try:
-            s = decode(APP.config['SECRET_KEY'], str(encoded))
+            s = decode(APP.config['SECRET_KEY'], encoded)
             return json.loads(s)
         except Exception as err:
             LOGGER.error('Error decoding auth: %s' % str(err))

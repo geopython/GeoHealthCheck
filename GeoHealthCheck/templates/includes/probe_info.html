@@ -77,7 +77,7 @@
                             {% if not probe_avail.CHECKS_AVAIL %}
                             This Probe has no checks.
                             {% else %}
-                            {% for check_class, check_info in probe_avail.CHECKS_AVAIL.iteritems() %}
+                            {% for check_class, check_info in probe_avail.CHECKS_AVAIL.items() %}
                                 {% include 'includes/check_info.html' %}
                             {% endfor %}
                             {% endif %}

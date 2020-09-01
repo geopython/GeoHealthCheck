@@ -32,10 +32,12 @@ import json
 import logging
 import os
 import smtplib
-import six
 import base64
-from urllib2 import urlopen
-from urlparse import urlparse
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+from urllib.request import urlopen
+from urllib.parse import urlparse
 from gettext import translation
 from passlib.hash import pbkdf2_sha256
 
@@ -228,6 +230,7 @@ def read(filename, encoding='utf-8'):
 
 
 # https://gist.github.com/gowhari/fea9c559f08a310e5cfd62978bc86a1a
+# with alterations to get return type of string, not bytes
 def encode(key, string):
     encoded_chars = []
     for i in range(len(string)):
@@ -235,15 +238,16 @@ def encode(key, string):
         encoded_c = chr(ord(string[i]) + ord(key_c) % 256)
         encoded_chars.append(encoded_c)
     encoded_string = ''.join(encoded_chars)
-    encoded_string = encoded_string.encode('latin') \
-        if six.PY3 else encoded_string
-    return base64.urlsafe_b64encode(encoded_string).rstrip(b'=')
+    encoded_string = encoded_string.encode('latin')
+    encoded_b64 = base64.urlsafe_b64encode(encoded_string).rstrip(b'=')
+    return encoded_b64.decode()
 
 
 # https://gist.github.com/gowhari/fea9c559f08a310e5cfd62978bc86a1a
-def decode(key, string):
-    string = base64.urlsafe_b64decode(string + b'===')
-    string = string.decode('latin') if six.PY3 else string
+# with alterations: expecting string as input (not bytes)
+def decode(key: str, string: str) -> str:
+    string = base64.urlsafe_b64decode(string.encode() + b'===')
+    string = string.decode('latin')
     encoded_chars = []
     for i in range(len(string)):
         key_c = key[i % len(key)]
@@ -256,3 +260,26 @@ def decode(key, string):
 # d = decode('a key', e)
 # print([e])
 # print([d])
+
+
+# https://www.peterbe.com/plog/best-practice-with-retries-with-requests
+# Provides a requests Session object with requests' Retry capabilities.
+# TODO: may make numbers below configurable
+def create_requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session

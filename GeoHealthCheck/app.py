@@ -1,4 +1,3 @@
-# coding=utf-8
 # =================================================================
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
@@ -33,7 +32,7 @@ import base64
 import csv
 import json
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 from flask import (abort, flash, g, jsonify, redirect,
                    render_template, request, url_for)
@@ -90,7 +89,7 @@ def db_commit():
     err = None
     try:
         DB.session.commit()
-    except Exception as err:
+    except Exception:
         DB.session.rollback()
     # finally:
     #     DB.session.close()
@@ -240,7 +239,8 @@ def context_processors():
         'resource_types_counts': rtc['counts'],
         'resources_total': rtc['total'],
         'languages': LANGUAGES,
-        'tags': tags
+        'tags': tags,
+        'tagnames': list(tags.keys())
     }
 
 
@@ -278,7 +278,7 @@ def export():
 
                 json_dict['resources'].append({
                     'resource_type': r.resource_type,
-                    'title': r.title.encode('utf-8'),
+                    'title': r.title,
                     'url': r.url,
                     'ghc_url': ghc_url,
                     'ghc_json': '%s/json' % ghc_url,
@@ -314,7 +314,7 @@ def export():
 
                 writer.writerow([
                     r.resource_type,
-                    r.title.encode('utf-8'),
+                    r.title,
                     r.url,
                     ghc_url,
                     '%s/json' % ghc_url,
@@ -361,7 +361,7 @@ def export_resource(identifier):
 
         json_dict = {
             'identifier': resource.identifier,
-            'title': resource.title.encode('utf-8'),
+            'title': resource.title,
             'url': resource.url,
             'resource_type': resource.resource_type,
             'owner': resource.owner.username,
@@ -390,7 +390,7 @@ def export_resource(identifier):
         writer.writerow(header)
         writer.writerow([
             resource.identifier,
-            resource.title.encode('utf-8'),
+            resource.title,
             resource.url,
             resource.resource_type,
             resource.owner.username,
@@ -424,7 +424,7 @@ def export_resource_history(identifier):
                 'owner': resource.owner.username,
                 'resource_type': resource.resource_type,
                 'checked_datetime': format_checked_datetime(run),
-                'title': resource.title.encode('utf-8'),
+                'title': resource.title,
                 'url': resource.url,
                 'response_time': round(run.response_time, 2),
                 'status': format_run_status(run)
@@ -443,7 +443,7 @@ def export_resource_history(identifier):
                 resource.owner.username,
                 resource.resource_type,
                 format_checked_datetime(run),
-                resource.title.encode('utf-8'),
+                resource.title,
                 resource.url,
                 round(run.response_time, 2),
                 format_run_status(run),
@@ -542,18 +542,6 @@ def add():
     for (resource_type, resource_url,
          title, success, response_time,
          message, start_time, resource_tags,) in sniffed_resources:
-
-        # sniffed_resources may return list of resource
-        # types different from initial one
-        # so we need to test each row separately
-        resource = Resource.query.filter_by(resource_type=resource_type,
-                                            url=url).first()
-        if resource is not None:
-            msg = gettext('Service already registered')
-            flash('%s (%s, %s)' % (msg, resource_type, url), 'danger')
-
-            if len(sniffed_resources) == 1 and 'resource_type' in request.args:
-                return redirect(url_for('add', lang=g.current_lang))
 
         tags_to_add = []
         for tag in chain(tags, resource_tags):
@@ -864,7 +852,6 @@ def get_check_edit_form(check_class):
     check_vars = CheckVars(
         None, check_class, check_obj.get_default_parameter_values())
 
-    # print(str(check_info))
     return render_template('includes/check_edit_form.html',
                            lang=g.current_lang,
                            check=check_vars, check_info=check_info)

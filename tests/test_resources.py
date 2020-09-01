@@ -29,20 +29,15 @@
 # =================================================================
 
 import unittest
-import sys
 import os
 
-from GeoHealthCheck.init import App
-from GeoHealthCheck.models import (DB, Resource, Run, load_data,
-                                   Recipient)
-from GeoHealthCheck.healthcheck import run_test_resource
-from GeoHealthCheck.notifications import _parse_webhook_location
-from GeoHealthCheck.resourceauth import ResourceAuth
+from init import App
+from models import (DB, Resource, Run, load_data, Recipient)
+from healthcheck import run_test_resource
+from notifications import _parse_webhook_location
+from resourceauth import ResourceAuth
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Needed to find classes and plugins
-sys.path.append('%s/..' % TEST_DIR)
 
 
 class GeoHealthCheckTest(unittest.TestCase):
@@ -86,10 +81,10 @@ class GeoHealthCheckTest(unittest.TestCase):
         resources = Resource.query.all()
         for resource in resources:
             # Each Resource should have one Run
-            self.assertEquals(
+            self.assertEqual(
                 resource.runs.count(), 1,
                 'RunCount should be 1 for %s' % resource.url)
-            self.assertEquals(
+            self.assertEqual(
                 resource.runs[0].success, True,
                 'Run should be success for %s report=%s' %
                 (resource.url, str(resource.runs[0])))
@@ -135,7 +130,7 @@ class GeoHealthCheckTest(unittest.TestCase):
                 self.assertTrue(success)
                 self.assertEqual(test_url, url)
                 self.assertEqual(test_params, params)
-            except Exception, err:
+            except Exception as err:
                 self.assertFalse(success, str(err))
 
     def testSetGetResoureAuth(self):

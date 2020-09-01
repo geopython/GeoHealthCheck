@@ -46,27 +46,56 @@ class WFS3Drilldown(Probe):
         wfs3 = None
         collections = None
 
-        # 1. Test top endpoints existence
-        result = Result(True, 'Test Top Endpoints')
+        # 1.1 Test Landing Page
+        result = Result(True, 'Test Landing Page')
         result.start()
         try:
             wfs3 = WebFeatureService(self._resource.url, version='3.0')
-            wfs3.conformance()
+        except Exception as err:
+            result.set(False, '%s:%s' % (result.message, str(err)))
 
-            # TODO: OWSLib 0.17.1 has no call to '/api yet.
-            url = wfs3._build_url('api')
-            api = requests.get(url).json()
+        result.stop()
+        self.result.add_result(result)
+
+        # 1.2 Test top endpoints existence: /conformance
+        result = Result(True, 'conformance endpoint exists')
+        result.start()
+        try:
+            wfs3.conformance()
+        except Exception as err:
+            result.set(False, str(err))
+
+        result.stop()
+        self.result.add_result(result)
+
+        # 1.3 Test top endpoints existence: /collections
+        result = Result(True, 'Get collections')
+        result.start()
+        try:
+            collections = wfs3.collections()
+        except Exception as err:
+            result.set(False, '%s:%s' % (result.message, str(err)))
+
+        result.stop()
+        self.result.add_result(result)
+
+        # 1.4 Test top endpoints existence: OpenAPI doc
+        result = Result(True, 'Test OpenAPI Doc')
+        result.start()
+        try:
+
+            # TODO: OWSLib 0.17.1 has no call to '/api yet, upgrade when GHC
+            #  supports Py3 to 0.19+.
+            api = wfs3_api_doc(wfs3)
             for attr in ['components', 'paths', 'openapi']:
                 val = api.get(attr, None)
                 if val is None:
-                    msg = '/api: missing attr: %s' % attr
+                    msg = 'missing attr: %s' % attr
                     result = push_result(
-                        self, result, False, msg, 'Test Collection')
+                        self, result, False, msg, 'Test OpenAPI doc')
                     continue
-
-            collections = wfs3.collections()
         except Exception as err:
-            result.set(False, str(err))
+            result.set(False, '%s:%s' % (result.message, str(err)))
 
         result.stop()
         self.result.add_result(result)
@@ -74,7 +103,7 @@ class WFS3Drilldown(Probe):
         if self._parameters['drilldown_level'] == 'basic':
             return
 
-        # ASSERTION: will do full drilldown from here
+        # ASSERTION: will do full drilldown, level 2, from here
 
         # 2. Test layers
         # TODO: use parameters to work on less/more drilling
@@ -85,7 +114,7 @@ class WFS3Drilldown(Probe):
         try:
             for collection in collections:
                 coll_id = collection['id']
-                coll_id = coll_id.encode('utf-8')
+                coll_id = coll_id
 
                 try:
                     coll = wfs3.collection(coll_id)
@@ -194,18 +223,14 @@ class WFS3OpenAPIValidator(Probe):
         """
 
         # Step 1 basic sanity check
-        result = Result(True, 'OpenAPI Validation Test')
+        result = Result(True, 'OpenAPI Sanity Check')
         result.start()
         api_doc = None
         try:
             wfs3 = WebFeatureService(self._resource.url, version='3.0')
 
             # TODO: OWSLib 0.17.1 has no call to '/api yet.
-            # Build endpoint URL (may have f=json etc)
-            api_url = wfs3._build_url('api')
-
-            # Get OpenAPI spec from endpoint as dict once
-            api_doc = requests.get(api_url).json()
+            api_doc = wfs3_api_doc(wfs3)
 
             # Basic sanity check
             for attr in ['components', 'paths', 'openapi']:
@@ -215,7 +240,7 @@ class WFS3OpenAPIValidator(Probe):
                     result.set(False, msg)
                     break
         except Exception as err:
-            result.set(False, str(err))
+            result.set(False, '%s:%s' % (result.message, str(err)))
 
         result.stop()
         self.result.add_result(result)
@@ -238,12 +263,30 @@ class WFS3OpenAPIValidator(Probe):
                     self, result, False,
                     str(error), 'OpenAPI Compliance Result')
         except Exception as err:
-            result.set(False, 'OpenAPI Validation err: e=%s' % str(err))
+            result.set(False, '%s:%s' % (result.message, str(err)))
 
         result.stop()
 
         # Add to overall Probe result
         self.result.add_result(result)
+
+
+def wfs3_api_doc(wfs3):
+    """
+    implements Requirement 3 (/req/core/api-definition-op)
+    @returns: OpenAPI definition object
+    """
+
+    api_url = None
+
+    for link in wfs3.links:
+        if link['rel'] == 'service-desc':
+            api_url = link['href']
+
+    if not api_url:
+        raise RuntimeError('Did not find service-desc link in landing page')
+
+    return requests.get(api_url).json()
 
 
 # class WFS3Caps(Probe):
