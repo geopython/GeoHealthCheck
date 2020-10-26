@@ -154,7 +154,7 @@ GHC_PROBE_DEFAULTS = {
         'probe_class': 'GeoHealthCheck.plugins.probe.sta.StaCaps'
     },
     'OGC:WFS3': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown'
+        'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Caps'
     },
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
