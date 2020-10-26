@@ -158,7 +158,7 @@ def load_user_from_request(request):
     # Inspiration: https://flask-login.readthedocs.io
     #              /en/latest/#custom-login-using-request-loader
     basic_auth_val = request.headers.get('Authorization')
-    if basic_auth_val:
+    if basic_auth_val and CONFIG['GHC_BASIC_AUTH_DISABLED'] is False:
         basic_auth_val = basic_auth_val.replace('Basic ', '', 1)
         authenticated = False
         try:
