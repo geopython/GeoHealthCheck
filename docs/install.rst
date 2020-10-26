@@ -136,6 +136,20 @@ the `paver upgrade` command. Also password recovery was changed: a user can crea
 a unique, personal URL that GHC sends by email. This requires a working email configuration and a reachable
 `SITE_URL` config value. See :ref:`admin_user_mgt` for solving password problems.
 
+See [closed issues for related Milestone 0.6.0](https://github.com/geopython/GeoHealthCheck/milestone/6?closed=1)
+
+Upgrade notes v0.7.0
+....................
+
+No database changes. Many fixes and enhancements, see [closed issues for related Milestone 0.7.0](https://github.com/geopython/GeoHealthCheck/milestone/7?closed=1).
+
+Upgrade notes v0.8.0
+....................
+
+Main change: migrated from Python 2 to Python 3. No DB upgrades required.
+One major improvement was more robust (HTTP) retries using the `requests` `Session` object.
+
+See [closed issues for related Milestone 0.8.0](https://github.com/geopython/GeoHealthCheck/milestone/8?closed=1)
 
 Running
 -------

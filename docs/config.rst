@@ -33,6 +33,7 @@ The configuration options are:
 - **GHC_PROBE_DEFAULTS**: Default `Probe` class to assign on "add" per Resource-type
 - **GHC_METADATA_CACHE_SECS**: metadata, "Capabilities Docs", cache expiry time, default 900 secs, -1 to disable
 - **GHC_REQUIRE_WEBAPP_AUTH**: require authentication (login or Basic Auth) to access GHC webapp and APIs (default: ``False``)
+- **GHC_BASIC_AUTH_DISABLED**: disable Basic Authentication to access GHC webapp and APIs (default: ``False``), see below when to set to `True`
 - **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: ``True``), more below
 - **GHC_LOG_LEVEL**: logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING)
 - **GHC_MAP**: default map settings
@@ -201,3 +202,8 @@ the login screen. Initially only the ``admin`` user will be able to login, but i
 and allow additional users by registering these within the ``admin`` login session.
 Note that password reset is still enabled. For remote REST API calls standard HTTP Basic
 Authentication (via the HTTP `Authentication` request header) can be used.
+
+In some cases where an external web- or proxy server provides HTTP Basic Authentication, a conflict may
+arise when GHC also checks the `Authorization` HTTP header used for the external Basic Auth. In those
+cases GHC Basic Auth checking can be disabled using the **GHC_BASIC_AUTH_DISABLED** to `True`.
+TODO: provide API Token auth to allow both external Basic Auth and GHC API auth.
