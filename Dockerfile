@@ -64,7 +64,7 @@ WSGI_WORKER_CLASS='eventlet' \
 GHC_USER_PLUGINS=''
 
 RUN apk add --no-cache --virtual .build-deps gcc build-base libxslt-dev libxml2-dev linux-headers postgresql-dev \
-    && apk add --no-cache bash postgresql-client libxslt libxml2 tzdata openntpd python3 python3-dev proj-dev proj-util\
+    && apk add --no-cache bash postgresql-client libxslt libxml2 tzdata openntpd proj-dev proj-util \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
 # Add standard files and Add/override Plugins
