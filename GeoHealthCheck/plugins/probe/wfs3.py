@@ -6,10 +6,10 @@ from GeoHealthCheck.result import Result, push_result
 
 
 class WFS3Caps(Probe):
-    """Probe for OGC WFS3 API (OAPIF) main endpoint url"""
+    """Probe for OGC WFS3 API (OAFeat) main endpoint url"""
 
-    NAME = 'OGC WFS3 (OAPIF) API Capabilities'
-    DESCRIPTION = 'Perform OGC WFS3 (OAPIF) API Capabilities ' \
+    NAME = 'OGC WFS3 (OAFeat) API Capabilities'
+    DESCRIPTION = 'Perform OGC WFS3 (OAFeat) API Capabilities ' \
                   'Operation and check validity'
     RESOURCE_TYPE = 'OGC:WFS3'
 
@@ -46,15 +46,15 @@ class WFS3Caps(Probe):
 
 class WFS3Drilldown(Probe):
     """
-    Probe for WFS3 (OpenAPI Features or OAPIF) endpoint "drilldown": starting
+    Probe for WFS3 (OpenAPI Features or OAFeat) endpoint "drilldown": starting
     with top endpoint: get Collections and do
     GetItems on them etc. Using OWSLib owslib.ogcapi package.
 
-    TODO: needs renaming: WFS3 is now OAPIF.
+    TODO: needs renaming: WFS3 is now OAFeat.
     """
 
-    NAME = 'WFS3 (OAPIF) Drilldown'
-    DESCRIPTION = 'Traverses a OGC WFS3 (OAPIF) API endpoint by drilling down'
+    NAME = 'WFS3 (OAFeat) Drilldown'
+    DESCRIPTION = 'Traverses a OGC WFS3 (OAFeat) API endpoint by drilling down'
     RESOURCE_TYPE = 'OGC:WFS3'
 
     REQUEST_METHOD = 'GET'
@@ -82,15 +82,15 @@ class WFS3Drilldown(Probe):
         See https://github.com/geopython/OWSLib/blob/
         master/tests/doctests/wfs3_GeoServerCapabilities.txt
         """
-        oapif = None
+        oa_feat = None
         collections = None
 
         # 1.1 Test Landing Page
         result = Result(True, 'Test Landing Page')
         result.start()
         try:
-            oapif = Features(self._resource.url,
-                             headers=self.get_request_headers())
+            oa_feat = Features(self._resource.url,
+                               headers=self.get_request_headers())
         except Exception as err:
             result.set(False, '%s:%s' % (result.message, str(err)))
 
@@ -101,7 +101,7 @@ class WFS3Drilldown(Probe):
         result = Result(True, 'conformance endpoint exists')
         result.start()
         try:
-            oapif.conformance()
+            oa_feat.conformance()
         except Exception as err:
             result.set(False, str(err))
 
@@ -112,7 +112,7 @@ class WFS3Drilldown(Probe):
         result = Result(True, 'Get collections')
         result.start()
         try:
-            collections = oapif.collections()['collections']
+            collections = oa_feat.collections()['collections']
         except Exception as err:
             result.set(False, '%s:%s' % (result.message, str(err)))
 
@@ -125,7 +125,7 @@ class WFS3Drilldown(Probe):
         try:
 
             # OWSLib 0.20.0+ has call to '/api now.
-            api_doc = oapif.api()
+            api_doc = oa_feat.api()
             for attr in ['components', 'paths', 'openapi']:
                 val = api_doc.get(attr, None)
                 if val is None:
@@ -156,7 +156,7 @@ class WFS3Drilldown(Probe):
                 coll_id = coll_id
 
                 try:
-                    coll = oapif.collection(coll_id)
+                    coll = oa_feat.collection(coll_id)
 
                     # TODO: Maybe also add crs
                     for attr in ['id', 'links']:
@@ -175,7 +175,7 @@ class WFS3Drilldown(Probe):
                     continue
 
                 try:
-                    items = oapif.collection_items(coll_id, limit=1)
+                    items = oa_feat.collection_items(coll_id, limit=1)
                 except Exception as e:
                     msg = 'GetItems %s: OWSLib err: %s ' % (str(e), coll_id)
                     result = push_result(
@@ -201,7 +201,7 @@ class WFS3Drilldown(Probe):
 
                     fid = items['features'][0]['id']
                     try:
-                        item = oapif.collection_item(coll_id, fid)
+                        item = oa_feat.collection_item(coll_id, fid)
                     except Exception as e:
                         msg = 'GetItem %s: OWSLib err: %s' \
                               % (str(e), coll_id)
@@ -238,13 +238,13 @@ class WFS3Drilldown(Probe):
 
 class WFS3OpenAPIValidator(Probe):
     """
-    Probe for WFS3 OpenAPI Spec Validation (/api endpoint).
+    Probe for WFS3 (OAFeat) OpenAPI Spec Validation (/api endpoint).
     Uses https://pypi.org/project/openapi-spec-validator/.
 
     """
 
-    NAME = 'WFS3 OpenAPI Validator'
-    DESCRIPTION = 'Validates WFS3 (OAPIF) /api endpoint for OpenAPI compliance'
+    NAME = 'WFS3 (OAFeat) OpenAPI Validator'
+    DESCRIPTION = 'Validates WFS3 (OAFeat) api endpoint for OpenAPI compliance'
     RESOURCE_TYPE = 'OGC:WFS3'
 
     REQUEST_METHOD = 'GET'
@@ -266,17 +266,17 @@ class WFS3OpenAPIValidator(Probe):
         result.start()
         api_doc = None
         try:
-            oapif = Features(self._resource.url,
-                             headers=self.get_request_headers())
+            oa_feat = Features(self._resource.url,
+                               headers=self.get_request_headers())
 
-            # OWSLib 0.20.0 has  call to '/api now.
-            api_doc = oapif.api()
+            # OWSLib 0.20.0 has call to OpenAPI doc now.
+            api_doc = oa_feat.api()
 
             # Basic sanity check
             for attr in ['components', 'paths', 'openapi']:
                 val = api_doc.get(attr, None)
                 if val is None:
-                    msg = '/api: missing attr: %s' % attr
+                    msg = 'OpenAPI doc: missing attr: %s' % attr
                     result.set(False, msg)
                     break
         except Exception as err:
@@ -289,7 +289,7 @@ class WFS3OpenAPIValidator(Probe):
         if api_doc is None or result.success is False:
             return
 
-        # ASSERTION: /api exists, next OpenAPI Validation
+        # ASSERTION: OpenAPI doc exists, next OpenAPI Validation
 
         # Step 2 detailed OpenAPI Compliance test
         result = Result(True, 'Validate OpenAPI Compliance')
@@ -311,7 +311,7 @@ class WFS3OpenAPIValidator(Probe):
         self.result.add_result(result)
 
 # TODO implement: similar to single WMS layer,
-#  expand params with colleciton names etc.
+#  expand params with collection names etc.
 # class WFS3Collection(Probe):
 #     """Probe for OGC WFS3 API main endpoint url"""
 #
