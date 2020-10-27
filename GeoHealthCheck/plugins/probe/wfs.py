@@ -127,7 +127,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         :param version:
         :return: Metadata object
         """
-        return WebFeatureService(resource.url, version=version)
+        return WebFeatureService(resource.url,
+                                 version=version,
+                                 headers=self.get_request_headers())
 
     # Overridden: expand param-ranges from WFS metadata
     def expand_params(self, resource):

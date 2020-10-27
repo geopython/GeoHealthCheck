@@ -283,3 +283,16 @@ def create_requests_retry_session(
     session.mount('http://', adapter)
     session.mount('https://', adapter)
     return session
+
+
+# Optionally expand a URL with query clause like 'f=json'
+def expand_url(url, query_clause):
+    if query_clause in url:
+        # Already present
+        return url
+
+    # Determine concatenator char
+    concat = '?'
+    if concat in url:
+        concat = '&'
+    return '{}{}{}'.format(url, concat, query_clause)
