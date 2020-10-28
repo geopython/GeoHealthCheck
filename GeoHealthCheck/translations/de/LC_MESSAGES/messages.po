@@ -129,7 +129,7 @@ msgstr "Jetzt geht's"
 
 #: GeoHealthCheck/plugins/probe/ghcreport.py:115
 msgid "Status summary"
-msgstr ""
+msgstr "Zusammenfassung Status"
 
 #: GeoHealthCheck/templates/add.html:5
 msgid "Add Resource"
@@ -178,11 +178,11 @@ msgstr "Aktiv"
 
 #: GeoHealthCheck/templates/edit_resource.html:23
 msgid "Authentication"
-msgstr ""
+msgstr "Authentifizierung"
 
 #: GeoHealthCheck/templates/edit_resource.html:26
 msgid "Select optional authentication method and applicable credentials"
-msgstr ""
+msgstr "Wählen Sie optional eine Authentifizierungsmethode und geeignete Zugangsdaten"
 
 #: GeoHealthCheck/templates/edit_resource.html:67
 msgid "Notify emails"
@@ -553,15 +553,15 @@ msgstr "Ergebnisse"
 
 #: GeoHealthCheck/templates/status_report_email.txt:1
 msgid "Hi: this is a status report sent by the"
-msgstr ""
+msgstr "Hallo, dies ist ein Status Report gesendet von"
 
 #: GeoHealthCheck/templates/status_report_email.txt:2
 msgid "at"
-msgstr ""
+msgstr "an"
 
 #: GeoHealthCheck/templates/status_report_email.txt:2
 msgid "for the GeoHealthCheck endpoint at"
-msgstr ""
+msgstr "für GeoHealthCheck unter"
 
 #: GeoHealthCheck/templates/includes/overall_status.html:3
 #: GeoHealthCheck/templates/status_report_email.txt:4
@@ -570,11 +570,11 @@ msgstr "Überwachungs-Zeitraum"
 
 #: GeoHealthCheck/templates/status_report_email.txt:5
 msgid "From"
-msgstr ""
+msgstr "Von"
 
 #: GeoHealthCheck/templates/status_report_email.txt:6
 msgid "To"
-msgstr ""
+msgstr "An"
 
 #: GeoHealthCheck/templates/includes/overall_status.html:20
 #: GeoHealthCheck/templates/status_report_email.txt:10
@@ -583,11 +583,11 @@ msgstr "Operationel"
 
 #: GeoHealthCheck/templates/status_report_email.txt:18
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: GeoHealthCheck/templates/status_report_email.txt:23
 msgid "Links"
-msgstr ""
+msgstr "Links"
 
 #: GeoHealthCheck/templates/status_report_email.txt:24
 msgid "Home"
@@ -596,11 +596,11 @@ msgstr ""
 #: GeoHealthCheck/templates/status_report_email.txt:25
 #: GeoHealthCheck/templates/status_report_email.txt:26
 msgid "Summary"
-msgstr ""
+msgstr "Zusammenfassung"
 
 #: GeoHealthCheck/templates/includes/overall_status.html:1
 msgid "Dashboard"
-msgstr "Dashboard"
+msgstr "Übersicht"
 
 #: GeoHealthCheck/templates/includes/overall_status.html:40
 msgid "Reliable"
@@ -664,4 +664,3 @@ msgstr "Info"
 
 #~ msgid "seconds"
 #~ msgstr "Sekunden"
-
