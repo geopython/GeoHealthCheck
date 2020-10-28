@@ -109,7 +109,7 @@ def before_request():
         # We need to pass-through static resources like CSS.
         if any(['/static/' in request.path,
                 request.path.endswith('.ico'),
-                g.user.is_authenticated(),  # This is from Flask-Login
+                g.user.is_authenticated,  # This is from Flask-Login
                 (request.endpoint is not None
                  and getattr(APP.view_functions[request.endpoint],
                              'is_public', False))]):
@@ -522,8 +522,6 @@ def register():
 @login_required
 def add():
     """add resource"""
-    if not g.user.is_authenticated():
-        return render_template('add.html')
     if request.method == 'GET':
         return render_template('add.html')
     resource_type = request.form['resource_type']
