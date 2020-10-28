@@ -8,9 +8,9 @@ from GeoHealthCheck.result import Result, push_result
 class WFS3Caps(Probe):
     """Probe for OGC WFS3 API (OAFeat) main endpoint url"""
 
-    NAME = 'OGC WFS3 (OAFeat) API Capabilities'
-    DESCRIPTION = 'Perform OGC WFS3 (OAFeat) API Capabilities ' \
-                  'Operation and check validity'
+    NAME = 'OGC API Features (OAFeat) Capabilities'
+    DESCRIPTION = 'Validate OGC API Features (OAFeat) ' \
+                  'endpoint landing page'
     RESOURCE_TYPE = 'OGC:WFS3'
 
     REQUEST_METHOD = 'GET'
@@ -40,21 +40,37 @@ class WFS3Caps(Probe):
             'default': True
         },
     }
-    """Check for OGC WFS3 API (OGC API Features) service endpoint
-    availability"""
+    """Validate OGC API Features (OAFeat) endpoint landing page"""
+
+
+def type_for_link(links, rel):
+    content_type = 'application/json'
+    for link in links:
+        if link['rel'] == rel:
+            content_type = link.get('type', content_type)
+            # We only want JSON content types (e.g. items)
+            # for OWSLib for now.
+            if 'json' in content_type:
+                break
+    return content_type
+
+
+def set_accept_header(oa_feat, content_type):
+    oa_feat.headers['Accept'] = content_type
 
 
 class WFS3Drilldown(Probe):
     """
-    Probe for WFS3 (OpenAPI Features or OAFeat) endpoint "drilldown": starting
-    with top endpoint: get Collections and do
-    GetItems on them etc. Using OWSLib owslib.ogcapi package.
+    Probe for OGC API Features (OAFeat) endpoint "drilldown" or
+    "crawl": starting with top endpoint: get Collections and fetch
+    Features on them etc. Uses the OWSLib owslib.ogcapi package.
 
-    TODO: needs renaming: WFS3 is now OAFeat.
+    TODO: class needs renaming: WFS3 is now OAFeat.
     """
 
-    NAME = 'WFS3 (OAFeat) Drilldown'
-    DESCRIPTION = 'Traverses a OGC WFS3 (OAFeat) API endpoint by drilling down'
+    NAME = 'OGC API Features (OAFeat) Drilldown'
+    DESCRIPTION = 'Traverses an OGC API Features (OAFeat) API ' \
+                  'endpoint by drilling down'
     RESOURCE_TYPE = 'OGC:WFS3'
 
     REQUEST_METHOD = 'GET'
@@ -63,9 +79,9 @@ class WFS3Drilldown(Probe):
     PARAM_DEFS = {
         'drilldown_level': {
             'type': 'string',
-            'description': 'How heavy the drilldown should be.\
+            'description': 'How thorough the drilldown should be.\
                             basic: test presence endpoints, \
-                            full: go through collections, fetch items',
+                            full: go through collections, fetch Features',
             'default': 'basic',
             'required': True,
             'range': ['basic', 'full']
@@ -101,6 +117,8 @@ class WFS3Drilldown(Probe):
         result = Result(True, 'conformance endpoint exists')
         result.start()
         try:
+            set_accept_header(oa_feat, type_for_link(
+                oa_feat.links, 'conformance'))
             oa_feat.conformance()
         except Exception as err:
             result.set(False, str(err))
@@ -112,6 +130,8 @@ class WFS3Drilldown(Probe):
         result = Result(True, 'Get collections')
         result.start()
         try:
+            set_accept_header(oa_feat, type_for_link(
+                oa_feat.links, 'data'))
             collections = oa_feat.collections()['collections']
         except Exception as err:
             result.set(False, '%s:%s' % (result.message, str(err)))
@@ -125,6 +145,8 @@ class WFS3Drilldown(Probe):
         try:
 
             # OWSLib 0.20.0+ has call to '/api now.
+            set_accept_header(oa_feat, type_for_link(
+                oa_feat.links, 'service-desc'))
             api_doc = oa_feat.api()
             for attr in ['components', 'paths', 'openapi']:
                 val = api_doc.get(attr, None)
@@ -156,6 +178,8 @@ class WFS3Drilldown(Probe):
                 coll_id = coll_id
 
                 try:
+                    set_accept_header(oa_feat, type_for_link(
+                        collection['links'], 'self'))
                     coll = oa_feat.collection(coll_id)
 
                     # TODO: Maybe also add crs
@@ -175,6 +199,7 @@ class WFS3Drilldown(Probe):
                     continue
 
                 try:
+                    set_accept_header(oa_feat, 'application/geo+json')
                     items = oa_feat.collection_items(coll_id, limit=1)
                 except Exception as e:
                     msg = 'GetItems %s: OWSLib err: %s ' % (str(e), coll_id)
@@ -238,14 +263,16 @@ class WFS3Drilldown(Probe):
 
 class WFS3OpenAPIValidator(Probe):
     """
-    Probe for WFS3 (OAFeat) OpenAPI Spec Validation (/api endpoint).
+    Probe for OGC API Features (OAFeat) OpenAPI Document Validation.
     Uses https://pypi.org/project/openapi-spec-validator/.
 
     """
 
-    NAME = 'WFS3 (OAFeat) OpenAPI Validator'
-    DESCRIPTION = 'Validates WFS3 (OAFeat) api endpoint for OpenAPI compliance'
+    NAME = 'OGC API Features (OAFeat) OpenAPI Validator'
+    DESCRIPTION = 'Validates OGC API Features (OAFeat) api endpoint for ' \
+                  'OpenAPI compliance'
     RESOURCE_TYPE = 'OGC:WFS3'
+    REQUEST_HEADERS = {'Accept': 'application/json'}
 
     REQUEST_METHOD = 'GET'
 
@@ -269,7 +296,8 @@ class WFS3OpenAPIValidator(Probe):
             oa_feat = Features(self._resource.url,
                                headers=self.get_request_headers())
 
-            # OWSLib 0.20.0 has call to OpenAPI doc now.
+            set_accept_header(oa_feat, type_for_link(
+                oa_feat.links, 'service-desc'))
             api_doc = oa_feat.api()
 
             # Basic sanity check
@@ -310,14 +338,12 @@ class WFS3OpenAPIValidator(Probe):
         # Add to overall Probe result
         self.result.add_result(result)
 
-# TODO implement: similar to single WMS layer,
-#  expand params with collection names etc.
-# class WFS3Collection(Probe):
-#     """Probe for OGC WFS3 API main endpoint url"""
+
+# class OGCAPIFeaturesCollection(Probe):
+#     """Probe for OGC API Features (OAFeat) - Features Collection endpoint"""
 #
-#     NAME = 'OGC WFS3 API Capabilities'
-#     DESCRIPTION = 'Perform OGC WFS3 API Capabilities Operation and
-#     check validity'
+#     NAME = 'OGC API Features Collection'
+#     DESCRIPTION = 'Validate an OGC API Features Collection'
 #     RESOURCE_TYPE = 'OGC:WFS3'
 #
 #     REQUEST_METHOD = 'GET'
@@ -336,8 +362,9 @@ class WFS3OpenAPIValidator(Probe):
 #             'default': True,
 #             'set_params': {
 #                 'strings': {
-#                     'name': 'Must contain links to at least WFS3 Collections,
-#                     Conformance and OpenAPI endpoint',
+#                     'name': 'Must contain links to at least Feature'
+#                             'Collections, Conformance and OpenAPI
+#                             endpoint',
 #                     'value': ['links', 'href', '/collections',
 #                     '/conformance', '/api']
 #                 }
@@ -349,3 +376,47 @@ class WFS3OpenAPIValidator(Probe):
 #     Optionally override Check.PARAM_DEFS using set_params
 #     e.g. with specific `value` or even `name`.
 #     """
+#
+#     # Overridden: expand param-ranges from WMS metadata
+#     def expand_params(self, resource):
+#
+#         # Use WMS Capabilities doc to get metadata for
+#         # PARAM_DEFS ranges/defaults
+#         try:
+#             wms = self.get_metadata_cached(resource, version='1.1.1')
+#             layers = wms.contents
+#             self.layer_count = len(layers)
+#
+#             # Layers to select
+#             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
+#
+#             # Image Format
+#             for oper in wms.operations:
+#                 if oper.name == 'GetMap':
+#                     self.PARAM_DEFS['format']['range'] = \
+#                         oper.formatOptions
+#                     break
+#
+#             # Take random layer to determine generic attrs
+#             for layer_name in layers:
+#                 layer_entry = layers[layer_name]
+#                 break
+#
+#             # SRS
+#             srs_range = layer_entry.crsOptions
+#             self.PARAM_DEFS['srs']['range'] = srs_range
+#
+#             # bbox list: 0-3 is bbox, 4 is SRS
+#             bbox = layer_entry.boundingBox
+#             bbox_srs = bbox[4]
+#             self.PARAM_DEFS['srs']['default'] = bbox_srs
+#             # if it is not EPSG:4326 we need to transform bbox
+#             # if bbox_srs != 'EPSG:4326':
+#             #     bbox = transform_bbox('EPSG:4326', bbox_srs, bbox[:-1])
+#
+#             self.PARAM_DEFS['bbox']['default'] = \
+#                 [str(x) for x in bbox[:-1]]
+#
+#             self.PARAM_DEFS['exceptions']['range'] = wms.exceptions
+#         except Exception as err:
+#             raise err

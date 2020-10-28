@@ -238,7 +238,7 @@ def sniff_test_resource(config, resource_type, url):
             if resource_type == 'OGC:STA':
                 title = 'OGC STA'
             elif resource_type == 'OGC:WFS3':
-                title = 'OGC WFS3 (OAPIF)'
+                title = 'OGC API Features (OAFeat)'
             elif resource_type == 'ESRI:FS':
                 title = 'ESRI ArcGIS FS'
             else:
