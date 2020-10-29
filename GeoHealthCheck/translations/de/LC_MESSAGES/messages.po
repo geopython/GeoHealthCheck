@@ -1,6 +1,7 @@
 #
 # Translators:
 # Hannes I. Reuter, 2015
+# Astrid Emde, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version:  GeoHealthCheck\n"
@@ -566,7 +567,7 @@ msgstr "für GeoHealthCheck unter"
 #: GeoHealthCheck/templates/includes/overall_status.html:3
 #: GeoHealthCheck/templates/status_report_email.txt:4
 msgid "Monitoring Period"
-msgstr "Überwachungs-Zeitraum"
+msgstr "Überwachungszeitraum"
 
 #: GeoHealthCheck/templates/status_report_email.txt:5
 msgid "From"
@@ -579,7 +580,7 @@ msgstr "An"
 #: GeoHealthCheck/templates/includes/overall_status.html:20
 #: GeoHealthCheck/templates/status_report_email.txt:10
 msgid "Operational"
-msgstr "Operationel"
+msgstr "Funktionsfähig"
 
 #: GeoHealthCheck/templates/status_report_email.txt:18
 msgid "URL"
