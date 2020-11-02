@@ -1,5 +1,4 @@
 Paver==1.3.4
-Sphinx==1.8.1
 psycopg2==2.7.5
 eventlet==0.24.1
 gunicorn==19.9.0
