@@ -76,7 +76,7 @@ def setup():
         config_file.copy(config_site)
 
     # setup deps
-    # sh('pip install -r requirements.txt')
+    sh('pip install -r requirements.txt')
 
     skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
 
