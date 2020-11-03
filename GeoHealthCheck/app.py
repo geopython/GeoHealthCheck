@@ -162,7 +162,7 @@ def load_user_from_request(request):
         basic_auth_val = basic_auth_val.replace('Basic ', '', 1)
         authenticated = False
         try:
-            username, password = base64.b64decode(basic_auth_val).split(':')
+            username, password = base64.b64decode(basic_auth_val).split(':'.encode())
 
             user = User.query.filter_by(username=username).first()
             if user:
