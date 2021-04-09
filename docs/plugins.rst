@@ -11,7 +11,7 @@ the GHC standard Plugins with custom implementations.
 
 Two Plugin types exist that can be extended: the `Probe` and `Check` class.
 In v0.7.0 also plugins for Resource Authentication, `ResourceAuth`, were added
-and in v0.8.0 the geocoder plugin was introduced.
+and in v0.9.0 the geocoder plugin was introduced.
 
 Concepts
 --------
