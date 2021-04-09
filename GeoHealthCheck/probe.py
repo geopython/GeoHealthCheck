@@ -8,6 +8,8 @@ from factory import Factory
 from init import App
 from plugin import Plugin
 from result import ProbeResult
+from util import create_requests_retry_session
+from GeoHealthCheck import __version__
 
 LOGGER = logging.getLogger(__name__)
 
@@ -36,7 +38,16 @@ class Probe(Plugin):
 
     REQUEST_HEADERS = {}
     """
-    `dict` of optional requests headers.
+    `dict` of optional HTTP request headers.
+    """
+
+    STANDARD_REQUEST_HEADERS = {
+        'User-Agent': 'GeoHealthCheck '
+                      '{} (https://geohealthcheck.org)'.format(__version__),
+        'Accept-Encoding': 'deflate, gzip;q=1.0, *;q=0.5'
+    }
+    """
+    `dict` of HTTP headers to add to each HTTP request.
     """
 
     REQUEST_TEMPLATE = ''
@@ -80,6 +91,7 @@ class Probe(Plugin):
     def __init__(self):
         Plugin.__init__(self)
         self._resource = None
+        self._session = create_requests_retry_session()
 
     #
     # Lifecycle : optionally expand params from Resource metadata
@@ -230,8 +242,14 @@ class Probe(Plugin):
 
     def get_request_headers(self):
         if not self._resource:
-            return dict()
+            return Probe.STANDARD_REQUEST_HEADERS
+
         headers = Plugin.copy(self.REQUEST_HEADERS)
+
+        # Add standard headers like User-Agent
+        headers.update(Probe.STANDARD_REQUEST_HEADERS)
+
+        # May add optional Auth header(s)
         return self._resource.add_auth_header(headers)
 
     def perform_request(self):
@@ -284,14 +302,14 @@ class Probe(Plugin):
 
     def perform_get_request(self, url):
         """ Perform actual HTTP GET request to service"""
-        return requests.get(
+        return self._session.get(
             url,
             timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
             headers=self.get_request_headers())
 
     def perform_post_request(self, url_base, request_string):
         """ Perform actual HTTP POST request to service"""
-        return requests.post(
+        return self._session.post(
             url_base,
             timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
             data=request_string,

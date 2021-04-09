@@ -78,11 +78,12 @@ within an interactive Python-shell as follows: ::
 	$ pip install passlib
 	# or in Debian/Ubuntu: apt-get install python-passlib
 
-	pythonfrom passlib.hash import pbkdf2_sha256
+	python
+	>>> from passlib.hash import pbkdf2_sha256
 	>>>
 	>>> hash = pbkdf2_sha256.hash("mynewpassword")
-	>>> print hash
-	$pbkdf2-sha256$29000$da51rlVKKWVsLSWEsBYCoA$2/shIdqAxGJkDq6TTeIOgQKbtYAOPSi5EA3TDij1L6Y
+	>>> print(hash)
+	'$pbkdf2-sha256$29000$da51rlVKKWVsLSWEsBYCoA$2/shIdqAxGJkDq6TTeIOgQKbtYAOPSi5EA3TDij1L6Y'
 	>>> pbkdf2_sha256.verify("mynewpassword", hash)
 	True
 

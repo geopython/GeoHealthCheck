@@ -72,7 +72,7 @@ RESOURCE_TYPES = {
         'versions': ['1.0']
     },
     'OGC:WFS3': {
-        'label': 'OGC API Features (WFS3)'
+        'label': 'OGC API Features (OAFeat)'
     },
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'

@@ -136,14 +136,16 @@ def setup():
     zipfile_obj.extractall(options.base.static_lib / 'leaflet')
 
     # install html5shiv to static/lib
+    cdn_url = 'https://cdn.jsdelivr.net/npm'
     with open(path(options.base.static_lib / 'html5shiv.min.js'), 'w') as f:
-        url = 'http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'
+        url = \
+            '{}/html5shiv.min.js@3.7.2/html5shiv.min.js'.format(cdn_url)
         content = urlopen(url).read().decode()
         f.write(content)
 
     # install respond to static/lib
     with open(path(options.base.static_lib / 'respond.min.js'), 'w') as f:
-        url = 'http://oss.maxcdn.com/respond/1.4.2/respond.min.js'
+        url = '{}/respond.min.js@1.4.2/respond.min.js'.format(cdn_url)
         content = urlopen(url).read().decode()
         f.write(content)
 

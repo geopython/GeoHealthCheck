@@ -10,7 +10,7 @@ GeoHealthCheck (GHC) is a Service Status and QoS Checker for OGC Web Services an
 See also the [full GHC documentation](http://docs.geohealthcheck.org/). 
 
 Easiest is [to run GHC using Docker](https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md).
-Below a quick overview of a manual install on Unix-based systems like Apple Mac and Linux.
+Below a quick overview of a manual install on Unix-based systems like Apple MacOS and Linux.
 
 ```bash
 virtualenv GeoHealthCheck && cd $_

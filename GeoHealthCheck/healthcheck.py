@@ -62,7 +62,7 @@ def db_commit():
     try:
         DB.session.commit()
     except Exception as err:
-        LOGGER.warning("Cannot commit to database %s".format(err))
+        LOGGER.warning('Cannot commit to database {}'.format(err))
         DB.session.rollback()
     # finally:
     #     DB.session.close()
@@ -238,7 +238,7 @@ def sniff_test_resource(config, resource_type, url):
             if resource_type == 'OGC:STA':
                 title = 'OGC STA'
             elif resource_type == 'OGC:WFS3':
-                title = 'OGC WFS3'
+                title = 'OGC API Features (OAFeat)'
             elif resource_type == 'ESRI:FS':
                 title = 'ESRI ArcGIS FS'
             else:
@@ -279,8 +279,8 @@ def geonode_get_ows(base_url):
     base_name = 'GeoNode {}: {{}}'.format(url.hostname)
     status_code = r.getcode()
     if status_code != 200:
-        msg = "Errorous response from GeoNode at {}: {}".format(base_url,
-                                                                r.text)
+        msg = "Error response from GeoNode at {}: {}".format(
+                                                    base_url, r.text)
         raise ValueError(msg)
 
     try:

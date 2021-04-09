@@ -6,12 +6,14 @@ Flask-Script==2.0.6
 SQLAlchemy==1.3.8
 Flask-SQLAlchemy==2.4.0
 itsdangerous==1.1.0
-pyproj==1.9.6
-OWSLib==0.17.1  # update to new version when solution to OWSLIB #614 is released
+pyproj==2.6.1.post1
+OWSLib==0.20.0
+jsonschema==3.0.2 # downgrade from 3.2.0 on sept 29, 2020, issue 331, consider better fix
 openapi-spec-validator==0.2.8
-Sphinx==2.2.0
-sphinx-rtd-theme==0.4.3
-requests>=2.20.0
+Sphinx==3.3.0
+sphinx-rtd-theme==0.5.0
+requests>=2.23.0
 WTForms==2.2.1
 APScheduler==3.6.1
 passlib==1.7.1
+Werkzeug==0.16.1

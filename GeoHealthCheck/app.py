@@ -109,7 +109,7 @@ def before_request():
         # We need to pass-through static resources like CSS.
         if any(['/static/' in request.path,
                 request.path.endswith('.ico'),
-                g.user.is_authenticated(),  # This is from Flask-Login
+                g.user.is_authenticated,  # This is from Flask-Login
                 (request.endpoint is not None
                  and getattr(APP.view_functions[request.endpoint],
                              'is_public', False))]):
@@ -158,11 +158,12 @@ def load_user_from_request(request):
     # Inspiration: https://flask-login.readthedocs.io
     #              /en/latest/#custom-login-using-request-loader
     basic_auth_val = request.headers.get('Authorization')
-    if basic_auth_val:
+    if basic_auth_val and CONFIG['GHC_BASIC_AUTH_DISABLED'] is False:
         basic_auth_val = basic_auth_val.replace('Basic ', '', 1)
         authenticated = False
         try:
-            username, password = base64.b64decode(basic_auth_val).split(':')
+            username, password = base64.b64decode(
+                basic_auth_val).decode().split(':')
 
             user = User.query.filter_by(username=username).first()
             if user:
@@ -522,8 +523,6 @@ def register():
 @login_required
 def add():
     """add resource"""
-    if not g.user.is_authenticated():
-        return render_template('add.html')
     if request.method == 'GET':
         return render_template('add.html')
     resource_type = request.form['resource_type']

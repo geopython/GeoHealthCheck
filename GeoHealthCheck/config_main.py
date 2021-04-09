@@ -50,6 +50,7 @@ GHC_SITE_TITLE = 'GeoHealthCheck Demonstration'
 GHC_SITE_URL = 'http://host'
 GHC_RUNNER_IN_WEBAPP = True
 GHC_REQUIRE_WEBAPP_AUTH = False
+GHC_BASIC_AUTH_DISABLED = False
 # 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL
 GHC_LOG_LEVEL = 30
 GHC_LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -153,7 +154,7 @@ GHC_PROBE_DEFAULTS = {
         'probe_class': 'GeoHealthCheck.plugins.probe.sta.StaCaps'
     },
     'OGC:WFS3': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown'
+        'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Caps'
     },
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'

@@ -127,7 +127,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         :param version:
         :return: Metadata object
         """
-        return WebFeatureService(resource.url, version=version)
+        return WebFeatureService(resource.url,
+                                 version=version,
+                                 headers=self.get_request_headers())
 
     # Overridden: expand param-ranges from WFS metadata
     def expand_params(self, resource):
@@ -137,6 +139,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         try:
             wfs = self.get_metadata_cached(resource, version='1.1.0')
             feature_types = wfs.contents
+            if not feature_types:
+                raise Exception('No Feature Types in WFS')
+
             feature_type_names = list(feature_types.keys())
             self.layer_count = len(feature_type_names)
 
@@ -176,10 +181,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             #             oper.formatOptions
             #         break
 
-            # Take random feature_type to determine generic attrs
-            for feature_type_name in feature_types:
-                feature_type_entry = feature_types[feature_type_name]
-                break
+            # Take first feature_type to determine generic attrs
+            feature_type_entry = feature_types[feature_type_names[0]]
 
             # SRS
             crs_list = feature_type_entry.crsOptions

@@ -8,6 +8,7 @@ source /venv/bin/activate
 # NB we use gunicorn/eventlet async workers as some Probes may take a long time
 # e.g. fetching Metadata (Caps) and testing all layers
 # Install Python packages for installation and setup
+pip install --upgrade pip
 pip install -I -r /GeoHealthCheck/docker/scripts/requirements.txt
 
 cd /GeoHealthCheck
@@ -26,4 +27,3 @@ then
 	# Remove to allow later Volume mount of /plugins
 	rm -rf /plugins
 fi
-
