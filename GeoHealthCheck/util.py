@@ -35,7 +35,6 @@ import base64
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from urllib.request import urlopen
 from urllib.parse import urlparse
 from gettext import translation
 from passlib.hash import pbkdf2_sha256
