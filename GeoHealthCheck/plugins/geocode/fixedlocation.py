@@ -10,7 +10,7 @@ class FixedLocation(Geocoder):
 
     NAME = 'Fixed geolocation'
 
-    DESCRIPTION = 'Geolocater service returning a fixed position (so ' \
+    DESCRIPTION = 'Geolocator service returning a fixed position (so ' \
                   'actually no real geolocation).'
 
     LATITUDE = 0

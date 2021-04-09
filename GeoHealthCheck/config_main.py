@@ -179,7 +179,7 @@ GHC_PROBE_DEFAULTS = {
 
 # Entry for Geocoder plugin
 # Use this service to locate the configured servers on a map. In case you want
-# to use fixed location (i.e. no geolocater service), use the `FixedLocation`:
+# to use fixed location (i.e. no geolocator service), use the `FixedLocation`:
 # GEOIP = {
 #     'plugin': 'GeoHealthCheck.plugins.geocode.fixedlocation.FixedLocation',
 #     'parameters': {

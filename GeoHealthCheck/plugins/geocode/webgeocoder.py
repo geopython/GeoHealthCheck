@@ -15,7 +15,7 @@ class HttpGeocoder(Geocoder):
 
     NAME = 'Http geocoder plugin'
 
-    DESCRIPTION = 'Geolocater service via a http request. Use a subclass of ' \
+    DESCRIPTION = 'Geolocator service via a http request. Use a subclass of ' \
                   'this plugin and implement the make_call function.'
 
     PARAM_DEFS = {}
@@ -159,7 +159,7 @@ class HttpGetGeocoder(HttpGeocoder):
 
     NAME = 'Http geocoder plugin based on a GET request.'
 
-    DESCRIPTION = 'Geolocater service via a http GET request.'
+    DESCRIPTION = 'Geolocator service via a http GET request.'
 
     def __init__(self):
         super().__init__()
@@ -187,7 +187,7 @@ class HttpPostGeocoder(HttpGeocoder):
 
     NAME = 'Http geocoder plugin based on a POST request.'
 
-    DESCRIPTION = 'Geolocater service via a http POST request.'
+    DESCRIPTION = 'Geolocator service via a http POST request.'
 
     def __init__(self):
         super().__init__()
