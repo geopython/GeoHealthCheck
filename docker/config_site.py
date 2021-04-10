@@ -108,7 +108,8 @@ GHC_MAP = {
 GEOIP = {
     'plugin': 'GeoHealthCheck.plugins.geocode.webgeocoder.HttpGetGeocoder',
     'parameters': {
-        'geocoder_url': 'http://ip-api.com/json/{hostname}',
-        'lat_field': 'lat',
-        'lon_field': 'lon'
+        'geocoder_url': os.environ['GHC_GEOIP_URL'],
+        'lat_field': os.environ['GHC_GEOIP_LATFIELD'],
+        'lon_field': os.environ['GHC_GEOIP_LONFIELD']
+    }
 }
