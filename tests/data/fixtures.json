@@ -86,12 +86,12 @@
         "tiling"
       ]
     },
-    "PYGEOAPI FEATURES": {
+    "LDPROXY FEATURES": {
       "owner": "admin",
       "resource_type": "OSGeo:WFS3",
       "active": true,
-      "title": "pygeoapi - master",
-      "url": "https://demo.pygeoapi.io/master",
+      "title": "LDproxy Daraa",
+      "url": "https://demo.ldproxy.net/daraa",
       "tags": [
         "ogc"
       ]
@@ -223,15 +223,15 @@
         "extension" : "png"
       }
     },
-    "PYGEOAPI - Drilldown": {
-      "resource": "PYGEOAPI FEATURES",
+    "LDPROXY - Drilldown": {
+      "resource": "LDPROXY FEATURES",
       "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown",
       "parameters": {
         "drilldown_level": "full"
       }
     },
-    "PYGEOAPI - OpenAPI": {
-      "resource": "PYGEOAPI FEATURES",
+    "LDPROXY - OpenAPI": {
+      "resource": "LDPROXY FEATURES",
       "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3OpenAPIValidator",
       "parameters": {}
     },
