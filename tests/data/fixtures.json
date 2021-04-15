@@ -76,23 +76,22 @@
       "url": "http://geo.woudc.org/def",
       "tags": []
     },
-    "PDOK TMS": {
+    "OPENGEOGROEP TMS": {
       "owner": "admin",
       "resource_type": "OSGeo:TMS",
       "active": true,
       "title": "Tile Map Service",
-      "url": "http://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0",
+      "url": "https://www.openbasiskaart.nl/mapcache/tms/1.0.0/",
       "tags": [
-        "tiling",
-        "pdok"
+        "tiling"
       ]
     },
-    "PYGEOAPI FEATURES": {
+    "LDPROXY FEATURES": {
       "owner": "admin",
       "resource_type": "OSGeo:WFS3",
       "active": true,
-      "title": "pygeoapi - master",
-      "url": "https://demo.pygeoapi.io/master",
+      "title": "LDproxy Daraa",
+      "url": "https://demo.ldproxy.net/daraa",
       "tags": [
         "ogc"
       ]
@@ -203,36 +202,36 @@
       "probe_class": "GeoHealthCheck.plugins.probe.http.HttpGet",
       "parameters": {}
     },
-    "PDOK TMS - PING": {
-      "resource": "PDOK TMS",
+    "OPENGEOGROEP TMS - PING": {
+      "resource": "OPENGEOGROEP TMS",
       "probe_class": "GeoHealthCheck.plugins.probe.http.HttpGet",
       "parameters": {}
     },
-    "PDOK TMS - Caps": {
-      "resource": "PDOK TMS",
+    "OPENGEOGROEP TMS - Caps": {
+      "resource": "OPENGEOGROEP TMS",
       "probe_class": "GeoHealthCheck.plugins.probe.tms.TmsCaps",
       "parameters": {}
     },
-    "PDOK TMS - TopTile": {
-      "resource": "PDOK TMS",
+    "OPENGEOGROEP TMS - TopTile": {
+      "resource": "OPENGEOGROEP TMS",
       "probe_class": "GeoHealthCheck.plugins.probe.tms.TmsGetTile",
       "parameters": {
-        "layer": "brtachtergrondkaart",
+        "layer": "osm@rd",
         "zoom": "0",
         "x": "0",
         "y": "0",
         "extension" : "png"
       }
     },
-    "PYGEOAPI - Drilldown": {
-      "resource": "PYGEOAPI FEATURES",
+    "LDPROXY - Drilldown": {
+      "resource": "LDPROXY FEATURES",
       "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown",
       "parameters": {
         "drilldown_level": "full"
       }
     },
-    "PYGEOAPI - OpenAPI": {
-      "resource": "PYGEOAPI FEATURES",
+    "LDPROXY - OpenAPI": {
+      "resource": "LDPROXY FEATURES",
       "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3OpenAPIValidator",
       "parameters": {}
     },
@@ -326,25 +325,25 @@
         "strings": ["RDF>"]
       }
     },
-    "PDOK TMS - HTTP - NoError": {
-      "probe_vars": "PDOK TMS - PING",
+    "OPENGEOGROEP TMS - HTTP - NoError": {
+      "probe_vars": "OPENGEOGROEP TMS - PING",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpStatusNoError",
       "parameters": {}
     },
-    "PDOK TMS - Caps - XML Parse": {
-      "probe_vars": "PDOK TMS - Caps",
+    "OPENGEOGROEP TMS - Caps - XML Parse": {
+      "probe_vars": "OPENGEOGROEP TMS - Caps",
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
       "parameters": {}
     },
-    "PDOK TMS - Caps - TileMap": {
-      "probe_vars": "PDOK TMS - Caps",
+    "OPENGEOGROEP TMS - Caps - TileMap": {
+      "probe_vars": "OPENGEOGROEP TMS - Caps",
       "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
       "parameters": {
         "strings": ["<TileMap"]
       }
     },
-    "PDOK TMS - TopTile - Content Type": {
-      "probe_vars": "PDOK TMS - TopTile",
+    "OPENGEOGROEP TMS - TopTile - Content Type": {
+      "probe_vars": "OPENGEOGROEP TMS - TopTile",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     }
