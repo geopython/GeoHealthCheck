@@ -67,7 +67,7 @@
                 <th>{{ _("Notify emails") }}</th>
                 <td>
                     <label>{{ _('You can enter multiple emails separated with comma') }}</label>
-                    <input type="text" class="form-control" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(', ') }}"/>
+                    <input type="text" class="form-control" id="input_resource_notify_emails" name="resource_notify_emails_value" value="{{ resource.get_recipients('email')|join(',') }}"/>
                 </td>
             </tr>
 
@@ -349,7 +349,7 @@ or
         var new_active = $('#input_resource_active').prop('checked');
 
         // Collect recipients
-        var new_notify_emails = $('#input_resource_notify_emails').val().split(',');
+        var new_notify_emails = $('#input_resource_notify_emails').val().replace(' ','').split(',');
         var new_notify_webhooks = [];
 
         $('textarea[name="resource_notify_webhooks_value"]').each(function(idx, elm){
