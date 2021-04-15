@@ -52,7 +52,8 @@ class Geocoder(Plugin):
         :param hostname string: the hostname of the server for which we want
                                 the coords.
 
-        TODO: return result as tuple with location in lat-lon like: (52.4, 21.0)
+        TODO: return result as tuple with location in lat-lon. Example:
+              `(52.4, 21.0)`
         """
         pass
 
