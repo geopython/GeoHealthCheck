@@ -684,11 +684,13 @@ def update(resource_identifier):
 
                 update_counter += 1
             elif key == 'notify_emails':
-                resource.set_recipients('email',
-                                        [v for v in value if v.strip()])
+                resource.set_recipients(
+                    'email',
+                    [v.strip() for v in value if v.strip()])
             elif key == 'notify_webhooks':
-                resource.set_recipients('webhook',
-                                        [v for v in value if v.strip()])
+                resource.set_recipients(
+                    'webhook',
+                    [v.strip() for v in value if v.strip()])
             elif key == 'auth':
                 resource.auth = value
             elif getattr(resource, key) != resource_identifier_dict[key]:
