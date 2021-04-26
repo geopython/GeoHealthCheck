@@ -3,8 +3,10 @@
 # This prepares an empty Ubuntu system for running Docker.
 #
 # Just van den Broecke - 2017
-
-# Based on
+# DEPRECATED - 2021 update:  there are much quicker ways
+# See https://docs.docker.com/engine/install/ubuntu/
+#
+# Below was based on
 # https://docs.docker.com/engine/installation/linux/ubuntu/
 # as on may 26 2017.
 # Run as root or prepend all commands with "sudo"!
