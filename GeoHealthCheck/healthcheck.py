@@ -183,15 +183,15 @@ def sniff_test_resource(config, resource_type, url):
             raise ValueError(message)
 
         if resource_type == 'WWW:LINK':
-            content_type = ows.info().getheader('Content-Type')
+            content_type = ows.info().get('Content-Type')
 
-            # Check content if the response is not an image
+            # When response is not an image try parse out Title and any Exceptions
             if 'image/' not in content_type:
                 content = ows.read()
                 import re
                 try:
-                    title_re = re.compile("<title>(.+?)</title>")
-                    title = title_re.search(content).group(1)
+                    title_re = re.compile('<title>(.+?)</title>'.encode())
+                    title = title_re.search(content).group(1).decode()
                 except Exception:
                     title = url
 
@@ -200,8 +200,8 @@ def sniff_test_resource(config, resource_type, url):
                     exception_text = None
                     try:
                         except_re = re.compile(
-                            "ServiceException>|ExceptionReport>")
-                        exception_text = except_re.search(content).group(0)
+                            'ServiceException>|ExceptionReport>'.encode())
+                        exception_text = except_re.search(content).group(0).decode()
                     except Exception:
                         # No Exception in Response text
                         pass
