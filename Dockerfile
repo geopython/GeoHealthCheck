@@ -44,6 +44,9 @@ ENV LC_ALL="en_US.UTF-8" \
 	GHC_SMTP_SSL=False \
 	GHC_SMTP_USERNAME=None \
 	GHC_SMTP_PASSWORD=None \
+	GHC_GEOIP_URL='http://ip-api.com/json/{hostname}' \
+	GHC_GEOIP_LATFIELD='lat' \
+	GHC_GEOIP_LONFIELD='lon' \
 	GHC_METADATA_CACHE_SECS=900 \
     \
 # WSGI server settings, assumed is gunicorn  \
