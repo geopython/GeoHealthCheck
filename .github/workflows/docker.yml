@@ -1,4 +1,4 @@
-name: Build and Push GeoHealthCheck Docker Image
+name: Docker Build and Push to DockerHub
 
 # Controls when the action will run. Triggers the workflow on push
 # events and PRs but only for the master branch
