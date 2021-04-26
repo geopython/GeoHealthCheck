@@ -1,0 +1,43 @@
+name: Docker Build and Push to DockerHub
+
+# Controls when the action will run. Triggers the workflow on push
+# events and PRs but only for the master branch
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+
+# Ignore PRs (permission problem for DockerHub)
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  # Single job now to build Docker Image and push to DockerHub
+  push_to_registry:
+    name: Build and Push Docker Image to Docker Hub
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      # TODO v2 is almost out with new syntax
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: geopython/geohealthcheck
+          tags: latest
+          # tag_with_ref: true
+          # tag_with_sha: true
