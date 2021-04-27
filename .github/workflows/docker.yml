@@ -42,10 +42,17 @@ jobs:
           elif [[ $GITHUB_REF == refs/pull/* ]]; then
             VERSION=pr-${{ github.event.number }}
           fi
+          if [[ $VERSION == master ]]; then
+            VERSION=latest
+          fi
           TAGS="${DOCKER_IMAGE}:${VERSION}"
+          echo ::set-output name=image::${DOCKER_IMAGE}
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+
+      - name: Show Image Settings
+        run: echo "IMAGE=${{ steps.prep.outputs.image }} VERSION=${{ steps.prep.outputs.version }} TAGS=${{ steps.prep.outputs.tags }}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -70,8 +77,8 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
 
       - name: GHC Unit Tests with Docker Image
-        run: docker run  --entrypoint "/run-tests.sh" geopython/geohealthcheck:${{ steps.prep.outputs.version }}
+        run: docker run  --entrypoint "/run-tests.sh" ${{ steps.prep.outputs.image }}:${{ steps.prep.outputs.version }}
 
       - name: Push to Docker repo (on GH Push only)
         if: ${{ github.event_name == 'push' }}
-        run: docker push geopython/geohealthcheck:${{ steps.prep.outputs.version }}
+        run: docker push ${{ steps.prep.outputs.image }}:${{ steps.prep.outputs.version }}
