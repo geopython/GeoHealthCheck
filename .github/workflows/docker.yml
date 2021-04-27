@@ -1,8 +1,10 @@
 name: Docker Build and Push to DockerHub
 
-# Author: Just van den Broecke
-# Controls when the action will run. Triggers the workflow on push
-# events and PRs but only for the master branch. Runs GHC unit tests as well.
+# Triggers a Docker workflow on push events and PRs but
+# pushes to DockerHub only for push on the master branch.
+# Runs GHC unit tests before DOcker push.
+#
+# Author: Just van den Broecke - 2021
 #
 on:
   push:
@@ -16,10 +18,10 @@ on:
       - '**.md'
 
 jobs:
-  # Single job now to build Docker Image and push to DockerHub
-  push_to_registry:
+  # Single job now to build Docker Image, run GHC unit tests, and push to DockerHub
+  build_test_push:
 
-    name: Build and Push Docker Image to Docker Hub
+    name: Build, Test then Push Docker Image to DockerHub
 
     runs-on: ubuntu-latest
 
