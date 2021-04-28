@@ -26,6 +26,8 @@ jobs:
 
     - name: Install requirements 📦
       run: |
+        python -m pip3 install --upgrade pip3
+        pip3 install wheel
         pip3 install -r requirements.txt
         pip3 install -r requirements-dev.txt
         paver setup

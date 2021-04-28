@@ -62,7 +62,7 @@
       "resource_type": "OGC:WMTS",
       "active": true,
       "title": "NASA Global Imagery Browse Services for EOSDIS",
-      "url": "http://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
+      "url": "https://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
       "tags": [
         "ows",
         "tiling"
