@@ -3,7 +3,7 @@
 #
 # Author: Just van den Broecke - 2021
 #
-name: build ⚙️
+name: Main GHC CI ⚙️
 
 on: [ push, pull_request ]
 
@@ -36,19 +36,19 @@ jobs:
         paver setup
         echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
 
-    - name: Flake8 verify coding standards ⚙️
+    - name: Flake8 - Verify Coding Conventions ⚙️
       run: flake8
 
     - name: Load Fixtures Test Data ⚙️
       run: python GeoHealthCheck/models.py load tests/data/fixtures.json y
 
-    - name: Run probes ⚙️
+    - name: Run Probes ⚙️
       run: python GeoHealthCheck/healthcheck.py
 
     - name: Run Unit Tests ⚙️
       run: python tests/run_tests.py
 
-    - name: Build docs 📖
+    - name: Build Docs 📖
       run: cd docs && make html
 
     - name: Cleanup 💯

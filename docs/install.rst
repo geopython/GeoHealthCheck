@@ -221,7 +221,7 @@ Use Docker!
 
 When running GHC in long-term production environment the following is recommended:
 
-* use Docker, see the `GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/tree/master/docker>`_
+* use Docker, see the `Docker Readme <https://github.com/geopython/GeoHealthCheck/tree/master/docker>`_
 
 Using Docker, especially with Docker Compose (sample files provided) is our #1 recommendation. It saves
 all the hassle from installing the requirements, upgrades etc. Docker (Compose) is also used to run the GHC demo site
@@ -251,7 +251,7 @@ Use virtualenv
 ..............
 
 This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`! Starting with python 3.3
-a `venv script <https://docs.python.org/3.3/library/venv.html>` is provided and from python 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`
+a `venv script <https://docs.python.org/3.3/library/venv.html>`_ is provided and from python 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`_
 is included in the standard library.
 
 Use SSL (HTTPS)

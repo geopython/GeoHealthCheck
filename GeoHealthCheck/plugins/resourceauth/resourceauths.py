@@ -80,15 +80,14 @@ class BasicAuth(ResourceAuth):
     def encode_auth_header_val(self):
         """
         Get encoded authorization header value from config data.
-        Authorization scheme-specific.
-         {
+        Authorization scheme-specific. ::
+          {
             'type': 'Basic',
             'data': {
                 'username': 'the_user',
                 'password': 'the_password'
              }
-        }
-
+          }
 
         :return: None or http Basic auth header value
         """
@@ -150,13 +149,14 @@ class BearerTokenAuth(ResourceAuth):
     def encode_auth_header_val(self):
         """
         Get encoded authorization header value from config data.
-        Authorization scheme-specific.
-         {
+        Authorization scheme-specific. ::
+
+          {
             'type': 'Bearer Token',
             'data': {
                 'token': 'the_token'
              }
-        }
+          }
 
         :return: None or http auth header value
         """
