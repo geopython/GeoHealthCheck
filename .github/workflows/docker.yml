@@ -1,11 +1,11 @@
-name: Docker Build
-
 # Triggers a Docker workflow on push events and PRs but
 # pushes to DockerHub only for push on the master branch.
 # Runs GHC unit tests before DockerHub push.
 #
 # Author: Just van den Broecke - 2021
 #
+name: Docker Build
+
 on:
   push:
     branches:

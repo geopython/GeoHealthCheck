@@ -1,9 +1,9 @@
-name: build ⚙️
 # Main GHC CI workflow. Inspired by
 # https://github.com/geopython/pycsw/blob/master/.github/workflows/main.yml
 #
 # Author: Just van den Broecke - 2021
 #
+name: build ⚙️
 
 on: [ push, pull_request ]
 
@@ -24,16 +24,17 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install requirements 📦
+    - name: Install Requirements 📦
       run: |
-        python -m pip3 install --upgrade pip3
-        pip3 install wheel
-        pip3 install -r requirements.txt
-        pip3 install -r requirements-dev.txt
-        paver setup
+        python -m pip install --upgrade pip
+        pip install wheel
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
 
-    - name: Create GHC App and init DB 🗃️
-      run:  echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
+    - name: Setup GHC App and init DB 🗃️
+      run: |
+        paver setup
+        echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
 
     - name: Flake8 verify coding standards ⚙️
       run: flake8
