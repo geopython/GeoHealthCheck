@@ -61,8 +61,8 @@
       "owner": "admin",
       "resource_type": "OGC:WMTS",
       "active": true,
-      "title": "NASA Global Imagery Browse Services for EOSDIS",
-      "url": "http://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
+      "title": "Dutch Kadaster PDOK WMTS",
+      "url": "https://geodata.nationaalgeoregister.nl/tiles/service/wmts",
       "tags": [
         "ows",
         "tiling"
@@ -80,7 +80,7 @@
       "owner": "admin",
       "resource_type": "OSGeo:TMS",
       "active": true,
-      "title": "Tile Map Service",
+      "title": "OpenBasisKaart Tile Map Service",
       "url": "https://www.openbasiskaart.nl/mapcache/tms/1.0.0/",
       "tags": [
         "tiling"

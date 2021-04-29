@@ -149,7 +149,7 @@ which needs to be translated in `msgstr'` as seen below.  ::
 Compiling Language Files
 ........................
 
-At runtime compiled versions, `*.mo` files, of the language-files are used.
+At runtime compiled versions, `.mo` files, of the language-files are used.
 Easiest to compile is via: `paver compile_translations` in the project root dir.
 This basically calls ``pybabel compile` with the proper options.
 Now you can e.g. test your new translations by starting GHC.
@@ -170,7 +170,7 @@ Missing translations will have `msgstr ""` like in this excerpt: ::
 	msgid "Status summary"
 	msgstr ""
 
-Next all empty `msgstr`s can be filled.
+Next all empty `msgstr` can be filled.
 
 Updating is easiest using the command `paver update_translations` within the root dir of the project.
 This will basically call `pybabel extract` followed by `pybabel update` with the proper parameters.
