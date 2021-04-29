@@ -142,7 +142,7 @@ class XmlParse(Check):
 
     def perform(self):
         try:
-            etree.fromstring(self.probe.response.content)
+            etree.fromstring(self.probe.response.content, parser=etree.XMLParser(huge_tree=True))
         except Exception:
             self.set_result(False, str(sys.exc_info()))
 
