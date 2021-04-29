@@ -1,5 +1,6 @@
 import sys
 from owslib.etree import etree
+from GeoHealthCheck.util import CONFIG
 from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.check import Check
 from html import escape
@@ -142,7 +143,9 @@ class XmlParse(Check):
 
     def perform(self):
         try:
-            etree.fromstring(self.probe.response.content, parser=etree.XMLParser(huge_tree=True))
+            etree.fromstring(
+                self.probe.response.content,
+                parser=etree.XMLParser(huge_tree=CONFIG['GHC_LARGE_XML']))
         except Exception:
             self.set_result(False, str(sys.exc_info()))
 
