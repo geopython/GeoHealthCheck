@@ -2,5 +2,4 @@ Paver==1.3.4
 psycopg2==2.7.5
 eventlet==0.24.1
 gunicorn==19.9.0
-lxml==4.6.3
 Werkzeug==0.16.1
