@@ -18,7 +18,7 @@
       "resource_type": "OGC:WMS",
       "active": true,
       "title": "PDOK BAG Web Map Service",
-      "url": "http://geodata.nationaalgeoregister.nl/bag/wms/v1_1",
+      "url": "https://geodata.nationaalgeoregister.nl/bag/wms/v1_1",
       "tags": [
         "ows",
         "pdok"
@@ -29,7 +29,7 @@
       "resource_type": "OGC:WMS",
       "active": true,
       "title": "PDOK BAG Web Map Service",
-      "url": "http://geodata.nationaalgeoregister.nl/bag/wms/v1_1",
+      "url": "https://geodata.nationaalgeoregister.nl/bag/wms/v1_1",
       "tags": [
         "ows",
         "pdok"
@@ -50,7 +50,7 @@
       "resource_type": "OGC:WFS",
       "active": true,
       "title": "PDOK BAG Web Feature Service",
-      "url": "http://geodata.nationaalgeoregister.nl/bag/wfs/v1_1",
+      "url": "https://geodata.nationaalgeoregister.nl/bag/wfs/v1_1",
       "tags": [
         "ows",
         "pdok"

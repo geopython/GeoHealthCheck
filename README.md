@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/geopython/GeoHealthCheck.png)](https://travis-ci.org/geopython/GeoHealthCheck)
-[![Join the chat at https://gitter.im/geopython/GeoHealthCheck](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/geopython/GeoHealthCheck) 
+[![CI Build](https://github.com/geopython/GeoHealthCheck/actions/workflows/main.yml/badge.svg)](https://github.com/geopython/GeoHealthCheck/actions/workflows/main.yml)
 [![Docker Build](https://github.com/geopython/GeoHealthCheck/actions/workflows/docker.yml/badge.svg)](https://github.com/geopython/GeoHealthCheck/actions/workflows/docker.yml)
-[![Full Documentation](https://img.shields.io/badge/ReadTheDocs-online-green.svg)](http://docs.geohealthcheck.org)
+[![Full Documentation](https://img.shields.io/badge/ReadTheDocs-online-green.svg)](https://docs.geohealthcheck.org)
+[![Gitter](https://img.shields.io/gitter/room/geopython/GeoHealthCheck.svg?style=flat-square)](https://gitter.im/geopython/GeoHealthCheck)
 
 GeoHealthCheck
 ==============
