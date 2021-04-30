@@ -22,6 +22,7 @@ The configuration options are:
 - **GHC_NOTIFICATIONS**: turn on email notifications
 - **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)
 - **GHC_WWW_LINK_EXCEPTION_CHECK**: turn on checking for OGC Exceptions in ``WWW:LINK`` Resource responses (default ``False``)
+- **GHC_LARGE_XML**: allows GeoHealthCheck to receive large XML files from the servers under test (default ``False``). Note: setting this to ``True`` might pose a security risk (see `this link <https://lxml.de/FAQ.html#is-lxml-vulnerable-to-xml-bombs>`_).
 - **GHC_ADMIN_EMAIL**: email address of administrator / contact- notification emails will come from this address
 - **GHC_NOTIFICATIONS_EMAIL**: list of email addresses that notifications should come to. Use a different address to **GHC_ADMIN_EMAIL** if you have trouble receiving notification emails. Also, you can set separate notification emails to specific resources. Failing resource will send notification to emails from **GHC_NOTIFICATIONS_EMAIL** value and emails configured for that specific resource altogether.
 - **GHC_SITE_TITLE**: title used for installation / deployment
