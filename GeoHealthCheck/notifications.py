@@ -217,7 +217,7 @@ def do_webhook(config, resource, run, status_changed, result):
 
         try:
             r = requests.post(url, params)
-            LOGGER.info("webhook deployed, got %s as reposnse",
+            LOGGER.info("webhook deployed, got %s as response",
                         r)
         except requests.exceptions.RequestException as err:
             LOGGER.warning("cannot deploy webhook %s: %s",
