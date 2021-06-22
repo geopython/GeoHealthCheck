@@ -19,7 +19,7 @@ The configuration options are:
 - **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a Probe response after the given number of seconds
 - **GHC_MINIMAL_RUN_FREQUENCY_MINS**: minimal run frequency for Resource that can be set in web UI
 - **GHC_SELF_REGISTER**: allow registrations from users on the website
-- **GHC_NOTIFICATIONS**: turn on email notifications
+- **GHC_NOTIFICATIONS**: turn on email and webhook notifications
 - **GHC_NOTIFICATIONS_VERBOSITY**: receive additional email notifications than just ``Failing`` and ``Fixed`` (default ``True``)
 - **GHC_WWW_LINK_EXCEPTION_CHECK**: turn on checking for OGC Exceptions in ``WWW:LINK`` Resource responses (default ``False``)
 - **GHC_LARGE_XML**: allows GeoHealthCheck to receive large XML files from the servers under test (default ``False``). Note: setting this to ``True`` might pose a security risk (see `this link <https://lxml.de/FAQ.html#is-lxml-vulnerable-to-xml-bombs>`_).
