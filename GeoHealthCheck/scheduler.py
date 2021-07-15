@@ -244,7 +244,7 @@ def update_job(resource):
 def add_job(resource):
     LOGGER.info('Starting job for resource=%d' % resource.identifier)
     freq = resource.run_frequency
-    next_run_time = datetime.now() + timedelta(minutes=random.randint(0, freq))
+    next_run_time = datetime.now() + timedelta(seconds=random.randint(0, freq*60))
     scheduler.add_job(
         run_job, 'interval', args=[resource.identifier, freq],
         minutes=freq, next_run_time=next_run_time, max_instances=1,
