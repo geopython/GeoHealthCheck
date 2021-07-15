@@ -278,21 +278,17 @@ class Probe(Plugin):
 
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
 
-        try:
-            if self.REQUEST_METHOD == 'GET':
-                # Default is plain URL, e.g. for WWW:LINK
-                url = url_base
-                if request_string:
-                    # Query String: mainly OWS:* resources
-                    url = "%s%s" % (url, request_string)
+        if self.REQUEST_METHOD == 'GET':
+            # Default is plain URL, e.g. for WWW:LINK
+            url = url_base
+            if request_string:
+                # Query String: mainly OWS:* resources
+                url = "%s%s" % (url, request_string)
 
-                self.response = self.perform_get_request(url)
-            elif self.REQUEST_METHOD == 'POST':
-                self.response = self.perform_post_request(
-                    url_base, request_string)
-        except requests.exceptions.RequestException as e:
-            msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
-            self.result.set(False, msg)
+            self.response = self.perform_get_request(url)
+        elif self.REQUEST_METHOD == 'POST':
+            self.response = self.perform_post_request(
+                url_base, request_string)
 
         if self.response:
             self.log('response: status=%d' % self.response.status_code)
@@ -321,12 +317,7 @@ class Probe(Plugin):
             self.before_request()
             self.result.start()
 
-            try:
-                self.perform_request()
-            except Exception as e:
-                msg = "Perform_request Err: %s %s" % \
-                      (e.__class__.__name__, str(e))
-                self.result.set(False, msg)
+            self.perform_request()
 
             self.result.stop()
             self.after_request()

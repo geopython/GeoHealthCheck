@@ -173,12 +173,9 @@ class TmsGetTileAll(TmsGetTile):
         """ Before request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
-        try:
-            self.tms = self.get_metadata_cached(self._resource,
-                                                version='1.0.0')
-            self.layers = self.tms.contents
-        except Exception as err:
-            self.result.set(False, str(err))
+        self.tms = self.get_metadata_cached(self._resource,
+                                            version='1.0.0')
+        self.layers = self.tms.contents
 
     def perform_request(self):
         """ Perform actual request to service, overridden from base class"""

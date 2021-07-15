@@ -240,12 +240,9 @@ class WfsGetFeatureBboxAll(WfsGetFeatureBbox):
         """ Before request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
-        try:
-            self.wfs = self.get_metadata_cached(self._resource,
-                                                version='1.1.0')
-            self.feature_types = self.wfs.contents.keys()
-        except Exception as err:
-            self.result.set(False, str(err))
+        self.wfs = self.get_metadata_cached(self._resource,
+                                            version='1.1.0')
+        self.feature_types = self.wfs.contents.keys()
 
     def perform_request(self):
         """ Perform actual request to service, overridden from base class"""
