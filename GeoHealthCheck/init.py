@@ -67,7 +67,10 @@ class App:
 
         # Read and override configs
         app.config.from_pyfile('config_main.py')
-        app.config.from_pyfile('../instance/config_site.py')
+        # config_site.py not present in doc-build: silently fail
+        sphinx_build = os.environ.get('SPHINX_BUILD', '0')
+        app.config.from_pyfile('../instance/config_site.py',
+                               silent=sphinx_build == '1')
         app.config.from_envvar('GHC_SETTINGS', silent=True)
 
         # Global Logging config
