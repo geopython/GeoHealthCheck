@@ -11,8 +11,8 @@ lxml==4.6.3
 OWSLib==0.20.0
 jsonschema==3.0.2 # downgrade from 3.2.0 on sept 29, 2020, issue 331, consider better fix
 openapi-spec-validator==0.2.8
-Sphinx==3.3.0
-sphinx-rtd-theme==0.5.0
+Sphinx==4.1.1
+sphinx-rtd-theme==0.5.2
 requests>=2.23.0
 WTForms==2.2.1
 APScheduler==3.6.1
