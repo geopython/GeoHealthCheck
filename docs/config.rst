@@ -152,7 +152,7 @@ Compiling Language Files
 
 At runtime compiled versions, `.mo` files, of the language-files are used.
 Easiest to compile is via: `paver compile_translations` in the project root dir.
-This basically calls ``pybabel compile` with the proper options.
+This basically calls `pybabel compile` with the proper options.
 Now you can e.g. test your new translations by starting GHC.
 
 Updating Language Files

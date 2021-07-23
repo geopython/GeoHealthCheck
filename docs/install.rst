@@ -119,7 +119,7 @@ Notes:
   - assign `Probes` and `Checks` to each `Resource` via the UI
 
 When running with Docker see the
-`Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
+`GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
 how to run `paver upgrade` within your Docker Container.
 
 Upgrade notes v0.5.0
