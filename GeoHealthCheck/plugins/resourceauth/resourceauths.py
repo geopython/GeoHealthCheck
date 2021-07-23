@@ -81,13 +81,14 @@ class BasicAuth(ResourceAuth):
         """
         Get encoded authorization header value from config data.
         Authorization scheme-specific. ::
-          {
-            'type': 'Basic',
-            'data': {
+
+            {
+              'type': 'Basic',
+              'data': {
                 'username': 'the_user',
                 'password': 'the_password'
-             }
-          }
+              }
+            }
 
         :return: None or http Basic auth header value
         """
