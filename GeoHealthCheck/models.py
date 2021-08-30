@@ -420,6 +420,13 @@ class Resource(DB.Model):
         return '<Resource %r %r>' % (self.identifier, self.title)
 
     @property
+    def run_count(self):
+        if not hasattr(self, '_run_count'):
+            setattr(self, '_run_count', self.runs.count())
+
+        return self._run_count
+
+    @property
     def get_capabilities_url(self):
         if self.resource_type.startswith('OGC:') \
                 and self.resource_type not in \
@@ -428,57 +435,80 @@ class Resource(DB.Model):
                             RESOURCE_TYPES[self.resource_type]['capabilities'])
         else:
             url = self.url
+
         return url
 
     @property
     def all_response_times(self):
-        result = [0]
-        if self.runs.count() > 0:
-            result = [run.response_time for run in self.runs]
-        return result
+        if not hasattr(self, '_all_response_times'):
+            result = [0]
+            if self.run_count > 0:
+                result = [run.response_time for run in self.runs]
+
+            setattr(self, '_all_response_times', result)
+
+        return self._all_response_times
 
     @property
     def first_run(self):
-        return self.runs.order_by(
-            Run.checked_datetime.asc()).first()
+        if not hasattr(self, '_first_run'):
+            _first_run = self.runs.order_by(Run.checked_datetime.asc()).first()
+            setattr(self, '_first_run', _first_run)
+
+        return self._first_run
 
     @property
     def last_run(self):
-        return self.runs.order_by(
-            Run.checked_datetime.desc()).first()
+        if not hasattr(self, '_last_run'):
+            _last_run = self.runs.order_by(Run.checked_datetime.desc()).first()
+            setattr(self, '_last_run', _last_run)
+
+        return self._last_run
 
     @property
     def average_response_time(self):
-        result = 0
-        if self.runs.count() > 0:
-            query = [run.response_time for run in self.runs]
-            result = util.average(query)
-        return result
+        if not hasattr(self, '_average_response_time'):
+            result = 0
+            if self.run_count > 0:
+                query = [run.response_time for run in self.runs]
+                result = util.average(query)
+            setattr(self, '_average_response_time', result)
+
+        return self._average_response_time
 
     @property
     def min_response_time(self):
-        result = 0
-        if self.runs.count() > 0:
-            query = [run.response_time for run in self.runs]
-            result = min(query)
-        return result
+        if not hasattr(self, '_min_response_time'):
+            result = 0
+            if self.run_count > 0:
+                query = [run.response_time for run in self.runs]
+                result = min(query)
+            setattr(self, '_min_response_time', result)
+
+        return self._min_response_time
 
     @property
     def max_response_time(self):
-        result = 0
-        if self.runs.count() > 0:
-            query = [run.response_time for run in self.runs]
-            result = max(query)
-        return result
+        if not hasattr(self, '_max_response_time'):
+            result = 0
+            if self.run_count > 0:
+                query = [run.response_time for run in self.runs]
+                result = max(query)
+            setattr(self, '_max_response_time', result)
+
+        return self._max_response_time
 
     @property
     def reliability(self):
-        result = 0
-        if self.runs.count() > 0:
-            total_runs = self.runs.count()
-            success_runs = self.runs.filter_by(success=True).count()
-            result = util.percentage(success_runs, total_runs)
-        return result
+        if not hasattr(self, '_reliability'):
+            result = 0
+            if self.run_count > 0:
+                total_runs = self.run_count
+                success_runs = self.runs.filter_by(success=True).count()
+                result = util.percentage(success_runs, total_runs)
+            setattr(self, '_reliability', result)
+
+        return self._reliability
 
     @property
     def tags2csv(self):
