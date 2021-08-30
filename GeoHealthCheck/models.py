@@ -73,7 +73,8 @@ class Run(DB.Model):
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_identifier = DB.Column(DB.Integer,
-                                    DB.ForeignKey('resource.identifier'))
+                                    DB.ForeignKey('resource.identifier'),
+                                    index=True)
     resource = DB.relationship('Resource',
                                backref=DB.backref('runs', lazy='dynamic',
                                                   cascade="all,delete"))
@@ -144,7 +145,8 @@ class ProbeVars(DB.Model):
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_identifier = DB.Column(DB.Integer,
-                                    DB.ForeignKey('resource.identifier'))
+                                    DB.ForeignKey('resource.identifier'),
+                                    index=True)
     resource = DB.relationship(
         'Resource', backref=DB.backref('probe_vars',
                                        lazy='dynamic',
@@ -188,8 +190,9 @@ class CheckVars(DB.Model):
     """Identifies and parameterizes check function, applies to single Probe"""
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
-    probe_vars_identifier = DB.Column(
-        DB.Integer, DB.ForeignKey('probe_vars.identifier'))
+    probe_vars_identifier = DB.Column(DB.Integer,
+                                      DB.ForeignKey('probe_vars.identifier'),
+                                      index=True)
     probe_vars = DB.relationship(
         'ProbeVars', backref=DB.backref(
             'check_vars', cascade="all, delete-orphan"))
@@ -231,9 +234,11 @@ resource_tags = DB.Table('resource_tags',
                          DB.Column('identifier', DB.Integer, primary_key=True,
                                    autoincrement=True),
                          DB.Column('tag_id', DB.Integer,
-                                   DB.ForeignKey('tag.id')),
+                                   DB.ForeignKey('tag.id'),
+                                   index=True),
                          DB.Column('resource_identifier', DB.Integer,
-                                   DB.ForeignKey('resource.identifier')))
+                                   DB.ForeignKey('resource.identifier'),
+                                   index=True))
 
 
 def _validate_webhook(value):
@@ -391,7 +396,9 @@ class Resource(DB.Model):
     url = DB.Column(DB.Text, nullable=False)
     latitude = DB.Column(DB.Float)
     longitude = DB.Column(DB.Float)
-    owner_identifier = DB.Column(DB.Text, DB.ForeignKey('user.username'))
+    owner_identifier = DB.Column(DB.Text,
+                                 DB.ForeignKey('user.username'),
+                                 index=True)
     owner = DB.relationship('User',
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
@@ -625,8 +632,9 @@ class ResourceLock(DB.Model):
 
     identifier = DB.Column(DB.Integer,
                            primary_key=True, autoincrement=False, unique=True)
-    resource_identifier = DB.Column(
-        DB.Integer, DB.ForeignKey('resource.identifier'), unique=True)
+    resource_identifier = DB.Column(DB.Integer,
+                                    DB.ForeignKey('resource.identifier'),
+                                    unique=True)
     resource = DB.relationship('Resource',
                                backref=DB.backref('locks', lazy='dynamic',
                                                   cascade="all,delete"))
