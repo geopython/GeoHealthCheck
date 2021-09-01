@@ -9,9 +9,9 @@
 
 {{ _('Details') }}:
 
-{{ _('Date') }}: {{ resource.last_run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} 
+{{ _('Date') }}: {{ run.checked_datetime.strftime('%Y-%m-%dT%H:%M:%SZ') }} 
 
-{{ _('Message') }}: {{ resource.last_run.message }}
+{{ _('Message') }}: {{ run.message }}
 
 {{ _('Details') }}: {{ config.GHC_SITE_URL }}/resource/{{resource.identifier}}
 
