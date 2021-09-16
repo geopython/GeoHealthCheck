@@ -82,9 +82,10 @@ class App:
 
         app.secret_key = app.config['SECRET_KEY']
         SQLALCHEMY_ENGINE_OPTIONS = {
-                                 'pool_pre_ping': True
+                                 'pool_pre_ping': app.config['SQLALCHEMY_ENGINE_OPTION_PRE_PING']
                                  }
-        App.db_instance = SQLAlchemy(app, engine_options=SQLALCHEMY_ENGINE_OPTIONS)
+        App.db_instance = SQLAlchemy(app, 
+                                     engine_options=SQLALCHEMY_ENGINE_OPTIONS)
         App.babel_instance = Babel(app)
 
         # Plugins (via Docker ENV) must be list, but may have been
