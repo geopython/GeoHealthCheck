@@ -65,6 +65,8 @@ class App:
         # Do init once
         app = Flask(__name__)
 
+        app.url_map.strict_slashes = False
+
         # Read and override configs
         app.config.from_pyfile('config_main.py')
         # config_site.py not present in doc-build: silently fail
