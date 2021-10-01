@@ -266,7 +266,7 @@ class Probe(Plugin):
                 self.REQUEST_TEMPLATE = '&' + self.REQUEST_TEMPLATE[1:]
 
             if self._parameters:
-                request_parms = self._parameters
+                request_parms = Plugin.copy(self._parameters)
                 param_defs = self.get_param_defs()
 
                 # Expand string list array to comma separated string
