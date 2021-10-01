@@ -111,6 +111,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.wfs3',
     'GeoHealthCheck.plugins.probe.esrifs',
     'GeoHealthCheck.plugins.probe.ghcreport',
+    'GeoHealthCheck.plugins.probe.wmts'
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
