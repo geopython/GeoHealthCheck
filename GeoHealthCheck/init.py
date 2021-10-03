@@ -82,9 +82,11 @@ class App:
 
         app.secret_key = app.config['SECRET_KEY']
         SQLALCHEMY_ENGINE_OPTIONS = {
-                                 'pool_pre_ping': app.config['SQLALCHEMY_ENGINE_OPTION_PRE_PING']
+                                 'pool_pre_ping': app.config[
+                                     'SQLALCHEMY_ENGINE_OPTION_PRE_PING'
+                                     ]
                                  }
-        App.db_instance = SQLAlchemy(app, 
+        App.db_instance = SQLAlchemy(app,
                                      engine_options=SQLALCHEMY_ENGINE_OPTIONS)
         App.babel_instance = Babel(app)
 
