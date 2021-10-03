@@ -70,7 +70,8 @@ LANGUAGES = (
     ('de', 'German'),
     ('nl_NL', 'Nederlands (Nederland)'),
     ('es_BO', 'Español (Bolivia)'),
-    ('hr_HR', 'Croatian (Croatia)')
+    ('hr_HR', 'Croatian (Croatia)'),
+    ('pt_BR', 'Portuguese (Brazil)')
 )
 
 # Should GHC Runner be run within GHC webapp?
