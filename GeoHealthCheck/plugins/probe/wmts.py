@@ -29,51 +29,51 @@ class WmtsGetTile(Probe):
             'description': 'The WMTS Layer, select one',
             'default': [],
             'required': True,
-            'range': None
+            'range': None,
         },
         'tilematrixset': {
             'type': 'string',
             'description': 'tilematrixset',
-            'value': 'All TileMatrixSets'
+            'value': 'All TileMatrixSets',
         },
         'tilematrix': {
             'type': 'string',
             'description': 'tilematrix',
-            'value': 'All TileMatrices'
+            'value': 'All TileMatrices',
         },
         'tilerow': {
             'type': 'string',
             'description': 'tilerow',
-            'value': 'Center of the Image'
+            'value': 'Center of the Image',
         },
         'tilecol': {
             'type': 'string',
             'description': 'tilecol',
-            'value': 'Center of the Image'
+            'value': 'Center of the Image',
         },
         'format': {
             'type': 'string',
             'description': 'The image format',
             'default': 'image/png',
             'required': True,
-            'range': None
+            'range': None,
         },
         'exceptions': {
             'type': 'string',
             'description': 'The Exception format to use',
-            'value': 'application/vnd.ogc.se_xml'
+            'value': 'application/vnd.ogc.se_xml',
         },
         'style': {
             'type': 'string',
             'description': 'The Styles to apply',
-            'value': 'default'
+            'value': 'default',
         },
         'kvprest': {
             'type': 'string',
             'description': 'Request the endpoint through KVP or Rest',
             'default': 'KVP',
             'required': True,
-            'range': ['KVP', 'Rest']
+            'range': ['KVP', 'Rest'],
         },
     }
     """Param defs"""
@@ -239,7 +239,7 @@ class WmtsGetTileAll(WmtsGetTile):
         'layers': {
             'type': 'stringlist',
             'description': 'The WMTS Layer, select one',
-            'value': 'All Layers'
+            'value': ['All Layers']
         },
         'tilematrixset': {
             'type': 'string',
@@ -252,6 +252,11 @@ class WmtsGetTileAll(WmtsGetTile):
             'value': 'All TileMatrices',
             'description': 'tilerow',
             'value': 'Center of the Image'
+        },
+        'tilerow': {
+            'type': 'string',
+            'description': 'tilerow',
+            'value': 'Center of the Image',
         },
         'tilecol': {
             'type': 'string',
@@ -308,3 +313,19 @@ class WmtsGetTileAll(WmtsGetTile):
 
         except Exception as err:
             raise err
+
+    def before_request(self):
+        """ Before request to service, overridden from base class"""
+
+        # Get capabilities doc to get all layers
+        try:
+            self.wmts = self.get_metadata_cached(self._resource,
+                                                 version='1.0.0')
+            self.layers = self.wmts.contents
+
+            if self._parameters['kvprest'] == 'Rest':
+                self.REQUEST_TEMPLATE = '/wmts/{layers}/{tilematrixset}' + \
+                                        '/{tilematrix}/{tilecol}/{tilerow}.png'
+
+        except Exception as err:
+            self.result.set(False, str(err))
