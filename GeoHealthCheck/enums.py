@@ -91,5 +91,8 @@ RESOURCE_TYPES = {
     },
     'GHC:Report': {
         'label': 'GeoHealthCheck Reporter (GHC-R)'
-    }
+    },
+    'MBTiles': {
+        'label': 'MBTiles'
+    },
 }
