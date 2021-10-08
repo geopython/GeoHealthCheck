@@ -72,7 +72,6 @@ class MBTiles(Probe):
 
                 # try:
                 self.response = Probe.perform_get_request(self, zoom_url)
-                self.check_response()
                 self.run_checks()
                 # except requests.exceptions.RequestException as e:
                 #     msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
