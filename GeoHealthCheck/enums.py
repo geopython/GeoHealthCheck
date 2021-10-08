@@ -93,6 +93,6 @@ RESOURCE_TYPES = {
         'label': 'GeoHealthCheck Reporter (GHC-R)'
     },
     'MBTiles': {
-        'label': 'MBTiles'
+        'label': 'Mapbox Vector Tiles Service'
     },
 }
