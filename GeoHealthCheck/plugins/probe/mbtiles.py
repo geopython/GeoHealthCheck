@@ -27,14 +27,18 @@ class MBTiles(Probe):
         if url_base[-1] == '/':
             url_base = url_base[0:-2]
 
-        try:
+        if url_base.endswith('.json'):
+            json_url = url_base
+        else:
             json_url = url_base + '.json'
-            self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, json_url))
-            self.response = Probe.perform_get_request(self, json_url)
-            self.check_response()
-        except requests.exceptions.RequestException as e:
-            msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
-            self.result.set(False, msg)
+
+        # try:
+        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, json_url))
+        self.response = Probe.perform_get_request(self, json_url)
+        self.check_response()
+        # except requests.exceptions.RequestException as e:
+        #     msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
+        #     self.result.set(False, msg)
 
         tile_info = self.response.json()
 
@@ -66,18 +70,20 @@ class MBTiles(Probe):
                 # Determine the tile URL.
                 zoom_url = tile_url.format(**zxy)
 
-                try:
-                    self.response = Probe.perform_get_request(self, zoom_url)
-                    self.run_checks()
-                except requests.exceptions.RequestException as e:
-                    msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
-                    self.result.set(False, msg)
+                # try:
+                self.response = Probe.perform_get_request(self, zoom_url)
+                self.check_response()
+                self.run_checks()
+                # except requests.exceptions.RequestException as e:
+                #     msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
+                #     self.result.set(False, msg)
 
     def check_response(self):
         if self.response:
             self.log('response: status=%d' % self.response.status_code)
             if self.response.status_code / 100 in [4, 5]:
-                self.log('Error response: %s' % (str(self.response.text)))
+                msg = 'Error response: %s' % (str(self.response.text))
+                self.result.set(False, msg)
 
     # Formula to calculate spherical mercator coordinates.
     # Beware the axis order. When dealing with geodetic coordinates (latitude/longitude), it is
