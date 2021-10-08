@@ -65,7 +65,7 @@ class MBTiles(Probe):
             try:
                 zoom_list = range(tile_info['minzoom'], tile_info['maxzoom'] + 1)
             except:
-                zoom_list = range(0, 24)
+                zoom_list = range(0, 23)
 
             for zoom in zoom_list:
                 tile_count = 2 ** zoom
