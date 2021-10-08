@@ -37,8 +37,11 @@ class MBTiles(Probe):
 
         tile_info = self.response.json()
 
+        if not tile_info['tilejson'].startswith('2'):
+            self.result.set(False, 'Only versions 2.x.x are supported')
+
         center_coords = tile_info['center']
-        
+
         if not center_coords:
             # Center is optional, if non-existent: get bounds from metadata
 
@@ -64,7 +67,7 @@ class MBTiles(Probe):
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
 
             zoom_list = range(tile_info['minzoom'], tile_info['maxzoom'] + 1)
-            
+
             if not zoom_list:
                 zoom_list = range(0, 23)
 
