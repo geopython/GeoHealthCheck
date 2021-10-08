@@ -17,9 +17,6 @@ class MBTiles(Probe):
         'GeoHealthCheck.plugins.check.checks.HttpStatusNoError': {
             'default': True
         },
-        # 'GeoHealthCheck.plugins.check.checks.HttpHasHeaderValue': {
-        #     'default': True
-        # },
     }
     """Checks avail"""
 
