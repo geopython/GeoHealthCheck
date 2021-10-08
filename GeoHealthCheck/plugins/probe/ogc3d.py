@@ -23,7 +23,7 @@ class B3DMTileset(Probe):
         url_base = self._resource.url
 
         # Remove trailing '/' if present
-        if url_base[-1] == '/':
+        if url_base.endswith('/'):
             url_base = url_base[0:-2]
 
         try:
