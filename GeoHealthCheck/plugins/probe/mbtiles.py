@@ -9,7 +9,7 @@ class MBTiles(Probe):
     """
 
     NAME = 'MBTiles'
-    DESCRIPTION = 'MBTiles'
+    DESCRIPTION = 'Mapbox Vector Tiles Service Probe'
     RESOURCE_TYPE = 'MBTiles'
     REQUEST_METHOD = 'GET'
 
@@ -33,7 +33,7 @@ class MBTiles(Probe):
             json_url = url_base + '.json'
 
         # try:
-        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, json_url))
+        self.log('Requesting: %s url=%s' %(self.REQUEST_METHOD, json_url))
         self.response = Probe.perform_get_request(self, json_url)
         self.check_response()
         # except requests.exceptions.RequestException as e:
