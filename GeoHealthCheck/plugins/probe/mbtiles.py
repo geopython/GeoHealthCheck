@@ -1,7 +1,6 @@
 from GeoHealthCheck.probe import Probe
-import requests
 import math
-from pyproj import Proj, transform
+
 
 class MBTiles(Probe):
     """
@@ -32,13 +31,9 @@ class MBTiles(Probe):
         else:
             json_url = url_base + '.json'
 
-        # try:
-        self.log('Requesting: %s url=%s' %(self.REQUEST_METHOD, json_url))
+        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, json_url))
         self.response = Probe.perform_get_request(self, json_url)
         self.check_response()
-        # except requests.exceptions.RequestException as e:
-        #     msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
-        #     self.result.set(False, msg)
 
         tile_info = self.response.json()
 
@@ -56,7 +51,7 @@ class MBTiles(Probe):
             wm_coords = self.to_wm(lat, lon)
 
         # Circumference (2 * pi * Semi-major Axis)
-        circ = 2 * math.pi * 6378137.0  
+        circ = 2 * math.pi * 6378137.0
 
         # For calculating the relative tile index for zoom levels
         x_rel = (circ / 2 + wm_coords[0]) / circ
@@ -66,7 +61,8 @@ class MBTiles(Probe):
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
 
             try:
-                zoom_list = range(tile_info['minzoom'], tile_info['maxzoom'] + 1)
+                zoom_list = range(tile_info['minzoom'],
+                                  tile_info['maxzoom'] + 1)
             except:
                 zoom_list = range(0, 23)
 
@@ -81,12 +77,8 @@ class MBTiles(Probe):
                 # Determine the tile URL.
                 zoom_url = tile_url.format(**zxy)
 
-                # try:
                 self.response = Probe.perform_get_request(self, zoom_url)
                 self.run_checks()
-                # except requests.exceptions.RequestException as e:
-                #     msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
-                #     self.result.set(False, msg)
 
     def check_response(self):
         if self.response:
@@ -96,11 +88,9 @@ class MBTiles(Probe):
                 self.result.set(False, msg)
 
     # Formula to calculate spherical mercator coordinates.
-    # Beware the axis order. When dealing with geodetic coordinates (latitude/longitude), it is
-    # customary to call these in this order, although when treating them as XY, both values should be
-    # swapped.
     def to_wm(self, lat, lon):
         x = 6378137.0 * math.radians(lon)
         scale = x / lon
-        y = math.degrees(math.log(math.tan(math.pi / 4.0 + math.radians(lat) / 2.0)) * scale)
+        y = math.degrees(math.log(math.tan(
+            math.pi / 4.0 + math.radians(lat) / 2.0)) * scale)
         return (x, y)
