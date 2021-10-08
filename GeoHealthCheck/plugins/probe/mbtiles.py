@@ -81,7 +81,7 @@ class MBTiles(Probe):
     def check_response(self):
         if self.response:
             self.log('response: status=%d' % self.response.status_code)
-            if self.response.status_code / 100 in [4, 5]:
+            if self.response.status_code // 100 in [4, 5]:
                 msg = 'Error response: %s' % (str(self.response.text))
                 self.result.set(False, msg)
 
