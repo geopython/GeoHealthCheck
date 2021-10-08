@@ -37,18 +37,21 @@ class MBTiles(Probe):
 
         tile_info = self.response.json()
 
-        try:
-            wm_coords = tile_info['center']
-        except:
+        center_coords = tile_info['center']
+        
+        if not center_coords:
             # Center is optional, if non-existent: get bounds from metadata
-            try:
-                lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
-                lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
-            except:
+
+            lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
+            lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+
+            if not lat and not lon:
                 lat, lon = 0, 0
 
             # Convert bound coordinates to WebMercator
             wm_coords = self.to_wm(lat, lon)
+        else:
+            wm_coords = center_coords
 
         # Circumference (2 * pi * Semi-major Axis)
         circ = 2 * math.pi * 6378137.0
@@ -60,10 +63,9 @@ class MBTiles(Probe):
         for tile_url in tile_info['tiles']:
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
 
-            try:
-                zoom_list = range(tile_info['minzoom'],
-                                  tile_info['maxzoom'] + 1)
-            except:
+            zoom_list = range(tile_info['minzoom'], tile_info['maxzoom'] + 1)
+            
+            if not zoom_list:
                 zoom_list = range(0, 23)
 
             for zoom in zoom_list:
