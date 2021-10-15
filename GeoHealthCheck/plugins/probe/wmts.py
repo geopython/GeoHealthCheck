@@ -70,10 +70,10 @@ class WmtsGetTile(Probe):
         },
         'kvprest': {
             'type': 'string',
-            'description': 'Request the endpoint through KVP or Rest',
+            'description': 'Request the endpoint through KVP or REST',
             'default': 'KVP',
             'required': True,
-            'range': ['KVP', 'Rest'],
+            'range': ['KVP', 'REST'],
         },
     }
     """Param defs"""
@@ -117,7 +117,7 @@ class WmtsGetTile(Probe):
             wmts = self.get_metadata_cached(resource, version='1.0.0')
 
             if wmts.restonly:
-                self.PARAM_DEFS['kvprest']['range'] = ['Rest']
+                self.PARAM_DEFS['kvprest']['range'] = ['REST']
 
             layers = wmts.contents
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
@@ -142,7 +142,7 @@ class WmtsGetTile(Probe):
                                                  version='1.0.0')
             self.layers = self._parameters['layers']
 
-            if self._parameters['kvprest'] == 'Rest':
+            if self._parameters['kvprest'] == 'REST':
                 self.REQUEST_TEMPLATE = '/wmts/{layers}/{tilematrixset}' + \
                                         '/{tilematrix}/{tilecol}/{tilerow}.png'
 
@@ -285,7 +285,7 @@ class WmtsGetTileAll(WmtsGetTile):
             'description': 'Request the endpoint through KVP or Rest',
             'default': 'KVP',
             'required': True,
-            'range': ['KVP', 'Rest']
+            'range': ['KVP', 'REST']
         }
     }
     """Param defs"""
@@ -299,7 +299,7 @@ class WmtsGetTileAll(WmtsGetTile):
             wmts = self.get_metadata_cached(resource, version='1.0.0')
 
             if wmts.restonly:
-                self.PARAM_DEFS['kvprest']['range'] = ['Rest']
+                self.PARAM_DEFS['kvprest']['range'] = ['REST']
 
             layers = wmts.contents
 
@@ -323,7 +323,7 @@ class WmtsGetTileAll(WmtsGetTile):
                                                  version='1.0.0')
             self.layers = self.wmts.contents
 
-            if self._parameters['kvprest'] == 'Rest':
+            if self._parameters['kvprest'] == 'REST':
                 self.REQUEST_TEMPLATE = '/wmts/{layers}/{tilematrixset}' + \
                                         '/{tilematrix}/{tilecol}/{tilerow}.png'
 
