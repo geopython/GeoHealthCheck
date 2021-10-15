@@ -25,7 +25,7 @@ class WmtsGetTile(Probe):
                         'EXCEPTIONS={exceptions}&STYLE={style}',
                         'REST':
                         '/wmts/{layers}/{tilematrixset}' + \
-                        '/{tilematrix}/{tilecol}/{tilerow}.png'
+                        '/{tilematrix}/{tilecol}/{tilerow}.{format}'
     }
 
 
@@ -40,27 +40,26 @@ class WmtsGetTile(Probe):
         'tilematrixset': {
             'type': 'string',
             'description': 'tilematrixset',
-            'value': 'All TileMatrixSets',
+            'value': 'All tilematrixsets',
         },
         'tilematrix': {
             'type': 'string',
             'description': 'tilematrix',
-            'value': 'All TileMatrices',
+            'value': 'All tilematrices',
         },
         'tilerow': {
             'type': 'string',
             'description': 'tilerow',
-            'value': 'Center of the Image',
+            'value': 'Center of the image',
         },
         'tilecol': {
             'type': 'string',
             'description': 'tilecol',
-            'value': 'Center of the Image',
+            'value': 'Center of the image',
         },
         'format': {
             'type': 'string',
             'description': 'The image format',
-            'default': 'image/png',
             'required': True,
             'range': None,
         },
@@ -77,7 +76,6 @@ class WmtsGetTile(Probe):
         'kvprest': {
             'type': 'string',
             'description': 'Request the endpoint through KVP or REST',
-            'default': 'KVP',
             'required': True,
             'range': ['KVP', 'REST'],
         },
@@ -150,6 +148,11 @@ class WmtsGetTile(Probe):
 
             self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[self._parameters['kvprest']]
 
+            if self._parameters['kvprest'] == 'REST':
+                r_url = self._resource.url
+                if '/wmts' in r_url:
+                    self._resource.url = r_url.split('/wmts')[0]
+
         except Exception as err:
             self.result.set(False, str(err))
 
@@ -167,25 +170,34 @@ class WmtsGetTile(Probe):
         for layer in self.layers:
             self._parameters['layers'] = [layer]
 
+            layer_object = self.wmts.contents[layer]
+
             # Get the boundingbox from capabilities to get
             # the center coordinate
-            bbox84 = self.wmts.contents[layer].boundingBoxWGS84
+            bbox84 = layer_object.boundingBoxWGS84
             center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
                                (bbox84[1] + bbox84[3]) / 2]
 
-            tilematrixsets = self.wmts.tilematrixsets
+            tilematrixsets = layer_object.tilematrixsetlinks
+
+            if self._parameters['kvprest'] == 'REST':
+                format = layer_object.formats[0]
+                self._parameters['format'] = format.split('/')[1]    
+
             for set in tilematrixsets:
                 self._parameters['tilematrixset'] = set
 
+                tilematrixset_object = self.wmts.tilematrixsets[set]
+
                 # Get projection from capabilities and transform
                 # the center coordinate
-                set_crs = tilematrixsets[set].crs
+                set_crs = tilematrixset_object.crs
                 center_coord = transform(Proj('EPSG:4326'),
-                                         Proj(set_crs),
-                                         center_coord_84[1],
-                                         center_coord_84[0])
+                                        Proj(set_crs),
+                                        center_coord_84[1],
+                                        center_coord_84[0])
 
-                tilematrices = tilematrixsets[set].tilematrix
+                tilematrices = tilematrixset_object.tilematrix
                 for zoom in tilematrices:
                     self._parameters['tilematrix'] = zoom
 
@@ -239,59 +251,7 @@ class WmtsGetTileAll(WmtsGetTile):
     Get WMTS GetTile for all layers.
     """
 
-    PARAM_DEFS = {
-        'layers': {
-            'type': 'stringlist',
-            'description': 'The WMTS Layer, select one',
-            'value': ['All Layers']
-        },
-        'tilematrixset': {
-            'type': 'string',
-            'description': 'tilematrixset',
-            'value': 'All TileMatrixSets'
-        },
-        'tilematrix': {
-            'type': 'string',
-            'description': 'tilematrix',
-            'value': 'All TileMatrices',
-            'description': 'tilerow',
-            'value': 'Center of the Image'
-        },
-        'tilerow': {
-            'type': 'string',
-            'description': 'tilerow',
-            'value': 'Center of the Image',
-        },
-        'tilecol': {
-            'type': 'string',
-            'description': 'tilecol',
-            'value': 'Center of the Image'
-        },
-        'format': {
-            'type': 'string',
-            'description': 'The image format',
-            'default': 'image/png',
-            'required': True,
-            'range': None
-        },
-        'exceptions': {
-            'type': 'string',
-            'description': 'The Exception format to use',
-            'value': 'application/vnd.ogc.se_xml'
-        },
-        'style': {
-            'type': 'string',
-            'description': 'The Styles to apply',
-            'value': 'default'
-        },
-        'kvprest': {
-            'type': 'string',
-            'description': 'Request the endpoint through KVP or Rest',
-            'default': 'KVP',
-            'required': True,
-            'range': ['KVP', 'REST']
-        }
-    }
+    PARAM_DEFS = WmtsGetTile.PARAM_DEFS
     """Param defs"""
 
     # Overridden: expand param-ranges from WMTS metadata
@@ -304,6 +264,12 @@ class WmtsGetTileAll(WmtsGetTile):
 
             if wmts.restonly:
                 self.PARAM_DEFS['kvprest']['range'] = ['REST']
+
+            self.PARAM_DEFS['layers'] = {
+                'type': 'stringlist',
+                'description': 'The WMTS layer, select one',
+                'value': ['All layers']
+            }
 
             layers = wmts.contents
 
@@ -322,12 +288,11 @@ class WmtsGetTileAll(WmtsGetTile):
         """ Before request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
+        WmtsGetTile.before_request(self)
         try:
             self.wmts = self.get_metadata_cached(self._resource,
                                                  version='1.0.0')
             self.layers = self.wmts.contents
-
-            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[self._parameters['kvprest']]
 
         except Exception as err:
             self.result.set(False, str(err))
