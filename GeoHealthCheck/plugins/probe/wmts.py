@@ -16,12 +16,18 @@ class WmtsGetTile(Probe):
     RESOURCE_TYPE = 'OGC:WMTS'
 
     REQUEST_METHOD = 'GET'
-    REQUEST_TEMPLATE = '?SERVICE=WMTS&VERSION=1.0.0&' + \
-                       'REQUEST=GetTile&LAYER={layers}&' + \
-                       'TILEMATRIXSET={tilematrixset}&' + \
-                       'TILEMATRIX={tilematrix}&TILEROW={tilerow}&' + \
-                       'TILECOL={tilecol}&FORMAT={format}&' + \
-                       'EXCEPTIONS={exceptions}&STYLE={style}'
+    REQUEST_TEMPLATE = {'KVP': 
+                        '?SERVICE=WMTS&VERSION=1.0.0&' + \
+                        'REQUEST=GetTile&LAYER={layers}&' + \
+                        'TILEMATRIXSET={tilematrixset}&' + \
+                        'TILEMATRIX={tilematrix}&TILEROW={tilerow}&' + \
+                        'TILECOL={tilecol}&FORMAT={format}&' + \
+                        'EXCEPTIONS={exceptions}&STYLE={style}',
+                        'REST':
+                        '/wmts/{layers}/{tilematrixset}' + \
+                        '/{tilematrix}/{tilecol}/{tilerow}.png'
+    }
+
 
     PARAM_DEFS = {
         'layers': {
@@ -142,9 +148,7 @@ class WmtsGetTile(Probe):
                                                  version='1.0.0')
             self.layers = self._parameters['layers']
 
-            if self._parameters['kvprest'] == 'REST':
-                self.REQUEST_TEMPLATE = '/wmts/{layers}/{tilematrixset}' + \
-                                        '/{tilematrix}/{tilecol}/{tilerow}.png'
+            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[self._parameters['kvprest']]
 
         except Exception as err:
             self.result.set(False, str(err))
@@ -323,9 +327,7 @@ class WmtsGetTileAll(WmtsGetTile):
                                                  version='1.0.0')
             self.layers = self.wmts.contents
 
-            if self._parameters['kvprest'] == 'REST':
-                self.REQUEST_TEMPLATE = '/wmts/{layers}/{tilematrixset}' + \
-                                        '/{tilematrix}/{tilecol}/{tilerow}.png'
+            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[self._parameters['kvprest']]
 
         except Exception as err:
             self.result.set(False, str(err))
