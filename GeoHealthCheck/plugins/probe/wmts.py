@@ -16,18 +16,18 @@ class WmtsGetTile(Probe):
     RESOURCE_TYPE = 'OGC:WMTS'
 
     REQUEST_METHOD = 'GET'
-    REQUEST_TEMPLATE = {'KVP': 
-                        '?SERVICE=WMTS&VERSION=1.0.0&' + \
-                        'REQUEST=GetTile&LAYER={layers}&' + \
-                        'TILEMATRIXSET={tilematrixset}&' + \
-                        'TILEMATRIX={tilematrix}&TILEROW={tilerow}&' + \
-                        'TILECOL={tilecol}&FORMAT={format}&' + \
-                        'EXCEPTIONS={exceptions}&STYLE={style}',
-                        'REST':
-                        '/wmts/{layers}/{tilematrixset}' + \
-                        '/{tilematrix}/{tilecol}/{tilerow}.{format}'
+    REQUEST_TEMPLATE = {
+        'KVP':
+            '?SERVICE=WMTS&VERSION=1.0.0&' +
+            'REQUEST=GetTile&LAYER={layers}&' +
+            'TILEMATRIXSET={tilematrixset}&' +
+            'TILEMATRIX={tilematrix}&TILEROW={tilerow}&' +
+            'TILECOL={tilecol}&FORMAT={format}&' +
+            'EXCEPTIONS={exceptions}&STYLE={style}',
+        'REST':
+            '/wmts/{layers}/{tilematrixset}' +
+            '/{tilematrix}/{tilecol}/{tilerow}.{format}'
     }
-
 
     PARAM_DEFS = {
         'layers': {
@@ -146,7 +146,8 @@ class WmtsGetTile(Probe):
                                                  version='1.0.0')
             self.layers = self._parameters['layers']
 
-            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[self._parameters['kvprest']]
+            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
+                self._parameters['kvprest']]
 
             if self._parameters['kvprest'] == 'REST':
                 r_url = self._resource.url
@@ -182,7 +183,7 @@ class WmtsGetTile(Probe):
 
             if self._parameters['kvprest'] == 'REST':
                 format = layer_object.formats[0]
-                self._parameters['format'] = format.split('/')[1]    
+                self._parameters['format'] = format.split('/')[1]
 
             for set in tilematrixsets:
                 self._parameters['tilematrixset'] = set
@@ -193,9 +194,9 @@ class WmtsGetTile(Probe):
                 # the center coordinate
                 set_crs = tilematrixset_object.crs
                 center_coord = transform(Proj('EPSG:4326'),
-                                        Proj(set_crs),
-                                        center_coord_84[1],
-                                        center_coord_84[0])
+                                         Proj(set_crs),
+                                         center_coord_84[1],
+                                         center_coord_84[0])
 
                 tilematrices = tilematrixset_object.tilematrix
                 for zoom in tilematrices:
@@ -224,7 +225,7 @@ class WmtsGetTile(Probe):
 
             self.result.results = []
 
-        self.result.results_failed = results_failed_total        
+        self.result.results_failed = results_failed_total
 
     def calculate_center_tile(self, center_coord, tilematrix):
         scale = tilematrix.scaledenominator
@@ -256,7 +257,6 @@ class WmtsGetTileAll(WmtsGetTile):
 
     # Overridden: expand param-ranges from WMTS metadata
     def expand_params(self, resource):
-        
         # Use WMTS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
