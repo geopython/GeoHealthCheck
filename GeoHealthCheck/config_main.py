@@ -178,7 +178,7 @@ GHC_PROBE_DEFAULTS = {
             'GeoHealthCheck.plugins.probe.ghcreport.GHCEmailReporter'
     },
     'OGC:3D': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.ogc3d.B3DMTileset'
+        'probe_class': 'GeoHealthCheck.plugins.probe.ogc3d.OGC3DTiles'
     },
 }
 

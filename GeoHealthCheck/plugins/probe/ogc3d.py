@@ -2,12 +2,12 @@ from GeoHealthCheck.probe import Probe
 import requests
 
 
-class B3DMTileset(Probe):
+class OGC3DTiles(Probe):
     """
     OGC3D
     """
 
-    NAME = 'OGC3D'
+    NAME = 'GET Tileset.json and data.b3dm'
     DESCRIPTION = 'OGC3D'
     RESOURCE_TYPE = 'OGC:3D'
     REQUEST_METHOD = 'GET'
@@ -24,7 +24,9 @@ class B3DMTileset(Probe):
 
         # Remove trailing '/' if present
         if url_base.endswith('/'):
-            url_base = url_base[0:-2]
+            url_base = url_base[:-1]
+        elif url_base.endswith('/tileset.json'):
+            url_base = url_base.split('/tileset.json')[0]
 
         try:
             tile_url = url_base + '/tileset.json'
@@ -32,8 +34,8 @@ class B3DMTileset(Probe):
             self.response = Probe.perform_get_request(self, tile_url)
             self.check_response()
         except requests.exceptions.RequestException as e:
-            #msg clear voor welk request
-            msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
+            msg = "Request Err: Couldn't get tileset.json %s %s" \
+                % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
 
         try:
@@ -43,16 +45,18 @@ class B3DMTileset(Probe):
             self.response = Probe.perform_get_request(self, data_url)
             self.check_response()
         except requests.exceptions.RequestException as e:
-            msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
+            msg = "Request Err: Couldn't get data.b3dm %s %s" \
+                % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
 
     def check_response(self):
         if self.response:
             self.log('response: status=%d' % self.response.status_code)
-            if self.response.status_code / 100 in [4, 5]:
+            if self.response.status_code // 100 in [4, 5]:
                 self.log('Error response: %s' % (str(self.response.text)))
 
     def get_3d_tileset_content_uri(self, tileset_json):
+        # Loop through tileset.json to find b3dm data url
         if 'content' in tileset_json['root']:
             return tileset_json['root']['content']['uri']
 
