@@ -44,15 +44,15 @@ class MBTiles(Probe):
 
         if not center_coords:
             # Center is optional, if non-existent: get bounds from metadata
-
             lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
             lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
 
-            if not lat and not lon:
-                lat, lon = 0, 0
-
             # Convert bound coordinates to WebMercator
-            wm_coords = self.to_wm(lat, lon)
+            try:
+                wm_coords = self.to_wm(lat, lon)
+            except Exception as e:
+                self.result.set(False, 'Bounding box missing: %s' % (e))
+
         else:
             wm_coords = center_coords
 
@@ -66,10 +66,7 @@ class MBTiles(Probe):
         for tile_url in tile_info['tiles']:
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
 
-            zoom_list = range(tile_info['minzoom'], tile_info['maxzoom'] + 1)
-
-            if not zoom_list:
-                zoom_list = range(0, 23)
+            zoom_list = range(tile_info.get('minzoom', 0), tile_info.get('maxzoom', 22) + 1)
 
             for zoom in zoom_list:
                 tile_count = 2 ** zoom
