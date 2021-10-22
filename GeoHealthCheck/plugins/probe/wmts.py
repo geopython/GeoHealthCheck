@@ -1,6 +1,7 @@
 from GeoHealthCheck.probe import Probe
 from owslib.wmts import WebMapTileService
-from pyproj import Proj, transform
+from pyproj import CRS, Transformer
+import math
 
 
 class WmtsGetTile(Probe):
@@ -25,7 +26,7 @@ class WmtsGetTile(Probe):
             'TILECOL={tilecol}&FORMAT={format}&' +
             'EXCEPTIONS={exceptions}&STYLE={style}',
         'REST':
-            '/wmts/{layers}/{tilematrixset}' +
+            '/{layers}/{tilematrixset}' +
             '/{tilematrix}/{tilecol}/{tilerow}.{format}'
     }
 
@@ -77,7 +78,7 @@ class WmtsGetTile(Probe):
             'type': 'string',
             'description': 'Request the endpoint through KVP or REST',
             'required': True,
-            'range': ['KVP', 'REST'],
+            'range': [],
         },
     }
     """Param defs"""
@@ -120,8 +121,7 @@ class WmtsGetTile(Probe):
         try:
             wmts = self.get_metadata_cached(resource, version='1.0.0')
 
-            if wmts.restonly:
-                self.PARAM_DEFS['kvprest']['range'] = ['REST']
+            self.PARAM_DEFS['kvprest']['range'] = self.test_kvp_rest()
 
             layers = wmts.contents
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
@@ -137,6 +137,40 @@ class WmtsGetTile(Probe):
         except Exception as err:
             raise err
 
+    def test_kvp_rest(self):
+        restenc = False
+        kvpenc = False
+
+        url = self._resource.url
+
+        # If url ends with wmtscapabilities.xml it is REST only
+        if url.endswith('WMTSCapabilities.xml'):
+            return ['REST']
+
+        elif '?' in url:
+            return ['KVP']
+
+        else:
+            print('rest:', url + '/1.0.0/WMTSCapabilities.xml')
+            if self.check_capabilities(url + '/1.0.0/WMTSCapabilities.xml'):
+                restenc = True
+
+            url + '?service=WMTS&version=1.0.0&request=GetCapabilities'
+            if self.check_capabilities(url +
+                                       '?service=WMTS&version=1.0.0' +
+                                       '&request=GetCapabilities'):
+                kvpenc = True
+
+        print('url:', url, 'rest:', restenc, 'kvp:', kvpenc)
+
+        return [x for (x, remove) in zip(['KVP', 'REST'], [kvpenc, restenc])
+                if remove]
+
+    def check_capabilities(self, url):
+        response = Probe.perform_get_request(self, url)
+        return (response.status_code == 200 and
+                '<ServiceException>' not in response.text)
+
     def before_request(self):
         """ Before request to service, overridden from base class"""
 
@@ -146,13 +180,12 @@ class WmtsGetTile(Probe):
                                                  version='1.0.0')
             self.layers = self._parameters['layers']
 
+            if self._resource.url.endswith('/1.0.0/WMTSCapabilities.xml'):
+                self._resource.url = self._resource.url.split(
+                    '/1.0.0/WMTSCapabilities.xml')[0]
+
             self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
                 self._parameters['kvprest']]
-
-            if self._parameters['kvprest'] == 'REST':
-                r_url = self._resource.url
-                if '/wmts' in r_url:
-                    self._resource.url = r_url.split('/wmts')[0]
 
         except Exception as err:
             self.result.set(False, str(err))
@@ -192,11 +225,14 @@ class WmtsGetTile(Probe):
 
                 # Get projection from capabilities and transform
                 # the center coordinate
-                set_crs = tilematrixset_object.crs
-                center_coord = transform(Proj('EPSG:4326'),
-                                         Proj(set_crs),
-                                         center_coord_84[1],
-                                         center_coord_84[0])
+                set_crs = CRS(tilematrixset_object.crs)
+                transformer = Transformer.from_crs(CRS('EPSG:4326'),
+                                                   set_crs,
+                                                   always_xy=False)
+                center_coord = transformer.transform(center_coord_84[1],
+                                                     center_coord_84[0])
+
+                # print(center_coord, center_coord_84)
 
                 tilematrices = tilematrixset_object.tilematrix
                 for zoom in tilematrices:
@@ -204,7 +240,7 @@ class WmtsGetTile(Probe):
 
                     tilecol, tilerow = self.calculate_center_tile(
                         center_coord,
-                        tilematrices[zoom])
+                        tilematrices[zoom], set_crs)
                     self._parameters['tilecol'] = tilecol
                     self._parameters['tilerow'] = tilerow
 
@@ -227,13 +263,28 @@ class WmtsGetTile(Probe):
 
         self.result.results_failed = results_failed_total
 
-    def calculate_center_tile(self, center_coord, tilematrix):
+    def calculate_center_tile(self, center_coord, tilematrix, crs):
         scale = tilematrix.scaledenominator
-        topleftcorner = tilematrix.topleftcorner
+        topleftcorner = list(tilematrix.topleftcorner)
+        center_coord = list(center_coord)
+
+        first_axis = crs.axis_info[0].direction
+        unit = crs.axis_info[0].unit_name
+
+        if first_axis == 'north':
+            center_coord.reverse()
+            topleftcorner.reverse()
+
+        corr = {
+            'metre': [1, 1],
+            'degree': [(1 / (40075000 * math.cos(center_coord[0]) / 360)),
+                       (1 / 111320)],
+            'feet': [0.3048, 0.3048]
+        }
 
         # Calculate tile size
-        tilewidth = 0.00028 * scale * tilematrix.tilewidth
-        tileheight = 0.00028 * scale * tilematrix.tileheight
+        tilewidth = 0.00028 * scale * tilematrix.tilewidth * corr[unit][0]
+        tileheight = 0.00028 * scale * tilematrix.tileheight * corr[unit][1]
 
         # Calculate tile index of center tile in the right projection
         tilecol = int((center_coord[0] - topleftcorner[0]) / tilewidth)
@@ -262,8 +313,11 @@ class WmtsGetTileAll(WmtsGetTile):
         try:
             wmts = self.get_metadata_cached(resource, version='1.0.0')
 
-            if wmts.restonly:
-                self.PARAM_DEFS['kvprest']['range'] = ['REST']
+            try:
+                if wmts.restonly:
+                    self.PARAM_DEFS['kvprest']['range'] = ['REST']
+            except AttributeError:
+                self.PARAM_DEFS['kvprest']['range'] = ['KVP', 'REST']
 
             self.PARAM_DEFS['layers'] = {
                 'type': 'stringlist',
