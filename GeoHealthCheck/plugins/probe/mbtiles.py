@@ -46,15 +46,14 @@ class MBTiles(Probe):
             # Center is optional, if non-existent: get bounds from metadata
             lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
             lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
-
-            # Convert bound coordinates to WebMercator
-            try:
-                wm_coords = self.to_wm(lat, lon)
-            except Exception as e:
-                self.result.set(False, 'Bounding box missing: %s' % (e))
-
         else:
-            wm_coords = center_coords
+            lat, lon = center_coords[1], center_coords[0]
+
+        # Convert bound coordinates to WebMercator
+        try:
+            wm_coords = self.to_wm(lat, lon)
+        except Exception as e:
+            self.result.set(False, 'Error converting coordinates: %s' % (e))
 
         # Circumference (2 * pi * Semi-major Axis)
         circ = 2 * math.pi * 6378137.0
@@ -80,13 +79,17 @@ class MBTiles(Probe):
                 zoom_url = tile_url.format(**zxy)
 
                 self.response = Probe.perform_get_request(self, zoom_url)
-                self.run_checks()
+                if self.response.status_code == 204:
+                    msg = 'Error response 204: No content'
+                    self.result.set(False, msg)
+                else:
+                    self.run_checks()
 
     def check_response(self):
         if self.response:
             self.log('response: status=%d' % self.response.status_code)
             if self.response.status_code // 100 in [4, 5]:
-                msg = 'Error response: %s' % (str(self.response.text))
+                msg = 'Error response %s: %s' % (str(self.response.status_code), str(self.response.text))
                 self.result.set(False, msg)
 
     # Formula to calculate spherical mercator coordinates.
