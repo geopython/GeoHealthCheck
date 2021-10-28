@@ -240,8 +240,6 @@ class WmtsGetTile(Probe):
                 center_coord = transformer.transform(center_coord_84[1],
                                                      center_coord_84[0])
 
-                # print(center_coord, center_coord_84)
-
                 tilematrices = tilematrixset_object.tilematrix
                 for zoom in tilematrices:
                     self._parameters['tilematrix'] = zoom
@@ -311,9 +309,9 @@ class WmtsGetTileAll(WmtsGetTile):
     Get WMTS GetTile for all layers.
     """
 
-    NAME = 'Get WMTS GetTile for all layers.'
+    NAME = 'WMTS GetTile for all layers.'
     DESCRIPTION = """
-    Get WMTS GetTile for all layers.
+    WMTS GetTile for all layers.
     """
 
     PARAM_DEFS = Plugin.merge(WmtsGetTile.PARAM_DEFS, {})
