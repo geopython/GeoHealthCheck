@@ -2,6 +2,7 @@ from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.plugin import Plugin
 from owslib.wmts import WebMapTileService
 from pyproj import CRS, Transformer
+from pyproj.crs import coordinate_system
 import math
 
 
@@ -120,9 +121,9 @@ class WmtsGetTile(Probe):
         # Use WMTS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
-            wmts = self.get_metadata_cached(resource, version='1.0.0')
-
             self.PARAM_DEFS['kvprest']['range'] = self.test_kvp_rest()
+
+            wmts = self.get_metadata_cached(resource, version='1.0.0')
 
             layers = wmts.contents
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
@@ -150,20 +151,22 @@ class WmtsGetTile(Probe):
         if '?' in url:
             return ['KVP']
 
-        print('rest:', url + '/1.0.0/WMTSCapabilities.xml')
-        if self.check_capabilities(url + '/1.0.0/WMTSCapabilities.xml'):
-            encodings.append('REST')
-
         url + '?service=WMTS&version=1.0.0&request=GetCapabilities'
         if self.check_capabilities(url +
                                     '?service=WMTS&version=1.0.0' +
                                     '&request=GetCapabilities'):
             encodings.append('KVP')
 
+        if self.check_capabilities(url + '/1.0.0/WMTSCapabilities.xml'):
+            encodings.append('REST')
+
         return encodings
 
     def check_capabilities(self, url):
-        response = Probe.perform_get_request(self, url)
+        try:
+            response = Probe.perform_get_request(self, url)
+        except Exception:
+            return False
         return (response.status_code == 200 and
                 '<ServiceException' not in response.text)
 
@@ -177,10 +180,11 @@ class WmtsGetTile(Probe):
 
             self.layers = self._parameters['layers']
 
+            self.original_url = self._resource.url
+
             rest_url_end = '/1.0.0/WMTSCapabilities.xml'
             if self._resource.url.endswith(rest_url_end):
                 self._resource.url = self._resource.url[0:-len(rest_url_end)]
-                print('rest short:', self._resource.url)
 
             if '?' in self._resource.url:
                 self._resource.url = self._resource.url.split('?')[0]
@@ -190,6 +194,9 @@ class WmtsGetTile(Probe):
 
         except Exception as err:
             self.result.set(False, str(err))
+
+    def after_request(self):
+        self._resource.url = self.original_url
 
     def perform_request(self):
         """ Perform actual request to service, overridden from base class"""
@@ -276,16 +283,21 @@ class WmtsGetTile(Probe):
             center_coord.reverse()
             topleftcorner.reverse()
 
-        corr = {
-            'metre': [1, 1],
-            'degree': [(1 / (40075000 * math.cos(center_coord[0]) / 360)),
-                       (1 / 111320)],
-            'feet': [0.3048, 0.3048]
+
+        # Formula for degree conversion factor from: 
+        # https://stackoverflow.com/questions/639695/how-to-convert-latitude-or-longitude-to-meters
+        conv = {
+            'metre': [1],
+            'degree': [1 / (40075000 * math.cos(math.pi * center_coord[0] / 180) / 360),
+                       1 / 111320],
+            'foot': [coordinate_system.UNIT_FT['conversion_factor']],
+            'US survey foot': [
+                coordinate_system.UNIT_US_FT['conversion_factor']]
         }
 
         # Calculate tile size
-        tilewidth = 0.00028 * scale * tilematrix.tilewidth * corr[unit][0]
-        tileheight = 0.00028 * scale * tilematrix.tileheight * corr[unit][1]
+        tilewidth = 0.00028 * scale * tilematrix.tilewidth * conv[unit][0]
+        tileheight = 0.00028 * scale * tilematrix.tileheight * conv[unit][-1]
 
         # Calculate tile index of center tile in the right projection
         tilecol = int((center_coord[0] - topleftcorner[0]) / tilewidth)
@@ -307,10 +319,10 @@ class WmtsGetTileAll(WmtsGetTile):
     PARAM_DEFS = Plugin.merge(WmtsGetTile.PARAM_DEFS, {})
     """Param defs"""
 
-    # def __init__(self):
-    #     WmtsGetTile.__init__(self)
-        # self.wmts = None
-        # self.layers = None
+    def __init__(self):
+        WmtsGetTile.__init__(self)
+        self.wmts = None
+        self.layers = None
 
     # Overridden: expand param-ranges from WMTS metadata
     def expand_params(self, resource):
@@ -344,15 +356,14 @@ class WmtsGetTileAll(WmtsGetTile):
 
         # Get capabilities doc to get all layers
         try:
-            print('test1')
             self.wmts = self.get_metadata_cached(self._resource,
                                                     version='1.0.0')
-            print('test2')
+
+            self.original_url = self._resource.url
             
             rest_url_end = '/1.0.0/WMTSCapabilities.xml'
             if self._resource.url.endswith(rest_url_end):
                 self._resource.url = self._resource.url[0:-len(rest_url_end)]
-                print('rest short:', self._resource.url)
 
             if '?' in self._resource.url:
                 self._resource.url = self._resource.url.split('?')[0]
@@ -361,7 +372,6 @@ class WmtsGetTileAll(WmtsGetTile):
                 self._parameters['kvprest']]
 
             self.layers = self.wmts.contents
-            print('THIS', self.layers)
 
         except Exception as err:
             self.result.set(False, str(err))
