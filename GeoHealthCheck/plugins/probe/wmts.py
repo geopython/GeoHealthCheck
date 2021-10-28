@@ -1,4 +1,5 @@
 from GeoHealthCheck.probe import Probe
+from GeoHealthCheck.plugin import Plugin
 from owslib.wmts import WebMapTileService
 from pyproj import CRS, Transformer
 import math
@@ -138,8 +139,7 @@ class WmtsGetTile(Probe):
             raise err
 
     def test_kvp_rest(self):
-        restenc = False
-        kvpenc = False
+        encodings = []
 
         url = self._resource.url
 
@@ -147,29 +147,25 @@ class WmtsGetTile(Probe):
         if url.endswith('WMTSCapabilities.xml'):
             return ['REST']
 
-        elif '?' in url:
+        if '?' in url:
             return ['KVP']
 
-        else:
-            print('rest:', url + '/1.0.0/WMTSCapabilities.xml')
-            if self.check_capabilities(url + '/1.0.0/WMTSCapabilities.xml'):
-                restenc = True
+        print('rest:', url + '/1.0.0/WMTSCapabilities.xml')
+        if self.check_capabilities(url + '/1.0.0/WMTSCapabilities.xml'):
+            encodings.append('REST')
 
-            url + '?service=WMTS&version=1.0.0&request=GetCapabilities'
-            if self.check_capabilities(url +
-                                       '?service=WMTS&version=1.0.0' +
-                                       '&request=GetCapabilities'):
-                kvpenc = True
+        url + '?service=WMTS&version=1.0.0&request=GetCapabilities'
+        if self.check_capabilities(url +
+                                    '?service=WMTS&version=1.0.0' +
+                                    '&request=GetCapabilities'):
+            encodings.append('KVP')
 
-        print('url:', url, 'rest:', restenc, 'kvp:', kvpenc)
-
-        return [x for (x, remove) in zip(['KVP', 'REST'], [kvpenc, restenc])
-                if remove]
+        return encodings
 
     def check_capabilities(self, url):
         response = Probe.perform_get_request(self, url)
         return (response.status_code == 200 and
-                '<ServiceException>' not in response.text)
+                '<ServiceException' not in response.text)
 
     def before_request(self):
         """ Before request to service, overridden from base class"""
@@ -178,11 +174,16 @@ class WmtsGetTile(Probe):
         try:
             self.wmts = self.get_metadata_cached(self._resource,
                                                  version='1.0.0')
+
             self.layers = self._parameters['layers']
 
-            if self._resource.url.endswith('/1.0.0/WMTSCapabilities.xml'):
-                self._resource.url = self._resource.url.split(
-                    '/1.0.0/WMTSCapabilities.xml')[0]
+            rest_url_end = '/1.0.0/WMTSCapabilities.xml'
+            if self._resource.url.endswith(rest_url_end):
+                self._resource.url = self._resource.url[0:-len(rest_url_end)]
+                print('rest short:', self._resource.url)
+
+            if '?' in self._resource.url:
+                self._resource.url = self._resource.url.split('?')[0]
 
             self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
                 self._parameters['kvprest']]
@@ -303,8 +304,13 @@ class WmtsGetTileAll(WmtsGetTile):
     Get WMTS GetTile for all layers.
     """
 
-    PARAM_DEFS = WmtsGetTile.PARAM_DEFS
+    PARAM_DEFS = Plugin.merge(WmtsGetTile.PARAM_DEFS, {})
     """Param defs"""
+
+    # def __init__(self):
+    #     WmtsGetTile.__init__(self)
+        # self.wmts = None
+        # self.layers = None
 
     # Overridden: expand param-ranges from WMTS metadata
     def expand_params(self, resource):
@@ -313,19 +319,14 @@ class WmtsGetTileAll(WmtsGetTile):
         try:
             wmts = self.get_metadata_cached(resource, version='1.0.0')
 
-            try:
-                if wmts.restonly:
-                    self.PARAM_DEFS['kvprest']['range'] = ['REST']
-            except AttributeError:
-                self.PARAM_DEFS['kvprest']['range'] = ['KVP', 'REST']
+            self.PARAM_DEFS['kvprest']['range'] = self.test_kvp_rest()
 
+            layers = wmts.contents
             self.PARAM_DEFS['layers'] = {
                 'type': 'stringlist',
                 'description': 'The WMTS layer, select one',
                 'value': ['All layers']
             }
-
-            layers = wmts.contents
 
             # Take random layer to determine generic attrs
             for layer_name in layers:
@@ -342,11 +343,25 @@ class WmtsGetTileAll(WmtsGetTile):
         """ Before request to service, overridden from base class"""
 
         # Get capabilities doc to get all layers
-        WmtsGetTile.before_request(self)
         try:
+            print('test1')
             self.wmts = self.get_metadata_cached(self._resource,
-                                                 version='1.0.0')
+                                                    version='1.0.0')
+            print('test2')
+            
+            rest_url_end = '/1.0.0/WMTSCapabilities.xml'
+            if self._resource.url.endswith(rest_url_end):
+                self._resource.url = self._resource.url[0:-len(rest_url_end)]
+                print('rest short:', self._resource.url)
+
+            if '?' in self._resource.url:
+                self._resource.url = self._resource.url.split('?')[0]
+
+            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
+                self._parameters['kvprest']]
+
             self.layers = self.wmts.contents
+            print('THIS', self.layers)
 
         except Exception as err:
             self.result.set(False, str(err))
