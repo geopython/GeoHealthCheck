@@ -7,7 +7,7 @@ class OGC3DTiles(Probe):
     OGC3D
     """
 
-    NAME = 'GET Tileset.json and data.b3dm'
+    NAME = 'GET Tileset.json and tile data'
     DESCRIPTION = 'OGC3D'
     RESOURCE_TYPE = 'OGC:3D'
     REQUEST_METHOD = 'GET'
@@ -45,7 +45,7 @@ class OGC3DTiles(Probe):
             self.response = Probe.perform_get_request(self, data_url)
             self.check_response()
         except requests.exceptions.RequestException as e:
-            msg = "Request Err: Couldn't get data.b3dm %s %s" \
+            msg = "Request Err: Couldn't get tile data %s %s" \
                 % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
 
