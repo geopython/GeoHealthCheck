@@ -74,6 +74,9 @@ RESOURCE_TYPES = {
     'OGC:WFS3': {
         'label': 'OGC API Features (OAFeat)'
     },
+    'OGC:3D': {
+        'label': 'OGC 3D Tiles (OGC3D)'
+    },
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'
     },
@@ -91,8 +94,5 @@ RESOURCE_TYPES = {
     },
     'GHC:Report': {
         'label': 'GeoHealthCheck Reporter (GHC-R)'
-    },
-    'OGC:3D': {
-        'label': 'OGC 3D Tiles (OGC3D)'
     },
 }
