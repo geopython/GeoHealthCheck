@@ -110,9 +110,9 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.sta',
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
     'GeoHealthCheck.plugins.probe.wfs3',
+    'GeoHealthCheck.plugins.probe.ogc3d',
     'GeoHealthCheck.plugins.probe.esrifs',
     'GeoHealthCheck.plugins.probe.ghcreport',
-    'GeoHealthCheck.plugins.probe.ogc3d',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
@@ -159,6 +159,9 @@ GHC_PROBE_DEFAULTS = {
     'OGC:WFS3': {
         'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Caps'
     },
+    'OGC:3D': {
+    'probe_class': 'GeoHealthCheck.plugins.probe.ogc3d.OGC3DTiles'
+    },
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
     },
@@ -177,9 +180,6 @@ GHC_PROBE_DEFAULTS = {
     'GHC:Report': {
         'probe_class':
             'GeoHealthCheck.plugins.probe.ghcreport.GHCEmailReporter'
-    },
-    'OGC:3D': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.ogc3d.OGC3DTiles'
     },
 }
 
