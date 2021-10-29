@@ -104,6 +104,7 @@ GHC_PLUGINS = [
     # Probes
     'GeoHealthCheck.plugins.probe.owsgetcaps',
     'GeoHealthCheck.plugins.probe.wms',
+    'GeoHealthCheck.plugins.probe.wmts',
     'GeoHealthCheck.plugins.probe.wfs',
     'GeoHealthCheck.plugins.probe.tms',
     'GeoHealthCheck.plugins.probe.http',
@@ -112,7 +113,6 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.wfs3',
     'GeoHealthCheck.plugins.probe.esrifs',
     'GeoHealthCheck.plugins.probe.ghcreport',
-    'GeoHealthCheck.plugins.probe.wmts',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',

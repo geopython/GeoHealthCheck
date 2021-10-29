@@ -9,6 +9,7 @@ import math
 class WmtsGetTile(Probe):
     """
     Get WMTS map tile for specific layers.
+    There are 2 possible request templates to support both KVP and REST
     """
 
     NAME = 'WMTS GetTile operation on specific layers'
@@ -115,6 +116,9 @@ class WmtsGetTile(Probe):
         """
         url = resource.url
 
+        # If endpoint can only be accessed through REST, owslib cannot
+        # get metadata, as GetCapabilities request is done through KVP.
+        # Added '/1.0.0/WMTSCapabilities.xml' to omit this problem.
         if not self.check_capabilities(url +
                                 '?service=WMTS&version=1.0.0' +
                                 '&request=GetCapabilities'):
@@ -124,7 +128,6 @@ class WmtsGetTile(Probe):
                                  headers=self.get_request_headers())
 
     def expand_params(self, resource):
-
         # Use WMTS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
@@ -147,8 +150,12 @@ class WmtsGetTile(Probe):
             raise err
 
     def test_kvp_rest(self):
-        encodings = []
+        """
+        Make requests on some variations of the url to test 
+        if KVP and/or REST is possible.
+        """
 
+        encodings = []
         url = self._resource.url
 
         # If url ends with wmtscapabilities.xml it is REST only
@@ -169,6 +176,8 @@ class WmtsGetTile(Probe):
         return encodings
 
     def check_capabilities(self, url):
+        """ Check for exception in GetCapabilities response"""
+
         try:
             response = Probe.perform_get_request(self, url)
         except Exception:
@@ -186,8 +195,7 @@ class WmtsGetTile(Probe):
 
             self.layers = self._parameters['layers']
 
-            self.original_url = self._resource.url
-
+            # Remove capabilities string from url before sending request.
             rest_url_end = '/1.0.0/WMTSCapabilities.xml'
             if self._resource.url.endswith(rest_url_end):
                 self._resource.url = self._resource.url[0:-len(rest_url_end)]
@@ -200,9 +208,6 @@ class WmtsGetTile(Probe):
 
         except Exception as err:
             self.result.set(False, str(err))
-
-    def after_request(self):
-        self._resource.url = self.original_url
 
     def perform_request(self):
         """ Perform actual request to service, overridden from base class"""
@@ -228,6 +233,8 @@ class WmtsGetTile(Probe):
 
             tilematrixsets = layer_object.tilematrixsetlinks
 
+            # Format i.e: image/png, url should then end with .png
+            # Will this work in every case?
             if self._parameters['kvprest'] == 'REST':
                 format = layer_object.formats[0]
                 self._parameters['format'] = format.split('/')[1]
@@ -276,6 +283,10 @@ class WmtsGetTile(Probe):
         self.result.results_failed = results_failed_total
 
     def calculate_center_tile(self, center_coord, tilematrix, crs):
+        """ 
+        Determine center tile row and column indexes based on
+        topleft coordinate, scale, center coordinate and tilewidth/height
+        """
         scale = tilematrix.scaledenominator
         topleftcorner = list(tilematrix.topleftcorner)
         center_coord = list(center_coord)
@@ -283,6 +294,7 @@ class WmtsGetTile(Probe):
         first_axis = crs.axis_info[0].direction
         unit = crs.axis_info[0].unit_name
 
+        # Correct for coordinate systems that have reversed lat/lon coordinates
         if first_axis == 'north':
             center_coord.reverse()
             topleftcorner.reverse()
