@@ -113,7 +113,14 @@ class WmtsGetTile(Probe):
         :param version:
         :return: Metadata object
         """
-        return WebMapTileService(resource.url, version=version,
+        url = resource.url
+
+        if not self.check_capabilities(url +
+                                '?service=WMTS&version=1.0.0' +
+                                '&request=GetCapabilities'):
+            url = url + '/1.0.0/WMTSCapabilities.xml'
+
+        return WebMapTileService(url, version=version,
                                  headers=self.get_request_headers())
 
     def expand_params(self, resource):
@@ -151,7 +158,6 @@ class WmtsGetTile(Probe):
         if '?' in url:
             return ['KVP']
 
-        url + '?service=WMTS&version=1.0.0&request=GetCapabilities'
         if self.check_capabilities(url +
                                     '?service=WMTS&version=1.0.0' +
                                     '&request=GetCapabilities'):
@@ -282,8 +288,8 @@ class WmtsGetTile(Probe):
             topleftcorner.reverse()
 
 
-        # Formula for degree conversion factor from: 
-        # https://stackoverflow.com/questions/639695/how-to-convert-latitude-or-longitude-to-meters
+        # Formula for metre to degree conversion factor from: 
+        # https://stackoverflow.com/questions/639695/
         conv = {
             'metre': [1],
             'degree': [1 / (40075000 * math.cos(math.pi * center_coord[0] / 180) / 360),
