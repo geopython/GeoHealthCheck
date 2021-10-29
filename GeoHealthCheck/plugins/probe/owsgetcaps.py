@@ -163,13 +163,13 @@ class WmtsGetCaps(OwsGetCaps):
             response = Probe.perform_get_request(self, self._resource.url)
         except Exception:
             self._resource.url = self._resource.url + \
-                                 '1.0.0/WMTSCapabilities.xml'
+                                 '/1.0.0/WMTSCapabilities.xml'
             return
 
         if not (response.status_code == 200 and
                 '<ServiceException' not in response.text):
             self._resource.url = self._resource.url + \
-                                 '1.0.0/WMTSCapabilities.xml'
+                                 '/1.0.0/WMTSCapabilities.xml'
 
 
 class WpsGetCaps(OwsGetCaps):
