@@ -244,7 +244,7 @@ def sniff_test_resource(config, resource_type, url):
                 title = 'OGC API Features (OAFeat)'
             elif resource_type == 'ESRI:FS':
                 title = 'ESRI ArcGIS FS'
-            elif resource_type =='OGC:3D':
+            elif resource_type == 'OGC:3D':
                 title = 'OGC 3D Tiles'
             else:
                 title = ows.identification.title
