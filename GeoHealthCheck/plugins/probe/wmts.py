@@ -196,6 +196,8 @@ class WmtsGetTile(Probe):
             self.layers = self._parameters['layers']
 
             # Remove capabilities string from url before sending request.
+            self.original_url = self._resource.url
+
             rest_url_end = '/1.0.0/WMTSCapabilities.xml'
             if self._resource.url.endswith(rest_url_end):
                 self._resource.url = self._resource.url[0:-len(rest_url_end)]
@@ -208,6 +210,9 @@ class WmtsGetTile(Probe):
 
         except Exception as err:
             self.result.set(False, str(err))
+
+    def after_request(self):
+        self._resource.url = self.original_url
 
     def perform_request(self):
         """ Perform actual request to service, overridden from base class"""
@@ -374,6 +379,7 @@ class WmtsGetTileAll(WmtsGetTile):
         try:
             self.wmts = self.get_metadata_cached(self._resource,
                                                  version='1.0.0')
+
             self.original_url = self._resource.url
 
             rest_url_end = '/1.0.0/WMTSCapabilities.xml'
