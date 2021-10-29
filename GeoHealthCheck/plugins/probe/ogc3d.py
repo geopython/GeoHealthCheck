@@ -28,16 +28,18 @@ class OGC3DTiles(Probe):
         elif url_base.endswith('/tileset.json'):
             url_base = url_base.split('/tileset.json')[0]
 
+        # Request tileset.json
         try:
             tile_url = url_base + '/tileset.json'
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
             self.response = Probe.perform_get_request(self, tile_url)
             self.check_response()
         except requests.exceptions.RequestException as e:
-            msg = "Request Err: Couldn't get tileset.json %s %s" \
+            msg = "Request Err: Error requesting tileset.json %s %s" \
                 % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
 
+        # Get data url from tileset.json and request tile data
         try:
             data_uri = self.get_3d_tileset_content_uri(self.response.json())
             data_url = url_base + '/' + data_uri
@@ -45,7 +47,7 @@ class OGC3DTiles(Probe):
             self.response = Probe.perform_get_request(self, data_url)
             self.check_response()
         except requests.exceptions.RequestException as e:
-            msg = "Request Err: Couldn't get tile data %s %s" \
+            msg = "Request Err: Error requesting tile data %s %s" \
                 % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
 
@@ -56,7 +58,7 @@ class OGC3DTiles(Probe):
                 self.log('Error response: %s' % (str(self.response.text)))
 
     def get_3d_tileset_content_uri(self, tileset_json):
-        # Loop through tileset.json to find b3dm data url
+        # Loop through tileset.json to find tile data url
         if 'content' in tileset_json['root']:
             return tileset_json['root']['content']['uri']
 
