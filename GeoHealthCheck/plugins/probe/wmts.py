@@ -120,8 +120,8 @@ class WmtsGetTile(Probe):
         # get metadata, as GetCapabilities request is done through KVP.
         # Added '/1.0.0/WMTSCapabilities.xml' to omit this problem.
         if not self.check_capabilities(url +
-                                '?service=WMTS&version=1.0.0' +
-                                '&request=GetCapabilities'):
+                                       '?service=WMTS&version=1.0.0' +
+                                       '&request=GetCapabilities'):
             url = url + '/1.0.0/WMTSCapabilities.xml'
 
         return WebMapTileService(url, version=version,
@@ -151,7 +151,7 @@ class WmtsGetTile(Probe):
 
     def test_kvp_rest(self):
         """
-        Make requests on some variations of the url to test 
+        Make requests on some variations of the url to test
         if KVP and/or REST is possible.
         """
 
@@ -166,8 +166,8 @@ class WmtsGetTile(Probe):
             return ['KVP']
 
         if self.check_capabilities(url +
-                                    '?service=WMTS&version=1.0.0' +
-                                    '&request=GetCapabilities'):
+                                   '?service=WMTS&version=1.0.0' +
+                                   '&request=GetCapabilities'):
             encodings.append('KVP')
 
         if self.check_capabilities(url + '/1.0.0/WMTSCapabilities.xml'):
@@ -283,7 +283,7 @@ class WmtsGetTile(Probe):
         self.result.results_failed = results_failed_total
 
     def calculate_center_tile(self, center_coord, tilematrix, crs):
-        """ 
+        """
         Determine center tile row and column indexes based on
         topleft coordinate, scale, center coordinate and tilewidth/height
         """
@@ -299,12 +299,12 @@ class WmtsGetTile(Probe):
             center_coord.reverse()
             topleftcorner.reverse()
 
-
-        # Formula for metre to degree conversion factor from: 
+        # Formula for metre to degree conversion factor from:
         # https://stackoverflow.com/questions/639695/
         conv = {
             'metre': [1],
-            'degree': [1 / (40075000 * math.cos(math.pi * center_coord[0] / 180) / 360),
+            'degree': [1 / (40075000 *
+                            math.cos(math.pi * center_coord[0] / 180) / 360),
                        1 / 111320],
             'foot': [coordinate_system.UNIT_FT['conversion_factor']],
             'US survey foot': [
@@ -373,10 +373,9 @@ class WmtsGetTileAll(WmtsGetTile):
         # Get capabilities doc to get all layers
         try:
             self.wmts = self.get_metadata_cached(self._resource,
-                                                    version='1.0.0')
-
+                                                 version='1.0.0')
             self.original_url = self._resource.url
-            
+
             rest_url_end = '/1.0.0/WMTSCapabilities.xml'
             if self._resource.url.endswith(rest_url_end):
                 self._resource.url = self._resource.url[0:-len(rest_url_end)]
