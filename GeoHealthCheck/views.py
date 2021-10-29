@@ -81,7 +81,7 @@ def list_resources(resource_type=None, query=None, tag=None):
     response['fail']['percentage'] = 0
     response['reliability'] = 0
     for resource in response['resources']:
-        if resource.runs.count() > 0:
+        if resource.run_count > 0:
             # View should work even without Runs
             if first_run is None or resource.first_run < first_run:
                 first_run = resource.first_run

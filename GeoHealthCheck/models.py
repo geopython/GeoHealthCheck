@@ -73,7 +73,8 @@ class Run(DB.Model):
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_identifier = DB.Column(DB.Integer,
-                                    DB.ForeignKey('resource.identifier'))
+                                    DB.ForeignKey('resource.identifier'),
+                                    index=True)
     resource = DB.relationship('Resource',
                                backref=DB.backref('runs', lazy='dynamic',
                                                   cascade="all,delete"))
@@ -144,7 +145,8 @@ class ProbeVars(DB.Model):
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
     resource_identifier = DB.Column(DB.Integer,
-                                    DB.ForeignKey('resource.identifier'))
+                                    DB.ForeignKey('resource.identifier'),
+                                    index=True)
     resource = DB.relationship(
         'Resource', backref=DB.backref('probe_vars',
                                        lazy='dynamic',
@@ -188,8 +190,9 @@ class CheckVars(DB.Model):
     """Identifies and parameterizes check function, applies to single Probe"""
 
     identifier = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
-    probe_vars_identifier = DB.Column(
-        DB.Integer, DB.ForeignKey('probe_vars.identifier'))
+    probe_vars_identifier = DB.Column(DB.Integer,
+                                      DB.ForeignKey('probe_vars.identifier'),
+                                      index=True)
     probe_vars = DB.relationship(
         'ProbeVars', backref=DB.backref(
             'check_vars', cascade="all, delete-orphan"))
@@ -231,9 +234,11 @@ resource_tags = DB.Table('resource_tags',
                          DB.Column('identifier', DB.Integer, primary_key=True,
                                    autoincrement=True),
                          DB.Column('tag_id', DB.Integer,
-                                   DB.ForeignKey('tag.id')),
+                                   DB.ForeignKey('tag.id'),
+                                   index=True),
                          DB.Column('resource_identifier', DB.Integer,
-                                   DB.ForeignKey('resource.identifier')))
+                                   DB.ForeignKey('resource.identifier'),
+                                   index=True))
 
 
 def _validate_webhook(value):
@@ -391,7 +396,9 @@ class Resource(DB.Model):
     url = DB.Column(DB.Text, nullable=False)
     latitude = DB.Column(DB.Float)
     longitude = DB.Column(DB.Float)
-    owner_identifier = DB.Column(DB.Text, DB.ForeignKey('user.username'))
+    owner_identifier = DB.Column(DB.Text,
+                                 DB.ForeignKey('user.username'),
+                                 index=True)
     owner = DB.relationship('User',
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
@@ -413,6 +420,13 @@ class Resource(DB.Model):
         return '<Resource %r %r>' % (self.identifier, self.title)
 
     @property
+    def run_count(self):
+        if not hasattr(self, '_run_count'):
+            setattr(self, '_run_count', self.runs.count())
+
+        return self._run_count
+
+    @property
     def get_capabilities_url(self):
         if self.resource_type.startswith('OGC:') \
                 and self.resource_type not in \
@@ -421,57 +435,80 @@ class Resource(DB.Model):
                             RESOURCE_TYPES[self.resource_type]['capabilities'])
         else:
             url = self.url
+
         return url
 
     @property
     def all_response_times(self):
-        result = [0]
-        if self.runs.count() > 0:
-            result = [run.response_time for run in self.runs]
-        return result
+        if not hasattr(self, '_all_response_times'):
+            result = [0]
+            if self.run_count > 0:
+                result = [run.response_time for run in self.runs]
+
+            setattr(self, '_all_response_times', result)
+
+        return self._all_response_times
 
     @property
     def first_run(self):
-        return self.runs.order_by(
-            Run.checked_datetime.asc()).first()
+        if not hasattr(self, '_first_run'):
+            _first_run = self.runs.order_by(Run.checked_datetime.asc()).first()
+            setattr(self, '_first_run', _first_run)
+
+        return self._first_run
 
     @property
     def last_run(self):
-        return self.runs.order_by(
-            Run.checked_datetime.desc()).first()
+        if not hasattr(self, '_last_run'):
+            _last_run = self.runs.order_by(Run.checked_datetime.desc()).first()
+            setattr(self, '_last_run', _last_run)
+
+        return self._last_run
 
     @property
     def average_response_time(self):
-        result = 0
-        if self.runs.count() > 0:
-            query = [run.response_time for run in self.runs]
-            result = util.average(query)
-        return result
+        if not hasattr(self, '_average_response_time'):
+            result = 0
+            if self.run_count > 0:
+                query = [run.response_time for run in self.runs]
+                result = util.average(query)
+            setattr(self, '_average_response_time', result)
+
+        return self._average_response_time
 
     @property
     def min_response_time(self):
-        result = 0
-        if self.runs.count() > 0:
-            query = [run.response_time for run in self.runs]
-            result = min(query)
-        return result
+        if not hasattr(self, '_min_response_time'):
+            result = 0
+            if self.run_count > 0:
+                query = [run.response_time for run in self.runs]
+                result = min(query)
+            setattr(self, '_min_response_time', result)
+
+        return self._min_response_time
 
     @property
     def max_response_time(self):
-        result = 0
-        if self.runs.count() > 0:
-            query = [run.response_time for run in self.runs]
-            result = max(query)
-        return result
+        if not hasattr(self, '_max_response_time'):
+            result = 0
+            if self.run_count > 0:
+                query = [run.response_time for run in self.runs]
+                result = max(query)
+            setattr(self, '_max_response_time', result)
+
+        return self._max_response_time
 
     @property
     def reliability(self):
-        result = 0
-        if self.runs.count() > 0:
-            total_runs = self.runs.count()
-            success_runs = self.runs.filter_by(success=True).count()
-            result = util.percentage(success_runs, total_runs)
-        return result
+        if not hasattr(self, '_reliability'):
+            result = 0
+            if self.run_count > 0:
+                total_runs = self.run_count
+                success_runs = self.runs.filter_by(success=True).count()
+                result = util.percentage(success_runs, total_runs)
+            setattr(self, '_reliability', result)
+
+        return self._reliability
 
     @property
     def tags2csv(self):
@@ -625,8 +662,9 @@ class ResourceLock(DB.Model):
 
     identifier = DB.Column(DB.Integer,
                            primary_key=True, autoincrement=False, unique=True)
-    resource_identifier = DB.Column(
-        DB.Integer, DB.ForeignKey('resource.identifier'), unique=True)
+    resource_identifier = DB.Column(DB.Integer,
+                                    DB.ForeignKey('resource.identifier'),
+                                    unique=True)
     resource = DB.relationship('Resource',
                                backref=DB.backref('locks', lazy='dynamic',
                                                   cascade="all,delete"))

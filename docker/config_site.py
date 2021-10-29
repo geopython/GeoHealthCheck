@@ -40,7 +40,8 @@ SQLALCHEMY_ECHO = False
 # makes it easier to override via Docker "environment"
 # settings on running GHC Containers.
 SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
-
+# When True enables 'pre_ping' (optionally reconnect to DB) for the SQLALCHEMY create_engine options
+SQLALCHEMY_ENGINE_OPTION_PRE_PING = os.environ['SQLALCHEMY_ENGINE_OPTION_PRE_PING']
 # Replace None with 'your secret key string' in quotes
 SECRET_KEY = os.environ['SECRET_KEY']
 
