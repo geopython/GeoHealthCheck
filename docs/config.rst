@@ -14,6 +14,7 @@ a configuration file in the environment settings that will override settings in 
 The configuration options are:
 
 - **SQLALCHEMY_DATABASE_URI**: the database configuration.  See the SQLAlchemy documentation for more info
+- **SQLALCHEMY_ENGINE_OPTION_PRE_PING**: DB Disconnect Handling, emitting a test statement on the SQL connection at the start of each connection pool checkout (default: ``False``)
 - **SECRET_KEY**: secret key to set when enabling authentication. Use the output of ``paver create_secret_key`` to set this value
 - **GHC_RETENTION_DAYS**: the number of days to keep Run history
 - **GHC_PROBE_HTTP_TIMEOUT_SECS**: stop waiting for the first byte of a Probe response after the given number of seconds

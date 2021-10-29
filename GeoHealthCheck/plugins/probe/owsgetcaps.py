@@ -158,6 +158,24 @@ class WmtsGetCaps(OwsGetCaps):
     })
     """Param defs"""
 
+    def before_request(self):
+        self.original_url = self._resource.url
+
+        try:
+            response = Probe.perform_get_request(self, self._resource.url)
+        except Exception:
+            self._resource.url = self._resource.url + \
+                                 '/1.0.0/WMTSCapabilities.xml'
+            return
+
+        if (response.status_code != 200 and
+                '<ServiceException' in response.text):
+            self._resource.url = self._resource.url + \
+                                 '/1.0.0/WMTSCapabilities.xml'
+
+    def after_request(self):
+        self._resource.url = self.original_url
+
 
 class WpsGetCaps(OwsGetCaps):
     """WPS GetCapabilities Probe"""

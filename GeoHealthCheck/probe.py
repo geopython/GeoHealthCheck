@@ -278,9 +278,6 @@ class Probe(Plugin):
 
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
 
-        test_url = url_base + request_string
-        print(test_url)
-
         try:
             if self.REQUEST_METHOD == 'GET':
                 # Default is plain URL, e.g. for WWW:LINK
@@ -290,7 +287,7 @@ class Probe(Plugin):
                     url = "%s%s" % (url, request_string)
 
                 self.response = self.perform_get_request(url)
-                print(self.response)
+
             elif self.REQUEST_METHOD == 'POST':
                 self.response = self.perform_post_request(
                     url_base, request_string)
