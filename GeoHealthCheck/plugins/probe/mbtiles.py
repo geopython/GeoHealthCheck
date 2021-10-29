@@ -65,7 +65,8 @@ class MBTiles(Probe):
         for tile_url in tile_info['tiles']:
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
 
-            zoom_list = range(tile_info.get('minzoom', 0), tile_info.get('maxzoom', 22) + 1)
+            zoom_list = range(tile_info.get('minzoom', 0),
+                              tile_info.get('maxzoom', 22) + 1)
 
             for zoom in zoom_list:
                 tile_count = 2 ** zoom
@@ -89,7 +90,8 @@ class MBTiles(Probe):
         if self.response:
             self.log('response: status=%d' % self.response.status_code)
             if self.response.status_code // 100 in [4, 5]:
-                msg = 'Error response %s: %s' % (str(self.response.status_code), str(self.response.text))
+                msg = 'Error response %s: %s' \
+                    % (str(self.response.status_code), str(self.response.text))
                 self.result.set(False, msg)
 
     # Formula to calculate spherical mercator coordinates.
