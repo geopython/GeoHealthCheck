@@ -299,7 +299,7 @@ class WmtsGetTile(Probe):
         first_axis = crs.axis_info[0].direction
         unit = crs.axis_info[0].unit_name
 
-        # Correct for coordinate systems that have reversed lat/lon coordinates
+        # Adjust for coordinate systems that have reversed lat/lon coordinates
         if first_axis == 'north':
             center_coord.reverse()
             topleftcorner.reverse()
@@ -308,8 +308,8 @@ class WmtsGetTile(Probe):
         # https://stackoverflow.com/questions/639695/
         conv = {
             'metre': [1],
-            'degree': [1 / (40075000 *
-                            math.cos(math.pi * center_coord[0] / 180) / 360),
+            'degree': [1 / (111320 *
+                            math.cos(math.pi * center_coord[0] / 180)),
                        1 / 111320],
             'foot': [coordinate_system.UNIT_FT['conversion_factor']],
             'US survey foot': [
