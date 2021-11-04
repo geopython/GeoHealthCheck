@@ -77,8 +77,8 @@ RESOURCE_TYPES = {
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'
     },
-    'MBTiles': {
-        'label': 'Mapbox Vector Tiles Service (MBTiles)'
+    'TileJSON': {
+        'label': 'Mapbox TileJSON Service (TileJSON)'
     },
     'urn:geoss:waf': {
         'label': 'Web Accessible Folder (WAF)'

@@ -2,14 +2,14 @@ from GeoHealthCheck.probe import Probe
 import math
 
 
-class MBTiles(Probe):
+class TileJSON(Probe):
     """
-    MBTiles
+    TileJSON
     """
 
-    NAME = 'MBTiles'
-    DESCRIPTION = 'Mapbox Vector Tiles Service Probe'
-    RESOURCE_TYPE = 'MBTiles'
+    NAME = 'TileJSON'
+    DESCRIPTION = 'Mapbox TileJSON Service Probe'
+    RESOURCE_TYPE = 'TileJSON'
     REQUEST_METHOD = 'GET'
 
     CHECKS_AVAIL = {

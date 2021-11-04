@@ -112,7 +112,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.wfs3',
     'GeoHealthCheck.plugins.probe.esrifs',
     'GeoHealthCheck.plugins.probe.ghcreport',
-    'GeoHealthCheck.plugins.probe.mbtiles',
+    'GeoHealthCheck.plugins.probe.mapbox',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
@@ -162,8 +162,8 @@ GHC_PROBE_DEFAULTS = {
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
     },
-    'MBTiles': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.mbtiles.MBTiles'
+    'TileJSON': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.mapbox.TileJSON'
     },
     'urn:geoss:waf': {
         'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
