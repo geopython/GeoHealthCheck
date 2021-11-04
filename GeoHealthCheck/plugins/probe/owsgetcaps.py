@@ -158,6 +158,11 @@ class WmtsGetCaps(OwsGetCaps):
     })
     """Param defs"""
 
+    # This is to catch errors because url is only accessible through REST
+    # owslib will always do KVP request and this way the GetCap url will be:
+    # .../1.0.0/WMTSCapabilities.xml?service=WMTS&version=1.0.0&
+    # request=GetCapabilities
+    # This new request will return a valid WebMapTileService object.
     def before_request(self):
         self.original_url = self._resource.url
 
