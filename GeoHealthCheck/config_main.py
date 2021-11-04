@@ -160,7 +160,7 @@ GHC_PROBE_DEFAULTS = {
         'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Caps'
     },
     'OGC:3DTiles': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.ogc3d.OGC3DTiles'
+        'probe_class': 'GeoHealthCheck.plugins.probe.ogc3dtiles.OGC3DTiles'
     },
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
