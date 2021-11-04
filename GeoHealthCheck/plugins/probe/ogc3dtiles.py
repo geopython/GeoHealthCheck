@@ -4,7 +4,7 @@ import requests
 
 class OGC3DTiles(Probe):
     """
-    OGC3D
+    OGC3DTiles
     """
 
     NAME = 'GET Tileset.json and tile data'
