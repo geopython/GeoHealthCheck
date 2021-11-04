@@ -230,11 +230,6 @@
         "drilldown_level": "full"
       }
     },
-    "LDPROXY - OpenAPI": {
-      "resource": "LDPROXY FEATURES",
-      "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3OpenAPIValidator",
-      "parameters": {}
-    },
     "ESRIFS - Drilldown": {
       "resource": "ESRI FEATURESERVER",
       "probe_class": "GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown",

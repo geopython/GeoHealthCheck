@@ -65,6 +65,8 @@ class App:
         # Do init once
         app = Flask(__name__)
 
+        app.url_map.strict_slashes = False
+
         # Read and override configs
         app.config.from_pyfile('config_main.py')
         # config_site.py not present in doc-build: silently fail
@@ -81,8 +83,13 @@ class App:
             app.config['GHC_SITE_URL'].rstrip('/')
 
         app.secret_key = app.config['SECRET_KEY']
-
-        App.db_instance = SQLAlchemy(app)
+        SQLALCHEMY_ENGINE_OPTIONS = {
+                                 'pool_pre_ping': app.config[
+                                     'SQLALCHEMY_ENGINE_OPTION_PRE_PING'
+                                     ]
+                                 }
+        App.db_instance = SQLAlchemy(app,
+                                     engine_options=SQLALCHEMY_ENGINE_OPTIONS)
         App.babel_instance = Babel(app)
 
         # Plugins (via Docker ENV) must be list, but may have been
