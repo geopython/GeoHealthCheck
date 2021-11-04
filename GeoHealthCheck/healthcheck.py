@@ -162,7 +162,7 @@ def sniff_test_resource(config, resource_type, url):
                          'FTP': [urlopen],
                          'GHC:Report': [urlopen],
                          'OSGeo:GeoNode': [geonode_get_ows],
-                         'OGC:3D': [urlopen],
+                         'OGC:3DTiles': [urlopen],
                          }
     try:
         ows = None
@@ -244,7 +244,7 @@ def sniff_test_resource(config, resource_type, url):
                 title = 'OGC API Features (OAFeat)'
             elif resource_type == 'ESRI:FS':
                 title = 'ESRI ArcGIS FS'
-            elif resource_type == 'OGC:3D':
+            elif resource_type == 'OGC:3DTiles':
                 title = 'OGC 3D Tiles'
             else:
                 title = ows.identification.title
