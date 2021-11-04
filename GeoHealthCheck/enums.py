@@ -77,6 +77,9 @@ RESOURCE_TYPES = {
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'
     },
+    'MBTiles': {
+        'label': 'Mapbox Vector Tiles Service (MBTiles)'
+    },
     'urn:geoss:waf': {
         'label': 'Web Accessible Folder (WAF)'
     },
@@ -91,8 +94,5 @@ RESOURCE_TYPES = {
     },
     'GHC:Report': {
         'label': 'GeoHealthCheck Reporter (GHC-R)'
-    },
-    'MBTiles': {
-        'label': 'Mapbox Vector Tiles Service (MBTiles)'
     },
 }

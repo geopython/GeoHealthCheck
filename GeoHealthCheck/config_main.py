@@ -161,6 +161,9 @@ GHC_PROBE_DEFAULTS = {
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
     },
+    'MBTiles': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.mbtiles.MBTiles'
+    },
     'urn:geoss:waf': {
         'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
     },
@@ -176,9 +179,6 @@ GHC_PROBE_DEFAULTS = {
     'GHC:Report': {
         'probe_class':
             'GeoHealthCheck.plugins.probe.ghcreport.GHCEmailReporter'
-    },
-    'MBTiles': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.mbtiles.MBTiles'
     },
 }
 

@@ -26,6 +26,7 @@ class MBTiles(Probe):
         if url_base.endswith('/'):
             url_base = url_base[0:-2]
 
+        # Add .json to url if not present yet
         if url_base.endswith('.json'):
             json_url = url_base
         else:
@@ -33,7 +34,7 @@ class MBTiles(Probe):
 
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, json_url))
         self.response = Probe.perform_get_request(self, json_url)
-        self.check_response()
+        self.run_checks()
 
         tile_info = self.response.json()
 
@@ -85,14 +86,6 @@ class MBTiles(Probe):
                     self.result.set(False, msg)
                 else:
                     self.run_checks()
-
-    def check_response(self):
-        if self.response:
-            self.log('response: status=%d' % self.response.status_code)
-            if self.response.status_code // 100 in [4, 5]:
-                msg = 'Error response %s: %s' \
-                    % (str(self.response.status_code), str(self.response.text))
-                self.result.set(False, msg)
 
     # Formula to calculate spherical mercator coordinates.
     def to_wm(self, lat, lon):
