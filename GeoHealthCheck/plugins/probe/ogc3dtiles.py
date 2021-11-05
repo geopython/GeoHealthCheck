@@ -38,6 +38,8 @@ class OGC3DTiles(Probe):
             msg = "Request Err: Error requesting tileset.json %s %s" \
                 % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
+            # If error occurs during request of tileset.json, no use going on
+            return
 
         # Get data url from tileset.json and request tile data
         try:
