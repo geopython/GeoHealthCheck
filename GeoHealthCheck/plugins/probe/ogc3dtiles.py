@@ -8,7 +8,8 @@ class OGC3DTiles(Probe):
     """
 
     NAME = 'GET Tileset.json and tile data'
-    DESCRIPTION = 'OGC3DTiles'
+    DESCRIPTION = 'Request tileset.json, ' + \
+                  'and recursively find and request tile data url'
     RESOURCE_TYPE = 'OGC:3DTiles'
     REQUEST_METHOD = 'GET'
 
