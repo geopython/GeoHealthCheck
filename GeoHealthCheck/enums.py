@@ -80,6 +80,9 @@ RESOURCE_TYPES = {
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'
     },
+    'Mapbox:TileJSON': {
+        'label': 'Mapbox TileJSON Service (TileJSON)'
+    },
     'urn:geoss:waf': {
         'label': 'Web Accessible Folder (WAF)'
     },

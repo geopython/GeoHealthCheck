@@ -113,6 +113,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.ogc3dtiles',
     'GeoHealthCheck.plugins.probe.esrifs',
     'GeoHealthCheck.plugins.probe.ghcreport',
+    'GeoHealthCheck.plugins.probe.mapbox',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
@@ -164,6 +165,9 @@ GHC_PROBE_DEFAULTS = {
     },
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
+    },
+    'Mapbox:TileJSON': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.mapbox.TileJSON'
     },
     'urn:geoss:waf': {
         'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'

@@ -156,13 +156,14 @@ def sniff_test_resource(config, resource_type, url):
                          'OGC:CSW': [CatalogueServiceWeb],
                          'OGC:SOS': [SensorObservationService],
                          'OGC:WFS3': [urlopen],
+                         'OGC:3DTiles': [urlopen],
                          'ESRI:FS': [urlopen],
                          'OGC:STA': [urlopen],
                          'WWW:LINK': [urlopen],
                          'FTP': [urlopen],
                          'GHC:Report': [urlopen],
                          'OSGeo:GeoNode': [geonode_get_ows],
-                         'OGC:3DTiles': [urlopen],
+                         'Mapbox:TileJSON': [urlopen]
                          }
     try:
         ows = None
