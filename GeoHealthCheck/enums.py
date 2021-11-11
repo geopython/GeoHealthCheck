@@ -77,7 +77,7 @@ RESOURCE_TYPES = {
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'
     },
-    'TileJSON': {
+    'MapBox:TileJSON': {
         'label': 'Mapbox TileJSON Service (TileJSON)'
     },
     'urn:geoss:waf': {
