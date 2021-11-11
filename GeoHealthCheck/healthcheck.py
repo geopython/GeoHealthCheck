@@ -162,7 +162,7 @@ def sniff_test_resource(config, resource_type, url):
                          'FTP': [urlopen],
                          'GHC:Report': [urlopen],
                          'OSGeo:GeoNode': [geonode_get_ows],
-                         'TileJSON': [urlopen],
+                         'Mapbox:TileJSON': [urlopen],
                          }
     try:
         ows = None

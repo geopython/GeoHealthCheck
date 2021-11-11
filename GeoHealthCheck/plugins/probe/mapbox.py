@@ -9,7 +9,7 @@ class TileJSON(Probe):
 
     NAME = 'TileJSON'
     DESCRIPTION = 'Mapbox TileJSON Service Probe'
-    RESOURCE_TYPE = 'TileJSON'
+    RESOURCE_TYPE = 'Mapbox:TileJSON'
     REQUEST_METHOD = 'GET'
 
     CHECKS_AVAIL = {

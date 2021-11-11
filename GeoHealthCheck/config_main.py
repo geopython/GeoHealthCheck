@@ -162,7 +162,7 @@ GHC_PROBE_DEFAULTS = {
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
     },
-    'TileJSON': {
+    'Mapbox:TileJSON': {
         'probe_class': 'GeoHealthCheck.plugins.probe.mapbox.TileJSON'
     },
     'urn:geoss:waf': {
