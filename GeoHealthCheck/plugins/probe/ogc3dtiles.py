@@ -34,9 +34,7 @@ class OGC3DTiles(Probe):
             tile_url = url_base + '/tileset.json'
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
             self.response = Probe.perform_get_request(self, tile_url)
-            self.log('test1')
             self.run_checks()
-            self.log('test2')
         except requests.exceptions.RequestException as e:
             msg = "Request Err: Error requesting tileset.json %s %s" \
                 % (e.__class__.__name__, str(e))
@@ -48,7 +46,6 @@ class OGC3DTiles(Probe):
         try:
             tile_root = self.response.json()['root']
             data_uri = self.get_3d_tileset_content_uri(tile_root)
-            print('DATA URI', data_uri)
             data_url = url_base + '/' + data_uri
             self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, data_url))
             self.response = Probe.perform_get_request(self, data_url)
