@@ -109,6 +109,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.http',
     'GeoHealthCheck.plugins.probe.sta',
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
+    'GeoHealthCheck.plugins.probe.wfsdrilldown',
     'GeoHealthCheck.plugins.probe.wfs3',
     'GeoHealthCheck.plugins.probe.ogc3dtiles',
     'GeoHealthCheck.plugins.probe.esrifs',
