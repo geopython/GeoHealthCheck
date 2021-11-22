@@ -24,12 +24,12 @@ class TileJSON(Probe):
     PARAM_DEFS = {
         'check_lat': {
             'type': 'float',
-            'description': 'latitude',
+            'description': 'latitude in EPSG:4326',
             'required': False
         },
         'check_lon': {
             'type': 'float',
-            'description': 'longitude',
+            'description': 'longitude in EPSG:4326',
             'required': False
         },
     }
