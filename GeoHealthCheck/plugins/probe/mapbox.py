@@ -61,7 +61,7 @@ class TileJSON(Probe):
                 center_coords = tile_info['center']
 
                 if not center_coords:
-                    # Center is optional, if non-existent: get bounds from metadata
+                    # Center is optional, if non-existent: use bounds
                     lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
                     lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
                 else:
@@ -76,8 +76,8 @@ class TileJSON(Probe):
 
         # Convert bound coordinates to WebMercator
         transformer = Transformer.from_crs(CRS('EPSG:4326'),
-                                        CRS('EPSG:3857'),
-                                        always_xy=False)
+                                           CRS('EPSG:3857'),
+                                           always_xy=False)
         wm_coords = transformer.transform(lat, lon)
 
         # Circumference (2 * pi * Semi-major Axis)
