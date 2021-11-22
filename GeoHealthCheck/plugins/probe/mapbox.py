@@ -52,9 +52,6 @@ class TileJSON(Probe):
 
         tile_info = self.response.json()
 
-        if not tile_info['tilejson'].startswith('2'):
-            self.result.set(False, 'Only versions 2.x.x are supported')
-
         if self._parameters['check_lat'] and self._parameters['check_lon']:
             lat = self._parameters['check_lat']
             lon = self._parameters['check_lon']
