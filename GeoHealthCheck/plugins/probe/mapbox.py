@@ -9,7 +9,7 @@ class TileJSON(Probe):
     """
 
     NAME = 'TileJSON'
-    DESCRIPTION = 'Request Mapbox TileJSON Service and' + \
+    DESCRIPTION = 'Request Mapbox TileJSON Service and ' + \
                   'request each zoom level at center coordinates'
     RESOURCE_TYPE = 'Mapbox:TileJSON'
     REQUEST_METHOD = 'GET'
