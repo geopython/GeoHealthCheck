@@ -22,12 +22,12 @@ class TileJSON(Probe):
     """Checks avail"""
 
     PARAM_DEFS = {
-        'check_lat': {
+        'lat_4326': {
             'type': 'float',
             'description': 'latitude in EPSG:4326',
             'required': False
         },
-        'check_lon': {
+        'lon_4326': {
             'type': 'float',
             'description': 'longitude in EPSG:4326',
             'required': False
@@ -53,9 +53,9 @@ class TileJSON(Probe):
 
         tile_info = self.response.json()
 
-        if self._parameters['check_lat'] and self._parameters['check_lon']:
-            lat = self._parameters['check_lat']
-            lon = self._parameters['check_lon']
+        if self._parameters['lat_4326'] and self._parameters['lon_4326']:
+            lat = self._parameters['lat_4326']
+            lon = self._parameters['lon_4326']
         else:
             try:
                 center_coords = tile_info['center']
