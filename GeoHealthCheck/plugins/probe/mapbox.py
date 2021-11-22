@@ -20,6 +20,19 @@ class TileJSON(Probe):
     }
     """Checks avail"""
 
+    PARAM_DEFS = {
+        'check_lat': {
+            'type': 'float',
+            'description': 'latitude',
+            'required': False
+        },
+        'check_lon': {
+            'type': 'float',
+            'description': 'longitude',
+            'required': False
+        },
+    }
+
     def perform_request(self):
         url_base = self._resource.url
 
@@ -42,14 +55,18 @@ class TileJSON(Probe):
         if not tile_info['tilejson'].startswith('2'):
             self.result.set(False, 'Only versions 2.x.x are supported')
 
-        center_coords = tile_info['center']
-
-        if not center_coords:
-            # Center is optional, if non-existent: get bounds from metadata
-            lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
-            lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+        if self._parameters['check_lat'] and self._parameters['check_lon']:
+            lat = self._parameters['check_lat']
+            lon = self._parameters['check_lon']
         else:
-            lat, lon = center_coords[1], center_coords[0]
+            center_coords = tile_info['center']
+
+            if not center_coords:
+                # Center is optional, if non-existent: get bounds from metadata
+                lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
+                lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+            else:
+                lat, lon = center_coords[1], center_coords[0]
 
         # Convert bound coordinates to WebMercator
         try:
