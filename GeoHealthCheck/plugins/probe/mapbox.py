@@ -1,5 +1,6 @@
 from GeoHealthCheck.probe import Probe
 import math
+from pyproj import CRS, Transformer
 
 
 class TileJSON(Probe):
@@ -66,10 +67,10 @@ class TileJSON(Probe):
                 lat, lon = center_coords[1], center_coords[0]
 
         # Convert bound coordinates to WebMercator
-        try:
-            wm_coords = self.to_wm(lat, lon)
-        except Exception as e:
-            self.result.set(False, 'Error converting coordinates: %s' % (e))
+        transformer = Transformer.from_crs(CRS('EPSG:4326'),
+                                        CRS('EPSG:3857'),
+                                        always_xy=False)
+        wm_coords = transformer.transform(lat, lon)
 
         # Circumference (2 * pi * Semi-major Axis)
         circ = 2 * math.pi * 6378137.0
@@ -101,11 +102,3 @@ class TileJSON(Probe):
                     self.result.set(False, msg)
                 else:
                     self.run_checks()
-
-    # Formula to calculate spherical mercator coordinates.
-    def to_wm(self, lat, lon):
-        x = 6378137.0 * math.radians(lon)
-        scale = x / lon
-        y = math.degrees(math.log(math.tan(
-            math.pi / 4.0 + math.radians(lat) / 2.0)) * scale)
-        return (x, y)
