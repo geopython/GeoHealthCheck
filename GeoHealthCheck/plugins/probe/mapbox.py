@@ -57,14 +57,22 @@ class TileJSON(Probe):
             lat = self._parameters['check_lat']
             lon = self._parameters['check_lon']
         else:
-            center_coords = tile_info['center']
+            try:
+                center_coords = tile_info['center']
 
-            if not center_coords:
-                # Center is optional, if non-existent: get bounds from metadata
-                lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
-                lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
-            else:
-                lat, lon = center_coords[1], center_coords[0]
+                if not center_coords:
+                    # Center is optional, if non-existent: get bounds from metadata
+                    lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
+                    lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+                else:
+                    lat, lon = center_coords[1], center_coords[0]
+
+            except KeyError:
+                err_message = 'No center coordinates given in ' + \
+                              'tile.json. Please add lat/lon as ' + \
+                              'probe parameters.'
+                self.result.set(False, err_message)
+                return
 
         # Convert bound coordinates to WebMercator
         transformer = Transformer.from_crs(CRS('EPSG:4326'),
@@ -80,8 +88,6 @@ class TileJSON(Probe):
         y_rel = (circ / 2 - wm_coords[1]) / circ
 
         for tile_url in tile_info['tiles']:
-            self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
-
             zoom_list = range(tile_info.get('minzoom', 0),
                               tile_info.get('maxzoom', 22) + 1)
 
@@ -95,6 +101,8 @@ class TileJSON(Probe):
 
                 # Determine the tile URL.
                 zoom_url = tile_url.format(**zxy)
+
+                self.log('Requesting zoom %s: url=%s' % (zoom, zoom_url))
 
                 self.response = Probe.perform_get_request(self, zoom_url)
                 if self.response.status_code == 204:
