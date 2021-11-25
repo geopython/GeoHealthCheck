@@ -111,8 +111,10 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.sta',
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
     'GeoHealthCheck.plugins.probe.wfs3',
+    'GeoHealthCheck.plugins.probe.ogc3dtiles',
     'GeoHealthCheck.plugins.probe.esrifs',
     'GeoHealthCheck.plugins.probe.ghcreport',
+    'GeoHealthCheck.plugins.probe.mapbox',
 
     # Checkers
     'GeoHealthCheck.plugins.check.checks',
@@ -159,8 +161,14 @@ GHC_PROBE_DEFAULTS = {
     'OGC:WFS3': {
         'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Caps'
     },
+    'OGC:3DTiles': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.ogc3dtiles.OGC3DTiles'
+    },
     'ESRI:FS': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
+    },
+    'Mapbox:TileJSON': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.mapbox.TileJSON'
     },
     'urn:geoss:waf': {
         'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
@@ -177,7 +185,7 @@ GHC_PROBE_DEFAULTS = {
     'GHC:Report': {
         'probe_class':
             'GeoHealthCheck.plugins.probe.ghcreport.GHCEmailReporter'
-    }
+    },
 }
 
 # Entry for Geocoder plugin

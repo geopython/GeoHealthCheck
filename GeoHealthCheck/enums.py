@@ -74,8 +74,14 @@ RESOURCE_TYPES = {
     'OGC:WFS3': {
         'label': 'OGC API Features (OAFeat)'
     },
+    'OGC:3DTiles': {
+        'label': 'OGC 3D Tiles (OGC3D)'
+    },
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'
+    },
+    'Mapbox:TileJSON': {
+        'label': 'Mapbox TileJSON Service (TileJSON)'
     },
     'urn:geoss:waf': {
         'label': 'Web Accessible Folder (WAF)'
@@ -91,5 +97,5 @@ RESOURCE_TYPES = {
     },
     'GHC:Report': {
         'label': 'GeoHealthCheck Reporter (GHC-R)'
-    }
+    },
 }
