@@ -4,6 +4,7 @@ from owslib.wmts import WebMapTileService
 from pyproj import CRS, Transformer
 from pyproj.crs import coordinate_system
 import math
+import requests
 
 
 class WmtsGetTile(Probe):
@@ -195,24 +196,11 @@ class WmtsGetTile(Probe):
 
             self.layers = self._parameters['layers']
 
-            # Remove capabilities string from url before sending request.
-            self.original_url = self._resource.url
-
-            rest_url_end = '/1.0.0/WMTSCapabilities.xml'
-            if self._resource.url.endswith(rest_url_end):
-                self._resource.url = self._resource.url[0:-len(rest_url_end)]
-
-            if '?' in self._resource.url:
-                self._resource.url = self._resource.url.split('?')[0]
-
             self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
                 self._parameters['kvprest']]
 
         except Exception as err:
             self.result.set(False, str(err))
-
-    def after_request(self):
-        self._resource.url = self.original_url
 
     def perform_request(self):
         """ Perform actual request to service, overridden from base class"""
@@ -269,7 +257,7 @@ class WmtsGetTile(Probe):
                     self._parameters['tilerow'] = tilerow
 
                     # Let the templated parent perform
-                    Probe.perform_request(self)
+                    self.actual_request()
                     self.run_checks()
 
             # Only keep failed Layer results
@@ -286,6 +274,65 @@ class WmtsGetTile(Probe):
             self.result.results = []
 
         self.result.results_failed = results_failed_total
+
+    def actual_request(self):
+        """ Perform actual request to service"""
+
+        # Actualize request query string or POST body
+        # by substitution in template.
+        url_base = self._resource.url
+
+        # Remove capabilities string from url before sending request.
+        rest_url_end = '/1.0.0/WMTSCapabilities.xml'
+        if url_base.endswith(rest_url_end):
+            url_base = url_base[0:-len(rest_url_end)]
+
+        if '?' in url_base:
+            url_base = url_base.split('?')[0]
+
+        request_string = None
+        if self.REQUEST_TEMPLATE:
+            request_string = self.REQUEST_TEMPLATE
+            if '?' in url_base and self.REQUEST_TEMPLATE[0] == '?':
+                self.REQUEST_TEMPLATE = '&' + self.REQUEST_TEMPLATE[1:]
+
+            if self._parameters:
+                request_parms = Plugin.copy(self._parameters)
+                param_defs = self.get_param_defs()
+
+                # Expand string list array to comma separated string
+                for param in request_parms:
+                    if param_defs[param]['type'] == 'stringlist':
+                        request_parms[param] = ','.join(request_parms[param])
+
+                request_string = self.REQUEST_TEMPLATE.format(**request_parms)
+
+        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
+        print(url_base + request_string)
+
+        try:
+            if self.REQUEST_METHOD == 'GET':
+                # Default is plain URL, e.g. for WWW:LINK
+                url = url_base
+                if request_string:
+                    # Query String: mainly OWS:* resources
+                    url = "%s%s" % (url, request_string)
+
+                self.response = Probe.perform_get_request(self, url)
+
+            elif self.REQUEST_METHOD == 'POST':
+                self.response = Probe.perform_post_request(self,
+                    url_base, request_string)
+        except requests.exceptions.RequestException as e:
+            msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
+            self.result.set(False, msg)
+
+        if self.response:
+            self.log('response: status=%d' % self.response.status_code)
+
+            if self.response.status_code / 100 in [4, 5]:
+                self.log('Error response: %s' % (str(self.response.text)))
+        
 
     def calculate_center_tile(self, center_coord, tilematrix, crs):
         """
@@ -379,15 +426,6 @@ class WmtsGetTileAll(WmtsGetTile):
         try:
             self.wmts = self.get_metadata_cached(self._resource,
                                                  version='1.0.0')
-
-            self.original_url = self._resource.url
-
-            rest_url_end = '/1.0.0/WMTSCapabilities.xml'
-            if self._resource.url.endswith(rest_url_end):
-                self._resource.url = self._resource.url[0:-len(rest_url_end)]
-
-            if '?' in self._resource.url:
-                self._resource.url = self._resource.url.split('?')[0]
 
             self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
                 self._parameters['kvprest']]
