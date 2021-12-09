@@ -194,13 +194,13 @@ class WmtsGetTile(Probe):
             self.wmts = self.get_metadata_cached(self._resource,
                                                  version='1.0.0')
 
-            self.layers = self._parameters['layers']
-
-            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
-                self._parameters['kvprest']]
-
         except Exception as err:
             self.result.set(False, str(err))
+
+        self.layers = self._parameters['layers']
+
+        self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
+            self._parameters['kvprest']]
 
     def perform_request(self):
         """ Perform actual request to service, overridden from base class"""
@@ -212,6 +212,18 @@ class WmtsGetTile(Probe):
         self.result.start()
 
         results_failed_total = []
+
+        # If no format was chosen, take the first format in metadata.
+        if self._parameters['format'] == '':
+            layers = self.wmts.contents
+
+            # Take random layer to determine generic attrs
+            for layer_name in layers:
+                layer_entry = layers[layer_name]
+                break
+
+            # Determine image format
+            self._parameters['format'] = layer_entry.formats[0]
 
         for layer in self.layers:
             self._parameters['layers'] = [layer]
@@ -427,10 +439,10 @@ class WmtsGetTileAll(WmtsGetTile):
             self.wmts = self.get_metadata_cached(self._resource,
                                                  version='1.0.0')
 
-            self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
-                self._parameters['kvprest']]
-
-            self.layers = self.wmts.contents
-
         except Exception as err:
             self.result.set(False, str(err))
+
+        self.REQUEST_TEMPLATE = self.REQUEST_TEMPLATE[
+            self._parameters['kvprest']]
+
+        self.layers = self.wmts.contents
