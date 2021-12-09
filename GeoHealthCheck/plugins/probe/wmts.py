@@ -334,7 +334,8 @@ class WmtsGetTile(Probe):
 
             elif self.REQUEST_METHOD == 'POST':
                 self.response = Probe.perform_post_request(self,
-                    url_base, request_string)
+                                                           url_base,
+                                                           request_string)
         except requests.exceptions.RequestException as e:
             msg = "Request Err: %s %s" % (e.__class__.__name__, str(e))
             self.result.set(False, msg)
@@ -344,7 +345,6 @@ class WmtsGetTile(Probe):
 
             if self.response.status_code / 100 in [4, 5]:
                 self.log('Error response: %s' % (str(self.response.text)))
-        
 
     def calculate_center_tile(self, center_coord, tilematrix, crs):
         """
