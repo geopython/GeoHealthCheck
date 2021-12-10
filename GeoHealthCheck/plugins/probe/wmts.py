@@ -320,7 +320,6 @@ class WmtsGetTile(Probe):
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
-        print(url_base + request_string)
 
         try:
             if self.REQUEST_METHOD == 'GET':
