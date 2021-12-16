@@ -57,17 +57,13 @@ class TileJSON(Probe):
             lat = self._parameters['lat_4326']
             lon = self._parameters['lon_4326']
         else:
-            try:
-                center_coords = tile_info['center']
+            if 'center' in tile_info:
+                lat, lon = tile_info['center'][1], tile_info['center'][0]
 
-                if not center_coords:
-                    # Center is optional, if non-existent: use bounds
-                    lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
-                    lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
-                else:
-                    lat, lon = center_coords[1], center_coords[0]
-
-            except KeyError:
+            elif 'bounds' in tile_info:
+                lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
+                lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+            else:    
                 err_message = 'No center coordinates given in ' + \
                               'tile.json. Please add lat/lon as ' + \
                               'probe parameters.'
