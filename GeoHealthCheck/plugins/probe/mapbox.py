@@ -101,8 +101,4 @@ class TileJSON(Probe):
                 self.log('Requesting zoom %s: url=%s' % (zoom, zoom_url))
 
                 self.response = Probe.perform_get_request(self, zoom_url)
-                if self.response.status_code == 204:
-                    msg = 'Error response 204: No content'
-                    self.result.set(False, msg)
-                else:
-                    self.run_checks()
+                self.run_checks()
