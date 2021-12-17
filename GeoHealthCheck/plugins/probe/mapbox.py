@@ -53,26 +53,11 @@ class TileJSON(Probe):
 
         tile_info = self.response.json()
 
-        # Get center coordinates from user input parameters
-        # If no input parameters are given, it is equal to ""
-        if self._parameters['lat_4326'] and self._parameters['lon_4326']:
-            lat = self._parameters['lat_4326']
-            lon = self._parameters['lon_4326']
-
-        # If there are no user input parameters, take center from json
-        elif 'center' in tile_info:
-            lat, lon = tile_info['center'][1], tile_info['center'][0]
-
-        # If there is no center attribute in json, take bounds from json
-        elif 'bounds' in tile_info:
-            lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
-            lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
-
-        # If none of the above are present, raise error
-        else:
-            err_message = 'No center coordinates given in ' + \
-                          'tile.json. Please add lat/lon as ' + \
-                          'probe parameters.'
+        lat, lon = self.get_latlon(tile_info)
+        if not lat or not lon:
+            # If none of the above are present, raise error
+            err_message = 'No center coordinates given in tile.json.' + \
+                          'Please add lat/lon as probe parameters.'
             self.result.set(False, err_message)
             return
 
@@ -108,3 +93,25 @@ class TileJSON(Probe):
 
                 self.response = Probe.perform_get_request(self, zoom_url)
                 self.run_checks()
+
+    def get_latlon(self, tile_info):
+        if ('lat_4326' in self._parameters and
+           'lon_4326' in self._parameters):
+           if (self._parameters['lat_4326'] and
+              self._parameters['lon_4326']):
+                lat = self._parameters['lat_4326']
+                lon = self._parameters['lon_4326']
+                return lat, lon
+
+        # If there are no user input parameters, take center from json
+        if 'center' in tile_info:
+            lat, lon = tile_info['center'][1], tile_info['center'][0]
+            return lat, lon
+
+        # If there is no center attribute in json, take bounds from json
+        if 'bounds' in tile_info:
+            lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
+            lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+            return lat, lon
+
+        return False
