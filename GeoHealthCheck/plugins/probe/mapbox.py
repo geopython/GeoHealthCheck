@@ -53,22 +53,28 @@ class TileJSON(Probe):
 
         tile_info = self.response.json()
 
+        # Get center coordinates from user input parameters
+        # If no input parameters are given, it is equal to ""
         if self._parameters['lat_4326'] and self._parameters['lon_4326']:
             lat = self._parameters['lat_4326']
             lon = self._parameters['lon_4326']
-        else:
-            if 'center' in tile_info:
-                lat, lon = tile_info['center'][1], tile_info['center'][0]
 
-            elif 'bounds' in tile_info:
-                lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
-                lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
-            else:    
-                err_message = 'No center coordinates given in ' + \
-                              'tile.json. Please add lat/lon as ' + \
-                              'probe parameters.'
-                self.result.set(False, err_message)
-                return
+        # If there are no user input parameters, take center from json
+        elif 'center' in tile_info:
+            lat, lon = tile_info['center'][1], tile_info['center'][0]
+
+        # If there is no center attribute in json, take bounds from json
+        elif 'bounds' in tile_info:
+            lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
+            lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+
+        # If none of the above are present, raise error
+        else:
+            err_message = 'No center coordinates given in ' + \
+                          'tile.json. Please add lat/lon as ' + \
+                          'probe parameters.'
+            self.result.set(False, err_message)
+            return
 
         # Convert bound coordinates to WebMercator
         transformer = Transformer.from_crs(CRS('EPSG:4326'),
