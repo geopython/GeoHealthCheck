@@ -255,7 +255,6 @@
         "lon_4326": "5"
       }
     }
-
   },
   "check_vars": {
     "PDOK BAG WMS - GetCaps - XML Parse": {
