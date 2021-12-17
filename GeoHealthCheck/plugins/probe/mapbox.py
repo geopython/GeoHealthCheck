@@ -97,8 +97,8 @@ class TileJSON(Probe):
     def get_latlon(self, tile_info):
         if ('lat_4326' in self._parameters and
            'lon_4326' in self._parameters):
-           if (self._parameters['lat_4326'] and
-              self._parameters['lon_4326']):
+            if (self._parameters['lat_4326'] and
+               self._parameters['lon_4326']):
                 lat = self._parameters['lat_4326']
                 lon = self._parameters['lon_4326']
                 return lat, lon
