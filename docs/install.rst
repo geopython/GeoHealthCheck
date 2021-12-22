@@ -260,3 +260,13 @@ Use SSL (HTTPS)
 As users and admin may login, running on plain http will send passwords in the clear.
 These days it has become almost trivial to automatically install SSL certificates
 with `Let's Encrypt <https://letsencrypt.org/>`_.
+
+Running on RaspberryPi
+----------------------
+
+Running GeoHealthCheck on a RaspberryPi does not seem to work in a simple way.
+
+- The standard Docker image does not work, because it is not targeted at ARM architecture which is required. 
+  It possible to manually build the Docker image for this architecture by using the Python base image ``arm32v7/python:3.7.9-alpine``.  
+  The built of the image works, but running this image failes so far. See `Issue 412 <https://github.com/geopython/GeoHealthCheck/issues/412>`_.
+- Installing GeoHealthCheck manually failed, because ``pyproj`` causes errors
