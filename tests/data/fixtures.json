@@ -199,7 +199,7 @@
     },
     "WOUDC WMTS - GetTileREST": {
       "resource": "WOUDC WMTS",
-      "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTileAll",
+      "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTile",
       "parameters": {
         "layers": ["natura2000"],
         "tilematrixset": "All tilematrixsets",
@@ -214,7 +214,7 @@
     },
     "WOUDC WMTS - GetTileKVP": {
       "resource": "WOUDC WMTS",
-      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetTileAll",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetTile",
       "parameters": {
         "layers": ["natura2000"],
         "tilematrixset": "All tilematrixsets",
