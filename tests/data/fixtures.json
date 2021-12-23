@@ -214,7 +214,7 @@
     },
     "WOUDC WMTS - GetTileKVP": {
       "resource": "WOUDC WMTS",
-      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetTile",
+      "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTile",
       "parameters": {
         "layers": ["natura2000"],
         "tilematrixset": "All tilematrixsets",
