@@ -197,6 +197,36 @@
         "version": "1.0.0"
       }
     },
+    "WOUDC WMTS - GetTileREST": {
+      "resource": "WOUDC WMTS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTileAll",
+      "parameters": {
+        "layers": ["natura2000"],
+        "tilematrixset": "All tilematrixsets",
+        "tilematrix": "All tilematrices",
+        "tilerow": "Center of the image",
+        "tilecol": "Center of the image",
+        "format": "image/png",
+        "exceptions": "application/vnd.ogc.se_xml",
+        "style": "default",
+        "kvprest": "REST"
+      }
+    },
+    "WOUDC WMTS - GetTileKVP": {
+      "resource": "WOUDC WMTS",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetTileAll",
+      "parameters": {
+        "layers": ["natura2000"],
+        "tilematrixset": "All tilematrixsets",
+        "tilematrix": "All tilematrices",
+        "tilerow": "Center of the image",
+        "tilecol": "Center of the image",
+        "format": "image/png",
+        "exceptions": "application/vnd.ogc.se_xml",
+        "style": "default",
+        "kvprest": "KVP"
+      }
+    },
     "WOUDC LINK - PING": {
       "resource": "WOUDC LINK",
       "probe_class": "GeoHealthCheck.plugins.probe.http.HttpGet",
