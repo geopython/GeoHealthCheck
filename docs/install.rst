@@ -264,9 +264,4 @@ with `Let's Encrypt <https://letsencrypt.org/>`_.
 Running on RaspberryPi
 ----------------------
 
-Running GeoHealthCheck on a RaspberryPi does not seem to work in a simple way.
-
-- The standard Docker image does not work, because it is not targeted at ARM architecture which is required. 
-  It possible to manually build the Docker image for this architecture by using the Python base image ``arm32v7/python:3.7.9-alpine``.  
-  The built of the image works, but running this image failes so far. See `Issue 412 <https://github.com/geopython/GeoHealthCheck/issues/412>`_.
-- Installing GeoHealthCheck manually failed, because ``pyproj`` causes errors
+Running GeoHealthCheck on a RaspberryPi works with Docker. But the standard Docker image cannot be used, because it is not targeted at RaspberryPi's ARM architecture. However, it is possible to manually build the Docker image for this architecture by replacing the Python base image of the Dockerfile with ``arm32v7/python:3.7.9-alpine``. The image needs to be build on a machine with that architecuture. The RaspberryPi itself can be used for that, but it takes up to one hour.
