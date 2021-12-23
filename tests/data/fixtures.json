@@ -371,6 +371,26 @@
       "probe_vars": "OPENGEOGROEP TMS - TopTile",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
+    },
+    "WOUDC WMTS - GetTileREST - No Exception": {
+      "probe_vars": "WOUDC WMTS - GetTileREST",
+      "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
+      "parameters": {"strings": ["ExceptionReport>", "ServiceException>"]}
+    },
+    "WOUDC WMTS - GetTileREST - Content Type": {
+      "probe_vars": "WOUDC WMTS - GetTileREST",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
+      "parameters": {}
+    },
+    "WOUDC WMTS - GetTileKVP - No Exception": {
+      "probe_vars": "WOUDC WMTS - GetTileKVP",
+      "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
+      "parameters": {"strings": ["ExceptionReport>", "ServiceException>"]}
+    },
+    "WOUDC WMTS - GetTileKVP - Content Type": {
+      "probe_vars": "WOUDC WMTS - GetTileKVP",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
+      "parameters": {}
     }
   }
 }
