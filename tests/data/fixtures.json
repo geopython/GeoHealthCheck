@@ -68,6 +68,18 @@
         "tiling"
       ]
     },
+    "PDOK WMTS": {
+      "owner": "admin",
+      "resource_type": "OGC:WMTS",
+      "active": true,
+      "title": "Dutch PDOK Luchtfoto WMTS",
+      "url": "https://service.pdok.nl/hwh/luchtfotocir/wmts/v1_0",
+      "tags": [
+        "ows",
+        "tiling",
+        "pdok"
+      ]
+    },
     "WOUDC LINK": {
       "owner": "admin",
       "resource_type": "WWW:LINK",
@@ -217,6 +229,21 @@
       "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTile",
       "parameters": {
         "layers": ["natura2000"],
+        "tilematrixset": "All tilematrixsets",
+        "tilematrix": "All tilematrices",
+        "tilerow": "Center of the image",
+        "tilecol": "Center of the image",
+        "format": "image/png",
+        "exceptions": "application/vnd.ogc.se_xml",
+        "style": "default",
+        "kvprest": "KVP"
+      }
+    },
+    "PDOK WMTS - GetTileAllKVP": {
+      "resource": "PDOK WMTS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTileAll",
+      "parameters": {
+        "layers": ["All layers"],
         "tilematrixset": "All tilematrixsets",
         "tilematrix": "All tilematrices",
         "tilerow": "Center of the image",
@@ -389,6 +416,16 @@
     },
     "WOUDC WMTS - GetTileKVP - Content Type": {
       "probe_vars": "WOUDC WMTS - GetTileKVP",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
+      "parameters": {}
+    },
+    "PDOK WMTS - GetTileAllKVP - No Exception": {
+      "probe_vars": "PDOK WMTS - GetTileAllKVP",
+      "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
+      "parameters": {"strings": ["ExceptionReport>", "ServiceException>"]}
+    },
+    "PDOK WMTS - GetTileAllKVP - Content Type": {
+      "probe_vars": "PDOK WMTS - GetTileAllKVP",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     }
