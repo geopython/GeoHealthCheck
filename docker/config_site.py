@@ -76,8 +76,8 @@ if os.environ.get('GHC_USER_PLUGINS'):
 GHC_SMTP = {
     'server': os.environ['GHC_SMTP_SERVER'],
     'port': os.environ['GHC_SMTP_PORT'],
-    'tls': os.environ['GHC_SMTP_TLS'],
-    'ssl': os.environ['GHC_SMTP_SSL'],
+    'tls': str2bool(os.environ['GHC_SMTP_TLS']),
+    'ssl': str2bool(os.environ['GHC_SMTP_SSL']),
     'username': os.environ['GHC_SMTP_USERNAME'],
     'password': os.environ['GHC_SMTP_PASSWORD']
 }

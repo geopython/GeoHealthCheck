@@ -95,22 +95,23 @@ def do_email(config, resource, run, status_changed, result):
     if config['DEBUG']:
         server.set_debuglevel(True)
 
-    try:
-        if config['GHC_SMTP']['tls']:
+    if config['GHC_SMTP']['tls']:
+        LOGGER.debug('Authenticating via TLS')
+        try:
             server.starttls()
-    except Exception as err:
-        LOGGER.exception("Cannot connect to smtp: %s[:%s]: %s",
-                         config['GHC_SMTP']['server'],
-                         config['GHC_SMTP']['port'],
-                         err,
-                         exc_info=err)
-        return
+        except Exception as err:
+            LOGGER.exception("Cannot authenticate to smtp: %s:%s: %s",
+                             config['GHC_SMTP']['server'],
+                             config['GHC_SMTP']['port'],
+                             err,
+                             exc_info=err)
+            return
     try:
         server.login(config['GHC_SMTP']['username'],
                      config['GHC_SMTP']['password'])
     except Exception as err:
-        LOGGER.exception("Cannot log in to smtp: %s", err,
-                         exc_info=err)
+        LOGGER.exception("Cannot log in to smtp: %s", err, exc_info=err)
+
     try:
         server.sendmail(config['GHC_ADMIN_EMAIL'],
                         notifications_email,
