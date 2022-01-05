@@ -100,7 +100,7 @@ def do_email(config, resource, run, status_changed, result):
         try:
             server.starttls()
         except Exception as err:
-            LOGGER.exception("Cannot authenticate to smtp: %s:%s: %s",
+            LOGGER.exception("Cannot authenticate to SMTP: %s:%s: %s",
                              config['GHC_SMTP']['server'],
                              config['GHC_SMTP']['port'],
                              err,
@@ -110,7 +110,8 @@ def do_email(config, resource, run, status_changed, result):
         server.login(config['GHC_SMTP']['username'],
                      config['GHC_SMTP']['password'])
     except Exception as err:
-        LOGGER.exception("Cannot log in to smtp: %s", err, exc_info=err)
+        LOGGER.warning("Cannot log in to SMTP: %s", err, exc_info=err)
+        LOGGER.warning("Will attempt to send mail anyway")
 
     try:
         server.sendmail(config['GHC_ADMIN_EMAIL'],
