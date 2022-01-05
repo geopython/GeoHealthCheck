@@ -101,7 +101,7 @@
       "resource_type": "ESRI:FS",
       "active": true,
       "title": "ESRI ArcGIS FeatureServer (FS)",
-      "url": "https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Fire/Sheep/FeatureServer",
+      "url": "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer",
       "tags": [
         "esri"
       ]
