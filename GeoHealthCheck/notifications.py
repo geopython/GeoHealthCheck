@@ -79,10 +79,7 @@ def do_email(config, resource, run, status_changed, result):
                                       result, resource.title)
 
     if not config.get('GHC_SMTP') or not\
-        (any([config['GHC_SMTP'][k] for k in ('port',
-                                              'server',
-                                              'username',
-                                              'password',)])):
+       (any([config['GHC_SMTP'][k] for k in ('port', 'server',)])):
 
         LOGGER.warning("No SMTP configuration. Not sending to %s",
                        notifications_email)
@@ -106,12 +103,14 @@ def do_email(config, resource, run, status_changed, result):
                              err,
                              exc_info=err)
             return
-    try:
-        server.login(config['GHC_SMTP']['username'],
-                     config['GHC_SMTP']['password'])
-    except Exception as err:
-        LOGGER.warning("Cannot log in to SMTP: %s", err, exc_info=err)
-        LOGGER.warning("Will attempt to send mail anyway")
+
+    if None not in [
+       config['GHC_SMTP'].get('username'), config['GHC_SMTP'].get('password')]:
+        try:
+            server.login(config['GHC_SMTP']['username'],
+                         config['GHC_SMTP']['password'])
+        except Exception as err:
+            LOGGER.exception("Cannot log in to SMTP: %s", err, exc_info=err)
 
     try:
         server.sendmail(config['GHC_ADMIN_EMAIL'],

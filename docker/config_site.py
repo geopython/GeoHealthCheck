@@ -33,6 +33,10 @@ def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
 
 
+def str2None(v):
+    return None if v == 'None' else v
+
+
 DEBUG = False
 SQLALCHEMY_ECHO = False
 
@@ -78,8 +82,8 @@ GHC_SMTP = {
     'port': os.environ['GHC_SMTP_PORT'],
     'tls': str2bool(os.environ['GHC_SMTP_TLS']),
     'ssl': str2bool(os.environ['GHC_SMTP_SSL']),
-    'username': os.environ['GHC_SMTP_USERNAME'],
-    'password': os.environ['GHC_SMTP_PASSWORD']
+    'username': str2None(os.environ.get('GHC_SMTP_USERNAME')),
+    'password': str2None(os.environ.get('GHC_SMTP_PASSWORD'))
 }
 
 # TODO: provide for GHC Plugins
