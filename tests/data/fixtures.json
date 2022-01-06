@@ -73,7 +73,7 @@
       "resource_type": "OGC:WMTS",
       "active": true,
       "title": "Dutch PDOK Luchtfoto WMTS",
-      "url": " https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0",
+      "url": "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0",
       "tags": [
         "ows",
         "tiling",

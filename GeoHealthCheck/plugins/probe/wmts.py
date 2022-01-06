@@ -5,6 +5,7 @@ from pyproj import CRS, Transformer
 from pyproj.crs import coordinate_system
 import math
 import requests
+from random import choice
 
 
 class WmtsGetTile(Probe):
@@ -50,7 +51,7 @@ class WmtsGetTile(Probe):
         'tilematrix': {
             'type': 'string',
             'description': 'tilematrix',
-            'value': 'All tilematrices',
+            'value': 'Random sample',
         },
         'tilerow': {
             'type': 'string',
@@ -259,18 +260,20 @@ class WmtsGetTile(Probe):
                                                      center_coord_84[0])
 
                 tilematrices = tilematrixset_object.tilematrix
-                for zoom in tilematrices:
-                    self._parameters['tilematrix'] = zoom
 
-                    tilecol, tilerow = self.calculate_center_tile(
-                        center_coord,
-                        tilematrices[zoom], set_crs)
-                    self._parameters['tilecol'] = tilecol
-                    self._parameters['tilerow'] = tilerow
+                zoom = choice(list(tilematrices.keys()))
 
-                    # Let the templated parent perform
-                    self.actual_request()
-                    self.run_checks()
+                self._parameters['tilematrix'] = zoom
+
+                tilecol, tilerow = self.calculate_center_tile(
+                    center_coord,
+                    tilematrices[zoom], set_crs)
+                self._parameters['tilecol'] = tilecol
+                self._parameters['tilerow'] = tilerow
+
+                # Let the templated parent perform
+                self.actual_request()
+                self.run_checks()
 
             # Only keep failed Layer results
             # otherwise with 100s of Layers the report grows out of hand...
