@@ -79,10 +79,7 @@ def do_email(config, resource, run, status_changed, result):
                                       result, resource.title)
 
     if not config.get('GHC_SMTP') or not\
-        (any([config['GHC_SMTP'][k] for k in ('port',
-                                              'server',
-                                              'username',
-                                              'password',)])):
+       (any([config['GHC_SMTP'][k] for k in ('port', 'server',)])):
 
         LOGGER.warning("No SMTP configuration. Not sending to %s",
                        notifications_email)
@@ -95,22 +92,26 @@ def do_email(config, resource, run, status_changed, result):
     if config['DEBUG']:
         server.set_debuglevel(True)
 
-    try:
-        if config['GHC_SMTP']['tls']:
+    if config['GHC_SMTP']['tls']:
+        LOGGER.debug('Authenticating via TLS')
+        try:
             server.starttls()
-    except Exception as err:
-        LOGGER.exception("Cannot connect to smtp: %s[:%s]: %s",
-                         config['GHC_SMTP']['server'],
-                         config['GHC_SMTP']['port'],
-                         err,
-                         exc_info=err)
-        return
-    try:
-        server.login(config['GHC_SMTP']['username'],
-                     config['GHC_SMTP']['password'])
-    except Exception as err:
-        LOGGER.exception("Cannot log in to smtp: %s", err,
-                         exc_info=err)
+        except Exception as err:
+            LOGGER.exception("Cannot authenticate to SMTP: %s:%s: %s",
+                             config['GHC_SMTP']['server'],
+                             config['GHC_SMTP']['port'],
+                             err,
+                             exc_info=err)
+            return
+
+    if None not in [
+       config['GHC_SMTP'].get('username'), config['GHC_SMTP'].get('password')]:
+        try:
+            server.login(config['GHC_SMTP']['username'],
+                         config['GHC_SMTP']['password'])
+        except Exception as err:
+            LOGGER.exception("Cannot log in to SMTP: %s", err, exc_info=err)
+
     try:
         server.sendmail(config['GHC_ADMIN_EMAIL'],
                         notifications_email,
