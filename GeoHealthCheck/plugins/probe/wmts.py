@@ -237,32 +237,29 @@ class WmtsGetTile(Probe):
             center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
                                (bbox84[1] + bbox84[3]) / 2]
 
-            tilematrixsets = layer_object.tilematrixsetlinks
-
             # Format i.e: image/png, url should then end with .png
             # Will this work in every case?
             if self._parameters['kvprest'] == 'REST':
                 format = layer_object.formats[0]
                 self._parameters['format'] = format.split('/')[1]
 
-            for set in tilematrixsets:
-                self._parameters['tilematrixset'] = set
+            tilematrixsets = layer_object.tilematrixsetlinks
+            set = choice(list(tilematrixsets.keys()))
+            self._parameters['tilematrixset'] = set
 
-                tilematrixset_object = self.wmts.tilematrixsets[set]
+            tilematrixset_object = self.wmts.tilematrixsets[set]
 
-                # Get projection from capabilities and transform
-                # the center coordinate
-                set_crs = CRS(tilematrixset_object.crs)
-                transformer = Transformer.from_crs(CRS('EPSG:4326'),
-                                                   set_crs,
-                                                   always_xy=False)
-                center_coord = transformer.transform(center_coord_84[1],
-                                                     center_coord_84[0])
+            # Get projection from capabilities and transform
+            # the center coordinate
+            set_crs = CRS(tilematrixset_object.crs)
+            transformer = Transformer.from_crs(CRS('EPSG:4326'),
+                                                set_crs,
+                                                always_xy=False)
+            center_coord = transformer.transform(center_coord_84[1],
+                                                    center_coord_84[0])
 
-                tilematrices = tilematrixset_object.tilematrix
-
-                zoom = choice(list(tilematrices.keys()))
-
+            tilematrices = tilematrixset_object.tilematrix
+            for zoom in tilematrices:
                 self._parameters['tilematrix'] = zoom
 
                 tilecol, tilerow = self.calculate_center_tile(
@@ -322,7 +319,7 @@ class WmtsGetTile(Probe):
 
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
-        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
+        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, request_string))
 
         try:
             if self.REQUEST_METHOD == 'GET':
