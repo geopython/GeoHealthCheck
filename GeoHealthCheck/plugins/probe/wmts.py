@@ -5,7 +5,7 @@ from pyproj import CRS, Transformer
 from pyproj.crs import coordinate_system
 import math
 import requests
-from random import choice
+from random import choice, shuffle
 
 
 class WmtsGetTile(Probe):
@@ -66,8 +66,7 @@ class WmtsGetTile(Probe):
         'format': {
             'type': 'string',
             'description': 'The image format',
-            'required': True,
-            'range': None,
+            'value': 'All image formats'
         },
         'exceptions': {
             'type': 'string',
@@ -140,14 +139,6 @@ class WmtsGetTile(Probe):
             layers = wmts.contents
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
 
-            # Take random layer to determine generic attrs
-            for layer_name in layers:
-                layer_entry = layers[layer_name]
-                break
-
-            # Determine image format
-            self.PARAM_DEFS['format']['range'] = list(layer_entry.formats)
-
         except Exception as err:
             raise err
 
@@ -214,22 +205,11 @@ class WmtsGetTile(Probe):
 
         results_failed_total = []
 
-        # If no format was chosen, take the first format in metadata.
-        if self._parameters['format'] == '':
-            layers = self.wmts.contents
-
-            # Take random layer to determine generic attrs
-            for layer_name in layers:
-                layer_entry = layers[layer_name]
-                break
-
-            # Determine image format
-            self._parameters['format'] = layer_entry.formats[0]
-
         for layer in self.layers:
             self._parameters['layers'] = [layer]
 
             layer_object = self.wmts.contents[layer]
+            print(dir(layer_object))
 
             # Get the boundingbox from capabilities to get
             # the center coordinate
@@ -237,11 +217,30 @@ class WmtsGetTile(Probe):
             center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
                                (bbox84[1] + bbox84[3]) / 2]
 
-            # Format i.e: image/png, url should then end with .png
-            # Will this work in every case?
-            if self._parameters['kvprest'] == 'REST':
-                format = layer_object.formats[0]
-                self._parameters['format'] = format.split('/')[1]
+            if self._parameters['kvprest'] == 'KVP':
+                format = choice(layer_object.formats)
+                self._parameters['format'] = format
+
+            elif self._parameters['kvprest'] == 'REST':
+                format_list = Plugin.copy(layer_object.formats)
+                shuffle(format_list)
+                print(layer_object.formats)
+                # shuffle(layer_object.formats)
+                print(format_list)
+                format_success = False
+                for format in format_list:
+                    if ('image/png' in format or 'image/jpeg' in format):
+                        self._parameters['format'] = format.split('/')[1]
+                        format_success = True
+                        break
+                    else:
+                        continue
+
+                if not format_success:
+                    msg = "Image Format Err: image format is not one " + \
+                        "of 'image/png or image/jpeg"
+                    self.result.set(False, msg)
+                    return
 
             tilematrixsets = layer_object.tilematrixsetlinks
             set = choice(list(tilematrixsets.keys()))
@@ -253,10 +252,10 @@ class WmtsGetTile(Probe):
             # the center coordinate
             set_crs = CRS(tilematrixset_object.crs)
             transformer = Transformer.from_crs(CRS('EPSG:4326'),
-                                                set_crs,
-                                                always_xy=False)
+                                               set_crs,
+                                               always_xy=False)
             center_coord = transformer.transform(center_coord_84[1],
-                                                    center_coord_84[0])
+                                                 center_coord_84[0])
 
             tilematrices = tilematrixset_object.tilematrix
             for zoom in tilematrices:
@@ -319,7 +318,9 @@ class WmtsGetTile(Probe):
 
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
-        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, request_string))
+                complete_url = url_base + request_string
+
+        self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, complete_url))
 
         try:
             if self.REQUEST_METHOD == 'GET':
@@ -408,24 +409,13 @@ class WmtsGetTileAll(WmtsGetTile):
         # Use WMTS Capabilities doc to get metadata for
         # PARAM_DEFS ranges/defaults
         try:
-            wmts = self.get_metadata_cached(resource, version='1.0.0')
-
             self.PARAM_DEFS['kvprest']['range'] = self.test_kvp_rest()
 
-            layers = wmts.contents
             self.PARAM_DEFS['layers'] = {
                 'type': 'stringlist',
                 'description': 'The WMTS layer, select one',
                 'value': ['All layers']
             }
-
-            # Take random layer to determine generic attrs
-            for layer_name in layers:
-                layer_entry = layers[layer_name]
-                break
-
-            # Determine image format
-            self.PARAM_DEFS['format']['range'] = list(layer_entry.formats)
 
         except Exception as err:
             raise err
