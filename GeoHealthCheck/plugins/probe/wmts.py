@@ -27,12 +27,12 @@ class WmtsGetTile(Probe):
             '?SERVICE=WMTS&VERSION=1.0.0&' +
             'REQUEST=GetTile&LAYER={layers}&' +
             'TILEMATRIXSET={tilematrixset}&' +
-            'TILEMATRIX={tilematrix}&TILEROW={tilerow}&' +
-            'TILECOL={tilecol}&FORMAT={format}&' +
+            'TILEMATRIX={tilematrix}&TILEROW={latitude_4326}&' +
+            'TILECOL={longitude_4326}&FORMAT={format}&' +
             'EXCEPTIONS={exceptions}&STYLE={style}',
         'REST':
             '/{layers}/{tilematrixset}' +
-            '/{tilematrix}/{tilecol}/{tilerow}.{format}'
+            '/{tilematrix}/{longitude_4326}/{latitude_4326}.{format}'
     }
 
     PARAM_DEFS = {
@@ -45,28 +45,29 @@ class WmtsGetTile(Probe):
         },
         'tilematrixset': {
             'type': 'string',
-            'description': 'tilematrixset',
-            'value': 'All tilematrixsets',
+            'description': 'Projection with its own set of zoom level indices',
+            'range': ['all', 'sample'],
+            'default': 'all'
         },
         'tilematrix': {
             'type': 'string',
-            'description': 'tilematrix',
-            'value': 'Random sample',
+            'description': 'Zoom level index',
+            'range': ['all', 'sample'],
+            'default': 'sample'
         },
-        'tilerow': {
+        'latitude_4326': {
             'type': 'string',
-            'description': 'tilerow',
-            'value': 'Center of the image',
+            'description': 'latitude of tile to request'
         },
-        'tilecol': {
+        'longitude_4326': {
             'type': 'string',
-            'description': 'tilecol',
-            'value': 'Center of the image',
+            'description': 'longitude of tile to request'
         },
         'format': {
             'type': 'string',
             'description': 'The image format',
-            'value': 'All image formats'
+            'range': ['sample'],
+            'default': 'sample'
         },
         'exceptions': {
             'type': 'string',
@@ -115,7 +116,7 @@ class WmtsGetTile(Probe):
         :param version:
         :return: Metadata object
         """
-        url = resource.url
+        url = Plugin.copy(resource.url)
 
         # If endpoint can only be accessed through REST, owslib cannot
         # get metadata, as GetCapabilities request is done through KVP.
@@ -138,6 +139,17 @@ class WmtsGetTile(Probe):
 
             layers = wmts.contents
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
+            
+            for layer in layers:
+                layer_object = layers[layer]
+                break
+
+            bbox84 = layer_object.boundingBoxWGS84
+            center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
+                               (bbox84[1] + bbox84[3]) / 2]
+
+            self.PARAM_DEFS['latitude_4326']['default'] = center_coord_84[1]
+            self.PARAM_DEFS['longitude_4326']['default'] = center_coord_84[0]
 
         except Exception as err:
             raise err
@@ -205,32 +217,31 @@ class WmtsGetTile(Probe):
 
         results_failed_total = []
 
+        self.parameters_copy = Plugin.copy(self._parameters)
+
         for layer in self.layers:
-            self._parameters['layers'] = [layer]
+            self.parameters_copy['layers'] = [layer]
 
             layer_object = self.wmts.contents[layer]
-            print(dir(layer_object))
 
-            # Get the boundingbox from capabilities to get
-            # the center coordinate
-            bbox84 = layer_object.boundingBoxWGS84
-            center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
-                               (bbox84[1] + bbox84[3]) / 2]
+            # # Get the boundingbox from capabilities to get
+            # # the center coordinate
+            # bbox84 = layer_object.boundingBoxWGS84
+            # center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
+            #                    (bbox84[1] + bbox84[3]) / 2]
 
             if self._parameters['kvprest'] == 'KVP':
                 format = choice(layer_object.formats)
-                self._parameters['format'] = format
+                self.parameters_copy['format'] = format
 
             elif self._parameters['kvprest'] == 'REST':
                 format_list = Plugin.copy(layer_object.formats)
                 shuffle(format_list)
-                print(layer_object.formats)
-                # shuffle(layer_object.formats)
-                print(format_list)
+
                 format_success = False
                 for format in format_list:
                     if ('image/png' in format or 'image/jpeg' in format):
-                        self._parameters['format'] = format.split('/')[1]
+                        self.parameters_copy['format'] = format.split('/')[1]
                         format_success = True
                         break
                     else:
@@ -238,51 +249,61 @@ class WmtsGetTile(Probe):
 
                 if not format_success:
                     msg = "Image Format Err: image format is not one " + \
-                        "of 'image/png or image/jpeg"
+                        "of 'image/png or image/jpeg.'" + \
+                        "It is recommended to support .png or .jpeg" + \
+                        "when using the REST request format."
                     self.result.set(False, msg)
                     return
 
             tilematrixsets = layer_object.tilematrixsetlinks
-            set = choice(list(tilematrixsets.keys()))
-            self._parameters['tilematrixset'] = set
+            if self._parameters['tilematrixset'] == 'sample':
+                tilematrixsets = [choice(list(tilematrixsets.keys()))]
 
-            tilematrixset_object = self.wmts.tilematrixsets[set]
+            for set in tilematrixsets:
+                self.parameters_copy['tilematrixset'] = set
 
-            # Get projection from capabilities and transform
-            # the center coordinate
-            set_crs = CRS(tilematrixset_object.crs)
-            transformer = Transformer.from_crs(CRS('EPSG:4326'),
-                                               set_crs,
-                                               always_xy=False)
-            center_coord = transformer.transform(center_coord_84[1],
-                                                 center_coord_84[0])
+                tilematrixset_object = self.wmts.tilematrixsets[set]
 
-            tilematrices = tilematrixset_object.tilematrix
-            for zoom in tilematrices:
-                self._parameters['tilematrix'] = zoom
+                # Get projection from capabilities and transform
+                # the center coordinate
+                set_crs = CRS(tilematrixset_object.crs)
+                transformer = Transformer.from_crs(CRS('EPSG:4326'),
+                                                set_crs,
+                                                always_xy=False)
+                lat_4326 = self._parameters['latitude_4326']
+                lon_4326 = self._parameters['longitude_4326']
+                center_coord = transformer.transform(lat_4326,
+                                                    lon_4326)
 
-                tilecol, tilerow = self.calculate_center_tile(
-                    center_coord,
-                    tilematrices[zoom], set_crs)
-                self._parameters['tilecol'] = tilecol
-                self._parameters['tilerow'] = tilerow
+                tilematrices = tilematrixset_object.tilematrix
+                if self._parameters['tilematrix'] == 'sample':
+                    tilematrices = [choice(list(tilematrices.keys()))]
 
-                # Let the templated parent perform
-                self.actual_request()
-                self.run_checks()
+                for zoom in tilematrices:
+                    self.parameters_copy['tilematrix'] = zoom
 
-            # Only keep failed Layer results
-            # otherwise with 100s of Layers the report grows out of hand...
-            results_failed = self.result.results_failed
-            if len(results_failed) > 0:
-                # We have a failed layer: add to result message
-                for result in results_failed:
-                    result.message = 'layer %s: %s' % (layer, result.message)
+                    tilecol, tilerow = self.calculate_center_tile(
+                        center_coord,
+                        tilematrixset_object.tilematrix[zoom], set_crs)
+                    self.parameters_copy['longitude_4326'] = tilecol
+                    self.parameters_copy['latitude_4326'] = tilerow
 
-                results_failed_total += results_failed
-                self.result.results_failed = []
+                    # Let the templated parent perform
+                    self.actual_request()
+                    self.run_checks()
 
-            self.result.results = []
+                # Only keep failed Layer results
+                # otherwise with 100s of Layers the report grows out of hand...
+                results_failed = self.result.results_failed
+                if len(results_failed) > 0:
+                    # We have a failed layer: add to result message
+                    for result in results_failed:
+                        result.message = 'layer %s: %s' % (layer, result.message)
+
+                    results_failed_total += results_failed
+                    self.result.results_failed = []
+
+                self.result.results = []
 
         self.result.results_failed = results_failed_total
 
@@ -308,7 +329,7 @@ class WmtsGetTile(Probe):
                 self.REQUEST_TEMPLATE = '&' + self.REQUEST_TEMPLATE[1:]
 
             if self._parameters:
-                request_parms = Plugin.copy(self._parameters)
+                request_parms = Plugin.copy(self.parameters_copy)
                 param_defs = self.get_param_defs()
 
                 # Expand string list array to comma separated string
@@ -413,7 +434,7 @@ class WmtsGetTileAll(WmtsGetTile):
 
             self.PARAM_DEFS['layers'] = {
                 'type': 'stringlist',
-                'description': 'The WMTS layer, select one',
+                'description': 'All WMTS layers',
                 'value': ['All layers']
             }
 
