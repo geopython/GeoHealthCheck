@@ -438,6 +438,22 @@ class WmtsGetTileAll(WmtsGetTile):
                 'value': ['All layers']
             }
 
+            wmts = self.get_metadata_cached(resource, version='1.0.0')
+
+            layers = wmts.contents
+            self.PARAM_DEFS['layers']['range'] = list(layers.keys())
+            
+            for layer in layers:
+                layer_object = layers[layer]
+                break
+
+            bbox84 = layer_object.boundingBoxWGS84
+            center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
+                               (bbox84[1] + bbox84[3]) / 2]
+
+            self.PARAM_DEFS['latitude_4326']['default'] = center_coord_84[1]
+            self.PARAM_DEFS['longitude_4326']['default'] = center_coord_84[0]
+
         except Exception as err:
             raise err
 
