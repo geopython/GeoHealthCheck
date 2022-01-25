@@ -139,7 +139,7 @@ class WmtsGetTile(Probe):
 
             layers = wmts.contents
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
-            
+
             for layer in layers:
                 layer_object = layers[layer]
                 break
@@ -224,12 +224,6 @@ class WmtsGetTile(Probe):
 
             layer_object = self.wmts.contents[layer]
 
-            # # Get the boundingbox from capabilities to get
-            # # the center coordinate
-            # bbox84 = layer_object.boundingBoxWGS84
-            # center_coord_84 = [(bbox84[0] + bbox84[2]) / 2,
-            #                    (bbox84[1] + bbox84[3]) / 2]
-
             if self._parameters['kvprest'] == 'KVP':
                 format = choice(layer_object.formats)
                 self.parameters_copy['format'] = format
@@ -268,12 +262,12 @@ class WmtsGetTile(Probe):
                 # the center coordinate
                 set_crs = CRS(tilematrixset_object.crs)
                 transformer = Transformer.from_crs(CRS('EPSG:4326'),
-                                                set_crs,
-                                                always_xy=False)
+                                                   set_crs,
+                                                   always_xy=False)
                 lat_4326 = self._parameters['latitude_4326']
                 lon_4326 = self._parameters['longitude_4326']
                 center_coord = transformer.transform(lat_4326,
-                                                    lon_4326)
+                                                     lon_4326)
 
                 tilematrices = tilematrixset_object.tilematrix
                 if self._parameters['tilematrix'] == 'sample':
@@ -298,7 +292,8 @@ class WmtsGetTile(Probe):
                 if len(results_failed) > 0:
                     # We have a failed layer: add to result message
                     for result in results_failed:
-                        result.message = 'layer %s: %s' % (layer, result.message)
+                        msg = 'layer %s: %s' % (layer, result.message)
+                        result.message = msg
 
                     results_failed_total += results_failed
                     self.result.results_failed = []
@@ -442,7 +437,7 @@ class WmtsGetTileAll(WmtsGetTile):
 
             layers = wmts.contents
             self.PARAM_DEFS['layers']['range'] = list(layers.keys())
-            
+
             for layer in layers:
                 layer_object = layers[layer]
                 break
