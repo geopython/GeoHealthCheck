@@ -114,4 +114,4 @@ class TileJSON(Probe):
             lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
             return lat, lon
 
-        return False
+        return False, False
