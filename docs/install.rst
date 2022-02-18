@@ -260,3 +260,8 @@ Use SSL (HTTPS)
 As users and admin may login, running on plain http will send passwords in the clear.
 These days it has become almost trivial to automatically install SSL certificates
 with `Let's Encrypt <https://letsencrypt.org/>`_.
+
+Running on RaspberryPi
+----------------------
+
+Running GeoHealthCheck on a RaspberryPi works with Docker. But the standard Docker image cannot be used, because it is not targeted at RaspberryPi's ARM architecture. However, it is possible to manually build the Docker image for this architecture by replacing the Python base image of the Dockerfile with ``arm32v7/python:3.7.9-alpine``. The image needs to be build on a machine with that architecuture. The RaspberryPi itself can be used for that, but it takes up to one hour.
