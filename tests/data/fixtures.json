@@ -117,8 +117,18 @@
       "tags": [
         "esri"
       ]
+    },
+    "PDOK MAPBOX TILEJSON": {
+      "owner": "admin",
+      "resource_type": "Mapbox:TileJSON",
+      "active": true,
+      "title": "PDOK BRT+BGT Mapbox TileJSON",
+      "url": "https://geodata.nationaalgeoregister.nl/beta/topotiles-viewer/styles/tilejson.json",
+      "tags": [
+        "pdok",
+        "tiling"
+      ]
     }
-
   },
   "probe_vars": {
     "PDOK BAG WMS - GetCaps": {
@@ -293,8 +303,15 @@
       "parameters": {
         "drilldown_level": "full"
       }
+    },
+    "PDOK - MAPBOX TILEJSON": {
+      "resource": "PDOK MAPBOX TILEJSON",
+      "probe_class": "GeoHealthCheck.plugins.probe.mapbox.TileJSON",
+      "parameters": {
+        "lat_4326": "52",
+        "lon_4326": "5"
+      }
     }
-
   },
   "check_vars": {
     "PDOK BAG WMS - GetCaps - XML Parse": {
@@ -397,6 +414,11 @@
     "OPENGEOGROEP TMS - TopTile - Content Type": {
       "probe_vars": "OPENGEOGROEP TMS - TopTile",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
+      "parameters": {}
+    },
+    "PDOK MAPBOX TILEJSON - HTTP - NoError": {
+      "probe_vars": "PDOK - MAPBOX TILEJSON",
+      "check_class": "GeoHealthCheck.plugins.check.checks.HttpStatusNoError",
       "parameters": {}
     },
     "WOUDC WMTS - GetTileREST - No Exception": {

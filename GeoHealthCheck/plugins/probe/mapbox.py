@@ -1,5 +1,6 @@
 from GeoHealthCheck.probe import Probe
 import math
+from pyproj import CRS, Transformer
 
 
 class TileJSON(Probe):
@@ -8,7 +9,7 @@ class TileJSON(Probe):
     """
 
     NAME = 'TileJSON'
-    DESCRIPTION = 'Request Mapbox TileJSON Service and' + \
+    DESCRIPTION = 'Request Mapbox TileJSON Service and ' + \
                   'request each zoom level at center coordinates'
     RESOURCE_TYPE = 'Mapbox:TileJSON'
     REQUEST_METHOD = 'GET'
@@ -19,6 +20,19 @@ class TileJSON(Probe):
         },
     }
     """Checks avail"""
+
+    PARAM_DEFS = {
+        'lat_4326': {
+            'type': 'float',
+            'description': 'latitude in EPSG:4326',
+            'required': False
+        },
+        'lon_4326': {
+            'type': 'float',
+            'description': 'longitude in EPSG:4326',
+            'required': False
+        },
+    }
 
     def perform_request(self):
         url_base = self._resource.url
@@ -39,23 +53,19 @@ class TileJSON(Probe):
 
         tile_info = self.response.json()
 
-        if not tile_info['tilejson'].startswith('2'):
-            self.result.set(False, 'Only versions 2.x.x are supported')
-
-        center_coords = tile_info['center']
-
-        if not center_coords:
-            # Center is optional, if non-existent: get bounds from metadata
-            lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
-            lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
-        else:
-            lat, lon = center_coords[1], center_coords[0]
+        lat, lon = self.get_latlon(tile_info)
+        if not lat or not lon:
+            # If none of the above are present, raise error
+            err_message = 'No center coordinates given in tile.json.' + \
+                          'Please add lat/lon as probe parameters.'
+            self.result.set(False, err_message)
+            return
 
         # Convert bound coordinates to WebMercator
-        try:
-            wm_coords = self.to_wm(lat, lon)
-        except Exception as e:
-            self.result.set(False, 'Error converting coordinates: %s' % (e))
+        transformer = Transformer.from_crs(CRS('EPSG:4326'),
+                                           CRS('EPSG:3857'),
+                                           always_xy=False)
+        wm_coords = transformer.transform(lat, lon)
 
         # Circumference (2 * pi * Semi-major Axis)
         circ = 2 * math.pi * 6378137.0
@@ -65,8 +75,6 @@ class TileJSON(Probe):
         y_rel = (circ / 2 - wm_coords[1]) / circ
 
         for tile_url in tile_info['tiles']:
-            self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, tile_url))
-
             zoom_list = range(tile_info.get('minzoom', 0),
                               tile_info.get('maxzoom', 22) + 1)
 
@@ -81,17 +89,29 @@ class TileJSON(Probe):
                 # Determine the tile URL.
                 zoom_url = tile_url.format(**zxy)
 
-                self.response = Probe.perform_get_request(self, zoom_url)
-                if self.response.status_code == 204:
-                    msg = 'Error response 204: No content'
-                    self.result.set(False, msg)
-                else:
-                    self.run_checks()
+                self.log('Requesting zoom %s: url=%s' % (zoom, zoom_url))
 
-    # Formula to calculate spherical mercator coordinates.
-    def to_wm(self, lat, lon):
-        x = 6378137.0 * math.radians(lon)
-        scale = x / lon
-        y = math.degrees(math.log(math.tan(
-            math.pi / 4.0 + math.radians(lat) / 2.0)) * scale)
-        return (x, y)
+                self.response = Probe.perform_get_request(self, zoom_url)
+                self.run_checks()
+
+    def get_latlon(self, tile_info):
+        if ('lat_4326' in self._parameters and
+           'lon_4326' in self._parameters):
+            if (self._parameters['lat_4326'] and
+               self._parameters['lon_4326']):
+                lat = self._parameters['lat_4326']
+                lon = self._parameters['lon_4326']
+                return lat, lon
+
+        # If there are no user input parameters, take center from json
+        if 'center' in tile_info:
+            lat, lon = tile_info['center'][1], tile_info['center'][0]
+            return lat, lon
+
+        # If there is no center attribute in json, take bounds from json
+        if 'bounds' in tile_info:
+            lat = (tile_info['bounds'][1] + tile_info['bounds'][3]) / 2
+            lon = (tile_info['bounds'][0] + tile_info['bounds'][2]) / 2
+            return lat, lon
+
+        return False, False
