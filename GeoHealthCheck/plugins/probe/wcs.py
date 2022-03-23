@@ -1,11 +1,10 @@
 from GeoHealthCheck.probe import Probe
-from GeoHealthCheck.plugin import Plugin
 from owslib.wcs import WebCoverageService
 
 
 class WcsGetCoverage(Probe):
     """
-    Get WCS coverage image using the OGC WMS GetCoverage v2.0.1 Operation.
+    Get WCS coverage image using the OGC WCS GetCoverage v2.0.1 Operation.
     """
 
     NAME = 'WCS GetCoverage v2.0.1'
@@ -16,10 +15,13 @@ class WcsGetCoverage(Probe):
     RESOURCE_TYPE = 'OGC:WCS'
 
     REQUEST_METHOD = 'GET'
-    REQUEST_TEMPLATE = '?SERVICE=WCS&VERSION=2.0.1&' + \
-                       'REQUEST=GetCoverage&COVERAGEID={layer}&FORMAT={format}&' + \
-                       'SUBSET=x({subset[0]},{subset[2]})&SUBSET=y({subset[1]},{subset[3]})&' + \
-                       'SUBSETTINGCRS={subsetting_crs}&WIDTH={width}&HEIGHT={height}'
+    REQUEST_TEMPLATE = '?SERVICE=WCS&VERSION=2.0.1' + \
+                       '&REQUEST=GetCoverage&COVERAGEID={layer}' + \
+                       '&FORMAT={format}' + \
+                       '&SUBSET=x({subset[0]},{subset[2]})' + \
+                       '&SUBSET=y({subset[1]},{subset[3]})' + \
+                       '&SUBSETTINGCRS={subsetting_crs}' + \
+                       '&WIDTH={width}&HEIGHT={height}'
 
     PARAM_DEFS = {
         'layer': {
@@ -45,7 +47,7 @@ class WcsGetCoverage(Probe):
         },
         'subsetting_crs': {
             'type': 'string',
-            'description': 'The crs of subsettin and also OUTPUTCRS',
+            'description': 'The crs of SUBSET and also OUTPUTCRS',
             'default': '',
             'required': True,
             'range': None
@@ -77,7 +79,7 @@ class WcsGetCoverage(Probe):
         }
     }
     """
-    Checks for WMS GetMap Response available.
+    Checks for WCS GetCoverage Response available.
     Optionally override Check PARAM_DEFS using set_params
     e.g. with specific `value` or even `name`.
     """
@@ -92,7 +94,7 @@ class WcsGetCoverage(Probe):
         :param version:
         :return: Metadata object
         """
-        return WebCoverageService(resource.url, version=version) # , headers-=self.get_request_headers()
+        return WebCoverageService(resource.url, version=version)
 
     # Overridden: expand param-ranges from WCS metadata
     def expand_params(self, resource):

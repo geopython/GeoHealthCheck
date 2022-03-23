@@ -103,6 +103,7 @@ GHC_MAP = {
 GHC_PLUGINS = [
     # Probes
     'GeoHealthCheck.plugins.probe.owsgetcaps',
+    'GeoHealthCheck.plugins.probe.wcs',
     'GeoHealthCheck.plugins.probe.wms',
     'GeoHealthCheck.plugins.probe.wmts',
     'GeoHealthCheck.plugins.probe.wfs',
