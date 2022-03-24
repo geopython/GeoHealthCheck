@@ -16,7 +16,7 @@ class WcsGetCoverage(Probe):
 
     REQUEST_METHOD = 'GET'
     REQUEST_TEMPLATE = '?SERVICE=WCS&VERSION=2.0.1' + \
-                       '&REQUEST=GetCoverage&COVERAGEID={layer}' + \
+                       '&REQUEST=GetCoverage&COVERAGEID={layers}' + \
                        '&FORMAT={format}' + \
                        '&SUBSET=x({subset[0]},{subset[2]})' + \
                        '&SUBSET=y({subset[1]},{subset[3]})' + \
@@ -24,7 +24,7 @@ class WcsGetCoverage(Probe):
                        '&WIDTH={width}&HEIGHT={height}'
 
     PARAM_DEFS = {
-        'layer': {
+        'layers': {
             'type': 'stringlist',
             'description': 'The WCS Layer ID, select one',
             'default': [],
@@ -107,7 +107,7 @@ class WcsGetCoverage(Probe):
             self.layer_count = len(layers)
 
             # Layers to select
-            self.PARAM_DEFS['layer']['range'] = list(layers.keys())
+            self.PARAM_DEFS['layers']['range'] = list(layers.keys())
 
             # Take random layer to determine generic attrs
             for layer_name in layers:
