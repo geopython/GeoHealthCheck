@@ -13,6 +13,17 @@
     "pdok": "pdok"
   },
   "resources": {
+    "PDOK AHN WCS": {
+      "owner": "admin",
+      "resource_type": "OGC:WCS",
+      "active": true,
+      "title": "PDOK AHN Web Coverage Service",
+      "url": "https://geodata.nationaalgeoregister.nl/ahn1/wcs",
+      "tags": [
+        "ows",
+        "pdok"
+      ]
+    },
     "PDOK BAG WMS": {
       "owner": "admin",
       "resource_type": "OGC:WMS",
@@ -97,6 +108,27 @@
     }
   },
   "probe_vars": {
+    "PDOK AHN WCS - GetCaps": {
+      "resource": "PDOK AHN WCS",
+      "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WcsGetCaps",
+      "parameters": {
+        "service": "WCS",
+        "version": "2.0.1"
+      }
+    },
+    "PDOK AHN WCS - GetCoverage v2.0.1": {
+      "resource": "PDOK AHN WCS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wcs.WcsGetCoverage",
+      "parameters": {
+        "layers": ["ahn1_100m"],
+        "format": "image/png",
+        "subset": ["10000", "300000", "280000", "619700"],
+        "subsetting_crs": "http://www.opengis.net/def/crs/EPSG/0/28992",
+        "height": "256",
+        "width": "256",
+        "exceptions": "application/vnd.ogc.se_xml"
+      }
+    },
     "PDOK BAG WMS - GetCaps": {
       "resource": "PDOK BAG WMS",
       "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmsGetCaps",
