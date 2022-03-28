@@ -441,6 +441,10 @@ to override any of the `Probe` baseclass methods.
    :members:
    :show-inheritance:
 
+.. automodule:: GeoHealthCheck.plugins.probe.wmts
+   :members:
+   :show-inheritance:
+
 .. automodule:: GeoHealthCheck.plugins.probe.sta
    :members:
    :show-inheritance:
@@ -449,11 +453,27 @@ to override any of the `Probe` baseclass methods.
    :members:
    :show-inheritance:
 
+.. automodule:: GeoHealthCheck.plugins.probe.wcs
+   :members:
+   :show-inheritance:
+
 .. automodule:: GeoHealthCheck.plugins.probe.wfs3
    :members:
    :show-inheritance:
 
+.. automodule:: GeoHealthCheck.plugins.probe.mapbox
+   :members:
+   :show-inheritance:
+
+.. automodule:: GeoHealthCheck.plugins.probe.ogc3dtiles
+   :members:
+   :show-inheritance:
+
 .. automodule:: GeoHealthCheck.plugins.probe.esrifs
+   :members:
+   :show-inheritance:
+
+.. automodule:: GeoHealthCheck.plugins.probe.ghcreport
    :members:
    :show-inheritance:
 
