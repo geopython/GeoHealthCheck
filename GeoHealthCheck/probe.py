@@ -306,6 +306,7 @@ class Probe(Plugin):
         return self._session.get(
             url,
             timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+            verify=App.get_config()['GHC_VERIFY_SSL'],
             headers=self.get_request_headers())
 
     def perform_post_request(self, url_base, request_string):
@@ -313,6 +314,7 @@ class Probe(Plugin):
         return self._session.post(
             url_base,
             timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+            verify=App.get_config()['GHC_VERIFY_SSL'],
             data=request_string,
             headers=self.get_request_headers())
 
