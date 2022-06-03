@@ -36,7 +36,7 @@ The configuration options are:
 - **GHC_METADATA_CACHE_SECS**: metadata, "Capabilities Docs", cache expiry time, default 900 secs, -1 to disable
 - **GHC_REQUIRE_WEBAPP_AUTH**: require authentication (login or Basic Auth) to access GHC webapp and APIs (default: ``False``)
 - **GHC_BASIC_AUTH_DISABLED**: disable Basic Authentication to access GHC webapp and APIs (default: ``False``), see below when to set to `True`
-- **GHC_VERIFY_SSL**: disable SSL verification for Probe request calls (default: ``False``)
+- **GHC_VERIFY_SSL**: perform SSL verification for Probe HTTPS requests (default: ``True``)
 - **GHC_RUNNER_IN_WEBAPP**: should the GHC Runner Daemon be run in webapp (default: ``True``), more below
 - **GHC_LOG_LEVEL**: logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING)
 - **GHC_MAP**: default map settings
