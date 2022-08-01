@@ -301,7 +301,7 @@ See an example for both below from `config_main.py` for **GHC_PLUGINS** and **GH
        'GeoHealthCheck.plugins.probe.http',
        'GeoHealthCheck.plugins.probe.sta',
        'GeoHealthCheck.plugins.probe.wmsdrilldown',
-       'GeoHealthCheck.plugins.probe.wfs3',
+       'GeoHealthCheck.plugins.probe.ogcfeat',
 
        # Checks
        'GeoHealthCheck.plugins.check.checks',
@@ -336,12 +336,12 @@ See an example for both below from `config_main.py` for **GHC_PLUGINS** and **GH
        'OGC:STA': {
            'probe_class': 'GeoHealthCheck.plugins.probe.sta.StaCaps'
        },
-	   'OGC:WFS3': {
-	       'probe_class': 'GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown'
-	   },
-	   'ESRI:FS': {
-	       'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
-	   },
+       'OGCFeat': {
+           'probe_class': 'GeoHealthCheck.plugins.probe.ogcfeat.OGCFeatDrilldown'
+       },
+       'ESRI:FS': {
+           'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
+       },
        'urn:geoss:waf': {
            'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
        },
@@ -457,7 +457,7 @@ to override any of the `Probe` baseclass methods.
    :members:
    :show-inheritance:
 
-.. automodule:: GeoHealthCheck.plugins.probe.wfs3
+.. automodule:: GeoHealthCheck.plugins.probe.ogcfeat
    :members:
    :show-inheritance:
 

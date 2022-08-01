@@ -71,7 +71,7 @@ RESOURCE_TYPES = {
         'label': 'SensorThings API (STA)',
         'versions': ['1.0']
     },
-    'OGC:WFS3': {
+    'OGCFeat': {
         'label': 'OGC API Features (OAFeat)'
     },
     'OGC:3DTiles': {

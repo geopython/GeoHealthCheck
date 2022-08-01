@@ -100,7 +100,7 @@
     },
     "LDPROXY FEATURES": {
       "owner": "admin",
-      "resource_type": "OSGeo:WFS3",
+      "resource_type": "OGCFeat",
       "active": true,
       "title": "LDproxy Daraa",
       "url": "https://demo.ldproxy.net/daraa",
@@ -292,7 +292,7 @@
     },
     "LDPROXY - Drilldown": {
       "resource": "LDPROXY FEATURES",
-      "probe_class": "GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown",
+      "probe_class": "GeoHealthCheck.plugins.probe.ogcfeat.OGCFeatDrilldown",
       "parameters": {
         "drilldown_level": "full"
       }
