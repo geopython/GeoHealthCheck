@@ -5,13 +5,13 @@ from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.result import Result, push_result
 
 
-class WFS3Caps(Probe):
-    """Probe for OGC WFS3 API (OAFeat) main endpoint url"""
+class OGCFeatCaps(Probe):
+    """Probe for OGC API - Features endpoint url"""
 
     NAME = 'OGC API Features (OAFeat) Capabilities'
     DESCRIPTION = 'Validate OGC API Features (OAFeat) ' \
                   'endpoint landing page'
-    RESOURCE_TYPE = 'OGC:WFS3'
+    RESOURCE_TYPE = 'OGCFeat'
 
     REQUEST_METHOD = 'GET'
     REQUEST_HEADERS = {'Accept': 'application/json'}
@@ -59,19 +59,17 @@ def set_accept_header(oa_feat, content_type):
     oa_feat.headers['Accept'] = content_type
 
 
-class WFS3Drilldown(Probe):
+class OGCFeatDrilldown(Probe):
     """
     Probe for OGC API Features (OAFeat) endpoint "drilldown" or
     "crawl": starting with top endpoint: get Collections and fetch
     Features on them etc. Uses the OWSLib owslib.ogcapi package.
-
-    TODO: class needs renaming: WFS3 is now OAFeat.
     """
 
     NAME = 'OGC API Features (OAFeat) Drilldown'
     DESCRIPTION = 'Traverses an OGC API Features (OAFeat) API ' \
                   'endpoint by drilling down'
-    RESOURCE_TYPE = 'OGC:WFS3'
+    RESOURCE_TYPE = 'OGCFeat'
 
     REQUEST_METHOD = 'GET'
     REQUEST_HEADERS = {'Accept': 'application/json'}
@@ -261,7 +259,7 @@ class WFS3Drilldown(Probe):
         self.result.add_result(result)
 
 
-class WFS3OpenAPIValidator(Probe):
+class OGCFeatOpenAPIValidator(Probe):
     """
     Probe for OGC API Features (OAFeat) OpenAPI Document Validation.
     Uses https://pypi.org/project/openapi-spec-validator/.
@@ -271,7 +269,7 @@ class WFS3OpenAPIValidator(Probe):
     NAME = 'OGC API Features (OAFeat) OpenAPI Validator'
     DESCRIPTION = 'Validates OGC API Features (OAFeat) api endpoint for ' \
                   'OpenAPI compliance'
-    RESOURCE_TYPE = 'OGC:WFS3'
+    RESOURCE_TYPE = 'OGCFeat'
     REQUEST_HEADERS = {'Accept': 'application/json'}
 
     REQUEST_METHOD = 'GET'
@@ -344,7 +342,7 @@ class WFS3OpenAPIValidator(Probe):
 #
 #     NAME = 'OGC API Features Collection'
 #     DESCRIPTION = 'Validate an OGC API Features Collection'
-#     RESOURCE_TYPE = 'OGC:WFS3'
+#     RESOURCE_TYPE = 'OGCFeat'
 #
 #     REQUEST_METHOD = 'GET'
 #

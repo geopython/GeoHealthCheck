@@ -430,7 +430,7 @@ class Resource(DB.Model):
     def get_capabilities_url(self):
         if self.resource_type.startswith('OGC:') \
                 and self.resource_type not in \
-                ['OGC:STA', 'OGC:WFS3', 'ESRI:FS', 'OGC:3DTiles']:
+                ['OGC:STA', 'OGCFeat', 'ESRI:FS', 'OGC:3DTiles']:
             url = '%s%s' % (bind_url(self.url),
                             RESOURCE_TYPES[self.resource_type]['capabilities'])
         else:
