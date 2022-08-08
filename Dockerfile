@@ -1,4 +1,4 @@
-FROM python:3.7.9-alpine3.11
+FROM python:3.7-alpine 
 
 # Thanks to http://www.sandtable.com/reduce-docker-image-sizes-using-alpine
 # FROM debian:jessie
@@ -76,10 +76,10 @@ RUN apk add --no-cache --virtual .build-deps gcc build-base libxslt-dev libxml2-
 # Add standard files and Add/override Plugins
 # Alternative Entrypoints to run GHC jobs
 # Override default Entrypoint with these on Containers
-ADD docker/scripts/*.sh docker/config_site.py docker/plugins /
+COPY docker/scripts/*.sh docker/config_site.py docker/plugins /
 
 # Add Source Code
-ADD . /GeoHealthCheck
+COPY . /GeoHealthCheck
 
 # Install and Remove build-related packages for smaller image size
 RUN chmod a+x /*.sh && bash install.sh && apk del .build-deps
