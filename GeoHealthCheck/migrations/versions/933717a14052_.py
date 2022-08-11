@@ -75,4 +75,25 @@ def downgrade():
             values({'resource_type': op.inline_literal('OGC:WFS3')})
     )
 
+    probe_vars = table('probe_vars',
+        column('probe_class', String)
+    )
+
+    op.execute(
+        probe_vars.update().
+            where(probe_vars.c.probe_class == op.inline_literal('GeoHealthCheck.plugins.probe.ogcfeat.OGCFeatCaps')).
+            values({'probe_class': op.inline_literal('GeoHealthCheck.plugins.probe.wfs3.WFS3Caps')})
+    )
+
+    op.execute(
+        probe_vars.update().
+            where(probe_vars.c.probe_class == op.inline_literal('GeoHealthCheck.plugins.probe.ogcfeat.OGCFeatDrilldown')).
+            values({'probe_class': op.inline_literal('GeoHealthCheck.plugins.probe.wfs3.WFS3Drilldown')})
+    )
+
+    op.execute(
+        probe_vars.update().
+            where(probe_vars.c.probe_class == op.inline_literal('GeoHealthCheck.plugins.probe.ogcfeat.OGCFeatOpenAPIValidator')).
+            values({'probe_class': op.inline_literal('GeoHealthCheck.plugins.probe.wfs3.WFS3OpenAPIValidator')})
+    )
     # ### end Alembic commands ###
