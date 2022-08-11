@@ -152,16 +152,37 @@ One major improvement was more robust (HTTP) retries using the `requests` `Sessi
 
 See `closed issues for related Milestone 0.8.0 <https://github.com/geopython/GeoHealthCheck/milestone/8?closed=1>`_.
 
-Upgrade notes v0.8.2
+Upgrade notes v0.8.3
 ....................
 
-Main change: Bugfixes and small new features on 0.8.0 (0.8.1 was skipped). No DB upgrades required.
+Main change: Bugfixes and small new features on 0.8.0
+(0.8.1 and 0.8.2 were skipped). No DB upgrades required.
 
 OWSLib was upgraded to 0.20.0. Some Py2 to Py3 string encoding issues.
 
 One major improvement was adding `User-Agent` HTTP header for Probe requests.
 
-See `closed issues for related Milestone 0.8.2 <https://github.com/geopython/GeoHealthCheck/milestone/9?closed=1>`_.
+See `closed issues for related Milestone 0.8.3 <https://github.com/geopython/GeoHealthCheck/milestone/9?closed=1>`_.
+
+
+Upgrade notes v0.9.0
+....................
+
+Many (58!) issues and PRs went in. Also thanks to contributors some major features
+were added:
+
+* configurable Geocoder (by @borrob)
+* CI (from Travis CI) and Docker build/push migrated to Github Workflows
+* OGC 3DTiles Probe (by SpotInfo)
+* MapBox TileJSON Probe (by SpotInfo)
+* additional WMTS Probes (by SpotInfo)
+* use official OGC naming for OAFeat Probes (includes DB-upgrade)
+* many bugfixes and security updates
+
+Only a single DB-upgrade is required and only if your installation (DB) contains
+OGC OAFeat Resources and Probes, formerly called "WFS3".
+
+See `closed issues/merged PRs for related Milestone 0.9.0 <https://github.com/geopython/GeoHealthCheck/milestone/10?closed=1>`_.
 
 Running
 -------
