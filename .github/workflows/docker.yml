@@ -34,7 +34,7 @@ jobs:
         id: prep
         run: |
           DOCKER_IMAGE=geopython/geohealthcheck
-          VERSION=0.9.0
+          VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
@@ -43,9 +43,9 @@ jobs:
             VERSION=pr-${{ github.event.number }}
           fi
           if [[ $VERSION == master ]]; then
-            VERSION=0.9.0
+            VERSION=latest
           fi
-          TAGS="${DOCKER_IMAGE}:0.9.0"
+          TAGS="${DOCKER_IMAGE}:${VERSION}"
           echo ::set-output name=image::${DOCKER_IMAGE}
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
