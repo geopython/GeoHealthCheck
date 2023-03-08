@@ -10,7 +10,7 @@ Flask-SQLAlchemy==2.4.0
 itsdangerous==1.1.0
 pyproj==2.6.1.post1
 lxml==4.9.1
-OWSLib==0.20.0
+OWSLib==0.28.1
 jsonschema==3.0.2 # downgrade from 3.2.0 on sept 29, 2020, issue 331, consider better fix
 openapi-spec-validator==0.2.8
 Sphinx==4.1.1
