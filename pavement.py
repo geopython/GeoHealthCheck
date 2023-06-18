@@ -2,7 +2,7 @@
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
-# Copyright (c) 2014 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -105,12 +105,6 @@ def setup():
 
         shutil.rmtree(path(options.base.static_lib /
                            'startbootstrap-sb-admin-2-3.3.7-1'))
-
-    # install sparklines to static/site/js
-    with open(path(options.base.static_lib / 'jspark.js'), 'w') as f:
-        content = urlopen('http://ejohn.org/files/jspark.js').read().decode()
-        content.replace('red', 'green')
-        f.write(content)
 
     # install bootstrap-tagsinput to static/lib
     info('Getting select2')
