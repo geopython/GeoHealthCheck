@@ -3,8 +3,6 @@
 
 echo "START /configure.sh"
 
-source /venv/bin/activate .
-
 # Make sure PYTHONPATH includes GeoHealthCheck
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
@@ -14,9 +12,9 @@ echo "Using DB_TYPE=${DB_TYPE}"
 
 # Create DB shorthand
 function create_db() {
-	pushd /GeoHealthCheck/
+	pushd /GeoHealthCheck/  || exit 1
 	paver create -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL}
-	popd
+	popd || exit 1
 }
 
 # Init actions per DB type

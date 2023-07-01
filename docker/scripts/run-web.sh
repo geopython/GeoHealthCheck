@@ -5,12 +5,11 @@
 echo "START /run-web.sh"
 
 # Set the timezone.
-/set-timezone.sh
+# /set-timezone.sh
 
 # Configure: DB and plugins.
 /configure.sh
 
-source /venv/bin/activate .
 # Make sure PYTHONPATH includes GeoHealthCheck
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
