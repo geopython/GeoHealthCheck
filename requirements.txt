@@ -1,4 +1,4 @@
-Jinja2==3.1.2
+Jinja2==3.0.3
 markupsafe==2.0.1
 Flask==1.1.1
 Flask-Babel==0.12.2
@@ -13,7 +13,7 @@ lxml==4.9.1
 OWSLib==0.20.0
 jsonschema==3.0.2 # downgrade from 3.2.0 on sept 29, 2020, issue 331, consider better fix
 openapi-spec-validator==0.2.8
-Sphinx==6.2.1
+Sphinx==5.3.0
 sphinx-rtd-theme==1.2.2
 requests>=2.23.0
 WTForms==2.2.1
