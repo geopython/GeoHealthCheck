@@ -1,7 +1,4 @@
-FROM python:3.7-alpine 
-
-# Thanks to http://www.sandtable.com/reduce-docker-image-sizes-using-alpine
-# FROM debian:jessie
+FROM ubuntu:jammy
 
 # Credits to yjacolin for providing first versions
 LABEL original_developer="yjacolin <yves.jacolin@camptocamp.com>" \
@@ -10,12 +7,19 @@ LABEL original_developer="yjacolin <yves.jacolin@camptocamp.com>" \
 # These are default values,
 # Override when running container via docker(-compose)
 
+# ARGS
+ARG TZ="Etc/UTC"
+ARG LANG="en_US.UTF-8"
+ARG ADD_DEB_PACKAGES=""
+
 # General ENV settings
 ENV LC_ALL="en_US.UTF-8" \
 	LANG="en_US.UTF-8" \
 	LANGUAGE="en_US.UTF-8" \
     \
 	\
+	DEB_PACKAGES="locales gunicorn python3-gunicorn python3-gevent python3-psycopg2 python3-lxml python3-pyproj" \
+	DEB_BUILD_DEPS="make python3-pip" \
 	# GHC ENV settings\
 	ADMIN_NAME=admin \
 	ADMIN_PWD=admin \
@@ -57,7 +61,7 @@ HOST=0.0.0.0 \
 PORT=80 \
 WSGI_WORKERS=4 \
 WSGI_WORKER_TIMEOUT=6000 \
-WSGI_WORKER_CLASS='eventlet' \
+WSGI_WORKER_CLASS='gevent' \
 \
 # GHC Core Plugins modules and/or classes, seldom needed to set:  \
 # if not specified here or in Container environment  \
@@ -69,9 +73,12 @@ WSGI_WORKER_CLASS='eventlet' \
 # GHC User Plugins, best be overridden via Container environment \
 GHC_USER_PLUGINS=''
 
-RUN apk add --no-cache --virtual .build-deps gcc build-base libxslt-dev libxml2-dev linux-headers postgresql-dev \
-    && apk add --no-cache bash postgresql-client libxslt libxml2 tzdata openntpd proj-dev proj-util \
-    && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+# Install operating system dependencies
+RUN \
+    apt-get update \
+    && apt-get --no-install-recommends install -y ${DEB_PACKAGES} ${DEB_BUILD_DEPS} ${ADD_DEB_PACKAGES} \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
+    && echo "For ${TZ} date=$(date)" && echo "Locale=$(locale)"
 
 # Add standard files and Add/override Plugins
 # Alternative Entrypoints to run GHC jobs
@@ -81,8 +88,15 @@ COPY docker/scripts/*.sh docker/config_site.py docker/plugins /
 # Add Source Code
 COPY . /GeoHealthCheck
 
-# Install and Remove build-related packages for smaller image size
-RUN chmod a+x /*.sh && bash install.sh && apk del .build-deps
+# Install
+RUN \
+	chmod a+x /*.sh && ./install.sh \
+    # Cleanup TODO: remove unused Locales and TZs
+    && apt-get remove --purge -y ${DEB_BUILD_DEPS} \
+    && apt-get clean \
+    && apt autoremove -y  \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # For SQLite
 VOLUME ["/GeoHealthCheck/DB/"]

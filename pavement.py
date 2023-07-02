@@ -179,7 +179,7 @@ def create(options):
 
     if all([username, password, email]):
         args = '%s %s %s' % (username, password, email)
-    sh('python %s create %s' % (path('GeoHealthCheck/models.py'), args))
+    sh('python3 %s create %s' % (path('GeoHealthCheck/models.py'), args))
 
 
 @task
@@ -206,7 +206,7 @@ def upgrade():
 
     info('Upgrading database...')
     with pushd(path('%s/GeoHealthCheck' % BASEDIR)):
-        sh('python manage.py db upgrade')
+        sh('python3 manage.py db upgrade')
 
 
 @task
@@ -302,13 +302,13 @@ def update_translations():
 @task
 def runner_daemon():
     """Run the HealthCheck runner daemon scheduler"""
-    sh('python %s' % path('GeoHealthCheck/scheduler.py'))
+    sh('python3 %s' % path('GeoHealthCheck/scheduler.py'))
 
 
 @task
 def run_healthchecks():
     """Run all HealthChecks directly"""
-    sh('python %s' % path('GeoHealthCheck/healthcheck.py'))
+    sh('python3 %s' % path('GeoHealthCheck/healthcheck.py'))
 
 
 def sphinx_make():
@@ -322,4 +322,4 @@ def sphinx_make():
 @task
 def run_tests():
     """Run all tests"""
-    sh('python %s' % path('tests/run_tests.py'))
+    sh('python3 %s' % path('tests/run_tests.py'))

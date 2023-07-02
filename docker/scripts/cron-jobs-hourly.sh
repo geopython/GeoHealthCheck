@@ -1,6 +1,5 @@
-# /bin/bash
+#!/bin/bash
 
-source /venv/bin/activate .
 
 # Copy possible mounted Plugins into app tree
 if [ -d /plugins ]

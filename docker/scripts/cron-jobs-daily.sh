@@ -1,5 +1,4 @@
-# /bin/bash
+#!/bin/bash
 
-source /venv/bin/activate .
-python /GeoHealthCheck/GeoHealthCheck/models.py flush
+python3 /GeoHealthCheck/GeoHealthCheck/models.py flush
 
