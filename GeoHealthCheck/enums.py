@@ -80,6 +80,9 @@ RESOURCE_TYPES = {
     'ESRI:FS': {
         'label': 'ESRI ArcGIS FeatureServer (FS)'
     },
+    'ESRI:MS': {
+        'label': 'ESRI ArcGIS MapServer (MS)'
+    },
     'Mapbox:TileJSON': {
         'label': 'Mapbox TileJSON Service (TileJSON)'
     },
