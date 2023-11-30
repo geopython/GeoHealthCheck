@@ -157,7 +157,7 @@ def sniff_test_resource(config, resource_type, url):
                          'OGC:SOS': [SensorObservationService],
                          'OGCFeat': [urlopen],
                          'OGC:3DTiles': [urlopen],
-                         'ESRI:FS': [urlopen],
+                         'ESRI': [urlopen],
                          'OGC:STA': [urlopen],
                          'WWW:LINK': [urlopen],
                          'FTP': [urlopen],
@@ -243,8 +243,8 @@ def sniff_test_resource(config, resource_type, url):
                 title = 'OGC STA'
             elif resource_type == 'OGCFeat':
                 title = 'OGC API Features (OAFeat)'
-            elif resource_type == 'ESRI:FS':
-                title = 'ESRI ArcGIS FS'
+            elif resource_type == 'ESRI':
+                title = 'ESRI ArcGIS Service'
             elif resource_type == 'OGC:3DTiles':
                 title = 'OGC 3D Tiles'
             else:

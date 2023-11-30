@@ -339,8 +339,8 @@ See an example for both below from `config_main.py` for **GHC_PLUGINS** and **GH
        'OGCFeat': {
            'probe_class': 'GeoHealthCheck.plugins.probe.ogcfeat.OGCFeatDrilldown'
        },
-       'ESRI:FS': {
-           'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
+       'ESRI': {
+           'probe_class': 'GeoHealthCheck.plugins.probe.esri.ESRIDrilldown'
        },
        'urn:geoss:waf': {
            'probe_class': 'GeoHealthCheck.plugins.probe.http.HttpGet'
@@ -469,7 +469,7 @@ to override any of the `Probe` baseclass methods.
    :members:
    :show-inheritance:
 
-.. automodule:: GeoHealthCheck.plugins.probe.esrifs
+.. automodule:: GeoHealthCheck.plugins.probe.esri
    :members:
    :show-inheritance:
 

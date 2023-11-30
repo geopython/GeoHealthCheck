@@ -58,7 +58,7 @@ class HttpPost(HttpGet):
         """
 
     REQUEST_METHOD = 'POST'
-    REQUEST_HEADERS = {'content-type': '{post_content_type}'}
+    REQUEST_HEADERS = {'Content-Type': '{post_content_type}'}
     REQUEST_TEMPLATE = '{body}'
 
     PARAM_DEFS = {

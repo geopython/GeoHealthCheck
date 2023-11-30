@@ -289,6 +289,7 @@ class Probe(Plugin):
                 self.response = self.perform_get_request(url)
 
             elif self.REQUEST_METHOD == 'POST':
+                request_string = request_string.replace("?","")
                 self.response = self.perform_post_request(
                     url_base, request_string)
         except requests.exceptions.RequestException as e:
