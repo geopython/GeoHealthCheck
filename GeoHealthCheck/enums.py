@@ -77,8 +77,8 @@ RESOURCE_TYPES = {
     'OGC:3DTiles': {
         'label': 'OGC 3D Tiles (OGC3D)'
     },
-    'ESRI:FS': {
-        'label': 'ESRI ArcGIS FeatureServer (FS)'
+    'ESRI': {
+        'label': 'ESRI ArcGIS Server (Feature- or MapService)'
     },
     'Mapbox:TileJSON': {
         'label': 'Mapbox TileJSON Service (TileJSON)'

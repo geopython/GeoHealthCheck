@@ -114,7 +114,7 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
     'GeoHealthCheck.plugins.probe.ogcfeat',
     'GeoHealthCheck.plugins.probe.ogc3dtiles',
-    'GeoHealthCheck.plugins.probe.esrifs',
+    'GeoHealthCheck.plugins.probe.esri',
     'GeoHealthCheck.plugins.probe.ghcreport',
     'GeoHealthCheck.plugins.probe.mapbox',
 
@@ -166,8 +166,8 @@ GHC_PROBE_DEFAULTS = {
     'OGC:3DTiles': {
         'probe_class': 'GeoHealthCheck.plugins.probe.ogc3dtiles.OGC3DTiles'
     },
-    'ESRI:FS': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
+    'ESRI': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.esri.ESRIDrilldown'
     },
     'Mapbox:TileJSON': {
         'probe_class': 'GeoHealthCheck.plugins.probe.mapbox.TileJSON'

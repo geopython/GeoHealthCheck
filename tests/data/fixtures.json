@@ -110,10 +110,20 @@
     },
     "ESRI FEATURESERVER": {
       "owner": "admin",
-      "resource_type": "ESRI:FS",
+      "resource_type": "ESRI",
       "active": true,
       "title": "ESRI ArcGIS FeatureServer (FS)",
       "url": "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer",
+      "tags": [
+        "esri"
+      ]
+    },
+    "ESRI MAPSERVER": {
+      "owner": "admin",
+      "resource_type": "ESRI",
+      "active": true,
+      "title": "ESRI ArcGIS MapServer (MS)",
+      "url": "https://sampleserver6.arcgisonline.com/arcgis/rest/services/AGP/USA/MapServer",
       "tags": [
         "esri"
       ]
@@ -288,11 +298,18 @@
     },
     "ESRIFS - Drilldown": {
       "resource": "ESRI FEATURESERVER",
-      "probe_class": "GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown",
+      "probe_class": "GeoHealthCheck.plugins.probe.esri.ESRIDrilldown",
       "parameters": {
         "drilldown_level": "full"
       }
-    }
+    },
+    "ESRIMS - Drilldown": {
+      "resource": "ESRI MAPSERVER",
+      "probe_class": "GeoHealthCheck.plugins.probe.esri.ESRIDrilldown",
+      "parameters": {
+        "drilldown_level": "full"
+      }
+    }    
    },
   "check_vars": {
     "PDOK BAG WMS - GetCaps - XML Parse": {
