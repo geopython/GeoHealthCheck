@@ -89,5 +89,7 @@ class HttpPost(HttpGet):
         #       self.REQUEST_HEADERS['content-type'].format(**content_type)
         # Hmm seems simpler
         headers = Probe.get_request_headers(self)
-        return headers.update(
+        headers.update(
             {'Content-Type': self._parameters['content_type']})
+
+        return headers
