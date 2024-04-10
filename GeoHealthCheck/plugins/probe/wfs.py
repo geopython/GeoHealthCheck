@@ -80,7 +80,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         'max_count': {
             'type': 'string',
             'description': 'Maximum amount of features to select',
-            'default': '1000',
+            'default': '5',
             'required': True,
             'range': None
         },
