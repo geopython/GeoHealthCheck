@@ -178,6 +178,7 @@
         "type_ns_prefix": "bag",
         "type_ns_uri": "http://bag.geonovum.nl",
         "srs": "EPSG:28992",
+        "max_count": "1",
         "bbox": ["180635", "455870", "180961", "456050"]
       }
     },
@@ -189,6 +190,7 @@
         "type_ns_prefix": "bag",
         "type_ns_uri": "http://bag.geonovum.nl",
         "srs": "EPSG:28992",
+        "max_count": "1",
         "bbox": ["180635", "455870", "180961", "456050"]
       }
     },
