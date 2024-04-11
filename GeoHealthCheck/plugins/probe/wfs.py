@@ -27,7 +27,7 @@ outputFormat="text/xml; subtype=gml/3.1.1"
 xsi:schemaLocation="http://www.opengis.net/wfs
 http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <wfs:Query typeName="{type_name}" srsName="{srs}" maxfeatures="{max_count}"
+  <wfs:Query typeName="{type_name}" srsName="{srs}" maxFeatures="{max_count}"
         xmlns:{type_ns_prefix}="{type_ns_uri}">
     <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
       <ogc:BBOX>
@@ -81,7 +81,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             'type': 'string',
             'description': 'Maximum amount of features to select',
             'default': '5',
-            'required': False,
+            'required': True,
             'range': None
         },
         'bbox': {
