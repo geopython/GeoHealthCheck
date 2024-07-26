@@ -92,6 +92,12 @@ RESOURCE_TYPES = {
     'FTP': {
         'label': 'File Transfer Protocol (FTP)'
     },
+    'ORACLE': {
+        'label': 'Oracle Database'
+    },
+    'POSTGRES': {
+        'label': 'Postgres Database'
+    },
     'OSGeo:GeoNode': {
         'label': 'GeoNode instance'
     },

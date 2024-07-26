@@ -158,6 +158,8 @@ def sniff_test_resource(config, resource_type, url):
                          'OGCFeat': [urlopen],
                          'OGC:3DTiles': [urlopen],
                          'ESRI': [urlopen],
+                         'ORACLE': [oracle_connect],
+                         'POSTGRES': [postgres_connect],
                          'OGC:STA': [urlopen],
                          'WWW:LINK': [urlopen],
                          'FTP': [urlopen],
@@ -307,6 +309,25 @@ def geonode_make_tags(base_url):
     url = urlparse(base_url)
     tag_name = 'GeoNode: {}'.format(url.hostname)
     return [tag_name]
+
+
+def oracle_connect(connect_string):
+    d = {}
+    for c in connect_string.split(";"):
+        key = c.split("=")[0]
+        value = c.split("=")[1]
+        d[key] = value
+    base_name = 'Oracle : {}'.format(d["service"])
+    return True
+
+def postgres_connect(connect_string):
+    d = {}
+    for c in connect_string.split(";"):
+        key = c.split("=")[0]
+        value = c.split("=")[1]
+        d[key] = value
+    base_name = 'Postgres : {}'.format(d["database"])
+    return True
 
 
 if __name__ == '__main__':

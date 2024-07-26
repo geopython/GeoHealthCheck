@@ -110,6 +110,10 @@ def get_python_snippet(resource):
     if resource.resource_type.startswith('OGC:'):
         lines.append('# testing via OWSLib')
         lines.append('# test GetCapabilities')
+    elif resource.resource_type == 'ORACLE':
+        lines.append('# testing via OracleDB')
+    elif resource.resource_type == 'POSTGRES':
+        lines.append('# testing via PostgresDB')
     else:
         lines.append('# testing via urllib2 and urlparse')
 

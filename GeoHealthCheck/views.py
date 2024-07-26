@@ -218,8 +218,11 @@ def get_probes_avail(resource_type=None, resource=None):
     # Assume no resource type
     filters = None
     if resource_type:
-        filters = [('RESOURCE_TYPE', resource_type),
-                   ('RESOURCE_TYPE', '*:*')]
+        if resource_type == "ORACLE" or resource_type == "POSTGRES":
+            filters = [('RESOURCE_TYPE', resource_type)]
+        else:
+            filters = [('RESOURCE_TYPE', resource_type),
+                       ('RESOURCE_TYPE', '*:*')]
 
     probe_classes = Plugin.get_plugins('GeoHealthCheck.probe.Probe', filters)
 

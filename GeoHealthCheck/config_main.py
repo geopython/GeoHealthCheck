@@ -115,6 +115,8 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.ogcfeat',
     'GeoHealthCheck.plugins.probe.ogc3dtiles',
     'GeoHealthCheck.plugins.probe.esri',
+    'GeoHealthCheck.plugins.probe.oracle',
+    'GeoHealthCheck.plugins.probe.postgres',
     'GeoHealthCheck.plugins.probe.ghcreport',
     'GeoHealthCheck.plugins.probe.mapbox',
 
@@ -165,6 +167,12 @@ GHC_PROBE_DEFAULTS = {
     },
     'OGC:3DTiles': {
         'probe_class': 'GeoHealthCheck.plugins.probe.ogc3dtiles.OGC3DTiles'
+    },
+    'ORACLE': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.oracle.OracleDrilldown'
+    },
+    'POSTGRES': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.postgres.PostgresDrilldown'
     },
     'ESRI': {
         'probe_class': 'GeoHealthCheck.plugins.probe.esri.ESRIDrilldown'
