@@ -110,7 +110,7 @@
     },
     "ESRI FEATURESERVER": {
       "owner": "admin",
-      "resource_type": "ESRI",
+      "resource_type": "ESRI:FS",
       "active": true,
       "title": "ESRI ArcGIS FeatureServer (FS)",
       "url": "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer",
@@ -120,7 +120,7 @@
     },
     "ESRI MAPSERVER": {
       "owner": "admin",
-      "resource_type": "ESRI",
+      "resource_type": "ESRI:MS",
       "active": true,
       "title": "ESRI ArcGIS MapServer (MS)",
       "url": "https://sampleserver6.arcgisonline.com/arcgis/rest/services/AGP/USA/MapServer",
@@ -298,14 +298,14 @@
     },
     "ESRIFS - Drilldown": {
       "resource": "ESRI FEATURESERVER",
-      "probe_class": "GeoHealthCheck.plugins.probe.esri.ESRIDrilldown",
+      "probe_class": "GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown",
       "parameters": {
         "drilldown_level": "full"
       }
     },
     "ESRIMS - Drilldown": {
       "resource": "ESRI MAPSERVER",
-      "probe_class": "GeoHealthCheck.plugins.probe.esri.ESRIDrilldown",
+      "probe_class": "GeoHealthCheck.plugins.probe.esrims.ESRIMSDrilldown",
       "parameters": {
         "drilldown_level": "full"
       }
