@@ -157,7 +157,8 @@ def sniff_test_resource(config, resource_type, url):
                          'OGC:SOS': [SensorObservationService],
                          'OGCFeat': [urlopen],
                          'OGC:3DTiles': [urlopen],
-                         'ESRI': [urlopen],
+                         'ESRI:FS': [urlopen],
+                         'ESRI:MS': [urlopen],
                          'ORACLE': [oracle_connect],
                          'POSTGRES': [postgres_connect],
                          'OGC:STA': [urlopen],
@@ -245,8 +246,10 @@ def sniff_test_resource(config, resource_type, url):
                 title = 'OGC STA'
             elif resource_type == 'OGCFeat':
                 title = 'OGC API Features (OAFeat)'
-            elif resource_type == 'ESRI':
-                title = 'ESRI ArcGIS Service'
+            elif resource_type == 'ESRI:FS':
+                title = 'ESRI ArcGIS FeatureService'
+            elif resource_type == 'ESRI:MS':
+                title = 'ESRI ArcGIS MapService'
             elif resource_type == 'OGC:3DTiles':
                 title = 'OGC 3D Tiles'
             else:

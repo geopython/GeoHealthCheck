@@ -147,16 +147,23 @@ class ESRIMSDrilldown(Probe):
         # ASSERTION: will do full drilldown from here
 
         # 3. Test getting Features from Layers
-        result = Result(True, 'Test Layers')
+        result = Result(True, 'Test 1 record for each layer in Layers')
         result.start()
         layer_id = -1
         try:
             for layer_id in layer_ids:
-
                 try:
                     features = self.perform_esrims_get_request(
                         req_tpl['get_features'] % layer_id)
-                    obj_id_field_name = "OBJECTID" #features['objectIdFieldName']
+                    # Get the name of the OBJECTID FieldName
+                    # In a FeatureService this is direct available from features['objectIdFieldName']
+                    # In a MapService this must be done by looping through the response fields and find the field with type 'esriFieldTypeOID'
+                    obj_id_field_name = None
+                    for f in features['fields']:
+                        if f['type'] == 'esriFieldTypeOID':
+                            obj_id_field_name = f['name']
+                            break
+
                     features = features['features']
                     if len(features) == 0:
                         continue

@@ -114,7 +114,8 @@ GHC_PLUGINS = [
     'GeoHealthCheck.plugins.probe.wmsdrilldown',
     'GeoHealthCheck.plugins.probe.ogcfeat',
     'GeoHealthCheck.plugins.probe.ogc3dtiles',
-    'GeoHealthCheck.plugins.probe.esri',
+    'GeoHealthCheck.plugins.probe.esrifs',
+    'GeoHealthCheck.plugins.probe.esrims',
     'GeoHealthCheck.plugins.probe.oracle',
     'GeoHealthCheck.plugins.probe.postgres',
     'GeoHealthCheck.plugins.probe.ghcreport',
@@ -174,8 +175,11 @@ GHC_PROBE_DEFAULTS = {
     'POSTGRES': {
         'probe_class': 'GeoHealthCheck.plugins.probe.postgres.PostgresDrilldown'
     },
-    'ESRI': {
-        'probe_class': 'GeoHealthCheck.plugins.probe.esri.ESRIDrilldown'
+    'ESRI:FS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.esrifs.ESRIFSDrilldown'
+    },
+    'ESRI:MS': {
+        'probe_class': 'GeoHealthCheck.plugins.probe.esrims.ESRIMSDrilldown'
     },
     'Mapbox:TileJSON': {
         'probe_class': 'GeoHealthCheck.plugins.probe.mapbox.TileJSON'
