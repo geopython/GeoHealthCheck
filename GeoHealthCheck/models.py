@@ -416,7 +416,9 @@ class Resource(DB.Model):
         try:
             croniter(cron)
         except CroniterBadCronError as error:
-            raise ValueError(f"Bad cron pattern '{cron}': {str(error)}") from error
+            raise ValueError(
+                f"Bad cron pattern '{cron}': {str(error)}"
+            ) from error
 
         return cron
 

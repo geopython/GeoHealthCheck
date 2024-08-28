@@ -247,8 +247,8 @@ def add_job(resource):
     LOGGER.info('Starting job for resource=%d' % resource.identifier)
 
     if resource.cron:
-        # determine the frequency. Used as input to ``run_job`` and to determine misfire
-        # grace time
+        # determine the frequency. Used as input to ``run_job`` and to
+        # determine misfire grace time
         cron = croniter(resource.cron)
         # Use the next two execution times to determine time difference
         seconds = abs(cron.get_next() - cron.get_next())
