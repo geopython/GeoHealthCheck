@@ -22,3 +22,4 @@ APScheduler==3.6.1
 passlib==1.7.1
 Werkzeug==0.16.1
 tzlocal<3.0 # Fix based on https://github.com/Yelp/elastalert/issues/2968
+croniter
