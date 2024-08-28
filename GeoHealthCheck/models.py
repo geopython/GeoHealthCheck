@@ -403,7 +403,7 @@ class Resource(DB.Model):
     owner = DB.relationship('User',
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
-    run_frequency = DB.Column(DB.Integer, default=60)
+    run_frequency = DB.Column(DB.Integer, default=60, nullable=False)
     _auth = DB.Column('auth', DB.Text, nullable=True, default=None)
     cron = DB.Column(DB.Text, nullable=True, default=None)
 
@@ -680,7 +680,8 @@ class ResourceLock(DB.Model):
                            primary_key=True, autoincrement=False, unique=True)
     resource_identifier = DB.Column(DB.Integer,
                                     DB.ForeignKey('resource.identifier'),
-                                    unique=True)
+                                    unique=True,
+                                    nullable=False)
     resource = DB.relationship('Resource',
                                backref=DB.backref('locks', lazy='dynamic',
                                                   cascade="all,delete"))
