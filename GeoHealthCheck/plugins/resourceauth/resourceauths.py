@@ -164,3 +164,63 @@ class BearerTokenAuth(ResourceAuth):
 
         # Bearer Type, see eg. https://tools.ietf.org/html/rfc6750
         return "Bearer %s" % self.auth_dict['data']['token']
+
+
+class DigestAuth(ResourceAuth):
+    """
+    Digest authentication.
+    """
+
+    NAME = 'Digest'
+    DESCRIPTION = 'Default class for digest auth'
+
+    PARAM_DEFS = {
+        'username': {
+            'type': 'string',
+            'description': 'Username',
+            'default': None,
+            'required': True,
+            'range': None
+        },
+        'password': {
+            'type': 'password',
+            'description': 'Password',
+            'default': None,
+            'required': True,
+            'range': None
+        }
+    }
+    """Param defs"""
+
+    def __init__(self):
+        ResourceAuth.__init__(self)
+
+    def verify(self):
+        if self.auth_dict is None:
+            return False
+
+        if 'data' not in self.auth_dict:
+            return False
+
+        auth_data = self.auth_dict['data']
+
+        if auth_data.get('username', None) is None:
+            return False
+
+        if len(auth_data.get('username', '')) == 0:
+            return False
+
+        if auth_data.get('password', None) is None:
+            return False
+
+        if len(auth_data.get('password', '')) == 0:
+            return False
+
+        return True
+
+    def encode_auth_header_val(self):
+        """
+        Get None!
+        HTTPDigestAuth is used directly within Probes 
+        """
+        return None

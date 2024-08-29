@@ -2,6 +2,9 @@ from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.plugin import Plugin
 from owslib.wms import WebMapService
 
+from owslib.util import Authentication
+from requests.auth import HTTPDigestAuth
+
 
 class WmsGetMapV1(Probe):
     """
@@ -109,8 +112,20 @@ class WmsGetMapV1(Probe):
         :param version:
         :return: Metadata object
         """
-        return WebMapService(resource.url, version=version,
+        if resource.auth and resource.auth['type'] == 'Digest':
+            headers = self.get_request_headers()
+            if headers and 'auth' in headers:
+                del headers['auth']
+            username = resource.auth['data']['username']
+            password = resource.auth['data']['password']
+            auth = Authentication(auth_delegate=HTTPDigestAuth(username, password))
+            return WebMapService(resource.url, version=version,
+                                 headers=headers,
+                                 auth=auth)
+        else:
+            return WebMapService(resource.url, version=version,
                              headers=self.get_request_headers())
+
 
     # Overridden: expand param-ranges from WMS metadata
     def expand_params(self, resource):
