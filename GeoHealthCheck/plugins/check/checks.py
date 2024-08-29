@@ -245,7 +245,10 @@ class NotContainsStrings(ContainsStrings):
             try:
                 result = text not in self.probe.response.text
                 if result is False:
-                    msg = '%s in response text' % text
+                    if 'exception' in self.probe.response.text.lower():
+                        msg = self.probe.response.text
+                    else:
+                        msg = '%s in response text' % text
                     break
             except Exception:
                 result = False
