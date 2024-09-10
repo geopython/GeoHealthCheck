@@ -42,6 +42,7 @@ from notifications import _parse_webhook_location, do_webhook
 from resourceauth import ResourceAuth
 import result
 
+
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -95,18 +96,22 @@ class GeoHealthCheckTest(unittest.TestCase):
                 (resource.url, str(resource.runs[0])))
 
     def testNotificationsApi(self):
-        Rcp = Recipient
         test_emails = ['test@test.com', 'other@test.com', 'unused@test.com']
         invalid_emails = ['invalid', None, object()]
 
         # invalid values should raise exception
         for email in invalid_emails:
             with self.assertRaises(ValueError):
-                Rcp.get_or_create('email', email)
+                Recipient.get_or_create('email', email)
 
         for email in test_emails:
-            Rcp.get_or_create('email', email)
-        from_db = set(r[0] for r in DB.session.query(Rcp.location).all())
+            Recipient.get_or_create('email', email)
+        from_db = {
+            r[0]
+            for r in DB.session.query(Recipient.location).filter(
+                Recipient.channel == 'email'
+            )
+        }
         self.assertEqual(from_db, set(test_emails))
 
         r = Resource.query.first()
@@ -114,7 +119,7 @@ class GeoHealthCheckTest(unittest.TestCase):
 
         # unused email should be removed
         self.assertEqual(set(r.get_recipients('email')), set(test_emails[:2]))
-        q = Rcp.query.filter(Rcp.location == test_emails[-1])
+        q = Recipient.query.filter(Recipient.location == test_emails[-1])
         self.assertEqual(q.count(), 0)
 
     def testWebhookNotifications(self):
