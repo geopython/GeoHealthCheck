@@ -917,7 +917,8 @@ def load_data(file_path):
         recipient = objects['recipients'][recipient_name]
 
         recipient = Recipient(recipient['channel'], recipient['location'])
-        for resource_name in objects['recipients'][recipient_name]['resources']:
+        attached_resources = objects['recipients'][recipient_name]['resources']
+        for resource_name in attached_resources:
             recipient.resources.append(resources[resource_name])
 
         recipients[recipient_name] = recipient

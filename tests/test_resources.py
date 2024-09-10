@@ -148,7 +148,9 @@ class GeoHealthCheckTest(unittest.TestCase):
 
         # create a report from scratch as as local fixture for
 
-        recipient = Recipient.query.filter(Recipient.channel==Recipient.TYPE_WEBHOOK).first()
+        recipient = Recipient.query.filter(
+            Recipient.channel == Recipient.TYPE_WEBHOOK
+        ).first()
 
         resource = recipient.resources[0]
 
@@ -186,7 +188,9 @@ class GeoHealthCheckTest(unittest.TestCase):
             'ghc.resource.type': resource.resource_type,
             'ghc.resource.view': f'http://host/resource/{resource.identifier}',
             'ghc.run.message': 'Failed',
-            'ghc.run.report': json.dumps(resource_result.get_report(), sort_keys=True),
+            'ghc.run.report': json.dumps(
+                resource_result.get_report(), sort_keys=True
+            ),
         }
 
         responses.add(
