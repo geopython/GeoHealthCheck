@@ -298,7 +298,7 @@ class Probe(Plugin):
         if self.response:
             self.log('response: status=%d' % self.response.status_code)
 
-            if self.response.status_code / 100 in [4, 5]:
+            if self.response.status_code >= 400:
                 self.log('Error response: %s' % (str(self.response.text)))
 
     def perform_get_request(self, url):

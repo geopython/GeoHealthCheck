@@ -911,6 +911,19 @@ def load_data(file_path):
         checks[check_name] = check
         DB.session.add(check)
 
+    # add Recipient, keeping track of DB objects
+    recipients = {}
+    for recipient_name in objects.get('recipients', {}):
+        recipient = objects['recipients'][recipient_name]
+
+        recipient = Recipient(recipient['channel'], recipient['location'])
+        attached_resources = objects['recipients'][recipient_name]['resources']
+        for resource_name in attached_resources:
+            recipient.resources.append(resources[resource_name])
+
+        recipients[recipient_name] = recipient
+        DB.session.add(recipient)
+
     db_commit()
 
 
