@@ -28,14 +28,19 @@
 #
 # =================================================================
 
+import json
 import unittest
 import os
+
+import responses
+from responses.matchers import urlencoded_params_matcher
 
 from init import App
 from models import (DB, Resource, Run, load_data, Recipient)
 from healthcheck import run_test_resource
-from notifications import _parse_webhook_location
+from notifications import _parse_webhook_location, do_webhook
 from resourceauth import ResourceAuth
+import result
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -132,6 +137,66 @@ class GeoHealthCheckTest(unittest.TestCase):
                 self.assertEqual(test_params, params)
             except Exception as err:
                 self.assertFalse(success, str(err))
+
+    @responses.activate
+    def testWebhookPayload(self):
+
+        # create a report from scratch as as local fixture for
+
+        recipient = Recipient.query.filter(Recipient.channel==Recipient.TYPE_WEBHOOK).first()
+
+        resource = recipient.resources[0]
+
+        resource_result = result.ResourceResult(resource)
+        resource_result.start()
+
+        probe = resource.probe_vars[0]
+        probe_result = result.ProbeResult(None, probe)
+        probe_result.start()
+
+        check = probe.check_vars[0]
+        check_result = result.CheckResult(
+            check=None,
+            check_vars=check,
+            success=False,
+            message='Failed'
+        )
+        check_result.start()
+        check_result.stop()
+
+        probe_result.add_result(check_result)
+        probe_result.stop()
+
+        resource_result.add_result(probe_result)
+        resource_result.stop()
+
+        run = Run(resource=resource, result=resource_result)
+
+        # Build up the expected payload being sent ot the webhook
+
+        expected_payload = {
+            'ghc.result': 'Broken',
+            'ghc.resource.url': resource.url,
+            'ghc.resource.title': resource.title,
+            'ghc.resource.type': resource.resource_type,
+            'ghc.resource.view': f'http://host/resource/{resource.identifier}',
+            'ghc.run.message': 'Failed',
+            'ghc.run.report': json.dumps(resource_result.get_report(), sort_keys=True),
+        }
+
+        responses.add(
+            method=responses.POST,
+            url='https://localhost/webhook',
+            match=[urlencoded_params_matcher(expected_payload)]
+        )
+
+        do_webhook(
+            config=App.get_config(),
+            resource=resource,
+            run=run,
+            status_changed=None,  # unused in do_webhook
+            result='Broken'
+        )
 
     def testSetGetResoureAuth(self):
         # Test set/get auth for any Resource, tests en/decrypt
