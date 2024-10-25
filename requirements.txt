@@ -20,5 +20,5 @@ requests>=2.23.0
 WTForms==2.2.1
 APScheduler==3.6.1
 passlib==1.7.1
-Werkzeug==0.16.1
+Werkzeug==3.0.6
 tzlocal<3.0 # Fix based on https://github.com/Yelp/elastalert/issues/2968
