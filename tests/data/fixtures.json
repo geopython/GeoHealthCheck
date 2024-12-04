@@ -117,6 +117,16 @@
       "tags": [
         "esri"
       ]
+    },
+    "ESRI MAPSERVER": {
+      "owner": "admin",
+      "resource_type": "ESRI:MS",
+      "active": true,
+      "title": "ESRI ArcGIS MapServer (MS)",
+      "url": "https://sampleserver6.arcgisonline.com/arcgis/rest/services/AGP/USA/MapServer",
+      "tags": [
+        "esri"
+      ]
     }
   },
   "probe_vars": {
@@ -292,7 +302,14 @@
       "parameters": {
         "drilldown_level": "full"
       }
-    }
+    },
+    "ESRIMS - Drilldown": {
+      "resource": "ESRI MAPSERVER",
+      "probe_class": "GeoHealthCheck.plugins.probe.esrims.ESRIMSDrilldown",
+      "parameters": {
+        "drilldown_level": "full"
+      }
+    }    
    },
   "check_vars": {
     "PDOK BAG WMS - GetCaps - XML Parse": {

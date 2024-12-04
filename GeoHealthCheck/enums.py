@@ -78,7 +78,10 @@ RESOURCE_TYPES = {
         'label': 'OGC 3D Tiles (OGC3D)'
     },
     'ESRI:FS': {
-        'label': 'ESRI ArcGIS FeatureServer (FS)'
+        'label': 'ESRI ArcGIS FeatureServer'
+    },
+    'ESRI:MS': {
+        'label': 'ESRI ArcGIS MapServer'
     },
     'Mapbox:TileJSON': {
         'label': 'Mapbox TileJSON Service (TileJSON)'
@@ -91,6 +94,12 @@ RESOURCE_TYPES = {
     },
     'FTP': {
         'label': 'File Transfer Protocol (FTP)'
+    },
+    'ORACLE': {
+        'label': 'Oracle Database'
+    },
+    'POSTGRES': {
+        'label': 'Postgres Database'
     },
     'OSGeo:GeoNode': {
         'label': 'GeoNode instance'

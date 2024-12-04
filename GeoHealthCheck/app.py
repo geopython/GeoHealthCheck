@@ -737,8 +737,7 @@ def test(resource_identifier):
         return redirect(request.referrer)
 
     from healthcheck import run_test_resource
-    result = run_test_resource(
-        resource)
+    result = run_test_resource(resource)
 
     if request.method == 'GET':
         if result.message == 'Skipped':
