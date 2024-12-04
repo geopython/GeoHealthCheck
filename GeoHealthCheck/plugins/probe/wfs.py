@@ -3,6 +3,9 @@ from GeoHealthCheck.plugin import Plugin
 from GeoHealthCheck.util import transform_bbox
 from owslib.wfs import WebFeatureService
 
+from owslib.util import Authentication
+from requests.auth import HTTPDigestAuth
+
 
 class WfsGetFeatureBbox(Probe):
     """
@@ -127,9 +130,22 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         :param version:
         :return: Metadata object
         """
-        return WebFeatureService(resource.url,
+        if resource.auth and resource.auth['type'] == 'Digest':
+            headers = self.get_request_headers()
+            if headers and 'auth' in headers:
+                del headers['auth']
+            username = resource.auth['data']['username']
+            password = resource.auth['data']['password']
+            auth = Authentication(auth_delegate=HTTPDigestAuth(username, password))
+            return WebFeatureService(resource.url,
                                  version=version,
-                                 headers=self.get_request_headers())
+                                 headers=headers,
+                                 auth=auth)
+        else:
+            return WebFeatureService(resource.url,
+                            version=version,
+                            headers=self.get_request_headers())
+
 
     # Overridden: expand param-ranges from WFS metadata
     def expand_params(self, resource):

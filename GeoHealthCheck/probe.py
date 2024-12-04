@@ -11,6 +11,9 @@ from result import ProbeResult
 from util import create_requests_retry_session
 from GeoHealthCheck import __version__
 
+from requests.auth import HTTPDigestAuth
+
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -303,20 +306,49 @@ class Probe(Plugin):
 
     def perform_get_request(self, url):
         """ Perform actual HTTP GET request to service"""
-        return self._session.get(
-            url,
-            timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
-            verify=App.get_config()['GHC_VERIFY_SSL'],
-            headers=self.get_request_headers())
+        if self._resource.auth and self._resource.auth['type'] == 'Digest':
+            headers = self.get_request_headers()
+            if headers and 'auth' in headers:
+                del headers['auth']
+            username = self._resource.auth['data']['username']
+            password = self._resource.auth['data']['password']
+            auth = HTTPDigestAuth(username, password)
+            response = self._session.get(
+                url,
+                timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+                headers=headers,
+                auth=auth)
+        else:
+            response = self._session.get(
+                url,
+                timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+                headers=self.get_request_headers(),
+            )
+        return response
+
 
     def perform_post_request(self, url_base, request_string):
         """ Perform actual HTTP POST request to service"""
-        return self._session.post(
-            url_base,
-            timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
-            verify=App.get_config()['GHC_VERIFY_SSL'],
-            data=request_string,
-            headers=self.get_request_headers())
+        if self._resource.auth and self._resource.auth['type'] == 'Digest':
+            headers = self.get_request_headers()
+            if headers and 'auth' in headers:
+                del headers['auth']
+            username = self._resource.auth['data']['username']
+            password = self._resource.auth['data']['password']
+            auth = HTTPDigestAuth(username, password)
+            response = self._session.post(
+                url_base,
+                timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+                data=request_string,
+                auth=auth)
+        else:
+            response = self._session.post(
+                url_base,
+                timeout=App.get_config()['GHC_PROBE_HTTP_TIMEOUT_SECS'],
+                data=request_string,
+                headers=self.get_request_headers())
+        return response
+
 
     def run_request(self):
         """ Run actual request to service"""
