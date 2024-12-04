@@ -139,6 +139,11 @@ or
                 </td>
             </tr>
             <tr>
+              <th>{{ _('crontab pattern') }}</th>
+              <td>
+                <input type="text" class="form-control" id="input_resource_cron" name="resource_cron" value="{{ resource.cron if resource.cron }}" />
+              </td>
+            <tr>
                 <th>Probes</th>
 
                 <td id="probe-edit-forms">
@@ -317,7 +322,7 @@ or
 
     $('#save').click(function() {
         $('#toggle-status-detail').hide();
-        
+
         // Resource auth: get and map input elements for auth type
         var auth_type = $('select[name="select_resource_auth_type_val"]').val();
         var new_auth = {
@@ -335,7 +340,7 @@ or
             }
             new_auth_data[elm.data('auth-param')] = elm.val();
         });
-        
+
         // Collect title
         var new_title = $('input[name="resource_title_value"]').val();
 
@@ -344,6 +349,9 @@ or
 
         // Collect test_frequency
         var new_frequency = $('input[name="resource_frequency_value"]').val();
+
+        // Collect cron pattern
+        var new_cron = $('input[name="resource_cron"]').val();
 
         // Collect active
         var new_active = $('#input_resource_active').prop('checked');
@@ -425,6 +433,7 @@ or
                 active: new_active,
                 tags: new_tags,
                 run_frequency: new_frequency,
+                cron: new_cron,
                 probes: new_probes,
                 notify_emails: new_notify_emails,
                 notify_webhooks: new_notify_webhooks
@@ -543,7 +552,7 @@ or
                      'focus': function(){return false}}
     $('#input_resource_notify_emails').autocomplete(ac_params);
 
-    // quick'n'dirty autoheight for text fields, 
+    // quick'n'dirty autoheight for text fields,
     // https://stackoverflow.com/a/10080841/35735
     // http://jsfiddle.net/SpYk3/m8Qk9/
     $(function() {

@@ -35,7 +35,7 @@ from datetime import datetime, timedelta
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy import func, and_
 
-from sqlalchemy.orm import deferred
+from sqlalchemy.orm import deferred, validates
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 import util
@@ -45,6 +45,7 @@ from init import App
 from resourceauth import ResourceAuth
 from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
+from croniter import croniter, CroniterBadCronError
 
 APP = App.get_app()
 DB = App.get_db()
@@ -402,8 +403,24 @@ class Resource(DB.Model):
     owner = DB.relationship('User',
                             backref=DB.backref('username2', lazy='dynamic'))
     tags = DB.relationship('Tag', secondary=resource_tags, backref='resource')
-    run_frequency = DB.Column(DB.Integer, default=60)
+    run_frequency = DB.Column(DB.Integer, default=60, nullable=False)
     _auth = DB.Column('auth', DB.Text, nullable=True, default=None)
+    cron = DB.Column(DB.Text, nullable=True, default=None)
+
+    @validates('cron')
+    def validate_cron(self, key, cron):
+        if cron == "":
+            # set null over an empty string
+            return None
+
+        try:
+            croniter(cron)
+        except CroniterBadCronError as error:
+            raise ValueError(
+                f"Bad cron pattern '{cron}': {str(error)}"
+            ) from error
+
+        return cron
 
     def __init__(self, owner, resource_type, title, url, tags, auth=None):
         self.resource_type = resource_type
@@ -653,6 +670,7 @@ class Resource(DB.Model):
             'owner': self.owner.username,
             'owner_identifier': self.owner.identifier,
             'run_frequency': self.run_frequency,
+            'cron': self.cron,
             'reliability': round(self.reliability, 1)
         }
 
@@ -664,7 +682,8 @@ class ResourceLock(DB.Model):
                            primary_key=True, autoincrement=False, unique=True)
     resource_identifier = DB.Column(DB.Integer,
                                     DB.ForeignKey('resource.identifier'),
-                                    unique=True)
+                                    unique=True,
+                                    nullable=False)
     resource = DB.relationship('Resource',
                                backref=DB.backref('locks', lazy='dynamic',
                                                   cascade="all,delete"))
