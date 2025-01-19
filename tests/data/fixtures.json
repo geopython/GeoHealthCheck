@@ -31,7 +31,7 @@
       "resource_type": "OGC:WFS",
       "active": true,
       "title": "WOUDC Web Feature Service",
-      "url": "http://geo.woudc.org/ows",
+      "url": "https://geo.woudc.org/ows",
       "tags": [
         "ows"
       ]
@@ -52,7 +52,7 @@
       "resource_type": "OGC:CSW",
       "active": true,
       "title": "WOUDC Catalogue Service",
-      "url": "http://geo.woudc.org/csw",
+      "url": "https://geo.woudc.org/csw",
       "tags": [
         "ows"
       ]
@@ -85,7 +85,7 @@
       "resource_type": "WWW:LINK",
       "active": true,
       "title": "WOUDC Definitions Service",
-      "url": "http://geo.woudc.org/def",
+      "url": "https://geo.woudc.org/def",
       "tags": []
     },
     "OPENGEOGROEP TMS": {
@@ -176,7 +176,7 @@
       "parameters": {
         "type_name": "bag:verblijfsobject",
         "type_ns_prefix": "bag",
-        "type_ns_uri": "http://bag.geonovum.nl",
+        "type_ns_uri": "https://bag.geonovum.nl",
         "srs": "EPSG:28992",
         "bbox": ["180635", "455870", "180961", "456050"]
       }
@@ -187,7 +187,7 @@
       "parameters": {
         "type_name": "all 5 featuretypes",
         "type_ns_prefix": "bag",
-        "type_ns_uri": "http://bag.geonovum.nl",
+        "type_ns_uri": "https://bag.geonovum.nl",
         "srs": "EPSG:28992",
         "bbox": ["180635", "455870", "180961", "456050"]
       }
@@ -426,6 +426,15 @@
       "probe_vars": "PDOK BRT WMTS - GetTileAllKVP",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
+    }
+  },
+  "recipients": {
+    "PDOK BAG WMS": {
+      "channel": "webhook",
+      "location": "https://localhost/webhook",
+      "resources": [
+        "PDOK BAG WMS"
+      ]
     }
   }
 }

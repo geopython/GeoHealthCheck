@@ -215,6 +215,8 @@ def do_webhook(config, resource, run, status_changed, result):
         params['ghc.resource.title'] = resource.title
         params['ghc.resource.type'] = resource.resource_type
         params['ghc.resource.view'] = resource_view
+        params['ghc.run.message'] = run.message
+        params['ghc.run.report'] = json.dumps(run.report, sort_keys=True)
 
         try:
             r = requests.post(url, params)
