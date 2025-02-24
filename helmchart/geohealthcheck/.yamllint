@@ -1,0 +1,8 @@
+---
+extends: 'default'
+ignore: []
+rules:
+  quoted-strings:
+    quote-type: 'single'
+    required: true
+    ignore: []
