@@ -31,7 +31,7 @@ spec:
       initContainers:
         - name: update-ca-certificates
           image: '{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}'
-          command: ['sh', '-c', 'cp /custom-ca/my-ca.crt /usr/local/share/ca-certificates/ && update-ca-certificates']
+          command: ['sh', '-c', 'cp /custom-ca/* /usr/local/share/ca-certificates/ && update-ca-certificates']
           volumeMounts:
             - name: custom-ca-cert
               mountPath: /custom-ca
@@ -51,12 +51,18 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            # TODO: loop through certs
+            - name: custom-ca-cert
+              mountPath: /etc/ssl/certs/my-ca.crt
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
       volumes:
+        - name: custom-ca-cert
+          configMap:
+            name: custom-ca-cert
+      {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}

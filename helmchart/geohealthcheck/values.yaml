@@ -141,6 +141,16 @@ service:
   # https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: 'ClusterIP'
 
+additionalCertificates:
+  cert1.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIID... (your certificate content here)
+    -----END CERTIFICATE-----
+  cert2.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIID... (your certificate content here)
+    -----END CERTIFICATE-----
+   
 # This block is for setting up the ingress for more information can be found
 # here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
