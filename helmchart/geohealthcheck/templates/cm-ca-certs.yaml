@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-certificates" (include "geohealthcheck.fullname" .) | squote }}
+  labels:
+    {{- include "geohealthcheck.labels" . | nindent 4 }}
+data:
+  my-ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIID... (your certificate content here)
+    -----END CERTIFICATE-----

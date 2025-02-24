@@ -1,0 +1,44 @@
+---
+{{- if .Values.ingress.enabled -}}
+apiVersion: 'networking.k8s.io/v1'
+kind: 'Ingress'
+metadata:
+  name: {{ include "geohealthcheck.fullname" . }}
+  labels:
+    {{- include "geohealthcheck.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . | squote }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | squote }}
+        {{- end }}
+      secretName: {{ .secretName | squote }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | squote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path | squote }}
+            {{- with .pathType }}
+            pathType: {{ . | squote }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ include "geohealthcheck.fullname" $ }}
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}
