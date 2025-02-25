@@ -51,6 +51,12 @@ securityContext: {}
 # runAsNonRoot: true
 # runAsUser: 1000
 
+initContainer:
+  resources: {}
+  repository: 'library/ubuntu'
+  pullPolicy: 'IfNotPresent'
+  tag: 'jammy'
+
 geohealthcheck:
   # -- additional env variables
   # additionalEnv:
@@ -67,6 +73,11 @@ geohealthcheck:
   #   - 'foo'
   #   - 'bar'
   additionalEnvSecrets: []
+  # -- database connection string for SQL-Alchemy
+  # valid examples are:
+  # SQLite: 'sqlite:///data.db'
+  # PostgreSQL: 'postgresql+psycopg2://scott:tiger@localhost:5432/mydatabase'
+  databaseUri: 'sqlite:///data.db'
   auth:
     # -- secret key to set when enabling authentication
     secret: 'changeme'
@@ -141,16 +152,8 @@ service:
   # https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: 'ClusterIP'
 
-additionalCertificates:
-  cert1.crt: |
-    -----BEGIN CERTIFICATE-----
-    MIID... (your certificate content here)
-    -----END CERTIFICATE-----
-  cert2.crt: |
-    -----BEGIN CERTIFICATE-----
-    MIID... (your certificate content here)
-    -----END CERTIFICATE-----
-   
+additionalCertificates: {}
+
 # This block is for setting up the ingress for more information can be found
 # here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -216,3 +219,7 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+networkPolicy:
+  enabled: true
+  egressEnabled: true

@@ -1,0 +1,101 @@
+---
+image:
+  repository: 'registry.disy.net/docker-proxy/geopython/geohealthcheck'
+additionalCertificates:
+  intermediate.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIFzDCCA7SgAwIBAgICEAAwDQYJKoZIhvcNAQELBQAwejEYMBYGA1UEAwwPSGVp
+    ZG1hbm4tUm9vdENBMQswCQYDVQQGEwJERTELMAkGA1UECAwCSEgxEDAOBgNVBAcM
+    B0hhbWJ1cmcxETAPBgNVBAoMCEhlaWRtYW5uMR8wHQYJKoZIhvcNAQkBFhBjYUBo
+    ZWlkbWFubi5pbmZvMB4XDTI0MTIzMDExMjQzMVoXDTM0MTIyODExMjQzMVowcDEL
+    MAkGA1UEBhMCREUxCzAJBgNVBAgMAkhIMREwDwYDVQQKDAhIZWlkbWFubjEgMB4G
+    A1UEAwwXSGVpZG1hbm4tSW50ZXJtZWRpYXRlQ0ExHzAdBgkqhkiG9w0BCQEWEGNh
+    QGhlaWRtYW5uLmluZm8wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDb
+    QQ4DfXSeZc/XVHfQ6EghPQ12PYShvQk6hgZkhkkmBicb8c9POslSYpkkK/Q8pC+5
+    XjIFF7yMR5FGxbZEtkIqFu9gHI6Sxm1FJptKhJSiPRy2MHhSjSImyG3GVXG+ZGRh
+    7P3wbZIqtoK70BrrdkrJTzoWU0qDhYQgCBlCpO88m1e0Qox/6UqnuhGgHcdwJPJS
+    zqUHqdsTGHxQo2hlHGm5CFTsTe37aUlQ9+627riVqK8ArhUXCCx3j4tyfkPBSxnV
+    uHyyndfeIMR1J2ofv5oiSTY148Dgkr7YyUFwfgO8H8onPs8SfCDL6hfoAGRHreeH
+    tC/4hHj9NYhnX3km1PvqMQWHAcPveswFnTpQ/ZaBibaSeC8i+JtT9iKW1V6JQgD7
+    Fim7nart6JgCytcxg8Cll7nNfqRwlkBNiedSU9i8FEEHy/YFmKj4D15YLluYTZCd
+    G2SEP2JEDGEqzTbmdxFsLKm59VI9FFTtcKKRgRlIoF7PoHc9brUoRu20MjaGSpZO
+    CwqLIdQv7yQv7z6ebfKxViCyIpsZESPHbKZ7Zyh9IYNa8BxlAvbEQnkVjBrplDdQ
+    yWlOJac5j+bCr4VJpIOicd7jek9g2W8TlxzMGjkHFSDMnMPFJS64NduZYdqT/ASp
+    aNcbzOGpmALIZTXJszBI3400mBEXBe0YoA6LGgUDUQIDAQABo2YwZDAdBgNVHQ4E
+    FgQUu8smU9eJDo4w+fPXw7942P0aux4wHwYDVR0jBBgwFoAUqQvWT3pd78gQnAhu
+    /t5hth1uVn4wEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwDQYJ
+    KoZIhvcNAQELBQADggIBAJQ+tACyevmB+uheXX1rZa6k0JkWij8oX5mlk+O6sSCu
+    toZ3iP3MdYuxAMaSOjU1+04ZRqUkn15QQ4gmyyqQ6ojdDqPHfploypNtTMh/HrYr
+    E/x4zqM0PCx1LUpkbbwe8eL/5CibdMCWsapxRNY6LBgsG6m9pOSIScv0SYRkAfTQ
+    dM5u67BLV23c7EkVv10WHfqKnOGnkHCaFDPXZXjPfl7KsjxwbNKK4bRQrgu9Wpzg
+    h0tRmEu1969fjj7AEGoxomiUdTLwcQu9f/OeJmqrlwoaYdq/rtInt+a+fi6HylX8
+    XHIsr71UsneUu5eOos1lNdzzKjNsMa/pI1vgoKY/83u68/mwjfyL45FIq8Aq8VS/
+    6uncn6EEqtyElqPxDkfRr3H0DEwXjiwU6No2/Gre1BKvK3/KuF/A8CWDpgSrsYEv
+    bAjZaQo0uCYydc8NrDykN36K5IVlEaGseLOnXdi8oOAWf/pzMck8EasfIPjVPhU8
+    Q+biOQC9dejBGxmWxrcpAbl/thes16v5iA7sls5VyLY7dn5P39BPMgRSssPBErAL
+    v+9x6+IKnNPZV8U4KuOSQZVIZe/fmumO4vKisE+LsIG4S7C3+tgIk9cr+KTITvUT
+    /CYKPJhWrMKoNUgIBZs1MhbEW1zj7bDb7V3sv/8yTomxobWy4B7NlvWK4dBFDqOJ
+    -----END CERTIFICATE-----
+  root.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIF5TCCA82gAwIBAgIUPLeDukjBOWKP3yfOT4X8WFx/qmQwDQYJKoZIhvcNAQEL
+    BQAwejEYMBYGA1UEAwwPSGVpZG1hbm4tUm9vdENBMQswCQYDVQQGEwJERTELMAkG
+    A1UECAwCSEgxEDAOBgNVBAcMB0hhbWJ1cmcxETAPBgNVBAoMCEhlaWRtYW5uMR8w
+    HQYJKoZIhvcNAQkBFhBjYUBoZWlkbWFubi5pbmZvMB4XDTI0MTIzMDExMjA1NVoX
+    DTQ0MTIyNTExMjA1NVowejEYMBYGA1UEAwwPSGVpZG1hbm4tUm9vdENBMQswCQYD
+    VQQGEwJERTELMAkGA1UECAwCSEgxEDAOBgNVBAcMB0hhbWJ1cmcxETAPBgNVBAoM
+    CEhlaWRtYW5uMR8wHQYJKoZIhvcNAQkBFhBjYUBoZWlkbWFubi5pbmZvMIICIjAN
+    BgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA5e3IwLY5mdPp2DjFLu1HTVaN6bdz
+    FP6oBshDHsnIWWRfijO0XMtzuefKKmoMl+o7Tbw9JJsMWBnZdYQ0mrWAc1P9tbkd
+    2IouNDsGfnb8/92DaR7YtCNZjuF2bJUdt4jsvOXfaPFIEx50M6oICg1UvXGgbD1U
+    Q8nk7/aCyTSaqbNQuxIQckftMK/t7/M/ZX4srW0Lf0aFgDs50YW1Eer3DfgE8FpM
+    1z4yp/mZTcrLzvXhKCUo8LsEpNPeTpkshVBjdQReJnEcGIvk5aCPNF43IueM+qDg
+    eYedsQnWeLz8Sg0SPQ7awcoSDwcOcaKUFqs4YpWbDwoBbvhSc4Uq+d2wgNJgNcJJ
+    3eZaqqRylw+I3D47is1IHPb0jP5SWi6HKdGHQJwYTKdAqL+6XohnB/DWrHFvvFJa
+    6GLaExk+CYTZcmQh6cY6p3HvhEG5pmkNPLyoHxBwtpU/bLeeZ99J469mTtPACxPM
+    srxpCSmmMxopmBvYokzWIxg5etwshb/YDzeWP3UIipaiCftN1dhhKLjMNMtv2/7p
+    vsDNY/2Kqs+4pZUQP0UsJHvVo3sskkDbyO8kjSxkM8gvNL4FO1v14ihlYFqQyPE4
+    iPAvAcIeAsJXl8A0rYmL5xz0XTjA9FDt6f4Duu9vmbHJBr7wIuUBcIDWLtYC4k2+
+    9JFpz/wF6qSR1w8CAwEAAaNjMGEwHQYDVR0OBBYEFKkL1k96Xe/IEJwIbv7eYbYd
+    blZ+MB8GA1UdIwQYMBaAFKkL1k96Xe/IEJwIbv7eYbYdblZ+MA8GA1UdEwEB/wQF
+    MAMBAf8wDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQCDC5IcejVj
+    K3n7/YNmVZ0JSNSmOwLbOFxBIrI7DuW/suqUTuGVMkcndCsK4iOsI2rs97Z7397N
+    Gnmz/EyfjDx/9R+QvEcgFpgT9mhFt+kDcUWZ52l0DqBmqUVqPHgc5um+FjNNrxfT
+    OI6ZPPE5QWRPU6duUGmOMIN1m0stj/j03bfP5ovFamqStceV6NL9LlVXj1gaSt+y
+    jtVddZiqDMoW/7XEe2nDQsEK4iMww3JaWf/ZZ6ufp8EU26McBuDwuzEqAyNpQARf
+    p73Qr0yCzs3qzpkTp5ze2pODAECC4DzQUNxv7bktOvGAhfryIGemLbm7f2EfuZOg
+    tUvrhTggqb4qLPqvEaA7clVUG3MpWEeewmLOHn/KA46BogEJy3LonJDJlsMJR9Q1
+    74qFdNmZtOJrH63j7re54MR6RHIYGSHUUofSGSwwUsXToyLTVc1XLU6MPjiN+5Ul
+    ocQETLAV51oSzoKPCcTWJv+E7XeVb7EPJU8rhZHzdxuGTcRG+ocj9p9h34JZUfKP
+    xby4V9Tk61eHATs7fqs/GDwme/Oyd5Bxi2SEjm13c8ftD/R1qn6NKwNwU4m/Qj5u
+    cwwCeaMVOEIFnRRVAoarZaC6cvYRg+P4uC+EkBYCJT4PcSPVuMpMTBmEybNSzynN
+    JgeVtaEOfwvvFzswuGlIUvmO4B96AFXymQ==
+    -----END CERTIFICATE-----
+resources:
+  limits:
+    cpu: '500m'
+    memory: '1Gi'
+  requests:
+    cpu: '500m'
+    memory: '1Gi'
+initContainer:
+  repository: 'registry.disy.net/docker-proxy/library/ubuntu'
+  resources:
+    limits:
+      cpu: '500m'
+      memory: '1Gi'
+    requests:
+      cpu: '500m'
+      memory: '1Gi'
+
+ingress:
+  enabled: true
+  hosts:
+    - host: 'geohealthcheck.whale-test2.disy.io'
+      paths:
+        - path: '/'
+          pathType: 'ImplementationSpecific'
+  tls:
+    - secretName: 'tls-cluster'
+      hosts:
+        - 'geohealthcheck.whale-test2.disy.io'

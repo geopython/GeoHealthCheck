@@ -38,7 +38,7 @@ spec:
               service:
                 name: {{ include "geohealthcheck.fullname" $ }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  name: 'http'
           {{- end }}
     {{- end }}
 {{- end }}

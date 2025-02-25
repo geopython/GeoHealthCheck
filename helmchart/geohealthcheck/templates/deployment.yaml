@@ -30,11 +30,15 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
         - name: update-ca-certificates
-          image: '{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}'
-          command: ['sh', '-c', 'cp /custom-ca/* /usr/local/share/ca-certificates/ && update-ca-certificates']
+          image: '{{ .Values.initContainer.repository }}:{{ .Values.initContainer.tag }}'
+          command: ['sh', '-c', 'apt-get update && apt-get install -y ca-certificates && update-ca-certificates']
+          resources:
+            {{- toYaml .Values.initContainer.resources | nindent 12 }}
           volumeMounts:
-            - name: custom-ca-cert
-              mountPath: /custom-ca
+            - name: 'custom-ca-cert'
+              mountPath: '/usr/local/share/ca-certificates'
+            - name: 'ca-bundle'
+              mountPath: '/etc/ssl/certs'
       containers:
         - name: {{ .Chart.Name | squote }}
           securityContext:
@@ -51,17 +55,33 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ printf "%s-secrets" (include "geohealthcheck.fullname" .) | squote }}
+            {{- range .Values.geohealthcheck.additionalEnvSecrets }}
+            - secretRef:
+                name: {{ . | squote }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-variables" (include "geohealthcheck.fullname" .) | squote }}
+            {{- range .Values.geohealthcheck.additionalConfigMaps }}
+            - configMapRef:
+                name: {{ . | squote }}
+            {{- end }}
           volumeMounts:
-            # TODO: loop through certs
-            - name: custom-ca-cert
-              mountPath: /etc/ssl/certs/my-ca.crt
+            - name: 'custom-ca-cert'
+              mountPath: '/usr/local/share/ca-certificates'
+            - name: 'ca-bundle'
+              mountPath: '/etc/ssl/certs'
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
         - name: custom-ca-cert
           configMap:
-            name: custom-ca-cert
+            name: {{ printf "%s-certificates" (include "geohealthcheck.fullname" .) | squote }}
+        - name: ca-bundle
+          emptyDir: {}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -84,16 +104,3 @@ spec:
           value: {{ $value | squote }}
         {{- end }}  
       {{- end }}
-      envFrom:
-        - secretRef:
-            name: {{ printf "%s-secrets" (include "geohealthcheck.fullname" .) | squote }}
-        {{- range .Values.geohealthcheck.additionalEnvSecrets }}
-        - secretRef:
-            name: {{ . | squote }}
-        {{- end }}
-        - configMapRef:
-            name: {{ printf "%s-variables" (include "geohealthcheck.fullname" .) | squote }}
-        {{- range .Values.geohealthcheck.additionalConfigMaps }}
-        - configMapRef:
-            name: {{ . | squote }}
-        {{- end }}
