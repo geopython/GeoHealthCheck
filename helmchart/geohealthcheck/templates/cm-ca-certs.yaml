@@ -7,6 +7,6 @@ metadata:
     {{- include "geohealthcheck.labels" . | nindent 4 }}
 data:
   {{- range $filename, $certificate := .Values.additionalCertificates }}
-  {{ $filename -}}: >-
+  {{ $filename -}}: |
     {{- $certificate | nindent 4 }}
   {{- end -}}

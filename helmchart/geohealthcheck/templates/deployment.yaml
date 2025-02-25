@@ -31,7 +31,7 @@ spec:
       initContainers:
         - name: update-ca-certificates
           image: '{{ .Values.initContainer.repository }}:{{ .Values.initContainer.tag }}'
-          command: ['sh', '-c', 'apt-get update && apt-get install -y ca-certificates && update-ca-certificates']
+          command: ['sh', '-c', 'apt-get update && apt-get install -y ca-certificates && update-ca-certificates -v']
           resources:
             {{- toYaml .Values.initContainer.resources | nindent 12 }}
           volumeMounts:
