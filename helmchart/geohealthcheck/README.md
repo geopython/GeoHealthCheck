@@ -17,7 +17,7 @@ A Helm chart for GeoHealthCheck
 | geohealthcheck.adminEmail | string | `"you@example.com"` | email address of administrator / contact- notification emails will come from this address |
 | geohealthcheck.auth.secret | string | `"changeme"` | secret key to set when enabling authentication |
 | geohealthcheck.basicAuthDisabled | string | `"False"` | disable Basic Authentication to access GHC webapp and APIs (default: False), |
-| geohealthcheck.databaseUri | string | `"sqlite:///data.db"` | database connection string for SQL-Alchemy valid examples are: SQLite: 'sqlite:///data.db' PostgreSQL: 'postgresql+psycopg2://scott:tiger@localhost:5432/mydatabase' |
+| geohealthcheck.databaseUri | string | `"sqlite:////data/data.db"` | database connection string for SQL-Alchemy valid examples are: SQLite: 'sqlite:///data.db' PostgreSQL: 'postgresql+psycopg2://scott:tiger@localhost:5432/mydatabase' |
 | geohealthcheck.largeXml | string | `"False"` | allows GeoHealthCheck to receive large XML files from the servers under test (default False). Note: setting this to True might pose a security risk |
 | geohealthcheck.logLevel | string | `"30"` | logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING) |
 | geohealthcheck.metadataCacheSecs | string | `"900"` | metadata, “Capabilities Docs”, cache expiry time, default 900 secs, -1 to disable |
@@ -56,6 +56,9 @@ A Helm chart for GeoHealthCheck
 | networkPolicy.egressEnabled | bool | `true` | allow/deny external connections. This should be enabled if you want to monitor resources outside of this namespace |
 | networkPolicy.enabled | bool | `true` | Enable/disable network policy generation |
 | nodeSelector | object | `{}` |  |
+| persistence.enabled | bool | `true` | enable persistence when using an SQLite database |
+| persistence.size | string | `"1Gi"` | size of the data partition |
+| persistence.storageClassName | string | `""` |  |
 | podAnnotations | object | `{}` | This is for setting Kubernetes Annotations to a Pod. For more information checkout: yamllint disable-line rule:line-length https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ |
 | podLabels | object | `{}` | This is for setting Kubernetes Labels to a Pod. For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/ |
 | podSecurityContext | object | `{}` |  |
