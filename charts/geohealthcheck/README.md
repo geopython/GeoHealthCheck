@@ -73,6 +73,7 @@ A Helm chart for GeoHealthCheck
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | tolerations | list | `[]` |  |
+| updateStrategy | string | `"Recreate"` | update strategy to the deployment. This should be Recreate unless you have a good reason to choose something else because otherwise you will get multi attach errors |
 | volumeMounts | list | `[]` | Additional volumeMounts on the output Deployment definition. volumeMounts:   - name: foo     mountPath: "/etc/foo"     readOnly: true |
 | volumes | list | `[]` | Additional volumes on the output Deployment definition. volumes:   - name: foo     secret:       secretName: mysecret       optional: false |
 
