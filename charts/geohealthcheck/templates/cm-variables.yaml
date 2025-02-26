@@ -9,23 +9,25 @@ data:
   GHC_RETENTION_DAYS: {{ .Values.geohealthcheck.retentionDays | squote }}
   GHC_PROBE_HTTP_TIMEOUT_SECS: {{ .Values.geohealthcheck.probeHttpTimeoutSecs | squote }}
   GHC_MINIMAL_RUN_FREQUENCY_MINS: {{ .Values.geohealthcheck.minimalRunFrequencyMins | squote }}
-  GHC_SELF_REGISTER: {{ .Values.geohealthcheck.selfRegister | squote }}
-  GHC_NOTIFICATIONS: {{ .Values.geohealthcheck.notifications | squote }}
-  GHC_NOTIFICATIONS_VERBOSITY: {{ .Values.geohealthcheck.notificationsVerbosity | squote }}
-  GHC_WWW_LINK_EXCEPTION_CHECK: {{ .Values.geohealthcheck.wwwLinkExceptionCheck | squote }}
-  GHC_LARGE_XML: {{ .Values.geohealthcheck.largeXml | squote }}
+  GHC_SELF_REGISTER: {{ .Values.geohealthcheck.selfRegister | toString | squote }}
+  GHC_NOTIFICATIONS: {{ .Values.geohealthcheck.notifications | toString | squote }}
+  GHC_NOTIFICATIONS_VERBOSITY: {{ .Values.geohealthcheck.notificationsVerbosity | toString | squote }}
+  GHC_WWW_LINK_EXCEPTION_CHECK: {{ .Values.geohealthcheck.wwwLinkExceptionCheck | toString | squote }}
+  GHC_LARGE_XML: {{ .Values.geohealthcheck.largeXml | toString | squote }}
   GHC_ADMIN_EMAIL: {{ .Values.geohealthcheck.adminEmail | squote }}
   GHC_NOTIFICATIONS_EMAIL: {{- " " -}}{{-  .Values.geohealthcheck.notificationsEmail  | toJson | squote }}
   GHC_SITE_TITLE: {{ .Values.geohealthcheck.siteTitle | squote }}
   GHC_SITE_URL: {{ .Values.geohealthcheck.siteUrl | squote }}
-  GHC_RUNNER_IN_WEBAPP: {{ .Values.geohealthcheck.runnerInWebapp | squote }}
-  GHC_REQUIRE_WEBAPP_AUTH: {{ .Values.geohealthcheck.requireWebappAuth | squote }}
-  GHC_BASIC_AUTH_DISABLED: {{ .Values.geohealthcheck.basicAuthDisabled | squote }}
-  GHC_VERIFY_SSL: {{ .Values.geohealthcheck.verifySsl | squote }}
+  GHC_RUNNER_IN_WEBAPP: {{ .Values.geohealthcheck.runnerInWebapp | toString | squote }}
+  GHC_REQUIRE_WEBAPP_AUTH: {{ .Values.geohealthcheck.requireWebappAuth | toString | squote }}
+  GHC_BASIC_AUTH_DISABLED: {{ .Values.geohealthcheck.basicAuthDisabled | toString | squote }}
+  GHC_VERIFY_SSL: {{ .Values.geohealthcheck.verifySsl | toString | squote }}
   GHC_LOG_LEVEL: {{ .Values.geohealthcheck.logLevel | squote }}
   GHC_METADATA_CACHE_SECS: {{ .Values.geohealthcheck.metadataCacheSecs | squote }}
+  {{- if .Values.geohealthcheck.smtpEnabled }}
   GHC_SMTP_SERVER: {{ .Values.geohealthcheck.smtpServer | squote }}
   GHC_SMTP_PORT: {{ .Values.geohealthcheck.smtpPort | squote }}
   GHC_SMTP_TLS: {{ .Values.geohealthcheck.smtpUseTls | squote }}
   GHC_SMTP_SSL: 'False'
   GHC_SMTP_USERNAME: {{ .Values.geohealthcheck.smtpUsername | squote }}
+  {{- end }}

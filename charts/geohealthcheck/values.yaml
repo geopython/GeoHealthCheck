@@ -9,8 +9,8 @@ image:
   # -- Overrides the image tag whose default is the chart appVersion.
   tag: ''
 
-# -- This is for the secretes for pulling an image from a private repository more
-# information can be found here:
+# -- This is for the secretes for pulling an image from a private repository
+# more information can be found here:
 # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # -- This is to override the chart name.
@@ -102,18 +102,18 @@ geohealthcheck:
   # -- minimal run frequency for Resource that can be set in web UI
   minimalRunFrequencyMins: 10
   # -- allow registrations from users on the website
-  selfRegister: 'False'
+  selfRegister: false
   # -- turn on email and webhook notifications
-  notifications: 'False'
+  notifications: false
   # -- receive additional email notifications than just Failing and Fixed
   # (default True)
-  notificationsVerbosity: 'True'
+  notificationsVerbosity: false
   # -- turn on checking for OGC Exceptions in WWW:LINK Resource responses
   # (default False)
-  wwwLinkExceptionCheck: 'False'
+  wwwLinkExceptionCheck: false
   # -- allows GeoHealthCheck to receive large XML files from the servers under
   # test (default False). Note: setting this to True might pose a security risk
-  largeXml: 'False'
+  largeXml: false
   # -- email address of administrator / contact- notification emails will come
   # from this address
   adminEmail: 'you@example.com'
@@ -132,15 +132,15 @@ geohealthcheck:
   # -- full URL of the installation / deployment
   siteUrl: 'http://host'
   # -- should the GHC Runner Daemon be run in webapp (default: True)
-  runnerInWebapp: 'True'
+  runnerInWebapp: true
   # -- require authentication (login or Basic Auth) to access GHC webapp and
   # APIs (default: False)
-  requireWebappAuth: 'False'
+  requireWebappAuth: false
   # -- disable Basic Authentication to access GHC webapp and APIs
   # (default: False),
-  basicAuthDisabled: 'False'
+  basicAuthDisabled: false
   # -- perform SSL verification for Probe HTTPS requests (default: True)
-  verifySsl: 'True'
+  verifySsl: true
   # -- logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL
   # (default: 30, WARNING)
   logLevel: '30'
@@ -148,6 +148,8 @@ geohealthcheck:
   # to disable
   metadataCacheSecs: '900'
   # SMTP configuration
+  # -- enable/disable smtp
+  smtpEnabled: false
   # -- SMTP server name or IP
   smtpServer:
   # -- SMTP port
@@ -248,6 +250,6 @@ affinity: {}
 networkPolicy:
   # -- Enable/disable network policy generation
   enabled: true
-  # -- allow/deny external connections. This should be enabled if you want to monitor resources
-  # outside of this namespace
+  # -- allow/deny external connections. This should be enabled if you want to
+  # monitor resources outside of this namespace
   egressEnabled: true

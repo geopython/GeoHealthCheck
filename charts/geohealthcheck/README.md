@@ -16,29 +16,30 @@ A Helm chart for GeoHealthCheck
 | geohealthcheck.additionalEnvSecrets | list | `[]` | additional envSecrets additionalEnvSecrets:   - 'foo'   - 'bar' |
 | geohealthcheck.adminEmail | string | `"you@example.com"` | email address of administrator / contact- notification emails will come from this address |
 | geohealthcheck.auth.secret | string | `"changeme"` | secret key to set when enabling authentication |
-| geohealthcheck.basicAuthDisabled | string | `"False"` | disable Basic Authentication to access GHC webapp and APIs (default: False), |
+| geohealthcheck.basicAuthDisabled | bool | `false` | disable Basic Authentication to access GHC webapp and APIs (default: False), |
 | geohealthcheck.databaseUri | string | `"sqlite:////data/data.db"` | database connection string for SQL-Alchemy valid examples are: SQLite: 'sqlite:///data.db' PostgreSQL: 'postgresql+psycopg2://scott:tiger@localhost:5432/mydatabase' |
-| geohealthcheck.largeXml | string | `"False"` | allows GeoHealthCheck to receive large XML files from the servers under test (default False). Note: setting this to True might pose a security risk |
+| geohealthcheck.largeXml | bool | `false` | allows GeoHealthCheck to receive large XML files from the servers under test (default False). Note: setting this to True might pose a security risk |
 | geohealthcheck.logLevel | string | `"30"` | logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL (default: 30, WARNING) |
 | geohealthcheck.metadataCacheSecs | string | `"900"` | metadata, “Capabilities Docs”, cache expiry time, default 900 secs, -1 to disable |
 | geohealthcheck.minimalRunFrequencyMins | int | `10` | minimal run frequency for Resource that can be set in web UI |
-| geohealthcheck.notifications | string | `"False"` | turn on email and webhook notifications |
+| geohealthcheck.notifications | bool | `false` | turn on email and webhook notifications |
 | geohealthcheck.notificationsEmail | list | `[]` | list of email addresses that notifications should come to. Use a different address to GHC_ADMIN_EMAIL if you have trouble receiving notification emails. Also, you can set separate notification emails t specific resources. Failing resource will send notification to emails from GHC_NOTIFICATIONS_EMAIL value and emails configured for that specific resource altogether. notificationsEmail:   - 'you2@example.com'   - 'you3@example.com' |
-| geohealthcheck.notificationsVerbosity | string | `"True"` | receive additional email notifications than just Failing and Fixed (default True) |
+| geohealthcheck.notificationsVerbosity | bool | `false` | receive additional email notifications than just Failing and Fixed (default True) |
 | geohealthcheck.probeHttpTimeoutSecs | int | `30` | stop waiting for the first byte of a Probe response after the given number of seconds |
-| geohealthcheck.requireWebappAuth | string | `"False"` | require authentication (login or Basic Auth) to access GHC webapp and APIs (default: False) |
+| geohealthcheck.requireWebappAuth | bool | `false` | require authentication (login or Basic Auth) to access GHC webapp and APIs (default: False) |
 | geohealthcheck.retentionDays | int | `30` | the number of days to keep Run history |
-| geohealthcheck.runnerInWebapp | string | `"True"` | should the GHC Runner Daemon be run in webapp (default: True) |
-| geohealthcheck.selfRegister | string | `"False"` | allow registrations from users on the website |
+| geohealthcheck.runnerInWebapp | bool | `true` | should the GHC Runner Daemon be run in webapp (default: True) |
+| geohealthcheck.selfRegister | bool | `false` | allow registrations from users on the website |
 | geohealthcheck.siteTitle | string | `"GeoHealthCheck Demonstration"` | title used for installation / deployment |
 | geohealthcheck.siteUrl | string | `"http://host"` | full URL of the installation / deployment |
+| geohealthcheck.smtpEnabled | bool | `false` | enable/disable smtp |
 | geohealthcheck.smtpPassword | string | `nil` | SMTP server name or IP |
 | geohealthcheck.smtpPort | string | `nil` | SMTP port |
 | geohealthcheck.smtpServer | string | `nil` | SMTP server name or IP |
 | geohealthcheck.smtpUseTls | string | `nil` | whether or not to use StartTLS with SMTP |
 | geohealthcheck.smtpUsername | string | `nil` | SMTP server name or IP |
-| geohealthcheck.verifySsl | string | `"True"` | perform SSL verification for Probe HTTPS requests (default: True) |
-| geohealthcheck.wwwLinkExceptionCheck | string | `"False"` | turn on checking for OGC Exceptions in WWW:LINK Resource responses (default False) |
+| geohealthcheck.verifySsl | bool | `true` | perform SSL verification for Probe HTTPS requests (default: True) |
+| geohealthcheck.wwwLinkExceptionCheck | bool | `false` | turn on checking for OGC Exceptions in WWW:LINK Resource responses (default False) |
 | image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the image |
 | image.repository | string | `"geopython/geohealthcheck"` | image for GeoHealthCheck |
 | image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
