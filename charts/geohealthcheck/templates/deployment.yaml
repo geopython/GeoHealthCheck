@@ -28,7 +28,8 @@ spec:
       serviceAccountName: {{ include "geohealthcheck.serviceAccountName" . | squote }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      strategy: {{ .Values.updateStrategy | squote }}
+      strategy:
+        type: 'Recreate'
       initContainers:
         - name: update-ca-certificates
           image: '{{ .Values.initContainer.repository }}:{{ .Values.initContainer.tag }}'
