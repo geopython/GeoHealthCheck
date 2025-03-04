@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       {{- include "geohealthcheck.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: 'Recreate'
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -28,8 +30,6 @@ spec:
       serviceAccountName: {{ include "geohealthcheck.serviceAccountName" . | squote }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      strategy:
-        type: 'Recreate'
       initContainers:
         - name: update-ca-certificates
           image: '{{ .Values.initContainer.repository }}:{{ .Values.initContainer.tag }}'
