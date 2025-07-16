@@ -26,12 +26,12 @@
         "pdok"
       ]
     },
-    "WOUDC WFS": {
+    "RCE WFS": {
       "owner": "admin",
       "resource_type": "OGC:WFS",
       "active": true,
-      "title": "WOUDC Web Feature Service",
-      "url": "http://geo.woudc.org/ows",
+      "title": "RCE - Rijksdienst Cultureel Erfgoed WFS",
+      "url": "https://services.rce.geovoorziening.nl/landschapsatlas/wfs",
       "tags": [
         "ows"
       ]
@@ -47,45 +47,33 @@
         "pdok"
       ]
     },
-    "WOUDC CSW": {
+    "PDOK CSW": {
       "owner": "admin",
       "resource_type": "OGC:CSW",
       "active": true,
-      "title": "WOUDC Catalogue Service",
-      "url": "http://geo.woudc.org/csw",
+      "title": "PDOK Catalogue Service",
+      "url": "https://nationaalgeoregister.nl/geonetwork/srv/dut/csw",
       "tags": [
         "ows"
       ]
     },
-    "PDOK CP WMTS": {
+    "PDOK BRK WMTS": {
       "owner": "admin",
       "resource_type": "OGC:WMTS",
       "active": true,
-      "title": "Dutch Kadaster PDOK BRT WMTS",
+      "title": "Dutch Kadaster PDOK BRK WMTS",
       "url": "https://service.pdok.nl/kadaster/kadastralekaart/wmts/v5_0",
       "tags": [
         "ows",
         "tiling"
       ]
     },
-    "PDOK BRT WMTS": {
-      "owner": "admin",
-      "resource_type": "OGC:WMTS",
-      "active": true,
-      "title": "Dutch PDOK Luchtfoto WMTS",
-      "url": "https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0",
-      "tags": [
-        "ows",
-        "tiling",
-        "pdok"
-      ]
-    },
     "WOUDC LINK": {
       "owner": "admin",
       "resource_type": "WWW:LINK",
       "active": true,
-      "title": "WOUDC Definitions Service",
-      "url": "http://geo.woudc.org/def",
+      "title": "WOUDC Landing Page",
+      "url": "https://api.woudc.org/",
       "tags": []
     },
     "OPENGEOGROEP TMS": {
@@ -162,8 +150,8 @@
         "drilldown_level": "minor"
       }
     },
-    "WOUDC WFS - GetCaps": {
-      "resource": "WOUDC WFS",
+    "RCE WFS - GetCaps": {
+      "resource": "RCE WFS",
       "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WfsGetCaps",
       "parameters": {
         "service": "WFS",
@@ -192,24 +180,24 @@
         "bbox": ["180635", "455870", "180961", "456050"]
       }
     },
-    "WOUDC CSW - GetCaps": {
-      "resource": "WOUDC CSW",
+    "PDOK CSW - GetCaps": {
+      "resource": "PDOK CSW",
       "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.CswGetCaps",
       "parameters": {
         "service": "CSW",
         "version": "2.0.2"
       }
     },
-    "PDOK CP WMTS - GetCaps": {
-      "resource": "PDOK CP WMTS",
+    "PDOK BRK WMTS - GetCaps": {
+      "resource": "PDOK BRK WMTS",
       "probe_class": "GeoHealthCheck.plugins.probe.owsgetcaps.WmtsGetCaps",
       "parameters": {
         "service": "WMTS",
         "version": "1.0.0"
       }
     },
-    "PDOK CP WMTS - GetTileREST": {
-      "resource": "PDOK CP WMTS",
+    "PDOK BRK WMTS - GetTileREST": {
+      "resource": "PDOK BRK WMTS",
       "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTile",
       "parameters": {
         "layers": ["Kadastralekaart"],
@@ -223,8 +211,8 @@
         "kvprest": "REST"
       }
     },
-    "PDOK CP WMTS - GetTileKVP": {
-      "resource": "PDOK CP WMTS",
+    "PDOK BRK WMTS - GetTileKVP": {
+      "resource": "PDOK BRK WMTS",
       "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTile",
       "parameters": {
         "layers": ["Kadastralekaart"],
@@ -238,8 +226,8 @@
         "kvprest": "KVP"
       }
     },
-    "PDOK BRT WMTS - GetTileAllKVP": {
-      "resource": "PDOK BRT WMTS",
+    "PDOK BRK WMTS - GetTileAllKVP": {
+      "resource": "PDOK BRK WMTS",
       "probe_class": "GeoHealthCheck.plugins.probe.wmts.WmtsGetTileAll",
       "parameters": {
         "layers": ["All layers"],
@@ -310,8 +298,8 @@
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     },
-    "WOUDC WFS - GetCaps - XML Parse": {
-      "probe_vars": "WOUDC WFS - GetCaps",
+    "RCE WFS - GetCaps - XML Parse": {
+      "probe_vars": "RCE WFS - GetCaps",
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
       "parameters": {}
     },
@@ -353,13 +341,13 @@
         "strings": ["FeatureCollection"]
       }
     },
-    "WOUDC CSW - GetCaps - XML Parse": {
-      "probe_vars": "WOUDC CSW - GetCaps",
+    "PDOK CSW - GetCaps - XML Parse": {
+      "probe_vars": "PDOK CSW - GetCaps",
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
       "parameters": {}
     },
-    "PDOK CP WMTS - GetCaps - XML Parse": {
-      "probe_vars": "PDOK CP WMTS - GetCaps",
+    "PDOK BRK WMTS - GetCaps - XML Parse": {
+      "probe_vars": "PDOK BRK WMTS - GetCaps",
       "check_class": "GeoHealthCheck.plugins.check.checks.XmlParse",
       "parameters": {}
     },
@@ -372,7 +360,7 @@
       "probe_vars": "WOUDC LINK - PING",
       "check_class": "GeoHealthCheck.plugins.check.checks.ContainsStrings",
       "parameters": {
-        "strings": ["RDF>"]
+        "strings": ["Ozone"]
       }
     },
     "OPENGEOGROEP TMS - HTTP - NoError": {
@@ -397,33 +385,33 @@
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     },
-    "PDOK CP WMTS - GetTileREST - No Exception": {
-      "probe_vars": "PDOK CP WMTS - GetTileREST",
+    "PDOK BRK WMTS - GetTileREST - No Exception": {
+      "probe_vars": "PDOK BRK WMTS - GetTileREST",
       "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
       "parameters": {"strings": ["ExceptionReport>", "ServiceException>"]}
     },
-    "PDOK CP WMTS - GetTileREST - Content Type": {
-      "probe_vars": "PDOK CP WMTS - GetTileREST",
+    "PDOK BRK WMTS - GetTileREST - Content Type": {
+      "probe_vars": "PDOK BRK WMTS - GetTileREST",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     },
-    "PDOK CP WMTS - GetTileKVP - No Exception": {
-      "probe_vars": "PDOK CP WMTS - GetTileKVP",
+    "PDOK BRK WMTS - GetTileKVP - No Exception": {
+      "probe_vars": "PDOK BRK WMTS - GetTileKVP",
       "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
       "parameters": {"strings": ["ExceptionReport>", "ServiceException>"]}
     },
-    "PDOK CP WMTS - GetTileKVP - Content Type": {
-      "probe_vars": "PDOK CP WMTS - GetTileKVP",
+    "PDOK BRK WMTS - GetTileKVP - Content Type": {
+      "probe_vars": "PDOK BRK WMTS - GetTileKVP",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     },
-    "PDOK BRT WMTS - GetTileAllKVP - No Exception": {
-      "probe_vars": "PDOK BRT WMTS - GetTileAllKVP",
+    "PDOK BRK WMTS - GetTileAllKVP - No Exception": {
+      "probe_vars": "PDOK BRK WMTS - GetTileAllKVP",
       "check_class": "GeoHealthCheck.plugins.check.checks.NotContainsOwsException",
       "parameters": {"strings": ["ExceptionReport>", "ServiceException>"]}
     },
-    "PDOK BRT WMTS - GetTileAllKVP - Content Type": {
-      "probe_vars": "PDOK BRT WMTS - GetTileAllKVP",
+    "PDOK BRK WMTS - GetTileAllKVP - Content Type": {
+      "probe_vars": "PDOK BRK WMTS - GetTileAllKVP",
       "check_class": "GeoHealthCheck.plugins.check.checks.HttpHasImageContentType",
       "parameters": {}
     }
