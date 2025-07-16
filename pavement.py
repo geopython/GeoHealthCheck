@@ -123,7 +123,7 @@ def setup():
 
     # install leafletjs to static/lib
     info('Getting leaflet')
-    leafletjs = 'http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip'
+    leafletjs = 'https://leafletjs-cdn.s3.amazonaws.com/content/leaflet/v1.9.4/leaflet.zip'
 
     zipstr = BytesIO(urlopen(leafletjs).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
