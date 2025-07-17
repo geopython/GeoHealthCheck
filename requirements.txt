@@ -1,3 +1,4 @@
+astroid==2.15.8 # https://github.com/sphinx-extensions2/sphinx-autodoc2/issues/31 
 Jinja2==3.0.3
 markupsafe==2.0.1
 Flask==1.1.1
@@ -9,7 +10,7 @@ SQLAlchemy==1.3.8
 Flask-SQLAlchemy==2.4.0
 itsdangerous==1.1.0
 pyproj >=2.6.1
-lxml >= 4.8.0, <= 4.9.2
+lxml >= 4.8.0, <= 4.9.4
 OWSLib==0.20.0
 jsonschema==3.0.2 # downgrade from 3.2.0 on sept 29, 2020, issue 331, consider better fix
 openapi-spec-validator==0.2.8

@@ -51,7 +51,7 @@ Install
 .. code-block:: bash
 
   python3 -m venv ghc && cd ghc
-  source ghc/bin/activate
+  source ./bin/activate
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
 
