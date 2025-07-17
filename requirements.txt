@@ -1,5 +1,5 @@
 astroid==2.15.8 # https://github.com/sphinx-extensions2/sphinx-autodoc2/issues/31 
-Jinja2==3.0.3
+Jinja2==3.1.6
 markupsafe==2.0.1
 Flask==1.1.1
 Flask-Babel==0.12.2
