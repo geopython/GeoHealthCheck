@@ -82,7 +82,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             'type': 'string',
             'description': 'Maximum amount of features to select',
             'default': '5',
-            'required': True,
+            'required': False,
             'range': None
         },
         'bbox': {

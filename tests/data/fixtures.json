@@ -170,6 +170,17 @@
         "bbox": ["180635", "455870", "180961", "456050"]
       }
     },
+    "PDOK BAG WFS - GetFeature - default max_count": {
+      "resource": "PDOK BAG WFS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBbox",
+      "parameters": {
+        "type_name": "bag:verblijfsobject",
+        "type_ns_prefix": "bag",
+        "type_ns_uri": "http://bag.geonovum.nl",
+        "srs": "EPSG:28992",
+        "bbox": ["180635", "455870", "180961", "456050"]
+      }
+    },
     "PDOK BAG WFS - GetFeature All": {
       "resource": "PDOK BAG WFS",
       "probe_class": "GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBboxAll",
@@ -179,6 +190,17 @@
         "type_ns_uri": "http://bag.geonovum.nl",
         "srs": "EPSG:28992",
         "max_count": "1",
+        "bbox": ["180635", "455870", "180961", "456050"]
+      }
+    },
+    "PDOK BAG WFS - GetFeature All - default max_count": {
+      "resource": "PDOK BAG WFS",
+      "probe_class": "GeoHealthCheck.plugins.probe.wfs.WfsGetFeatureBboxAll",
+      "parameters": {
+        "type_name": "all 5 featuretypes",
+        "type_ns_prefix": "bag",
+        "type_ns_uri": "http://bag.geonovum.nl",
+        "srs": "EPSG:28992",
         "bbox": ["180635", "455870", "180961", "456050"]
       }
     },
