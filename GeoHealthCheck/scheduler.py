@@ -40,6 +40,8 @@ from apscheduler.jobstores.base import JobLookupError
 from apscheduler.events import \
     EVENT_SCHEDULER_STARTED, EVENT_SCHEDULER_SHUTDOWN, \
     EVENT_JOB_MISSED, EVENT_JOB_ERROR
+from apscheduler.triggers.cron import CronTrigger
+from croniter import croniter
 from init import App
 
 LOGGER = logging.getLogger(__name__)
@@ -243,14 +245,38 @@ def update_job(resource):
 
 def add_job(resource):
     LOGGER.info('Starting job for resource=%d' % resource.identifier)
-    freq = resource.run_frequency
-    next_run_time = datetime.now() + timedelta(
-        seconds=random.randint(0, freq * 60))
-    scheduler.add_job(
-        run_job, 'interval', args=[resource.identifier, freq],
-        minutes=freq, next_run_time=next_run_time, max_instances=1,
-        misfire_grace_time=round((freq * 60) / 2), coalesce=True,
-        id=str(resource.identifier))
+
+    if resource.cron:
+        # determine the frequency. Used as input to ``run_job`` and to
+        # determine misfire grace time
+        cron = croniter(resource.cron)
+        # Use the next two execution times to determine time difference
+        seconds = abs(cron.get_next() - cron.get_next())
+
+        LOGGER.info(f'scheduling job with cron pattern ({seconds})')
+
+        scheduler.add_job(
+            run_job,
+            CronTrigger.from_crontab(resource.cron),
+            args=[resource.identifier, round(seconds / 60)],
+            max_instances=1,
+            misfire_grace_time=round(seconds / 2),
+            coalesce=True,
+            id=str(resource.identifier)
+        )
+
+    else:
+        freq = resource.run_frequency
+        next_run_time = datetime.now() + timedelta(
+            seconds=random.randint(0, freq * 60))
+
+        LOGGER.info('scheduling job with frequency')
+
+        scheduler.add_job(
+            run_job, 'interval', args=[resource.identifier, freq],
+            minutes=freq, next_run_time=next_run_time, max_instances=1,
+            misfire_grace_time=round((freq * 60) / 2), coalesce=True,
+            id=str(resource.identifier))
 
 
 def stop_job(resource_id):
