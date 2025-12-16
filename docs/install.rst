@@ -32,7 +32,8 @@ for installation and management. ``Cron`` was used for scheduling the actual
 healthchecks before v0.5.0.
 
 Starting from version v0.8.0.0 GeoHealthCheck requires **python 3**. Previous
-versions require **python 2**.
+versions require **python 2**. GeoHealthCheck is at least compatible with Python versions
+up to and including `3.12.3`. Higher Python versions may work but are untested.
 
 Install
 -------
