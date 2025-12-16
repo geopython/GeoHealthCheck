@@ -27,7 +27,7 @@
 #
 # =================================================================
 
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 import json
 from urllib.request import urlopen
@@ -95,7 +95,7 @@ def run_resource(resourceid):
     # Run test
     result = run_test_resource(resource)
 
-    run1 = Run(resource, result, datetime.utcnow())
+    run1 = Run(resource, result, datetime.now(timezone.utc))
 
     DB.session.add(run1)
 
@@ -144,7 +144,7 @@ def sniff_test_resource(config, resource_type, url):
         raise RuntimeError(msg2)
 
     title = None
-    start_time = datetime.utcnow()
+    start_time = datetime.now(timezone.utc)
     message = None
     resource_type_map = {'OGC:WMS': [partial(WebMapService, version='1.3.0'),
                                      partial(WebMapService, version='1.1.1')],
@@ -223,7 +223,7 @@ def sniff_test_resource(config, resource_type, url):
             title = urlparse(url).hostname
         elif resource_type == 'OSGeo:GeoNode':
             endpoints = ows
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             delta = end_time - start_time
             response_time = '%s.%s' % (delta.seconds, delta.microseconds)
             base_tags = geonode_make_tags(url)
@@ -259,7 +259,7 @@ def sniff_test_resource(config, resource_type, url):
         message = msg
         success = False
 
-    end_time = datetime.utcnow()
+    end_time = datetime.now(timezone.utc)
 
     delta = end_time - start_time
     response_time = '%s.%s' % (delta.seconds, delta.microseconds)
@@ -311,10 +311,10 @@ def geonode_make_tags(base_url):
 
 if __name__ == '__main__':
     print('START - Running health check tests on %s'
-          % datetime.utcnow().isoformat())
+          % datetime.now(timezone.utc).isoformat())
     run_resources()
     print('END - Running health check tests on %s'
-          % datetime.utcnow().isoformat())
+          % datetime.now(timezone.utc).isoformat())
     # from init import App
     # if len(sys.argv) < 3:
     #     print('Usage: %s <resource_type> <url>' % sys.argv[0])

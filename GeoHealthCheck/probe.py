@@ -128,7 +128,7 @@ class Probe(Plugin):
         metadata = None
         if key in Probe.METADATA_CACHE:
             entry = Probe.METADATA_CACHE[key]
-            delta = datetime.datetime.utcnow() - entry['time']
+            delta = datetime.now(timezone.utc) - entry['time']
             metadata = entry['metadata']
 
             # Don't keep cache forever, refresh every N mins
@@ -144,7 +144,7 @@ class Probe(Plugin):
                 # Store entry with time, for expiry later
                 entry = {
                     "metadata": metadata,
-                    "time": datetime.datetime.utcnow()
+                    "time": datetime.now(timezone.utc)
                 }
                 Probe.METADATA_CACHE[key] = entry
 
