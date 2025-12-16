@@ -17,6 +17,7 @@ echo "START /run-tests.sh"
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
+source bin/activate
 paver run_tests
 
 echo "END /run-tests.sh"

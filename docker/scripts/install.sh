@@ -5,10 +5,14 @@
 # e.g. fetching Metadata (Caps) and testing all layers
 # Install Python packages for installation and setup
 
+python3 -m venv GeoHealthCheck
 pushd /GeoHealthCheck || exit 1
 
+source bin/activate
+
+
 # Docker-specific deps
-pip install -r docker/scripts/requirements.txt
+pip install --no-cache-dir -r docker/scripts/requirements.txt
 
 # Sets up GHC itself
 paver setup

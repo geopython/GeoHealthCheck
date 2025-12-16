@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:noble
 
 # Credits to yjacolin for providing first versions
 LABEL original_developer="yjacolin <yves.jacolin@camptocamp.com>" \
@@ -18,7 +18,7 @@ ENV LC_ALL="en_US.UTF-8" \
 	LANGUAGE="en_US.UTF-8" \
     \
 	\
-	DEB_PACKAGES="locales gunicorn postgresql-client python3-gunicorn python3-gevent python3-psycopg2 python3-lxml python3-pyproj" \
+	DEB_PACKAGES="locales gunicorn python3.12-venv postgresql-client python3-gunicorn python3-gevent python3-psycopg2 python3-lxml python3-pyproj" \
 	DEB_BUILD_DEPS="make python3-pip" \
 	# GHC ENV settings\
 	ADMIN_NAME=admin \

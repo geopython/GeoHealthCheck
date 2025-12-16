@@ -13,7 +13,9 @@ echo "START /run-web.sh"
 # Make sure PYTHONPATH includes GeoHealthCheck
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
-cd /GeoHealthCheck
+pushd /GeoHealthCheck || exit 1
+
+source bin/activate
 
 paver upgrade
 
@@ -21,7 +23,7 @@ paver upgrade
 [ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
 
 echo "Running GHC WSGI on ${HOST}:${PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
-exec gunicorn --workers ${WSGI_WORKERS} \
+exec gunicorn --pythonpath /GeoHealthCheck/lib/python3.12/site-packages/ --workers ${WSGI_WORKERS} \
 		--worker-class=${WSGI_WORKER_CLASS} \
 		--timeout ${WSGI_WORKER_TIMEOUT} \
 		--name="Gunicorn_GHC" \
