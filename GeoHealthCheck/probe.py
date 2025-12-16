@@ -1,7 +1,7 @@
 import logging
 import sys
 
-import datetime
+from datetime import datetime, timezone
 import requests
 
 from factory import Factory
