@@ -108,7 +108,7 @@ class Run(DB.Model):
         return self.identifier > other.identifier
 
     def __ge__(self, other):
-        return self.identifief >= other.identifier
+        return self.identifier >= other.identifier
 
     def __hash__(self):
         return hash(f"{self.identifier}{self.checked_datetime}{self.resource}")
