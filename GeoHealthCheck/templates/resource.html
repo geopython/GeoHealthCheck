@@ -21,13 +21,13 @@
       /*displays pop-up when "active" class is present*/
       visibility:visible;
     }
-    
+
     .run-popup-content {
       /*Hides pop-up content when there is no "active" class */
      margin: 12px;
      visibility:hidden;
     }
-    
+
     .run-popup-content.active {
       /*Shows pop-up content when "active" class is present */
       visibility:visible;
@@ -83,10 +83,15 @@
                 </td>
             </tr>
             <tr>
+              {% if resource.cron %}
+              <th>{{ _('crontab pattern') }}</th>
+              <td>{{ resource.cron }}</td>
+              {% else %}
               <th>{{ _('Run Every') }}</th>
               <td>
               {{ resource.run_frequency }} {{ _('minutes') }}
               </td>
+              {% endif %}
             </tr>
             <tr>
                 <th>Probes</th>
@@ -263,7 +268,7 @@
 
         {% endif %}
     });
-    
+
 </script>
 
 {% endblock %}
