@@ -32,7 +32,11 @@ import json
 import logging
 from flask_babel import gettext as _
 from datetime import datetime, timedelta
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+try:
+    from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+except ImportError:
+    from itsdangerous import URLSafeTimedSerializer as Serializer
+
 from sqlalchemy import func, and_
 
 from sqlalchemy.orm import deferred
