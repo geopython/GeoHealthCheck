@@ -63,7 +63,7 @@ class WmsDrilldown(Probe):
         result.start()
         try:
             # Pick a random layer
-            layer_name = random.sample(wms.contents.keys(), 1)[0]
+            layer_name = random.sample(list(wms.contents.keys()), 1)[0]
             layer = wms[layer_name]
 
             # TODO Only use EPSG:4326, later random CRS

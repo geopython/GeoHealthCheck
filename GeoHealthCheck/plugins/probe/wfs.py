@@ -23,6 +23,7 @@ class WfsGetFeatureBbox(Probe):
 xmlns:wfs="http://www.opengis.net/wfs"
 service="WFS"
 version="1.1.0"
+maxFeatures="{max_count}"
 outputFormat="text/xml; subtype=gml/3.1.1"
 xsi:schemaLocation="http://www.opengis.net/wfs
 http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
@@ -75,6 +76,13 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             'description': 'The SRS as EPSG: code',
             'default': 'EPSG:4326',
             'required': True,
+            'range': None
+        },
+        'max_count': {
+            'type': 'string',
+            'description': 'Maximum amount of features to select',
+            'default': '5',
+            'required': False,
             'range': None
         },
         'bbox': {

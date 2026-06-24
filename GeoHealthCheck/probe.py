@@ -274,6 +274,14 @@ class Probe(Plugin):
                     if param_defs[param]['type'] == 'stringlist':
                         request_parms[param] = ','.join(request_parms[param])
 
+                # Some new params may have been defined,
+                # but not present in request params from DB.
+                for param_def in param_defs:
+                    if param_def not in request_parms \
+                            and 'default' in param_defs[param_def]:
+                        request_parms[param_def] = \
+                            param_defs[param_def]['default']
+
                 request_string = self.REQUEST_TEMPLATE.format(**request_parms)
 
         self.log('Requesting: %s url=%s' % (self.REQUEST_METHOD, url_base))
