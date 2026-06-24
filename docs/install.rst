@@ -16,6 +16,15 @@ See the
 `GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
 for a full guide.
 
+Kubernetes with Helm Chart
+--------------------------
+
+This repository contains a Helm chart for easy installation on Kubernetes.
+
+See the
+`GHC Helm Chart Readme <https://github.com/geopython/GeoHealthCheck/blob/master/charts/geohealthcheck/docs/README.md>`_
+for a full guide.
+
 Requirements
 ------------
 
