@@ -7,8 +7,6 @@ Create Date: 2017-04-24 17:51:15.481079
 """
 from alembic import op
 import sqlalchemy as sa
-import imp
-import os
 from GeoHealthCheck.migrations import alembic_helpers
 
 # revision identifiers, used by Alembic.

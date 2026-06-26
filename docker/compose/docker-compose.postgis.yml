@@ -1,9 +1,8 @@
 # GHC Docker setup with Postgres as backend DB.
 #
 # To run:
-# sudo docker-compose -f docker-compose.postgis.yml up [-d]
+# sudo docker compose -f docker-compose.postgis.yml up [-d]
 #
-version: "3"
 
 services:
   ghc_web:
@@ -63,7 +62,7 @@ services:
       # - ./../GeoHealthCheck/plugins:/plugins:ro
 
   postgis_ghc:
-    image: mdillon/postgis:10-alpine
+    image: postgis/postgis:14-3.5-alpine
 
     container_name: postgis_ghc
 

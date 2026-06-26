@@ -13,6 +13,8 @@ echo "Using DB_TYPE=${DB_TYPE}"
 # Create DB shorthand
 function create_db() {
 	pushd /GeoHealthCheck/  || exit 1
+	source bin/activate
+
 	paver create -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL}
 	popd || exit 1
 }
@@ -45,7 +47,7 @@ case ${DB_TYPE} in
 		echo "Check if Postgres is avail/ready..."
 		until pg_isready -h "${DB_HOST}"; do
 		  echo "Exit code=$? - Postgres not ready - sleeping"
-		  sleep 1
+		  sleep $[ ( $RANDOM % 6 )  + 1 ]s
 		done
 
 		# Check if we need to create DB tables

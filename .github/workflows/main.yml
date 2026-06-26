@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - python-version: 3.10.12
+          - python-version: 3.12.3
     steps:
     - name: Checkout ✅
       uses: actions/checkout@v2

@@ -31,7 +31,7 @@
 import json
 import logging
 from flask_babel import gettext as _
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy import func, and_
 
@@ -58,7 +58,7 @@ def flush_runs():
     all_runs = Run.query.all()
     run_count = 0
     for run in all_runs:
-        days_old = (datetime.utcnow() - run.checked_datetime).days
+        days_old = (datetime.now(timezone.utc) - run.checked_datetime).days
         if days_old > retention_days:
             run_count += 1
             DB.session.delete(run)
@@ -87,7 +87,7 @@ class Run(DB.Model):
     report = deferred(DB.Column(DB.Text, default={}))
 
     def __init__(self, resource, result,
-                 checked_datetime=datetime.utcnow()):
+                 checked_datetime=datetime.now(timezone.utc)):
         self.resource = resource
         self.success = result.success
         self.response_time = result.response_time_str
@@ -680,13 +680,13 @@ class ResourceLock(DB.Model):
         self.init_datetimes(interval_mins)
 
     def init_datetimes(self, interval_mins):
-        self.start_time = datetime.utcnow()
+        self.start_time = datetime.now(timezone.utc)
         # Subtract some space from end-time to allow obtain at scheduled time
         minutes = interval_mins - 1
         self.end_time = self.start_time + timedelta(minutes=minutes)
 
     def has_expired(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         return now > self.end_time
 
     def obtain(self, owner, frequency):
@@ -723,7 +723,7 @@ class User(DB.Model):
         self.set_password(password)
         self.email = email
         self.role = role
-        self.registered_on = datetime.utcnow()
+        self.registered_on = datetime.now(timezone.utc)
 
     def authenticate(self, password):
         return util.verify_hash(password, self.password)
