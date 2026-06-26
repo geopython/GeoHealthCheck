@@ -47,7 +47,7 @@ case ${DB_TYPE} in
 		echo "Check if Postgres is avail/ready..."
 		until pg_isready -h "${DB_HOST}"; do
 		  echo "Exit code=$? - Postgres not ready - sleeping"
-		  sleep 1
+		  sleep $[ ( $RANDOM % 6 )  + 1 ]s
 		done
 
 		# Check if we need to create DB tables

@@ -18,9 +18,8 @@ ENV LC_ALL="en_US.UTF-8" \
 	LANGUAGE="en_US.UTF-8" \
     \
 	\
-	DEB_PACKAGES="locales gunicorn python3.12-venv postgresql-client python3-gunicorn python3-gevent python3-psycopg2 python3-lxml python3-pyproj" \
+	DEB_PACKAGES="locales gunicorn python3.12-venv postgresql-client python3-gunicorn python3-gevent python3-lxml python3-pyproj" \
 	DEB_BUILD_DEPS="make python3-pip" \
-	# GHC ENV settings\
 	ADMIN_NAME=admin \
 	ADMIN_PWD=admin \
 	ADMIN_EMAIL=admin.istrator@mydomain.com \
@@ -91,7 +90,7 @@ COPY . /GeoHealthCheck
 # Install
 RUN \
 	chmod a+x /*.sh && ./install.sh \
-    # Cleanup TODO: remove unused Locales and TZs
+    # Cleanup TODO: remove unused Locales and TZs \
     && apt-get remove --purge -y ${DEB_BUILD_DEPS} \
     && apt-get clean \
     && apt autoremove -y  \

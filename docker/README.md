@@ -43,7 +43,7 @@ For example [run.sh](run.sh) which launches GHC using the robust `gunicorn` WSGI
 ## Run
 
 ```
-docker run -d --name ghc_web -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run -d --name ghc_web --rm -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 ```
 
 go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host).
@@ -56,7 +56,7 @@ This mode can be disabled by passing `GHC_RUNNER_IN_WEBAPP` to as an ENV
 var to the Docker container:
 
 ```
-docker run  --name ghc_web -e GHC_RUNNER_IN_WEBAPP=False -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run  --name ghc_web --rm -e GHC_RUNNER_IN_WEBAPP=False -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 
 ```
 
@@ -66,13 +66,13 @@ You can then run `GHC Runner` as a separate container by overriding
 the default `ENTRYPOINT` with `/run-runner.sh`:
 
 ```
-docker run -d --name ghc_runner --entrypoint "/run-runner.sh" -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run -d --name ghc_runner --rm --entrypoint "/run-runner.sh" -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
 ```
 
 But the most optimal way to run GHC with scheduled jobs and optionally Postgres as backend DB,
 is to use [Docker Compose](https://docs.docker.com/compose), see below.
 
-## Using docker-compose
+## Using docker compose
 
 This allows a complete Docker setup, including scheduling and optionally using 
 Postgres/PostGIS as database (recommended).  
@@ -80,7 +80,7 @@ See the [Docker Compose Documentation](https://docs.docker.com/compose)
 for more info. GHC Webapp and Runner are in this case 
 deployed as separate processes (Docker containers).
 
-*Note that the `docker-compose` YAML files below are meant as examples to be adapted to your*
+*Note that the `docker compose` YAML files below are meant as examples to be adapted to your*
 *local deployment situation.* 
 
 ### Using sqlite DB (default)
@@ -92,7 +92,7 @@ To run (`-d` allows running in background):
 
 ```
 cd docker/compose
-docker-compose -f docker-compose.yml up  [-d]
+docker compose -f docker-compose.yml up  [-d]
 
 # go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host)
 
@@ -105,10 +105,9 @@ similar but uses Postgres as the database.
 
 To run:
 
-
 ```
 cd docker/compose
-docker-compose -f docker-compose.postgis.yml up [-d]
+docker compose -f docker-compose.postgis.yml up [-d]
 
 # go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host)
 
