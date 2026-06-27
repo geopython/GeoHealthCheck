@@ -687,9 +687,10 @@ class ResourceLock(DB.Model):
 
     def has_expired(self):
         now = datetime.now(timezone.utc)
-        
+
         # See issue https://github.com/geopython/GeoHealthCheck/issues/506
-        end_time = self.end_time.replace(tzinfo=timezone.utc)
+        end_time = self.end_time.replace(
+            tzinfo=timezone.utc)
         return now > end_time
 
     def obtain(self, owner, frequency):
