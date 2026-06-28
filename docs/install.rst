@@ -27,12 +27,12 @@ GeoHealthCheck is built on the awesome Flask micro-framework and uses
 
 `APScheduler` is used to run scheduled healthchecks.
 
-These dependencies are automatically installed (see below). ``Paver`` is used
+These dependencies are automatically installed (see below). `Invoke <https://docs.pyinvoke.org>`_ is used
 for installation and management. ``Cron`` was used for scheduling the actual
 healthchecks before v0.5.0.
 
-Starting from version v0.8.0.0 GeoHealthCheck requires **python 3**. Previous
-versions require **python 2**. GeoHealthCheck is at least compatible with Python versions
+Starting from version v0.8.0.0 GeoHealthCheck requires **python3 3**. Previous
+versions require **python3 2**. GeoHealthCheck is at least compatible with Python versions
 up to and including `3.12.3`. Higher Python versions may work but are untested.
 
 Install
@@ -56,20 +56,20 @@ Install
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
 
-  # install paver dependency for admin tool
-  pip install Paver
+  # install Invoke dependency for admin tool
+  pip3 install invoke
 
   # setup app
-  paver setup
+  invoke setup
 
   # create secret key to use for auth
-  paver create_secret_key
+  invoke create_secret_key
 
   # almost there!  Customize config
   vi instance/config_site.py
   # edit:
   # - SQLALCHEMY_DATABASE_URI
-  # - SECRET_KEY  # from paver create_secret_key
+  # - SECRET_KEY  # from invoke create_secret_key
   # - GHC_RETENTION_DAYS
   # - GHC_SELF_REGISTER
   # - GHC_NOTIFICATIONS
@@ -85,10 +85,10 @@ Install
   # - GEOIP  # or use the default settings
 
   # init database
-  python GeoHealthCheck/models.py create
+  python3 GeoHealthCheck/models.py create
 
   # start web-app
-  python GeoHealthCheck/app.py  # http://localhost:8000/
+  python3 GeoHealthCheck/app.py  # http://localhost:8000/
 
   # when you are done, you can exit the virtualenv
   deactivate
@@ -105,15 +105,15 @@ An existing GHC database installation can be upgraded with:
 .. code-block:: bash
 
   # In the top directory (e.g. the topdir cloned from github)
-  paver upgrade
+  invoke upgrade
 
   # Notice any output, in particular errors
 
 Notes:
 
 * **Always backup your database first!!**
-* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.5.2`, but best is to run `paver setup` also for other dependencies
-* upgrading is "smart": you can always run `paver upgrade`, it has no effect when DB is already up to date
+* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip3 install Flask-Migrate==2.5.2`, but best is to run `invoke setup` also for other dependencies
+* upgrading is "smart": you can always run `invoke upgrade`, it has no effect when DB is already up to date
 * when upgrading from earlier versions without Plugin-support:
 
   - adapt your `config_site.py` to Plugin settings from `config_main.py`
@@ -121,7 +121,7 @@ Notes:
 
 When running with Docker see the
 `GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
-how to run `paver upgrade` within your Docker Container.
+how to run `invoke upgrade` within your Docker Container.
 
 Upgrade notes v0.5.0
 ....................
@@ -134,7 +134,7 @@ Upgrade notes v0.6.0
 ....................
 
 In GHC v0.6.0 encryption was added for password storage. Existing passwords should be migrated via
-the `paver upgrade` command. Also password recovery was changed: a user can create a new password via
+the `invoke upgrade` command. Also password recovery was changed: a user can create a new password via
 a unique, personal URL that GHC sends by email. This requires a working email configuration and a reachable
 `SITE_URL` config value. See :ref:`admin_user_mgt` for solving password problems.
 
@@ -192,9 +192,9 @@ Start using Flask's built-in WSGI server:
 
 .. code-block:: bash
 
-  python GeoHealthCheck/app.py  # http://localhost:8000
-  python GeoHealthCheck/app.py 0.0.0.0:8881  # http://localhost:8881
-  python GeoHealthCheck/app.py 192.168.0.105:8957  # http://192.168.0.105:8957
+  python3 GeoHealthCheck/app.py  # http://localhost:8000
+  python3 GeoHealthCheck/app.py 0.0.0.0:8881  # http://localhost:8881
+  python3 GeoHealthCheck/app.py 192.168.0.105:8957  # http://192.168.0.105:8957
 
 
 This runs the (Flask) **GHC Webapp**, by default with the **GHC Runner** (scheduled healthchecker) internally.
@@ -205,10 +205,10 @@ From the command-line run both processes, e.g. in background or different termin
 .. code-block:: bash
 
   # run GHC Runner, here in background
-  python GeoHealthCheck/scheduler.py &
+  python3 GeoHealthCheck/scheduler.py &
 
   # run GHC Webapp for http://localhost:8000
-  python GeoHealthCheck/app.py
+  python3 GeoHealthCheck/app.py
 
 
 To enable in Apache, use ``GeoHealthCheck.wsgi`` and configure in Apache
@@ -272,8 +272,8 @@ to run the scheduled healthchecks.
 Use virtualenv
 ..............
 
-This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`! Starting with python 3.3
-a `venv script <https://docs.python.org/3.3/library/venv.html>`_ is provided and from python 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`_
+This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`! Starting with python3 3.3
+a `venv script <https://docs.python.org/3.3/library/venv.html>`_ is provided and from python3 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`_
 is included in the standard library.
 
 Use SSL (HTTPS)

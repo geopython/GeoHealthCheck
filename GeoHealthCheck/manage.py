@@ -6,7 +6,7 @@
 #
 # Usage:
 #
-# $ python manage.py --help
+# $ python3 manage.py --help
 # usage: manage.py [-h] {shell,db,runserver} ...
 #
 # positional arguments:
@@ -19,7 +19,7 @@
 #   -h, --help  show this help message and exit
 #
 # For DB management:
-# $ python manage.py db --help
+# $ python3 manage.py db --help
 # usage: Perform database migrations
 #
 # positional arguments:

@@ -17,15 +17,15 @@ virtualenv GeoHealthCheck && cd $_
 . bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
-pip install Paver
+pip3 install Invoke
 # setup installation
-paver setup
+invoke setup
 # generate secret key
-paver create_secret_key
+invoke create_secret_key
 # setup local configuration (overrides GeoHealthCheck/config_main.py)
 vi instance/config_site.py
 # edit at least secret key:
-# - SECRET_KEY  # copy/paste result string from paver create_secret_key
+# - SECRET_KEY  # copy/paste result string from `invoke create_secret_key`
 
 # Optional: edit other settings or leave defaults
 # - SQLALCHEMY_DATABASE_URI
@@ -37,32 +37,32 @@ vi instance/config_site.py
 # - GHC_MAP (or use default settings)
 
 # setup database and superuser account interactively 
-paver create
+invoke create
 
 # start webserver with healthcheck runner daemon inside 
 # (default is 0.0.0.0:8000)
-python GeoHealthCheck/app.py  
+python3 GeoHealthCheck/app.py  
 # or start webserver on another port
-python GeoHealthCheck/app.py 0.0.0.0:8881
+python3 GeoHealthCheck/app.py 0.0.0.0:8881
 # or start webserver on another IP
-python GeoHealthCheck/app.py 192.168.0.105:8001
+python3 GeoHealthCheck/app.py 192.168.0.105:8001
 
 # OR start webserver and separate runner daemon (scheduler) process
 vi instance/config_site.py
 # GHC_RUNNER_IN_WEBAPP = False
-python GeoHealthCheck/scheduler.py & 
-python GeoHealthCheck/app.py  
+python3 GeoHealthCheck/scheduler.py & 
+python3 GeoHealthCheck/app.py  
 
 # next: use a real webserver or preferably Docker for production
 
 # other commands
 #
 # drop database
-python GeoHealthCheck/models.py drop
+python3 GeoHealthCheck/models.py drop
 
 # load data in database (WARN: deletes existing data!)
 # See example data .json files in tests/data
-python GeoHealthCheck/models.py load <.json data file> [y/n]
+python3 GeoHealthCheck/models.py load <.json data file> [y/n]
 
 ```
 

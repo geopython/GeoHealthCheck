@@ -7,4 +7,4 @@ then
 	cp -ar /plugins/* /GeoHealthCheck/GeoHealthCheck/plugins/
 fi
 
-python /GeoHealthCheck/GeoHealthCheck/healthcheck.py
+python3 /GeoHealthCheck/GeoHealthCheck/healthcheck.py

@@ -12,10 +12,10 @@ source bin/activate
 
 
 # Docker-specific deps
-pip install --no-cache-dir -r docker/scripts/requirements.txt
+pip3 install --no-cache-dir -r docker/scripts/requirements.txt
 
 # Sets up GHC itself
-paver setup
+invoke setup
 mv /config_site.py /GeoHealthCheck/instance/config_site.py
 
 # Copy possible Plugins into app tree

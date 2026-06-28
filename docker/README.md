@@ -234,11 +234,11 @@ docker exec -it docker_geohealthcheck_1 bash
 source /venv/bin/activate .
 cd /GeoHealthCheck/
  
-# next can use Paver commands e.g. DB upgrade
-paver upgrade
+# next can use Invoke commands e.g. DB upgrade
+invoke upgrade
 
 etc
 ```
 
-NB: database upgrades (`paver upgrade`)
+NB: database upgrades (`invoke upgrade`)
 are always performed automatically when running GHC via Docker.
