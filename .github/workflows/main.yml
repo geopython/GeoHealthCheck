@@ -26,28 +26,28 @@ jobs:
     - name: Install Requirements 📦
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+        pip3 install -r requirements.txt
+        pip3 install -r requirements-dev.txt
 
     - name: Setup GHC App and init DB 🗃️
       run: |
-        paver setup
-        echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
+        invoke setup
+        echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python3 GeoHealthCheck/models.py create
 
     - name: Flake8 - Verify Coding Conventions ⚙️
       run: flake8
 
     - name: Load Fixtures Test Data ⚙️
-      run: python GeoHealthCheck/models.py load tests/data/fixtures.json y
+      run: python3 GeoHealthCheck/models.py load tests/data/fixtures.json y
 
     - name: Run Probes ⚙️
-      run: python GeoHealthCheck/healthcheck.py
+      run: python3 GeoHealthCheck/healthcheck.py
 
     - name: Run Unit Tests ⚙️
-      run: python tests/run_tests.py
+      run: python3 tests/run_tests.py
 
     - name: Build Docs 📖
       run: cd docs && make html
 
     - name: Cleanup 💯
-      run: python GeoHealthCheck/models.py drop
+      run: python3 GeoHealthCheck/models.py drop
