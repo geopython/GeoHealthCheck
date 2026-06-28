@@ -39,8 +39,8 @@ from urllib.parse import urlparse
 from gettext import translation
 from passlib.hash import pbkdf2_sha256
 
-from .factory import Factory
-from .init import App
+from GeoHealthCheck.factory import Factory
+from GeoHealthCheck.init import App
 
 from jinja2 import Environment, FileSystemLoader
 
