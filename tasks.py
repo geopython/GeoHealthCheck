@@ -102,8 +102,10 @@ def setup(c):
     zipstr = BytesIO(urlopen(select2).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
     zipfile_obj.extractall(STATIC_LIB)
-    dirname = Path(glob.glob(STATIC_LIB / 'select2-*')[0])
-    dstdir = ''.join(dirname.rsplit('-', 1)[:-1])
+
+    dirname = list(STATIC_LIB.glob('select2-*'))[0]
+    dstdir = ''.join(dirname.name.rsplit('-', 1)[:-1])
+
     try:
         os.rename(dirname, dstdir)
     except OSError:
