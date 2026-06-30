@@ -63,13 +63,13 @@ Install
   invoke setup
 
   # create secret key to use for auth
-  invoke create_secret_key
+  invoke create-secret-key
 
   # almost there!  Customize config
   vi instance/config_site.py
   # edit:
   # - SQLALCHEMY_DATABASE_URI
-  # - SECRET_KEY  # from invoke create_secret_key
+  # - SECRET_KEY  # from invoke create-secret-key
   # - GHC_RETENTION_DAYS
   # - GHC_SELF_REGISTER
   # - GHC_NOTIFICATIONS
