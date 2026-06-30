@@ -18,6 +18,6 @@ export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
 source bin/activate
-invoke run_tests
+invoke run-tests
 
 echo "END /run-tests.sh"

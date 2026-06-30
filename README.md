@@ -21,11 +21,11 @@ pip3 install Invoke
 # setup installation
 invoke setup
 # generate secret key
-invoke create_secret_key
+invoke create-secret-key
 # setup local configuration (overrides GeoHealthCheck/config_main.py)
 vi instance/config_site.py
 # edit at least secret key:
-# - SECRET_KEY  # copy/paste result string from `invoke create_secret_key`
+# - SECRET_KEY  # copy/paste result string from `invoke create-secret-key`
 
 # Optional: edit other settings or leave defaults
 # - SQLALCHEMY_DATABASE_URI

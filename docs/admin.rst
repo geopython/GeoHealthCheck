@@ -95,7 +95,7 @@ Or more compact within the root dir of your GHC installation: ::
 
 Or even more compact within the root dir of your GHC installation via Invoke: ::
 
-	$ invoke create_hash -p mypass
+	$ invoke create-hash -p mypass
 	Copy/paste the entire token below for example to set password
 	$pbkdf2-sha256$29000$FkJoTYnxPqc0pjQG4HxP6Q$C3SZb8jqtM7zKS1DSLcouc/CL9XMI9cL5xT6DRTOEd4
 
