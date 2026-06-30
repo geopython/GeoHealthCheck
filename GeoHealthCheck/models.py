@@ -986,7 +986,7 @@ if __name__ == '__main__':
 
         elif sys.argv[1] == 'run':
             print('NOTICE: models.py no longer here.')
-            print('Use: python healthcheck.py or upcoming cli.py')
+            print('Use: python3 healthcheck.py or upcoming cli.py')
         elif sys.argv[1] == 'flush':
             flush_runs()
 

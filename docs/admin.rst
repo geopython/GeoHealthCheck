@@ -21,7 +21,7 @@ To create the database execute the following:
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python GeoHealthCheck/models.py create
+    python3 GeoHealthCheck/models.py create
 
 drop db
 .......
@@ -30,7 +30,7 @@ To delete the database execute the following, however you will loose all your in
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python GeoHealthCheck/models.py drop
+    python3 GeoHealthCheck/models.py drop
 
 Note: you need to create a Database again before you can start GHC again.
 
@@ -39,7 +39,7 @@ load data
 
 To load a JSON data file, do (WARN: deletes existing data!) ::
 
-    python GeoHealthCheck/models.py load <datafile.json> [y/n]
+    python3 GeoHealthCheck/models.py load <datafile.json> [y/n]
 
 Hint: see `tests/data` for example JSON data files.
 
@@ -75,10 +75,10 @@ a password is forgotten and somehow the email-based reset is not available nor w
 In that case, password-hashes can be created from the command-line using the Python library `passlib <https://passlib.readthedocs.io/en/stable/>`_
 within an interactive Python-shell as follows: ::
 
-	$ pip install passlib
+	$ pip3 install passlib
 	# or in Debian/Ubuntu: apt-get install python-passlib
 
-	python
+	python3
 	>>> from passlib.hash import pbkdf2_sha256
 	>>>
 	>>> hash = pbkdf2_sha256.hash("mynewpassword")
@@ -93,10 +93,9 @@ Or more compact within the root dir of your GHC installation: ::
 	>>> create_hash('mynewpassword')
 	'$pbkdf2-sha256$29000$8X4PAUAIAcC4V2rNea9Vqg$XnMx1SfEiBzBAMOQOOC7uxCcyzVuKaHENLj3IfXvfu0'
 
-Or even more compact within the root dir of your GHC installation via Paver: ::
+Or even more compact within the root dir of your GHC installation via Invoke: ::
 
-	$ paver create_hash -p mypass
-	---> pavement.create_hash
+	$ invoke create_hash -p mypass
 	Copy/paste the entire token below for example to set password
 	$pbkdf2-sha256$29000$FkJoTYnxPqc0pjQG4HxP6Q$C3SZb8jqtM7zKS1DSLcouc/CL9XMI9cL5xT6DRTOEd4
 

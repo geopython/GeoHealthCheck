@@ -13,6 +13,6 @@ export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
 source bin/activate
-paver runner_daemon
+invoke runner_daemon
 
 echo "END /run-runner.sh"

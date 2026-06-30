@@ -6,7 +6,7 @@ and Flask-Script.
 Users should be able to upgrade existing installs via: 
 
 	# In top dir of installation
-	paver upgrade
+	invoke upgrade
 	
 The `versions` dir contains the various upgrades. These were
 initially created using the Alembic `autogenerate` facility
@@ -20,12 +20,12 @@ for various DB management tasks related to migrations and upgrading.
 Whenever a change in the database schema or table content
 conventions has changed a new migration should be created via the command.
 
-	python manage.py db migrate
+	python3 manage.py db migrate
 
 Where `migrate` is an alias for `revision --autogenerate`. 
 Alternatively if the autogeneration does not work, create an empty migration: 
 
-	python manage.py db revision
+	python3 manage.py db revision
 	
 In both cases this will create a new revision and a `<revision_number>_.py` file 
 under `versions/` to upgrade
@@ -37,9 +37,9 @@ to check various DB metadata.
 
 Subsequently the upgrade can be performed using:
 
-	python manage.py db upgrade
+	python3 manage.py db upgrade
 	# or the equivalent (for users) 
-	paver upgrade
+	invoke upgrade
 
 ## Revisions
 

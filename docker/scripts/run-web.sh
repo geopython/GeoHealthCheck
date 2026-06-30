@@ -17,7 +17,7 @@ pushd /GeoHealthCheck || exit 1
 
 source bin/activate
 
-paver upgrade
+invoke upgrade
 
 # SCRIPT_NAME should not have value '/'
 [ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
@@ -31,6 +31,6 @@ exec gunicorn --pythonpath /GeoHealthCheck/lib/python3.12/site-packages/ --worke
 		GeoHealthCheck.app:APP
 
 # Built-in Flask server, deprecated
-# python /GeoHealthCheck/GeoHealthCheck/app.py ${HOST}:${PORT}
+# python3 /GeoHealthCheck/GeoHealthCheck/app.py ${HOST}:${PORT}
 
 echo "END /run-web.sh"
