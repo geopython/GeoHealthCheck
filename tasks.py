@@ -28,7 +28,6 @@
 # =================================================================
 
 import codecs
-import glob
 from io import BytesIO
 import os
 from pathlib import Path
