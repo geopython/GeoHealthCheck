@@ -100,10 +100,11 @@ def setup(c):
 
     zipstr = BytesIO(urlopen(select2).read())
     zipfile_obj = zipfile.ZipFile(zipstr)
-    zipfile_obj.extractall(STATIC_LIB)
+    zip_dst_dir = STATIC_LIB / ''
+    zipfile_obj.extractall(zip_dst_dir)
 
-    dirname = list(STATIC_LIB.glob('select2-*'))[0]
-    dstdir = ''.join(dirname.name.rsplit('-', 1)[:-1])
+    dirname = list(zip_dst_dir.glob('select2-*'))[0]
+    dstdir = STATIC_LIB / 'select2'
 
     try:
         os.rename(dirname, dstdir)
