@@ -25,7 +25,7 @@ invoke create-secret-key
 # setup local configuration (overrides GeoHealthCheck/config_main.py)
 vi instance/config_site.py
 # edit at least secret key:
-# - SECRET-KEY  # copy/paste result string from `invoke create-secret-key`
+# - SECRET_KEY  # copy/paste result string from `invoke create-secret-key`
 
 # Optional: edit other settings or leave defaults
 # - SQLALCHEMY_DATABASE_URI
