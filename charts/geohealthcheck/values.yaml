@@ -1,0 +1,250 @@
+---
+# This sets the container image more information can be found here:
+# https://kubernetes.io/docs/concepts/containers/images/
+image:
+  # -- image for GeoHealthCheck
+  repository: 'geopython/geohealthcheck'
+  # -- Pull policy for the image
+  pullPolicy: 'IfNotPresent'
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: ''
+
+# -- This is for the secretes for pulling an image from a private repository
+# more information can be found here:
+# https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# -- This is to override the chart name.
+nameOverride: ''
+# -- This is to override the release name.
+fullnameOverride: ''
+
+# This section builds out the service account more information can be found
+# here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname
+  # template
+  name: ''
+
+# -- This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout:
+# yamllint disable-line rule:line-length
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+
+# -- This is for setting Kubernetes Labels to a Pod.
+# For more information checkout:
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+
+# Definitions for the init container
+initContainer:
+  # -- resource definitions for the init container
+  resources: {}
+  # -- image for the init container
+  repository: 'library/ubuntu'
+  # -- tag for the init container
+  tag: 'jammy'
+  # -- Pull policy for the image of the init container
+  pullPolicy: 'IfNotPresent'
+
+geohealthcheck:
+  # -- additional env variables
+  # additionalEnv:
+  #   name1: 'value1'
+  #   name2: 'value2'
+  additionalEnv: {}
+  # -- additional configmaps
+  # additionalConfigMaps:
+  #   - 'foo'
+  #   - 'bar'
+  additionalConfigMaps: []
+  # -- additional envSecrets
+  # additionalEnvSecrets:
+  #   - 'foo'
+  #   - 'bar'
+  additionalEnvSecrets: []
+  # -- database connection string for SQL-Alchemy
+  # valid examples are:
+  # SQLite: 'sqlite:///data.db'
+  # PostgreSQL: 'postgresql+psycopg2://scott:tiger@localhost:5432/mydatabase'
+  databaseUri: 'sqlite:////data/data.db'
+  auth:
+    # -- secret key to set when enabling authentication
+    secret: 'changeme'
+  # -- the number of days to keep Run history
+  retentionDays: 30
+  # -- stop waiting for the first byte of a Probe response after the given
+  # number of seconds
+  probeHttpTimeoutSecs: 30
+  # -- minimal run frequency for Resource that can be set in web UI
+  minimalRunFrequencyMins: 10
+  # -- allow registrations from users on the website
+  selfRegister: false
+  # -- turn on email and webhook notifications
+  notifications: false
+  # -- receive additional email notifications than just Failing and Fixed
+  # (default True)
+  notificationsVerbosity: false
+  # -- turn on checking for OGC Exceptions in WWW:LINK Resource responses
+  # (default False)
+  wwwLinkExceptionCheck: false
+  # -- allows GeoHealthCheck to receive large XML files from the servers under
+  # test (default False). Note: setting this to True might pose a security risk
+  largeXml: false
+  # -- email address of administrator / contact- notification emails will come
+  # from this address
+  adminEmail: 'you@example.com'
+  # -- list of email addresses that notifications should come to. Use a
+  # different address to GHC_ADMIN_EMAIL if you have trouble receiving
+  # notification emails. Also, you can set separate notification emails t
+  # specific resources. Failing resource will send notification to emails from
+  # GHC_NOTIFICATIONS_EMAIL value and emails configured for that specific
+  # resource altogether.
+  # notificationsEmail:
+  #   - 'you2@example.com'
+  #   - 'you3@example.com'
+  notificationsEmail: []
+  # -- title used for installation / deployment
+  siteTitle: 'GeoHealthCheck Demonstration'
+  # -- full URL of the installation / deployment
+  siteUrl: 'http://host'
+  # -- should the GHC Runner Daemon be run in webapp (default: True)
+  runnerInWebapp: true
+  # -- require authentication (login or Basic Auth) to access GHC webapp and
+  # APIs (default: False)
+  requireWebappAuth: false
+  # -- disable Basic Authentication to access GHC webapp and APIs
+  # (default: False),
+  basicAuthDisabled: false
+  # -- perform SSL verification for Probe HTTPS requests (default: True)
+  verifySsl: true
+  # -- logging level: 10=DEBUG 20=INFO 30=WARN(ING) 40=ERROR 50=FATAL/CRITICAL
+  # (default: 30, WARNING)
+  logLevel: '30'
+  # -- metadata, “Capabilities Docs”, cache expiry time, default 900 secs, -1
+  # to disable
+  metadataCacheSecs: '900'
+  # SMTP configuration
+  # -- enable/disable smtp
+  smtpEnabled: false
+  # -- SMTP server name or IP
+  smtpServer:
+  # -- SMTP port
+  smtpPort:
+  # -- whether or not to use StartTLS with SMTP
+  smtpUseTls:
+  # -- SMTP server name or IP
+  smtpUsername:
+  # -- SMTP server name or IP
+  smtpPassword:
+# -- This is for setting up a service more information can be found here:
+# https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  # -- This sets the service type more information can be found here:
+  # https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: 'ClusterIP'
+
+additionalCertificates: {}
+
+# -- This block is for setting up the ingress for more information can be found
+# here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  # -- enable/disable ingress
+  enabled: false
+  # -- ingress class name
+  className: ''
+  # -- annotations for the ingress
+  # annotations:
+  #   kubernetes.io/ingress.class: nginx
+  #   kubernetes.io/tls-acme: "true"
+  annotations: {}
+  hosts:
+    - host: 'chart-example.local'
+      paths:
+        - path: '/'
+          pathType: 'ImplementationSpecific'
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# -- resources for the main container
+# We usually recommend not to specify default resources and to leave this as
+# a conscious choice for the user. This also increases chances charts run on
+# environments with little resources, such as Minikube. If you do want to
+# specify resources, uncomment the following lines, adjust them as necessary,
+# and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+resources: {}
+
+# -- This is to setup the liveness and readiness probes more information can be
+# found here:
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe:
+  httpGet:
+    path: '/'
+    port: 'http'
+readinessProbe:
+  httpGet:
+    path: '/'
+    port: 'http'
+
+persistence:
+  # -- enable persistence when using an SQLite database
+  enabled: true
+  # -- size of the data partition
+  size: '1Gi'
+  # storage class name. Leave empty for the default class
+  storageClassName: ''
+
+# -- Additional volumes on the output Deployment definition.
+# volumes:
+#   - name: foo
+#     secret:
+#       secretName: mysecret
+#       optional: false
+volumes: []
+
+# -- Additional volumeMounts on the output Deployment definition.
+# volumeMounts:
+#   - name: foo
+#     mountPath: "/etc/foo"
+#     readOnly: true
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Network Policy definition
+networkPolicy:
+  # -- Enable/disable network policy generation
+  enabled: true
+  # -- allow/deny external connections. This should be enabled if you want to
+  # monitor resources outside of this namespace
+  egressEnabled: true

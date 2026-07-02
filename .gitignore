@@ -63,3 +63,6 @@ GeoHealthCheck.conf
 
 # Data
 GeoHealthCheck/data.db
+
+# MacOS artifacts
+.DS_Store

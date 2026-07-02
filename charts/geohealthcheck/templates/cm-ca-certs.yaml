@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-certificates" (include "geohealthcheck.fullname" .) | squote }}
+  labels:
+    {{- include "geohealthcheck.labels" . | nindent 4 }}
+data:
+  {{- range $filename, $certificate := .Values.additionalCertificates }}
+  {{ $filename -}}: |
+    {{- $certificate | nindent 4 }}
+  {{- end -}}
