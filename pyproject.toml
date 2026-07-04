@@ -3,16 +3,18 @@ name = "GeoHealthCheck"
 version = "0.9.0"
 description = "Monitor uptime and availability of OGC web services and REST APIs"
 readme = "README.md"
+requires-python = ">=3.12,<3.13"
 license = { text = "MIT" }
 authors = [
     { name = "Just van den Broecke", email = "just@justobjects.nl" },
     { name = "Tom Kralidis", email = "tomkralidis@gmail.com" },
 ]
-# Faithful 1:1 port of pixi.toml: these are the former [pypi-dependencies].
-# Note: `invoke` was also listed here in pixi.toml but is a conda dependency
-# (see [tool.pixi.dependencies]); the redundant pypi entry is dropped.
-# A more efficient hybrid model (native/geo packages from conda-forge,
-# requires-python, pip-fallback policy) is deferred to a follow-up.
+# Complete runtime dependency set, readable by pip and Dependabot.
+# Hybrid sourcing: the native/geo libs listed here AND in
+# [tool.pixi.dependencies] (lxml, pyproj) come from conda-forge under pixi
+# for robust native builds, and from PyPI on the plain-pip path; pixi's
+# conda->pypi name mapping keeps them from being installed twice.
+# `invoke` is pixi-only tooling, so it lives solely in [tool.pixi.dependencies].
 dependencies = [
     "astroid==2.15.8",
     "Jinja2==3.0.3",
@@ -26,6 +28,7 @@ dependencies = [
     "Flask-SQLAlchemy==2.4.0",
     "itsdangerous==1.1.0",
     "pyproj>=2.6.1",
+    "lxml>=4.8.0,<=4.9.4",
     "OWSLib==0.20.0",
     "jsonschema==4.26.0",
     "openapi-spec-validator==0.9.0",
@@ -46,7 +49,7 @@ Homepage = "https://geohealthcheck.org"
 Documentation = "https://docs.geohealthcheck.org"
 Repository = "https://github.com/geopython/GeoHealthCheck"
 
-# --- Pixi workspace configuration (replaces pixi.toml) ---
+# Pixi workspace configuration (replaces pixi.toml)
 # No [build-system] on purpose: GeoHealthCheck runs from source
 # (via `invoke setup`), so pixi manages the environment but does not
 # install GHC itself as a package.
@@ -54,12 +57,17 @@ Repository = "https://github.com/geopython/GeoHealthCheck"
 [tool.pixi.workspace]
 name = "ghc"
 channels = ["conda-forge"]
-platforms = ["osx-arm64"]
+# multi-platform support for CI (ubuntu) and docker.
+platforms = ["osx-arm64", "linux-64"]
 
-# Conda-forge dependencies (former pixi.toml [dependencies]).
+# Packages sourced from conda-forge under pixi: `python` plus the native/geo
+# libs (lxml, pyproj). The same names in [project.dependencies] are the PyPI
+# fallback for non-pixi installs. `invoke` is pixi-only admin tooling.
 [tool.pixi.dependencies]
+python = "3.12.*"
 invoke = "==3.0.3"
 lxml = ">=4.8.0,<=4.9.4"
+pyproj = ">=2.6.1"
 
 [tool.pixi.tasks]
 # App bootstrap (config, JS assets, i18n, local docs, DB). Wraps `invoke setup`
