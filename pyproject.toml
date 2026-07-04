@@ -9,7 +9,7 @@ authors = [
     { name = "Tom Kralidis", email = "tomkralidis@gmail.com" },
 ]
 # Faithful 1:1 port of pixi.toml: these are the former [pypi-dependencies].
-# NB: `invoke` was also listed here in pixi.toml but is a conda dependency
+# Note: `invoke` was also listed here in pixi.toml but is a conda dependency
 # (see [tool.pixi.dependencies]); the redundant pypi entry is dropped.
 # A more efficient hybrid model (native/geo packages from conda-forge,
 # requires-python, pip-fallback policy) is deferred to a follow-up.
@@ -61,6 +61,12 @@ platforms = ["osx-arm64"]
 invoke = "==3.0.3"
 lxml = ">=4.8.0,<=4.9.4"
 
+[tool.pixi.tasks]
+# App bootstrap (config, JS assets, i18n, local docs, DB). Wraps `invoke setup`
+# so it runs in the activated env without `pixi shell`. In the default feature,
+# so it works for both dev and prod (README runs `invoke setup` for prod too).
+setup = "invoke setup"
+
 [tool.pixi.feature.dev.dependencies]
 flake8 = "==5.0.4"
 pytest = "*"
@@ -74,3 +80,12 @@ test = "pytest --md=report.md"
 # both dev and prod share exactly the same versions for shared dependencies
 dev = { features = ["dev"], solve-group = "prod-group" }
 prod = { features = [], solve-group = "prod-group" }
+
+# pytest needs GeoHealthCheck/ on the import path: the test modules import
+# top-level packages (models, init, ...) that live there. This mirrors the
+# sys.path setup in tests/run_tests.py (the entry point used by CI).
+# Note: the `test` task still requires the app to be bootstrapped first
+# (`invoke setup` creates instance/config_site.py and the DB), same as CI.
+[tool.pytest.ini_options]
+pythonpath = ["GeoHealthCheck"]
+testpaths = ["tests"]
