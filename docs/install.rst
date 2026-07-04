@@ -40,24 +40,42 @@ Install
 
 .. note::
 
-  It is strongly recommended to install GeoHealthCheck in a Python ``virtualenv``.
-  a ``virtualenv`` is self-contained and provides the flexibility to install /
-  tear down / whatever packages without affecting system wide packages or
-  settings.
-  If installing on Ubuntu, you may need to install the python-dev package for installation to complete successfully.
-  
+  It is strongly recommended to install GeoHealthCheck with `Pixi <https://pixi.sh>`_.
+  Pixi manages a self-contained environment (Python and all dependencies) from the
+  committed ``pixi.lock``, without affecting system-wide packages or settings.
+
+Quickstart
+..........
+
+Get a running instance with a few commands (SQLite, defaults):
+
+.. code-block:: bash
+
+  git clone https://github.com/geopython/GeoHealthCheck.git
+  cd GeoHealthCheck
+
+  # install the environment and bootstrap the app
+  pixi install -e prod
+  pixi run -e prod setup
+
+  # create an admin user and start the web-app
+  pixi run -e prod invoke create -u admin -p admin -e you@example.com
+  pixi run -e prod python GeoHealthCheck/app.py  # http://localhost:8000/
+
+Detailed install
+................
+
 - Download a GeoHealthCheck release from
   https://github.com/geopython/GeoHealthCheck/releases, or clone manually from GitHub. 
 
 .. code-block:: bash
 
-  python3 -m venv ghc && cd ghc
-  source ./bin/activate
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
 
-  # install Invoke dependency for admin tool
-  pip3 install invoke
+  # install the environment (Python + all deps) and open a shell in it
+  pixi install -e prod
+  pixi shell -e prod
 
   # setup app
   invoke setup
@@ -90,8 +108,8 @@ Install
   # start web-app
   python3 GeoHealthCheck/app.py  # http://localhost:8000/
 
-  # when you are done, you can exit the virtualenv
-  deactivate
+  # when you are done, you can exit the environment
+  exit
 
 NB GHC supports internal scheduling, no cronjobs required.
 
@@ -112,7 +130,7 @@ An existing GHC database installation can be upgraded with:
 Notes:
 
 * **Always backup your database first!!**
-* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip3 install Flask-Migrate==2.5.2`, but best is to run `invoke setup` also for other dependencies
+* make sure Flask-Migrate is installed; it is part of the pixi environment (run `pixi install -e prod` if needed)
 * upgrading is "smart": you can always run `invoke upgrade`, it has no effect when DB is already up to date
 * when upgrading from earlier versions without Plugin-support:
 
@@ -269,12 +287,12 @@ See for example the `GHC Docker run.sh <https://github.com/geopython/GeoHealthCh
 script to run the GHC Webapp with `gunicorn` and the `GHC Runner run-runner.sh <https://github.com/geopython/GeoHealthCheck/blob/master/docker/scripts/run-runner.sh>`_ script
 to run the scheduled healthchecks.
 
-Use virtualenv
-..............
+Use pixi
+........
 
-This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`! Starting with python3 3.3
-a `venv script <https://docs.python.org/3.3/library/venv.html>`_ is provided and from python3 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`_
-is included in the standard library.
+This is a general recommendation. Save yourself from classpath and library hells by using
+`Pixi <https://pixi.sh>`_, which provides a reproducible, self-contained environment
+(Python and all dependencies) from the committed ``pixi.lock``.
 
 Use SSL (HTTPS)
 ...............

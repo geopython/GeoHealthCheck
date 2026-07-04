@@ -92,9 +92,9 @@ Scheduling via Cron
 
 **Applies only to pre-0.5.0 versions.**
 
-Edit the file ``jobs.cron`` so that the paths reflect the path to the virtualenv.
+Edit the file ``jobs.cron`` so that the paths reflect the path to the pixi environment.
 Set the first argument to the desired monitoring time step. If finished editing,
-copy the command line calls e.g. ``/YOURvirtualenv/bin_or_SCRIPTSonwindows/python3 /path/to/GeoHealthCheck/GeoHealthCheck/healthcheck.py run``
+copy the command line calls e.g. ``pixi run -e prod python3 /path/to/GeoHealthCheck/GeoHealthCheck/healthcheck.py run``
 to the commandline to test if they work sucessfully.
 On Windows - do not forget to include the ''.exe.'' file extension to the python3 executable.
 For documentation how to create cron jobs see your operating system: on \*NIX systems e.g.  ``crontab -e`` and on

@@ -19,7 +19,7 @@ create db
 
 To create the database execute the following:
 
-Open a command line, (if needed activate your virtualenv), and do ::
+Open a command line, (if needed, activate the pixi environment with ``pixi shell -e prod``), and do ::
 
     python3 GeoHealthCheck/models.py create
 
@@ -28,7 +28,7 @@ drop db
 
 To delete the database execute the following, however you will loose all your information. So please ensure backup if needed:
 
-Open a command line, (if needed activate your virtualenv), and do ::
+Open a command line, (if needed, activate the pixi environment with ``pixi shell -e prod``), and do ::
 
     python3 GeoHealthCheck/models.py drop
 
@@ -75,10 +75,8 @@ a password is forgotten and somehow the email-based reset is not available nor w
 In that case, password-hashes can be created from the command-line using the Python library `passlib <https://passlib.readthedocs.io/en/stable/>`_
 within an interactive Python-shell as follows: ::
 
-	$ pip3 install passlib
-	# or in Debian/Ubuntu: apt-get install python-passlib
-
-	python3
+	# passlib is part of the pixi environment; open a Python shell in it:
+	pixi run -e prod python3
 	>>> from passlib.hash import pbkdf2_sha256
 	>>>
 	>>> hash = pbkdf2_sha256.hash("mynewpassword")
@@ -109,5 +107,5 @@ Then copy-paste the hash-string into the `password`-field of the User-record in 
 Build Documentation
 -------------------
 
-Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``.
+Open a command line, (if needed, activate the pixi environment with ``pixi shell -e prod``) and move into the directory  ``GeoHealthCheck/doc/``.
 In there, type ``make html`` plus ENTER and the documentation should be built locally.

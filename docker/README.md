@@ -230,12 +230,10 @@ The GHC installation is at `/GeoHealthCheck` within the Docker Container.
 # Bash into running GHC Container
 docker exec -it docker_geohealthcheck_1 bash
 
-# setup Python venv
-source /venv/bin/activate .
 cd /GeoHealthCheck/
- 
-# next can use Invoke commands e.g. DB upgrade
-invoke upgrade
+
+# next can use Invoke commands via the pixi env, e.g. DB upgrade
+pixi run -e prod invoke upgrade
 
 etc
 ```

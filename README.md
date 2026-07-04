@@ -14,11 +14,11 @@ Easiest is [to run GHC using Docker](https://github.com/geopython/GeoHealthCheck
 Below a quick overview of a manual install on Unix-based systems like Apple MacOS and Linux.
 
 ```bash
-virtualenv GeoHealthCheck && cd $_
-. bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
-pip3 install Invoke
+# install the environment (Python + all deps) and open a shell in it
+pixi install -e prod
+pixi shell -e prod
 # setup installation
 invoke setup
 # generate secret key
