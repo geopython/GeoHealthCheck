@@ -1,21 +1,20 @@
 #!/bin/bash
 
-# GHC Source was added in Dockerfile, install
-# NB we use gunicorn/eventlet async workers as some Probes may take a long time
-# e.g. fetching Metadata (Caps) and testing all layers
-# Install Python packages for installation and setup
+# GHC source was added in the Dockerfile; set up the pixi environment.
+# NB we use gunicorn/gevent async workers as some Probes may take a long time
+# e.g. fetching Metadata (Caps) and testing all layers.
+set -e
 
-python3 -m venv GeoHealthCheck
-pushd /GeoHealthCheck || exit 1
+cd /GeoHealthCheck || exit 1
 
-source bin/activate
+# Create the locked `prod` environment: Python plus all app/runtime deps
+# (incl. gunicorn/gevent, lxml, pyproj, invoke) from conda-forge/PyPI.
+pixi install --locked -e prod
 
+# Bootstrap GHC itself: static JS assets, i18n .mo files, local docs, dirs.
+pixi run -e prod setup
 
-# Docker-specific deps
-pip3 install --no-cache-dir -r docker/scripts/requirements.txt
-
-# Sets up GHC itself
-invoke setup
+# Use the Docker-specific site config (overrides the default from setup).
 mv /config_site.py /GeoHealthCheck/instance/config_site.py
 
 # Copy possible Plugins into app tree
@@ -28,5 +27,3 @@ then
 	# Remove to allow later Volume mount of /plugins
 	rm -rf /plugins
 fi
-
-popd || exit 1

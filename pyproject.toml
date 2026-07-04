@@ -84,10 +84,17 @@ pytest-asyncio = "*"
 [tool.pixi.feature.dev.tasks]
 test = "pytest --md=report.md"
 
+# Production WSGI server (used by the Docker image via gunicorn's gevent
+# worker). Sourced from conda-forge; formerly apt python3-gunicorn/gevent.
+[tool.pixi.feature.server.dependencies]
+gunicorn = "*"
+gevent = "*"
+
 [tool.pixi.environments]
-# both dev and prod share exactly the same versions for shared dependencies
+# dev and prod share exactly the same versions for shared dependencies.
+# prod includes the production WSGI server (gunicorn/gevent) for Docker.
 dev = { features = ["dev"], solve-group = "prod-group" }
-prod = { features = [], solve-group = "prod-group" }
+prod = { features = ["server"], solve-group = "prod-group" }
 
 # pytest needs GeoHealthCheck/ on the import path: the test modules import
 # top-level packages (models, init, ...) that live there. This mirrors the

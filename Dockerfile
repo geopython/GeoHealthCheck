@@ -1,4 +1,4 @@
-FROM ubuntu:noble
+FROM ghcr.io/prefix-dev/pixi:0.72.0-noble
 
 # Credits to yjacolin for providing first versions
 LABEL original_developer="yjacolin <yves.jacolin@camptocamp.com>" \
@@ -12,14 +12,16 @@ ARG TZ="Etc/UTC"
 ARG LANG="en_US.UTF-8"
 ARG ADD_DEB_PACKAGES=""
 
-# General ENV settings
+# General ENV settings.
+# DEB_PACKAGES holds only non-Python system tools: Python and all app/runtime
+# deps (incl. gunicorn/gevent, lxml, pyproj) now come from the pixi env.
+# `make` is needed at build time by `invoke setup` (docs build).
 ENV LC_ALL="en_US.UTF-8" \
 	LANG="en_US.UTF-8" \
 	LANGUAGE="en_US.UTF-8" \
     \
 	\
-	DEB_PACKAGES="locales gunicorn python3.12-venv postgresql-client python3-gunicorn python3-gevent python3-lxml python3-pyproj" \
-	DEB_BUILD_DEPS="make python3-pip" \
+	DEB_PACKAGES="locales ca-certificates make postgresql-client" \
 	ADMIN_NAME=admin \
 	ADMIN_PWD=admin \
 	ADMIN_EMAIL=admin.istrator@mydomain.com \
@@ -72,10 +74,10 @@ WSGI_WORKER_CLASS='gevent' \
 # GHC User Plugins, best be overridden via Container environment \
 GHC_USER_PLUGINS=''
 
-# Install operating system dependencies
+# Install operating system dependencies (non-Python only)
 RUN \
     apt-get update \
-    && apt-get --no-install-recommends install -y ${DEB_PACKAGES} ${DEB_BUILD_DEPS} ${ADD_DEB_PACKAGES} \
+    && apt-get --no-install-recommends install -y ${DEB_PACKAGES} ${ADD_DEB_PACKAGES} \
     && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
     && echo "For ${TZ} date=$(date)" && echo "Locale=$(locale)"
 
@@ -87,13 +89,12 @@ COPY docker/scripts/*.sh docker/config_site.py docker/plugins /
 # Add Source Code
 COPY . /GeoHealthCheck
 
-# Install
+WORKDIR /GeoHealthCheck
+
+# Install: create the locked pixi `prod` env and bootstrap GHC
 RUN \
-	chmod a+x /*.sh && ./install.sh \
-    # Cleanup TODO: remove unused Locales and TZs \
-    && apt-get remove --purge -y ${DEB_BUILD_DEPS} \
+	chmod a+x /*.sh && /install.sh \
     && apt-get clean \
-    && apt autoremove -y  \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -102,4 +103,4 @@ VOLUME ["/GeoHealthCheck/DB/"]
 
 EXPOSE ${PORT}
 
-ENTRYPOINT /run-web.sh
+ENTRYPOINT ["/run-web.sh"]

@@ -12,7 +12,6 @@ echo "START /run-runner.sh"
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
-source bin/activate
-invoke runner-daemon
+pixi run -e prod invoke runner-daemon
 
 echo "END /run-runner.sh"

@@ -17,7 +17,6 @@ echo "START /run-tests.sh"
 export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 cd /GeoHealthCheck
-source bin/activate
-invoke run-tests
+pixi run -e prod invoke run-tests
 
 echo "END /run-tests.sh"
