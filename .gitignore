@@ -63,3 +63,6 @@ GeoHealthCheck.conf
 
 # Data
 GeoHealthCheck/data.db
+# pixi environments
+.pixi/*
+!.pixi/config.toml

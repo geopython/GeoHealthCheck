@@ -67,7 +67,7 @@ def setup(c):
         shutil.copy2(config_file, config_site)
 
     # setup deps
-    c.run('pip3 install -r requirements.txt')
+    # c.run('pip3 install -r requirements.txt')
 
     skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
 
