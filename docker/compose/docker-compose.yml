@@ -4,7 +4,6 @@
 # configured in the GHC Web App.
 #
 # Plugins (optional) need to be configured for both Docker containers.
-version: "3"
 
 services:
   ghc_web:

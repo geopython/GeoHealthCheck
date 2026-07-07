@@ -44,6 +44,7 @@ DOCS = BASEDIR / 'docs'
 INSTANCE = BASEDIR / 'instance'
 POT = BASEDIR / 'GeoHealthCheck/translations/en/LC_MESSAGES/messages.po'
 STATIC_DOCS = BASEDIR / 'GeoHealthCheck/static/docs'
+GEN_DOCS = BASEDIR / 'docs/_build'
 STATIC_LIB = BASEDIR / 'GeoHealthCheck/static/lib'
 TMP = Path(tempfile.mkdtemp())
 TRANSLATIONS = BASEDIR / 'GeoHealthCheck/translations'
@@ -145,7 +146,7 @@ def setup(c):
     # message user
     print(f'GeoHealthCheck is now built. Edit settings in {config_site}')
     print('before deploying the application. Alternatively, you can start a')
-    print('development instance with "python3 GeoHealthCheck/app.py"')
+    print('development instance with "python GeoHealthCheck/app.py"')
 
 
 @task
@@ -168,7 +169,7 @@ def create(c, email, username, password):
     if None not in [email, username, password]:
         args = f'{username} {password} {email}'
 
-    c.run(f'python3 {models_py} create {args}')
+    c.run(f'python {models_py} create {args}')
 
 
 @task
@@ -188,7 +189,7 @@ def upgrade(c):
 
     print('Upgrading database...')
     os.chdir(BASEDIR / 'GeoHealthCheck')
-    c.run('python3 manage.py db upgrade')
+    c.run('python manage.py db upgrade')
     os.chdir(BASEDIR)
 
 
@@ -218,22 +219,16 @@ def create_wsgi(c):
 def refresh_docs(c):
     """Build sphinx docs from scratch"""
 
-    make = 'make'
-
-    if os.name == 'nt':
-        make = 'make.bat'
-
-    if STATIC_DOCS.exists():
-        shutil.rmtree(STATIC_DOCS)
-
+    for dir_ in [GEN_DOCS, STATIC_DOCS]:
+        if dir_.exists():
+            shutil.rmtree(dir_)
     os.chdir(DOCS)
-    c.run(f'{make} clean')
-    c.run(f'{make} html')
+    GEN_DOCS.mkdir()
+    c.run(f'sphinx-build -b html . _build/html')
 
     source_html_dir = BASEDIR / 'docs/_build/html'
     shutil.copytree(source_html_dir, STATIC_DOCS)
     os.chdir(BASEDIR)
-
 
 @task
 def clean(c):
@@ -284,18 +279,18 @@ def update_translations(c):
 def runner_daemon(c):
     """Run the HealthCheck runner daemon scheduler"""
 
-    c.run('python3 GeoHealthCheck/scheduler.py')
+    c.run('python GeoHealthCheck/scheduler.py')
 
 
 @task
 def run_healthchecks(c):
     """Run all HealthChecks directly"""
 
-    c.run('python3 GeoHealthCheck/healthcheck.py')
+    c.run('python GeoHealthCheck/healthcheck.py')
 
 
 @task
 def run_tests(c):
     """Run all tests"""
 
-    c.run('python3 tests/run_tests.py')
+    c.run('python tests/run_tests.py')

@@ -15,15 +15,14 @@ export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 
 pushd /GeoHealthCheck || exit 1
 
-source bin/activate
-
-invoke upgrade
+# pixi shell -e prod
+pixi run -e prod upgrade-db
 
 # SCRIPT_NAME should not have value '/'
 [ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
 
 echo "Running GHC WSGI on ${HOST}:${PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
-exec gunicorn --pythonpath /GeoHealthCheck/lib/python3.12/site-packages/ --workers ${WSGI_WORKERS} \
+pixi run -e prod gunicorn --workers ${WSGI_WORKERS} \
 		--worker-class=${WSGI_WORKER_CLASS} \
 		--timeout ${WSGI_WORKER_TIMEOUT} \
 		--name="Gunicorn_GHC" \

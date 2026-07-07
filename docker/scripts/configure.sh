@@ -9,13 +9,12 @@ export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 # Determine database type from DB URI
 DB_TYPE=$(echo ${SQLALCHEMY_DATABASE_URI} | cut -f1 -d:)
 echo "Using DB_TYPE=${DB_TYPE}"
+# pixi shell -e prod
 
 # Create DB shorthand
 function create_db() {
 	pushd /GeoHealthCheck/  || exit 1
-	source bin/activate
-
-	invoke create -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL}
+  pixi run -e prod create -u ${ADMIN_NAME} -p ${ADMIN_PWD} -e ${ADMIN_EMAIL}
 	popd || exit 1
 }
 

@@ -69,30 +69,56 @@ python3 GeoHealthCheck/models.py load <.json data file> [y/n]
 
 ## Install with Pixi
 
+[Pixi](https://pixi.sh) manages the environment; tasks run via `pixi run`,
+so no shell activation is needed.
+
 ```
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
 
 # Install production environment
 pixi install -e prod
-pixi shell -e prod
-invoke setup
+
+# bootstrap the app (config, static assets, i18n, local docs, DB)
+pixi run -e prod setup
 
 # generate secret key
-invoke create-secret-key
+pixi run -e prod create-secret-key
 # setup local configuration (overrides GeoHealthCheck/config_main.py)
 vi instance/config_site.py
 # edit at least secret key:
-# - SECRET_KEY  # copy/paste result string from `invoke create-secret-key`
+# - SECRET_KEY  # copy/paste result string from the command above
 
 # Optional: edit other settings or leave defaults (see above)
 
-# setup superuser account passsword and email directly 
-invoke create admin admin a@a.com
+# setup superuser account password and email directly
+pixi run -e prod create -username admin -password admin --email a@a.com
+
+# or shorter
+pixi run -e prod create -u admin -p admin --e a@a.com
 
 # run locally
-python GeoHealthCheck/app.py  
+pixi run -e prod run
+ 
+# open http://localhost:8000 in browser
 
 ```
+
+### Development and tests
+
+```
+# install the dev environment (adds flake8, pytest, ...)
+pixi install -e dev
+
+# bootstrap once, needed before the tests can run
+pixi run -e dev setup
+
+# run the unit tests
+pixi run -e dev test
+```
+
+Prefer an interactive shell? `pixi shell -e prod` (or `-e dev`) activates the
+environment, after which `invoke ...` and `python ...` work directly.
+
 
 More in the [full GHC documentation](http://docs.geohealthcheck.org/).

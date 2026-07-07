@@ -1,4 +1,4 @@
-FROM ubuntu:noble
+FROM ghcr.io/prefix-dev/pixi:0.72.0-noble
 
 # Credits to yjacolin for providing first versions
 LABEL original_developer="yjacolin <yves.jacolin@camptocamp.com>" \
@@ -18,14 +18,15 @@ ENV LC_ALL="en_US.UTF-8" \
 	LANGUAGE="en_US.UTF-8" \
     \
 	\
-	DEB_PACKAGES="locales gunicorn python3.12-venv postgresql-client python3-gunicorn python3-gevent python3-lxml python3-pyproj" \
-	DEB_BUILD_DEPS="make python3-pip" \
+	DEB_PACKAGES="ca-certificates locales postgresql-client" \
+	DEB_BUILD_DEPS="curl adduser" \
 	ADMIN_NAME=admin \
 	ADMIN_PWD=admin \
 	ADMIN_EMAIL=admin.istrator@mydomain.com \
 	SQLALCHEMY_DATABASE_URI='sqlite:////GeoHealthCheck/DB/data.db' \
 	SQLALCHEMY_ENGINE_OPTION_PRE_PING=False \
 	SECRET_KEY='d544ccc37dc3ad214c09b1b7faaa64c60351d5c8bb48b342' \
+	GHC_HOME=/GeoHealthCheck \
 	GHC_PROBE_HTTP_TIMEOUT_SECS=30 \
 	GHC_MINIMAL_RUN_FREQUENCY_MINS=10 \
 	GHC_RETENTION_DAYS=30 \
@@ -72,30 +73,34 @@ WSGI_WORKER_CLASS='gevent' \
 # GHC User Plugins, best be overridden via Container environment \
 GHC_USER_PLUGINS=''
 
-# Install operating system dependencies
-RUN \
-    apt-get update \
-    && apt-get --no-install-recommends install -y ${DEB_PACKAGES} ${DEB_BUILD_DEPS} ${ADD_DEB_PACKAGES} \
-    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
-    && echo "For ${TZ} date=$(date)" && echo "Locale=$(locale)"
-
 # Add standard files and Add/override Plugins
 # Alternative Entrypoints to run GHC jobs
 # Override default Entrypoint with these on Containers
 COPY docker/scripts/*.sh docker/config_site.py docker/plugins /
 
 # Add Source Code
-COPY . /GeoHealthCheck
+COPY . ${GHC_HOME}
 
-# Install
+WORKDIR ${GHC_HOME}
+
+# Install operating system dependencies
 RUN \
-	chmod a+x /*.sh && ./install.sh \
-    # Cleanup TODO: remove unused Locales and TZs \
+    apt-get update \
+    && apt-get --no-install-recommends install -y ${DEB_PACKAGES} ${DEB_BUILD_DEPS} ${ADD_DEB_PACKAGES} \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
+    && echo "For ${TZ} date=$(date)" && echo "Locale=$(locale)"  \
+    && adduser --disabled-password --shell /bin/bash --home ${GHC_HOME} --gecos "User" ghc \
+    && chmod +x /*.sh  \
+    && echo "pixi install --locked -e prod" && pixi install --locked -e prod \
+    && echo "pixi run -e prod setup" && pixi run -e prod setup \
+    && echo "cp /config_site.py " && cp /config_site.py ${GHC_HOME}/instance/config_site.py \
+    && echo "copy plugins.." && if [ -d /plugins ]; then cp -ar /plugins/* ${GHC_HOME}/GeoHealthCheck/plugins/; fi && rm -rf /plugins \
     && apt-get remove --purge -y ${DEB_BUILD_DEPS} \
     && apt-get clean \
     && apt autoremove -y  \
     && rm -rf /var/lib/apt/lists/*
 
+# USER ghc
 
 # For SQLite
 VOLUME ["/GeoHealthCheck/DB/"]
