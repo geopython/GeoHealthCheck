@@ -206,12 +206,22 @@ def create_hash(c, password):
 
 
 @task
-def upgrade(c):
+def db_upgrade(c):
     """upgrade database if changed; be sure to backup first!"""
 
     print('Upgrading database...')
     os.chdir(BASEDIR / 'GeoHealthCheck')
-    c.run('python manage.py db upgrade')
+    c.run('python manage.py upgrade')
+    os.chdir(BASEDIR)
+
+
+@task
+def db_downgrade(c):
+    """downgrade database to previous version; be sure to backup first!"""
+
+    print('Downgrading database...')
+    os.chdir(BASEDIR / 'GeoHealthCheck')
+    c.run('python manage.py downgrade')
     os.chdir(BASEDIR)
 
 

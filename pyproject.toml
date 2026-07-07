@@ -22,8 +22,7 @@ dependencies = [
     "Flask==1.1.1",
     "Flask-Babel==0.12.2",
     "Flask-Login==0.4.1",
-    "Flask-Migrate==2.5.2",
-    "Flask-Script==2.0.6",
+    "Flask-Migrate==4.1.0",
     "SQLAlchemy==1.3.8",
     "Flask-SQLAlchemy==2.4.0",
     "itsdangerous==1.1.0",
@@ -82,7 +81,8 @@ run = "python GeoHealthCheck/app.py"
 docs = "invoke refresh-docs"
 clean = "invoke clean"
 runner-daemon = "invoke runner-daemon"
-upgrade-db = "invoke upgrade"
+db-upgrade = "invoke db-upgrade"
+db-downgrade = "invoke db-downgrade"
 run-healthchecks = "invoke run-healthchecks"
 run-tests = "invoke run-tests"
 

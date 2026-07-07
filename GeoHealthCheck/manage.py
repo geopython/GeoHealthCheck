@@ -37,17 +37,36 @@
 # optional arguments:
 #   -h, --help  show this help message and exit
 
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
+from flask_migrate import (Migrate, upgrade, downgrade, current,
+                           migrate, history, revision)
 from init import App
+import sys
 
 DB = App.get_db()
 APP = App.get_app()
 
-migrate = Migrate(APP, DB)
-
-manager = Manager(APP)
-manager.add_command('db', MigrateCommand)
+Migrate(APP, DB)
 
 if __name__ == '__main__':
-    manager.run()
+    action = ''
+    if len(sys.argv) > 1:
+        action = sys.argv[1]
+
+    with APP.app_context():
+        if action == 'current':
+            current()
+        elif action == 'upgrade':
+            # Upgrade to latest version
+            upgrade()
+        elif action == 'downgrade':
+            # Downgrade one version back
+            downgrade()
+        elif action == 'migrate':
+            # Generate revision
+            migrate()
+        elif action == 'history':
+            # Show revisions
+            history()
+        elif action == 'revision':
+            # Create new revision
+            revision()
