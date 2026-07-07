@@ -171,6 +171,7 @@ def create(c, email, username, password):
 
     c.run(f'python {models_py} create {args}')
 
+
 @task
 def load_data(c, file_path):
     """populate database from data file"""
@@ -236,11 +237,12 @@ def refresh_docs(c):
             shutil.rmtree(dir_)
     os.chdir(DOCS)
     GEN_DOCS.mkdir()
-    c.run(f'sphinx-build -b html . _build/html')
+    c.run('sphinx-build -b html . _build/html')
 
     source_html_dir = BASEDIR / 'docs/_build/html'
     shutil.copytree(source_html_dir, STATIC_DOCS)
     os.chdir(BASEDIR)
+
 
 @task
 def clean(c):
@@ -257,7 +259,7 @@ def extract_translations(c):
 
     pot_dir = Path('GeoHealthCheck/translations/en/LC_MESSAGES')
     if not pot_dir.exists():
-        pot_dir.mkdir(parants=True, exist_ok=True)
+        pot_dir.mkdir(parents=True, exist_ok=True)
 
     c.run(f'pybabel extract -F babel.cfg -o {POT} GeoHealthCheck')
 

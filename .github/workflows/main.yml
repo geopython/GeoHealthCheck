@@ -29,7 +29,7 @@ jobs:
     - name: Setup GHC App and init DB 🗃️
       run: |
         pixi run -e dev setup
-        pixi run -e dev create -u admin -p admin --e a@a.com
+        pixi run -e dev create -u admin -p admin -e a@a.com
 
     - name: Flake8 - Verify Coding Conventions ⚙️
       run: pixi run -e dev flake8
