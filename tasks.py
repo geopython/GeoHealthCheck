@@ -171,6 +171,18 @@ def create(c, email, username, password):
 
     c.run(f'python {models_py} create {args}')
 
+@task
+def load_data(c, file_path):
+    """populate database from data file"""
+
+    args = ''
+    models_py = Path('GeoHealthCheck/models.py')
+
+    if None not in [file_path]:
+        args = f'{file_path}'
+
+    c.run(f'python {models_py} load {args} y')
+
 
 @task
 def create_hash(c, password):

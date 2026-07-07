@@ -75,12 +75,14 @@ pyproj = ">=2.6.1"
 # so it works for both dev and prod (README runs `invoke setup` for prod too).
 setup = "invoke setup"
 create = "invoke create"
+load-data = "invoke load-data"
 create-secret-key = "invoke create-secret-key"
 run = "python GeoHealthCheck/app.py"
 docs = "invoke refresh-docs"
 clean = "invoke clean"
 runner-daemon = "invoke runner-daemon"
 upgrade-db = "invoke upgrade"
+run-healthchecks = "invoke run-healthchecks"
 run-tests = "invoke run-tests"
 
 [tool.pixi.feature.dev.dependencies]

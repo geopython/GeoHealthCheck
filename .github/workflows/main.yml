@@ -29,16 +29,16 @@ jobs:
     - name: Setup GHC App and init DB 🗃️
       run: |
         pixi run -e dev setup
-        echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | pixi run -e dev python3 GeoHealthCheck/models.py create
+        pixi run -e dev create -u admin -p admin --e a@a.com
 
     - name: Flake8 - Verify Coding Conventions ⚙️
       run: pixi run -e dev flake8
 
     - name: Load Fixtures Test Data ⚙️
-      run: pixi run -e dev python3 GeoHealthCheck/models.py load tests/data/fixtures.json y
+      run: pixi run -e dev load-data tests/data/fixtures.json
 
     - name: Run Probes ⚙️
-      run: pixi run -e dev python3 GeoHealthCheck/healthcheck.py
+      run: pixi run -e dev run-healthchecks
 
     - name: Run Unit Tests ⚙️
       run: pixi run -e dev test
@@ -48,7 +48,7 @@ jobs:
       run: cat report.md >> "$GITHUB_STEP_SUMMARY" || true
 
     - name: Build Docs 📖
-      run: pixi run -e dev bash -c "cd docs && make html"
+      run: pixi run -e dev refresh-docs
 
     - name: Cleanup 💯
       run: pixi run -e dev python3 GeoHealthCheck/models.py drop
