@@ -48,7 +48,7 @@ jobs:
       run: cat report.md >> "$GITHUB_STEP_SUMMARY" || true
 
     - name: Build Docs 📖
-      run: pixi run -e dev refresh-docs
+      run: pixi run -e dev docs
 
     - name: Cleanup 💯
-      run: pixi run -e dev python3 GeoHealthCheck/models.py drop
+      run: pixi run -e dev drop-data

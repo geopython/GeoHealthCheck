@@ -180,9 +180,18 @@ def load_data(c, file_path):
     models_py = Path('GeoHealthCheck/models.py')
 
     if None not in [file_path]:
-        args = f'{file_path}'
+        args = f'{file_path} y'
 
-    c.run(f'python {models_py} load {args} y')
+    c.run(f'python {models_py} load {args}')
+
+
+@task
+def drop_data(c):
+    """drop data in database"""
+
+    models_py = Path('GeoHealthCheck/models.py')
+
+    c.run(f'python {models_py} drop')
 
 
 @task
