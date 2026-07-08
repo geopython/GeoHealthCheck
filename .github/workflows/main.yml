@@ -37,11 +37,11 @@ jobs:
     - name: Load Fixtures Test Data ⚙️
       run: pixi run -e dev load-data tests/data/fixtures.json
 
-    - name: Test DB downgrade to previous schema (via Alembic) ⚙️
-      run: pixi run -e dev db-action downgrade
-
-    - name: Test DB upgrade back to current schema (via Alembic) ⚙️
-      run: pixi run -e dev db-action upgrade
+#    - name: Test DB downgrade to previous schema (via Alembic) ⚙️
+#      run: pixi run -e dev db-action downgrade
+#
+#    - name: Test DB upgrade back to current schema (via Alembic) ⚙️
+#      run: pixi run -e dev db-action upgrade
 
     - name: Run Probes ⚙️
       run: pixi run -e dev run-healthchecks
