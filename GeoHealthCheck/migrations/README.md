@@ -5,7 +5,7 @@ Upgrades are supported using Alembic via Flask-Migrate.
 Users should be able to upgrade existing installations via `pixi`: 
 
 	# In top dir of installation
-	pixi run db-upgrade
+	pixi run db-action upgrade
 	# or the equivalent
 	python manage.py upgrade
 	
@@ -38,7 +38,7 @@ to check various DB metadata.
 
 Subsequently the upgrade can be performed using:
 
-	pixi run db-upgrade
+	pixi run db-action upgrade
 	# or the equivalent
 	python manage.py upgrade
 

@@ -16,7 +16,7 @@ export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
 pushd /GeoHealthCheck || exit 1
 
 # pixi shell -e prod
-pixi run -e prod db-upgrade
+pixi run -e prod db-action upgrade
 
 # SCRIPT_NAME should not have value '/'
 [ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"

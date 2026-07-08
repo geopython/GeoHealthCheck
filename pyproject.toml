@@ -8,6 +8,7 @@ license = { text = "MIT" }
 authors = [
     { name = "Just van den Broecke", email = "just@justobjects.nl" },
     { name = "Tom Kralidis", email = "tomkralidis@gmail.com" },
+    { name = "Francesco Bartoli" },
 ]
 # Complete runtime dependency set, readable by pip and Dependabot.
 # Hybrid sourcing: the native/geo libs listed here AND in
@@ -81,8 +82,7 @@ run = "python GeoHealthCheck/app.py"
 docs = "invoke refresh-docs"
 clean = "invoke clean"
 runner-daemon = "invoke runner-daemon"
-db-upgrade = "invoke db-upgrade"
-db-downgrade = "invoke db-downgrade"
+db-action = "invoke db-action"
 run-healthchecks = "invoke run-healthchecks"
 run-tests = "invoke run-tests"
 

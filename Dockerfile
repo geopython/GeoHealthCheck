@@ -91,15 +91,16 @@ RUN \
     && echo "For ${TZ} date=$(date)" && echo "Locale=$(locale)"  \
     && adduser --disabled-password --shell /bin/bash --home ${GHC_HOME} --gecos "User" ghc \
     && chmod +x /*.sh  \
-    && echo "pixi install --locked -e prod" && pixi install --locked -e prod \
-    && echo "pixi run -e prod setup" && pixi run -e prod setup \
-    && echo "cp /config_site.py " && cp /config_site.py ${GHC_HOME}/instance/config_site.py \
-    && echo "copy plugins.." && if [ -d /plugins ]; then cp -ar /plugins/* ${GHC_HOME}/GeoHealthCheck/plugins/; fi && rm -rf /plugins \
+    && pixi install --locked -e prod \
+    && pixi run -e prod setup \
+    && cp /config_site.py ${GHC_HOME}/instance/config_site.py \
+    && if [ -d /plugins ]; then cp -ar /plugins/* ${GHC_HOME}/GeoHealthCheck/plugins/; fi && rm -rf /plugins \
     && apt-get remove --purge -y ${DEB_BUILD_DEPS} \
     && apt-get clean \
     && apt autoremove -y  \
     && rm -rf /var/lib/apt/lists/*
 
+# For later: run as user 'ghc'
 # USER ghc
 
 # For SQLite

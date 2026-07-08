@@ -206,23 +206,15 @@ def create_hash(c, password):
 
 
 @task
-def db_upgrade(c):
-    """upgrade database if changed; be sure to backup first!"""
+def db_action(c, action):
+    """Execute database action, e.g. upgrade, downgrade"""
 
-    print('Upgrading database...')
-    os.chdir(BASEDIR / 'GeoHealthCheck')
-    c.run('python manage.py upgrade')
-    os.chdir(BASEDIR)
+    if action is None:
+        print('Usage: db-action (action), or try help')
+        return
 
-
-@task
-def db_downgrade(c):
-    """downgrade database to previous version; be sure to backup first!"""
-
-    print('Downgrading database...')
-    os.chdir(BASEDIR / 'GeoHealthCheck')
-    c.run('python manage.py downgrade')
-    os.chdir(BASEDIR)
+    print(f'Database action={action}')
+    c.run(f'python GeoHealthCheck/manage.py {action}')
 
 
 @task

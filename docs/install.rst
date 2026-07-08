@@ -105,7 +105,7 @@ An existing GHC database installation can be upgraded with:
 .. code-block:: bash
 
   # In the top directory (e.g. the topdir cloned from github)
-  invoke upgrade
+  invoke db-action upgrade
 
   # Notice any output, in particular errors
 
@@ -177,10 +177,10 @@ were added:
 * OGC 3DTiles Probe (by SpotInfo)
 * MapBox TileJSON Probe (by SpotInfo)
 * additional WMTS Probes (by SpotInfo)
-* use official OGC naming for OAFeat Probes (includes DB-upgrade)
+* use official OGC naming for OAFeat Probes (includes db-action upgrade)
 * many bugfixes and security updates
 
-Only a single DB-upgrade is required and only if your installation (DB) contains
+Only a single db-action upgrade is required and only if your installation (DB) contains
 OGC OAFeat Resources and Probes, formerly called "WFS3".
 
 See `closed issues/merged PRs for related Milestone 0.9.0 <https://github.com/geopython/GeoHealthCheck/milestone/10?closed=1>`_.
