@@ -1,10 +1,11 @@
 [project]
 name = "GeoHealthCheck"
-version = "0.9.0"
+version = "0.9.1dev"
 description = "Monitor uptime and availability of OGC web services and REST APIs"
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
-license = { text = "MIT" }
+requires-python = ">=3.12,<3.14"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Just van den Broecke", email = "just@justobjects.nl" },
     { name = "Tom Kralidis", email = "tomkralidis@gmail.com" },
@@ -48,6 +49,15 @@ dependencies = [
 Homepage = "https://geohealthcheck.org"
 Documentation = "https://docs.geohealthcheck.org"
 Repository = "https://github.com/geopython/GeoHealthCheck"
+
+[build-system]
+requires = ["setuptools", "pip", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*"]
+include = ["GeoHealthCheck*"]
 
 # Pixi workspace configuration (replaces pixi.toml)
 # No [build-system] on purpose: GeoHealthCheck runs from source

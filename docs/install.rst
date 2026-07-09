@@ -31,7 +31,7 @@ These dependencies are automatically installed (see below). `Invoke <https://doc
 for installation and management. ``Cron`` was used for scheduling the actual
 healthchecks before v0.5.0.
 
-Starting from version v0.8.0.0 GeoHealthCheck requires **python3 3**. Previous
+Starting from version v0.8.0 GeoHealthCheck requires **python3 3**. Previous
 versions require **python3 2**. GeoHealthCheck is at least compatible with Python versions
 up to and including `3.12.3`. Higher Python versions may work but are untested.
 
@@ -40,24 +40,26 @@ Install
 
 .. note::
 
-  It is strongly recommended to install GeoHealthCheck in a Python ``virtualenv``.
-  a ``virtualenv`` is self-contained and provides the flexibility to install /
+  It is strongly recommended to install GeoHealthCheck in a Python Virtual Environment.
+  A Virtual Environment is self-contained and provides the flexibility to install /
   tear down / whatever packages without affecting system wide packages or
-  settings.
-  If installing on Ubuntu, you may need to install the python-dev package for installation to complete successfully.
-  
+  settings. The installation is driven by the standard config file `pyproject.toml`.
+  It is recommended to use `pixi <https://pixi.prefix.dev/>`_ to manage the entire installation and
+  further management.
+
 - Download a GeoHealthCheck release from
   https://github.com/geopython/GeoHealthCheck/releases, or clone manually from GitHub. 
 
+The following local install works with Python 3.12, other (lower) Python versions may need changes in `pyproject.toml`.
+
 .. code-block:: bash
 
-  python3 -m venv ghc && cd ghc
-  source ./bin/activate
+  python -m venv ghc && cd ghc
+  . bin/activate
   git clone https://github.com/geopython/GeoHealthCheck.git
   cd GeoHealthCheck
-
-  # install Invoke dependency for admin tool
-  pip3 install invoke
+  pip install --no-cache-dir -U pip setuptools wheel Invoke
+  pip install --no-cache-dir -e .
 
   # setup app
   invoke setup
@@ -68,8 +70,8 @@ Install
   # almost there!  Customize config
   vi instance/config_site.py
   # edit:
-  # - SQLALCHEMY_DATABASE_URI
-  # - SECRET_KEY  # from invoke create-secret-key
+  # - SQLALCHEMY_DATABASE_URI = 'sqlite:///../instance/data.db' - put in instance dir
+  # - SECRET_KEY  # paste from invoke create-secret-key
   # - GHC_RETENTION_DAYS
   # - GHC_SELF_REGISTER
   # - GHC_NOTIFICATIONS
@@ -84,16 +86,51 @@ Install
   # - GHC_MAP  # or use default settings
   # - GEOIP  # or use the default settings
 
-  # init database
-  python3 GeoHealthCheck/models.py create
+  # setup database and superuser account directly
+  invoke create -u admin -p admin -e a@a.com
 
   # start web-app
-  python3 GeoHealthCheck/app.py  # http://localhost:8000/
+  python GeoHealthCheck/app.py  # http://localhost:8000/
 
   # when you are done, you can exit the virtualenv
   deactivate
 
 NB GHC supports internal scheduling, no cronjobs required.
+
+It is strongly recommended to install `pixi <https://pixi.prefix.dev/>`_ and
+handle the GeoHealthCheck installation and further tasks. The GHC Dockerfile also
+uses `pixi`.
+
+.. code-block:: bash
+
+    git clone https://github.com/geopython/GeoHealthCheck.git
+    cd GeoHealthCheck
+
+    # Install production environment
+    pixi install -e prod
+
+    # bootstrap the app (config, static assets, i18n, local docs, DB)
+    pixi run -e prod setup
+
+    # generate secret key
+    pixi run -e prod create-secret-key
+    # setup local configuration (overrides GeoHealthCheck/config_main.py)
+    vi instance/config_site.py
+    # edit at least secret key:
+    # - SECRET_KEY  # copy/paste result string from the command above
+
+    # Optional: edit other settings or leave defaults (see above)
+
+    # setup superuser account password and email directly
+    pixi run -e prod create --username admin --password admin --email a@a.com
+
+    # or shorter
+    pixi run -e prod create -u admin -p admin --e a@a.com
+
+    # run locally
+    pixi run -e prod run
+
+    # open http://localhost:8000 in browser
 
 .. _upgrade:
 
@@ -269,12 +306,11 @@ See for example the `GHC Docker run.sh <https://github.com/geopython/GeoHealthCh
 script to run the GHC Webapp with `gunicorn` and the `GHC Runner run-runner.sh <https://github.com/geopython/GeoHealthCheck/blob/master/docker/scripts/run-runner.sh>`_ script
 to run the scheduled healthchecks.
 
-Use virtualenv
-..............
+Virtual Environment
+...................
 
-This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`! Starting with python3 3.3
-a `venv script <https://docs.python.org/3.3/library/venv.html>`_ is provided and from python3 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`_
-is included in the standard library.
+Use Virtual Environment! This is a general Python-recommendation. Save yourself from classpath and library hells by using Python's built-in `virtualenv`! Starting with python3 3.3
+a `venv script <https://docs.python.org/3.12/library/venv.html>`_ is provided in the standard library.
 
 Use SSL (HTTPS)
 ...............

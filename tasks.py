@@ -67,10 +67,7 @@ def setup(c):
         data_dir.chmod(0o777)
         shutil.copy2(config_file, config_site)
 
-    # setup deps
-    # c.run('pip3 install -r requirements.txt')
-
-    skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
+    skin = 'https://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
 
     skin_dirs = ['dist', 'vendor']
     need_to_fetch = False

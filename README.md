@@ -10,15 +10,20 @@ See also the [full GHC documentation](http://docs.geohealthcheck.org/).
 
 Easiest is [to run GHC using Docker](https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md).
 
-## Manual Install
-Below a quick overview of a manual install on Unix-based systems like Apple MacOS and Linux.
+## Standard Install
+
+Below an overview of an installation on Unix-based systems like Apple MacOS and Linux with just plain Python. 
+NB works with Python 3.12.*, other Python versions need tweaking [pyproject.toml](pyproject.toml).
 
 ```bash
-virtualenv GeoHealthCheck && cd $_
+
+python -m venv ghc && cd ghc
 . bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
-pip3 install Invoke
+pip install --no-cache-dir -U pip setuptools wheel Invoke
+pip install --no-cache-dir -e . 
+
 # setup installation
 invoke setup
 # generate secret key
@@ -27,6 +32,7 @@ invoke create-secret-key
 vi instance/config_site.py
 # edit at least secret key:
 # - SECRET_KEY  # copy/paste result string from `invoke create-secret-key`
+# - SQLALCHEMY_DATABASE_URI = 'sqlite:///../instance/data.db' - put in instance dir
 
 # Optional: edit other settings or leave defaults
 # - SQLALCHEMY_DATABASE_URI
@@ -38,32 +44,32 @@ vi instance/config_site.py
 # - GHC_MAP (or use default settings)
 
 # setup database and superuser account interactively 
-invoke create
+invoke create -u admin -p admin -e a@a.com
 
 # start webserver with healthcheck runner daemon inside 
 # (default is 0.0.0.0:8000)
-python3 GeoHealthCheck/app.py  
+python GeoHealthCheck/app.py  
 # or start webserver on another port
-python3 GeoHealthCheck/app.py 0.0.0.0:8881
+python GeoHealthCheck/app.py 0.0.0.0:8881
 # or start webserver on another IP
-python3 GeoHealthCheck/app.py 192.168.0.105:8001
+python GeoHealthCheck/app.py 192.168.0.105:8001
 
 # OR start webserver and separate runner daemon (scheduler) process
 vi instance/config_site.py
 # GHC_RUNNER_IN_WEBAPP = False
-python3 GeoHealthCheck/scheduler.py & 
-python3 GeoHealthCheck/app.py  
+python GeoHealthCheck/scheduler.py & 
+python GeoHealthCheck/app.py  
 
 # next: use a real webserver or preferably Docker for production
 
 # other commands
 #
 # drop database
-python3 GeoHealthCheck/models.py drop
+python GeoHealthCheck/models.py drop
 
 # load data in database (WARN: deletes existing data!)
 # See example data .json files in tests/data
-python3 GeoHealthCheck/models.py load <.json data file> [y/n]
+python GeoHealthCheck/models.py load <.json data file> [y/n]
 
 ```
 
@@ -72,7 +78,8 @@ python3 GeoHealthCheck/models.py load <.json data file> [y/n]
 [Pixi](https://pixi.sh) manages the environment; tasks run via `pixi run`,
 so no shell activation is needed.
 
-```
+```bash
+
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
 
@@ -92,7 +99,7 @@ vi instance/config_site.py
 # Optional: edit other settings or leave defaults (see above)
 
 # setup superuser account password and email directly
-pixi run -e prod create -username admin -password admin --email a@a.com
+pixi run -e prod create --username admin --password admin --email a@a.com
 
 # or shorter
 pixi run -e prod create -u admin -p admin --e a@a.com
@@ -106,7 +113,8 @@ pixi run -e prod run
 
 ### Development and tests
 
-```
+```bash
+
 # install the dev environment (adds flake8, pytest, ...)
 pixi install -e dev
 
