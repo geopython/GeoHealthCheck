@@ -77,7 +77,7 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
 
       - name: GHC Unit Tests with Docker Image ⚙️
-        run: docker run  --entrypoint "/run-tests.sh" ${{ steps.prep.outputs.image }}:${{ steps.prep.outputs.version }}
+        run: docker run  --entrypoint "/app/docker/scripts/run-tests.sh" ${{ steps.prep.outputs.image }}:${{ steps.prep.outputs.version }}
 
       - name: Push to Docker repo (on GH Push only) ☁️
         if: ${{ github.event_name == 'push' }}
