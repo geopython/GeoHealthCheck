@@ -1,4 +1,5 @@
 FROM ghcr.io/prefix-dev/pixi:0.72.2-noble AS build
+# Inspired by https://tech.quantco.com/blog/pixi-production/
 
 # ARGS
 ARG LANGUAGE="en_US"
@@ -8,21 +9,27 @@ ENV LOCALE_STR="${LANGUAGE}.${ENCODING} ${ENCODING}" \
     DEBIAN_FRONTEND=noninteractive
 
 # Install and Configure default locale
-# NB GHC has its own language handlling via Babel.
+# NB GHC has its own language handling via Babel.
 RUN apt update -y \
     && apt install -y locales \
     && echo "${LOCALE_STR}" > /etc/locale.gen \
     && locale-gen \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy entire GHC repo content to /app
 WORKDIR /app
 COPY . .
 
+# Install deps (in /app/.pixi/).
 RUN pixi install -e prod --locked
+
+# pixi-env.sh: to be sourced, sets all paths and more.
 RUN echo '#!/bin/bash' > /app/pixi-env.sh
 RUN pixi shell-hook -e prod -s bash --as-is >> /app/pixi-env.sh
 RUN echo 'exec "$@"' >> /app/pixi-env.sh
 RUN echo chmod +x /app/pixi-env.sh
+
+# Prepare the GHC app, mainly web-related.
 RUN pixi run -e prod setup
 RUN cp docker/config_site.py instance/
 RUN if [ -d  docker/plugins ]; then cp -ar docker/plugins/* /app/GeoHealthCheck/plugins/; fi
@@ -45,8 +52,6 @@ COPY --from=build /etc/default/locale /etc/default/locale
 
 # These are default values,
 # Override when running container via docker(-compose)
-
-# General ENV settings
 ENV LANG='en_US.UTF-8' \
     LANGUAGE='en_US:en' \
     LC_ALL='en_US.UTF-8' \
@@ -106,7 +111,7 @@ ENV LANG='en_US.UTF-8' \
 
 # GHC User Plugins, best be overridden via Container environment \
 
-# Install operating system dependencies
+# Install remaining dependencies and create user.
 RUN \
     apt update \
     && apt --no-install-recommends install -y ${DEB_PACKAGES} ${DEB_BUILD_DEPS} \
@@ -117,10 +122,11 @@ RUN \
     && apt autoremove -y  \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy entire bundle: GHC plus all dependencies, including non-Python binaries in /app.
 WORKDIR /app
 COPY --from=build --chown=${GHC_USER}:${GHC_USER} /app /app
 
-# For later: run as user 'ghc'
+# Run Containers as user.
 USER ${GHC_USER}
 
 EXPOSE ${PORT}
