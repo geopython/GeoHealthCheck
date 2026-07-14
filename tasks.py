@@ -62,9 +62,8 @@ def setup(c):
         STATIC_LIB.mkdir()
     if not INSTANCE.exists():
         INSTANCE.mkdir()
-        data_dir = INSTANCE / 'data'
+        data_dir = INSTANCE / 'DB'
         data_dir.mkdir()
-        data_dir.chmod(0o777)
         shutil.copy2(config_file, config_site)
 
     skin = 'https://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa

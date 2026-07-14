@@ -20,13 +20,13 @@ services:
       - ghc.env
 
     volumes:
-      - ghc_sqlitedb:/GeoHealthCheck/DB
+      - ghc_sqlitedb:/app/instance/DB
       # Optional Plugins, using Path on the host, relative to this Compose file
       # To activate: 2 steps for runner and GHC webapp:
       # - configure in ghc.env
       # - mount these as docker volume on host
       # See https://docs.docker.com/compose/compose-file/#volumes
-      # - ./../GeoHealthCheck/plugins:/plugins:ro
+      # - ./../app/plugins:/plugins:ro
 
   ghc_runner:
     image: geopython/geohealthcheck:latest
@@ -39,16 +39,16 @@ services:
       - ghc.env
 
     entrypoint:
-      - /run-runner.sh
+      - /app/docker/scripts/run-runner.sh
 
     volumes:
-      - ghc_sqlitedb:/GeoHealthCheck/DB
+      - ghc_sqlitedb:/app/instance/DB
       # Optional Plugins, using Path on the host, relative to this Compose file
       # To activate 2 steps:
       # - configure in ghc.env
       # - mount these as docker volume on host
       # See https://docs.docker.com/compose/compose-file/#volumes
-      # - ./../GeoHealthCheck/plugins:/plugins:ro
+      # - ./../app/plugins:/plugins:ro
 
 # docker-compose v2+ needs separate volumes section
 volumes:

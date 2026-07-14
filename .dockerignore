@@ -1,6 +1,7 @@
 # VCS
 .git
 .gitignore
+.github
 
 # Local pixi environment (built inside the image via `pixi install`)
 .pixi
@@ -10,7 +11,12 @@ instance
 report.md
 docs/_build
 GeoHealthCheck/static/lib
-GeoHealthCheck/data.db
+!GeoHealthCheck/static/lib/jqueryui
+!GeoHealthCheck/static/lib/jspark
+GeoHealthCheck/static/docs
+**/data.db
+*.log
+**/*.log
 
 # Tooling / caches
 .pytest_cache

@@ -11,6 +11,7 @@ authors = [
     { name = "Tom Kralidis", email = "tomkralidis@gmail.com" },
     { name = "Francesco Bartoli" },
 ]
+
 # Complete runtime dependency set, readable by pip and Dependabot.
 # Hybrid sourcing: the native/geo libs listed here AND in
 # [tool.pixi.dependencies] (lxml, pyproj) come from conda-forge under pixi

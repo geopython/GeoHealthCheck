@@ -3,20 +3,22 @@
 #
 # Just van den Broecke - 2021
 # Usage:
-#   docker run  --entrypoint "/run-tests.sh" geopython/geohealthcheck:latest
+#   docker run  --entrypoint "/app/run-tests.sh" geopython/geohealthcheck:latest
 #
-echo "START /run-tests.sh"
+echo "START run-tests.sh"
 
 # Set the timezone.
 # /set-timezone.sh
+pushd /app || exit 1
+
+source pixi-env.sh
 
 # Configure: DB and plugins.
-/configure.sh
+docker/scripts/configure.sh
 
 # Make sure PYTHONPATH includes GeoHealthCheck
-export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
+export PYTHONPATH=/app/GeoHealthCheck:${PYTHONPATH}
 
-cd /GeoHealthCheck
-pixi run -e prod run-tests
+invoke run-tests
 
-echo "END /run-tests.sh"
+echo "END run-tests.sh"
