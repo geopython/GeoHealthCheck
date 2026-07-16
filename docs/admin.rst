@@ -7,6 +7,19 @@ This chapter describes maintenance tasks for the administrator of a GHC instance
 There is a separate :ref:`userguide` that provides guidance to the end-user to
 configure the actual Resource healthchecks.
 
+Since v0.10.0 Invoke and Pixi can be used. Before pixi commands run `pixi shell -e prod` in the repo topdir.
+Below the main commands (hint: type `pixi run --help` to see commands:
+
+.. code-block:: bash
+    
+    pixi run setup  or  invoke setup
+    pixi run create  or  invoke create
+    pixi run load-data  or  invoke load-data
+    pixi run drop-data  or  invoke drop-data
+    pixi run create-secret-key  or  invoke create-secret-key
+    pixi run run  or  python GeoHealthCheck/app.py
+    pixi run db-action  (pixi run db-action --help for tasks) or  invoke db-action
+
 Each of the sections below is geared at a specific administrative task area.
 
 Database
@@ -21,7 +34,8 @@ To create the database execute the following:
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python3 GeoHealthCheck/models.py create
+    invoke create -u <username>> -p <password> -e you@email.com
+
 
 drop db
 .......
@@ -30,7 +44,7 @@ To delete the database execute the following, however you will loose all your in
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python3 GeoHealthCheck/models.py drop
+    invoke drop-data
 
 Note: you need to create a Database again before you can start GHC again.
 
@@ -39,7 +53,7 @@ load data
 
 To load a JSON data file, do (WARN: deletes existing data!) ::
 
-    python3 GeoHealthCheck/models.py load <datafile.json> [y/n]
+    invoke load-data <datafile.json>
 
 Hint: see `tests/data` for example JSON data files.
 
@@ -75,7 +89,7 @@ a password is forgotten and somehow the email-based reset is not available nor w
 In that case, password-hashes can be created from the command-line using the Python library `passlib <https://passlib.readthedocs.io/en/stable/>`_
 within an interactive Python-shell as follows: ::
 
-	$ pip3 install passlib
+	$ pip install passlib
 	# or in Debian/Ubuntu: apt-get install python-passlib
 
 	python3
