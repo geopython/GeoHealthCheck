@@ -44,6 +44,7 @@ DOCS = BASEDIR / 'docs'
 INSTANCE = BASEDIR / 'instance'
 POT = BASEDIR / 'GeoHealthCheck/translations/en/LC_MESSAGES/messages.po'
 STATIC_DOCS = BASEDIR / 'GeoHealthCheck/static/docs'
+GEN_DOCS = BASEDIR / 'docs/_build'
 STATIC_LIB = BASEDIR / 'GeoHealthCheck/static/lib'
 TMP = Path(tempfile.mkdtemp())
 TRANSLATIONS = BASEDIR / 'GeoHealthCheck/translations'
@@ -61,15 +62,11 @@ def setup(c):
         STATIC_LIB.mkdir()
     if not INSTANCE.exists():
         INSTANCE.mkdir()
-        data_dir = INSTANCE / 'data'
+        data_dir = INSTANCE / 'DB'
         data_dir.mkdir()
-        data_dir.chmod(0o777)
         shutil.copy2(config_file, config_site)
 
-    # setup deps
-    c.run('pip3 install -r requirements.txt')
-
-    skin = 'http://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
+    skin = 'https://github.com/BlackrockDigital/startbootstrap-sb-admin-2/archive/v3.3.7+1.zip'  # noqa
 
     skin_dirs = ['dist', 'vendor']
     need_to_fetch = False
@@ -145,7 +142,7 @@ def setup(c):
     # message user
     print(f'GeoHealthCheck is now built. Edit settings in {config_site}')
     print('before deploying the application. Alternatively, you can start a')
-    print('development instance with "python3 GeoHealthCheck/app.py"')
+    print('development instance with "python GeoHealthCheck/app.py"')
 
 
 @task
@@ -168,7 +165,29 @@ def create(c, email, username, password):
     if None not in [email, username, password]:
         args = f'{username} {password} {email}'
 
-    c.run(f'python3 {models_py} create {args}')
+    c.run(f'python {models_py} create {args}')
+
+
+@task
+def load_data(c, file_path):
+    """populate database from data file"""
+
+    args = ''
+    models_py = Path('GeoHealthCheck/models.py')
+
+    if None not in [file_path]:
+        args = f'{file_path} y'
+
+    c.run(f'python {models_py} load {args}')
+
+
+@task
+def drop_data(c):
+    """drop data in database"""
+
+    models_py = Path('GeoHealthCheck/models.py')
+
+    c.run(f'python {models_py} drop')
 
 
 @task
@@ -183,13 +202,15 @@ def create_hash(c, password):
 
 
 @task
-def upgrade(c):
-    """upgrade database if changed; be sure to backup first!"""
+def db_action(c, action):
+    """Execute database action, e.g. upgrade, downgrade"""
 
-    print('Upgrading database...')
-    os.chdir(BASEDIR / 'GeoHealthCheck')
-    c.run('python3 manage.py db upgrade')
-    os.chdir(BASEDIR)
+    if action is None:
+        print('Usage: db-action (action), or try help')
+        return
+
+    print(f'Database action={action}')
+    c.run(f'python GeoHealthCheck/manage.py {action}')
 
 
 @task
@@ -218,17 +239,12 @@ def create_wsgi(c):
 def refresh_docs(c):
     """Build sphinx docs from scratch"""
 
-    make = 'make'
-
-    if os.name == 'nt':
-        make = 'make.bat'
-
-    if STATIC_DOCS.exists():
-        shutil.rmtree(STATIC_DOCS)
-
+    for dir_ in [GEN_DOCS, STATIC_DOCS]:
+        if dir_.exists():
+            shutil.rmtree(dir_)
     os.chdir(DOCS)
-    c.run(f'{make} clean')
-    c.run(f'{make} html')
+    GEN_DOCS.mkdir()
+    c.run('sphinx-build -b html . _build/html')
 
     source_html_dir = BASEDIR / 'docs/_build/html'
     shutil.copytree(source_html_dir, STATIC_DOCS)
@@ -250,7 +266,7 @@ def extract_translations(c):
 
     pot_dir = Path('GeoHealthCheck/translations/en/LC_MESSAGES')
     if not pot_dir.exists():
-        pot_dir.mkdir(parants=True, exist_ok=True)
+        pot_dir.mkdir(parents=True, exist_ok=True)
 
     c.run(f'pybabel extract -F babel.cfg -o {POT} GeoHealthCheck')
 
@@ -284,18 +300,18 @@ def update_translations(c):
 def runner_daemon(c):
     """Run the HealthCheck runner daemon scheduler"""
 
-    c.run('python3 GeoHealthCheck/scheduler.py')
+    c.run('python GeoHealthCheck/scheduler.py')
 
 
 @task
 def run_healthchecks(c):
     """Run all HealthChecks directly"""
 
-    c.run('python3 GeoHealthCheck/healthcheck.py')
+    c.run('python GeoHealthCheck/healthcheck.py')
 
 
 @task
 def run_tests(c):
     """Run all tests"""
 
-    c.run('python3 tests/run_tests.py')
+    c.run('python tests/run_tests.py')

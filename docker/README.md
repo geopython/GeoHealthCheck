@@ -5,7 +5,7 @@ GHC Docker images are hosted at [Docker Hub](https://hub.docker.com/r/geopython/
 In the best case an install/run of GHC is a matter of minutes!
 
 If you are reading this from Docker Hub, local links will not work. 
-In that case use the [Docker Readme at GHC GitHub](https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md).
+In that case use the [Docker Readme at GHC GitHub](https://github.com/geopython/geohealthcheck/blob/master/docker/README.md).
 
 Since GHC release 0.4.0 GHC can run completely with two Docker containers from the same
 GHC Docker image:
@@ -15,14 +15,13 @@ GHC Docker image:
 
 ## Requirements
 
-Docker installed and Docker daemon running.
-[Docker Compose](https://docs.docker.com/compose/install) is separate install.
+Docker with Docker Compose installed and Docker daemon running.
 
 For installing Docker on Ubuntu there
 is a  [bash helper script](install-docker-ubuntu.sh).
 
-NB: The ``docker`` commands below may need to be prepended with 
-``sudo``, dependent on your login rights.
+NB: The `docker` commands below may need to be prepended with 
+`sudo`, dependent on your rights to run `docker` commands.
 
 ## Build
 
@@ -43,7 +42,7 @@ For example [run.sh](run.sh) which launches GHC using the robust `gunicorn` WSGI
 ## Run
 
 ```
-docker run -d --name ghc_web --rm -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run -d --name ghc_web --rm -p 8083:80 -v ghc_sqlitedb:/app/instance/DB geopython/geohealthcheck:latest
 ```
 
 go to http://localhost:8083 (port 80 in GHC Container is mapped to 8083 on host).
@@ -56,7 +55,7 @@ This mode can be disabled by passing `GHC_RUNNER_IN_WEBAPP` to as an ENV
 var to the Docker container:
 
 ```
-docker run  --name ghc_web --rm -e GHC_RUNNER_IN_WEBAPP=False -p 8083:80 -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run  --name ghc_web --rm -e GHC_RUNNER_IN_WEBAPP=False -p 8083:80 -v ghc_sqlitedb:/app/instance/DB geopython/geohealthcheck:latest
 
 ```
 
@@ -66,7 +65,13 @@ You can then run `GHC Runner` as a separate container by overriding
 the default `ENTRYPOINT` with `/run-runner.sh`:
 
 ```
-docker run -d --name ghc_runner --rm --entrypoint "/run-runner.sh" -v ghc_sqlitedb:/GeoHealthCheck/DB geopython/geohealthcheck:latest
+docker run -d --name ghc_runner --rm --entrypoint "/app/docker/scripts/run-runner.sh" -v ghc_sqlitedb:/app/instance/DB geopython/geohealthcheck:latest
+```
+
+You can also run the GHC standard tests by overriding the default `ENTRYPOINT` with `/run-tests.sh`:
+
+```
+docker run --name ghc_tests --rm --entrypoint "docker/scripts/run-tests.sh" -v ghc_sqlitedb:/app/instance/DB -e GHC_LOG_LEVEL=10 geopython/geohealthcheck:latest
 ```
 
 But the most optimal way to run GHC with scheduled jobs and optionally Postgres as backend DB,
@@ -177,7 +182,7 @@ Here we use `.env` files.
       - /run-runner.sh
 
     volumes:
-      - ghc_sqlitedb:/GeoHealthCheck/DB
+      - ghc_sqlitedb:/app/instance/DB
 
 ```
 
@@ -206,7 +211,7 @@ version:
       - /run-runner.sh
 
   postgis_ghc:
-    image: mdillon/postgis:9.6-alpine
+    image: mdillon/postgis:14-3.5-alpine
 
     container_name: postgis_ghc
 
@@ -223,7 +228,8 @@ Here [ghc-postgis.env](compose/ghc-postgis.env) adds extra Postgres-related conf
 ## Other tasks
 
 You can always `bash` into the GHC Container to run maintenance tasks.
-The GHC installation is at `/GeoHealthCheck` within the Docker Container.
+The GHC installation is at `/app` within the Docker Container. The container runs under
+user `ghc`. The home dir is `/home/ghc`.
 
 ```
 
@@ -232,7 +238,7 @@ docker exec -it docker_geohealthcheck_1 bash
 
 # setup Python venv
 source /venv/bin/activate .
-cd /GeoHealthCheck/
+cd /app/
  
 # next can use Invoke commands e.g. DB upgrade
 invoke upgrade

@@ -7,22 +7,16 @@
 # Usage:
 #
 # $ python3 manage.py --help
-# usage: manage.py [-h] {shell,db,runserver} ...
-#
-# positional arguments:
-#   {shell,db,runserver}
-#     shell     Runs a Python shell inside Flask application context.
-#     db        Perform database migrations
-#     runserver Runs the Flask development server i.e. app.run()
+# usage: manage.py action
 #
 # optional arguments:
 #   -h, --help  show this help message and exit
 #
 # For DB management:
-# $ python3 manage.py db --help
+# $ python manage.py upgrade
 # usage: Perform database migrations
 #
-# positional arguments:
+# action arguments:
 #   {upgrade,migrate,current,stamp,init,downgrade,history,revision}
 #     upgrade         Upgrade to a later version
 #     migrate         Alias for 'revision --autogenerate'
@@ -37,17 +31,44 @@
 # optional arguments:
 #   -h, --help  show this help message and exit
 
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
+import sys
+import os
+from flask_migrate import (Migrate, upgrade, downgrade, current,
+                           migrate, history, revision)
 from init import App
 
 DB = App.get_db()
 APP = App.get_app()
-
-migrate = Migrate(APP, DB)
-
-manager = Manager(APP)
-manager.add_command('db', MigrateCommand)
+workdir_path = os.path.dirname(__file__)
+migrations_path = os.path.join(workdir_path, 'migrations')
+Migrate(APP, DB, directory=migrations_path)
+ACTIONS = ['current', 'upgrade', 'downgrade', 'migrate', 'history', 'revision']
 
 if __name__ == '__main__':
-    manager.run()
+    if len(sys.argv) < 1 or sys.argv[1] not in ACTIONS:
+        print(f'Invalid action, valid values: {ACTIONS}')
+        sys.exit(1)
+
+    # Valid action name
+    action = sys.argv[1]
+
+    os.chdir(workdir_path)
+
+    with APP.app_context():
+        if action == 'current':
+            current()
+        elif action == 'upgrade':
+            # Upgrade to latest version
+            upgrade()
+        elif action == 'downgrade':
+            # Downgrade one version back
+            downgrade()
+        elif action == 'migrate':
+            # Generate revision
+            migrate()
+        elif action == 'history':
+            # Show revisions
+            history()
+        elif action == 'revision':
+            # Create new revision
+            revision()

@@ -31,7 +31,7 @@ services:
       # - configure in ghc.env
       # - mount these as docker volume on host
       # See https://docs.docker.com/compose/compose-file/#volumes
-      # - ./../GeoHealthCheck/plugins:/plugins:ro
+      # - ./../app/plugins:/plugins:ro
 
   ghc_runner:
     image: geopython/geohealthcheck:latest
@@ -51,7 +51,7 @@ services:
       - postgis_ghc
 
     entrypoint:
-      - /run-runner.sh
+      - /app/docker/scripts/run-runner.sh
 
     # volumes:
       # Optional Plugins, using Path on the host, relative to this Compose file
@@ -59,7 +59,7 @@ services:
       # - configure in ghc.env
       # - mount these as docker volume on host
       # See https://docs.docker.com/compose/compose-file/#volumes
-      # - ./../GeoHealthCheck/plugins:/plugins:ro
+      # - ./../app/plugins:/plugins:ro
 
   postgis_ghc:
     image: postgis/postgis:14-3.5-alpine

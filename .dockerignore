@@ -1,1 +1,24 @@
+# VCS
 .git
+.gitignore
+.github
+
+# Local pixi environment (built inside the image via `pixi install`)
+.pixi
+
+# Local dev / bootstrap artifacts (regenerated in the image)
+instance
+report.md
+docs/_build
+GeoHealthCheck/static/lib
+!GeoHealthCheck/static/lib/jqueryui
+!GeoHealthCheck/static/lib/jspark
+GeoHealthCheck/static/docs
+**/data.db
+*.log
+**/*.log
+
+# Tooling / caches
+.pytest_cache
+**/__pycache__
+*.pyc

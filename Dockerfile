@@ -1,31 +1,72 @@
-FROM ubuntu:noble
+FROM ghcr.io/prefix-dev/pixi:0.72.2-noble AS build
+# Inspired by https://tech.quantco.com/blog/pixi-production/
+
+# ARGS
+ARG LANGUAGE="en_US"
+ARG ENCODING="UTF-8"
+
+ENV LOCALE_STR="${LANGUAGE}.${ENCODING} ${ENCODING}" \
+    DEBIAN_FRONTEND=noninteractive
+
+# Install and Configure default locale
+# NB GHC has its own language handling via Babel.
+RUN apt update -y \
+    && apt install -y locales \
+    && echo "${LOCALE_STR}" > /etc/locale.gen \
+    && locale-gen \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy entire GHC repo content to /app
+WORKDIR /app
+COPY . .
+
+# Install deps (in /app/.pixi/).
+RUN pixi install -e prod --locked
+
+# pixi-env.sh: to be sourced, sets all paths and more.
+RUN echo '#!/bin/bash' > /app/pixi-env.sh
+RUN pixi shell-hook -e prod -s bash --as-is >> /app/pixi-env.sh
+RUN echo 'exec "$@"' >> /app/pixi-env.sh
+RUN echo chmod +x /app/pixi-env.sh
+
+# Prepare the GHC app, mainly web-related.
+RUN pixi run -e prod setup
+RUN cp docker/config_site.py instance/
+RUN if [ -d  docker/plugins ]; then cp -ar docker/plugins/* /app/GeoHealthCheck/plugins/; fi
+
+# Slim down, removing unused files generated within build
+RUN rm -rf /app/GeoHealthCheck/docs
+RUN find /app/GeoHealthCheck/static/lib -type d -name docs | xargs rm -rf
+RUN find /app/GeoHealthCheck/static/lib -type d -name src | xargs rm -rf
+
+FROM ubuntu:24.04 AS production
 
 # Credits to yjacolin for providing first versions
 LABEL original_developer="yjacolin <yves.jacolin@camptocamp.com>" \
 	maintainer="Just van den Broecke <justb4@gmail.com>"
 
+# Copy the compiled locale files from the builder
+COPY --from=build /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive
+COPY --from=build /etc/locale.gen /etc/locale.gen
+COPY --from=build /etc/default/locale /etc/default/locale
+
 # These are default values,
 # Override when running container via docker(-compose)
-
-# ARGS
-ARG TZ="Etc/UTC"
-ARG LANG="en_US.UTF-8"
-ARG ADD_DEB_PACKAGES=""
-
-# General ENV settings
-ENV LC_ALL="en_US.UTF-8" \
-	LANG="en_US.UTF-8" \
-	LANGUAGE="en_US.UTF-8" \
-    \
-	\
-	DEB_PACKAGES="locales gunicorn python3.12-venv postgresql-client python3-gunicorn python3-gevent python3-lxml python3-pyproj" \
-	DEB_BUILD_DEPS="make python3-pip" \
+ENV LANG='en_US.UTF-8' \
+    LANGUAGE='en_US:en' \
+    LC_ALL='en_US.UTF-8' \
+    TZ='Etc/UTC' \
+	DEB_PACKAGES="ca-certificates postgresql-client" \
+	DEB_BUILD_DEPS="adduser" \
 	ADMIN_NAME=admin \
 	ADMIN_PWD=admin \
 	ADMIN_EMAIL=admin.istrator@mydomain.com \
-	SQLALCHEMY_DATABASE_URI='sqlite:////GeoHealthCheck/DB/data.db' \
+	SQLALCHEMY_DATABASE_URI='sqlite:////app/instance/DB/data.db' \
 	SQLALCHEMY_ENGINE_OPTION_PRE_PING=False \
 	SECRET_KEY='d544ccc37dc3ad214c09b1b7faaa64c60351d5c8bb48b342' \
+	GHC_HOME=/app \
+	GHC_USER=ghc \
+	GHC_USER_HOME=/home/ghc \
 	GHC_PROBE_HTTP_TIMEOUT_SECS=30 \
 	GHC_MINIMAL_RUN_FREQUENCY_MINS=10 \
 	GHC_RETENTION_DAYS=30 \
@@ -54,52 +95,40 @@ ENV LC_ALL="en_US.UTF-8" \
 	GHC_GEOIP_LATFIELD='lat' \
 	GHC_GEOIP_LONFIELD='lon' \
 	GHC_METADATA_CACHE_SECS=900 \
-    \
-# WSGI server settings, assumed is gunicorn  \
-HOST=0.0.0.0 \
-PORT=80 \
-WSGI_WORKERS=4 \
-WSGI_WORKER_TIMEOUT=6000 \
-WSGI_WORKER_CLASS='gevent' \
-\
+    HOST=0.0.0.0 \
+    PORT=80 \
+    WSGI_WORKERS=4 \
+    WSGI_WORKER_TIMEOUT=6000 \
+    WSGI_WORKER_CLASS='gevent' \
+    GHC_USER_PLUGINS=''
+
 # GHC Core Plugins modules and/or classes, seldom needed to set:  \
 # if not specified here or in Container environment  \
 # all GHC built-in Plugins will be active.  \
 #ENV GHC_PLUGINS 'GeoHealthCheck.plugins.probe.owsgetcaps,\
 #        GeoHealthCheck.plugins.probe.wms, ...., ...\
 #        GeoHealthCheck.plugins.check.checks' \
-\
+
 # GHC User Plugins, best be overridden via Container environment \
-GHC_USER_PLUGINS=''
 
-# Install operating system dependencies
+# Install remaining dependencies and create user.
 RUN \
-    apt-get update \
-    && apt-get --no-install-recommends install -y ${DEB_PACKAGES} ${DEB_BUILD_DEPS} ${ADD_DEB_PACKAGES} \
-    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
-    && echo "For ${TZ} date=$(date)" && echo "Locale=$(locale)"
-
-# Add standard files and Add/override Plugins
-# Alternative Entrypoints to run GHC jobs
-# Override default Entrypoint with these on Containers
-COPY docker/scripts/*.sh docker/config_site.py docker/plugins /
-
-# Add Source Code
-COPY . /GeoHealthCheck
-
-# Install
-RUN \
-	chmod a+x /*.sh && ./install.sh \
-    # Cleanup TODO: remove unused Locales and TZs \
-    && apt-get remove --purge -y ${DEB_BUILD_DEPS} \
-    && apt-get clean \
+    apt update \
+    && apt --no-install-recommends install -y ${DEB_PACKAGES} ${DEB_BUILD_DEPS} \
+    && echo "For ${TZ} date=$(date)" && echo "Locale=$(locale)"  \
+    && adduser --disabled-password --shell /bin/bash --gecos "User" ${GHC_USER} \
+    && apt remove --purge -y ${DEB_BUILD_DEPS} \
+    && apt clean \
     && apt autoremove -y  \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy entire bundle: GHC plus all dependencies, including non-Python binaries in /app.
+WORKDIR /app
+COPY --from=build --chown=${GHC_USER}:${GHC_USER} /app /app
 
-# For SQLite
-VOLUME ["/GeoHealthCheck/DB/"]
+# Run Containers as user.
+USER ${GHC_USER}
 
 EXPOSE ${PORT}
 
-ENTRYPOINT /run-web.sh
+ENTRYPOINT [ "/app/docker/scripts/run-web.sh"  ]

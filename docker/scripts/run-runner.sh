@@ -1,18 +1,18 @@
 #!/bin/bash
 
-echo "START /run-runner.sh"
+echo "START run-runner.sh"
 
 # Set the timezone.
 # /set-timezone.sh
+pushd /app || exit 1
+source pixi-env.sh
 
 # Configure: DB and plugins.
-/configure.sh
+docker/scripts/configure.sh
 
 # Make sure PYTHONPATH includes GeoHealthCheck
-export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
+export PYTHONPATH=/app/GeoHealthCheck:$PYTHONPATH
 
-cd /GeoHealthCheck
-source bin/activate
 invoke runner-daemon
 
-echo "END /run-runner.sh"
+echo "END run-runner.sh"

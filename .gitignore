@@ -58,8 +58,16 @@ instance
 tmp/
 GeoHealthCheck/static/docs
 GeoHealthCheck/static/lib
+!GeoHealthCheck/static/lib/jqueryui
+!GeoHealthCheck/static/lib/jspark
 GeoHealthCheck.wsgi
 GeoHealthCheck.conf
 
 # Data
-GeoHealthCheck/data.db
+data.db
+# test report
+report.md
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml

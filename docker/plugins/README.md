@@ -4,7 +4,7 @@ GHC User Plugins can add new Probes and Checks or extend existing ones.
 
 ## Via Docker
 
-When using Docker, Plugins need to be available under `/GeoHealthCheck/GeoHealthCheck/plugins` within the 
+When using Docker, Plugins need to be available under `/app/GeoHealthCheck/plugins` within the 
 GHC Docker Image or Container. 
 
 You can choose to add your Plugins to the GHC Docker Image at build-time
@@ -21,7 +21,7 @@ The following steps:
 
 During the build Docker will `ADD` (copy) this dir to `/plugins` within the GHC Docker Image.
 The [install.sh](../install.sh) script will then move `/plugins`
-to the app-dir `/GeoHealthCheck/GeoHealthCheck/plugins`.
+to the app-dir `/app/GeoHealthCheck/plugins`.
  
 ## At Container run-time (preferred)
 
@@ -46,7 +46,7 @@ services:
        .
        .
     volumes:
-      - ghc_sqlitedb:/GeoHealthCheck/DB
+      - ghc_sqlitedb:/app/instance/DB
       - Path on the host, relative to the Compose file
       - ./../plugins:/plugins:ro
 ```
@@ -56,12 +56,12 @@ Or if you run the Image via `docker run` :
 
 ```
 docker run -d --name GeoHealthCheck -p 8083:80 \
-         -v ghc_sqlitedb:/GeoHealthCheck/DB \
+         -v ghc_sqlitedb:/app/instance/DB \
          -v ./plugins:/plugins:ro \
          -e 'GHC_USER_PLUGINS=GeoHealthCheck.plugins.user.myplugins'
          geopython/geohealthcheck:latest
 ```
 
 When the Container starts it will copy all content under
-`/plugins` to the internal dir `/GeoHealthCheck/GeoHealthCheck/plugins`. 
+`/plugins` to the internal dir `/app/GeoHealthCheck/plugins`. 
 
