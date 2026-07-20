@@ -7,7 +7,7 @@ This chapter describes maintenance tasks for the administrator of a GHC instance
 There is a separate :ref:`userguide` that provides guidance to the end-user to
 configure the actual Resource healthchecks.
 
-Since v0.10.0 Invoke and Pixi can be used. Before pixi commands run `pixi shell -e prod` in the repo topdir.
+Since v0.10.0, Invoke and Pixi can be used. Before Pixi commands, run `pixi shell -e prod` in the repo top level directory.
 Below the main commands (hint: type `pixi run --help` to see commands:
 
 .. code-block:: bash
