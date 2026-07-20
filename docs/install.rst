@@ -43,16 +43,15 @@ Install
   It is strongly recommended to install GeoHealthCheck in a Python Virtual Environment.
   A Virtual Environment is self-contained and provides the flexibility to install /
   tear down / whatever packages without affecting system wide packages or
-  settings. The installation is driven by the standard config file `pyproject.toml`.
-  It is recommended to use `pixi <https://pixi.prefix.dev/>`_ to manage the entire installation and
-  further management.
+  settings. The installation is driven by the standard config file ``pyproject.toml``.
+  It is strongly recommended to use `Pixi <https://pixi.prefix.dev/>`_ to manage installation and management.
 
 - Download a GeoHealthCheck release from
   https://github.com/geopython/GeoHealthCheck/releases, or clone manually from GitHub. 
 
-It is strongly recommended to install `pixi <https://pixi.prefix.dev/>`_ to
+It is strongly recommended to install `Pixi <https://pixi.prefix.dev/>`_ to
 handle the GeoHealthCheck installation and further tasks. The GHC Dockerfile also
-uses `pixi`.
+uses `Pixi`.
 
 .. code-block:: bash
 
@@ -150,11 +149,11 @@ An existing GHC database installation can be upgraded with:
 Notes:
 
 * **Always backup your database first!!**
-* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.5.2`, but best is to run `invoke setup` also for other dependencies
-* upgrading is "smart": you can always run `invoke upgrade`, it has no effect when DB is already up to date
-* when upgrading from earlier versions without Plugin-support:
+* make sure Flask-Migrate is installed (see requirements.txt), else:  ``pip install Flask-Migrate==2.5.2``, but best is to run ``invoke setup`` also for other dependencies
+* upgrading is "smart": you can always run ``invoke upgrade``, it has no effect when DB is already up to date
+* when upgrading from earlier versions without Plugin support:
 
-  - adapt your `config_site.py` to Plugin settings from `config_main.py`
+  - adapt your `config_site.py` to Plugin settings from ``config_main.py``
   - assign `Probes` and `Checks` to each `Resource` via the UI
 
 When running with Docker see the
@@ -165,7 +164,7 @@ Upgrade notes v0.5.0
 ....................
 
 In GHC v0.5.0 a new run-architecture was introduced. By default, healthchecks run under
-the control of an internal scheduler, i.s.o. of external cron-jobs. See also the :ref:`architecture` chapter
+the control of an internal scheduler, i.s.o. of external cronjobs. See also the :ref:`architecture` chapter
 and :ref:`admin_running` and below.
 
 Upgrade notes v0.6.0
@@ -242,7 +241,7 @@ See `closed issues for the related GitHub Milestone 0.10.0 <https://github.com/g
 Specifics, for existing, pre 0.10.0, installations:
 
 * Docker Containers now run under a specific non-root user. This may give permission issues.
-* `docker-compose.yml`: `entrypoint` now uses scripts directly like `/app/docker/scripts/run-runner.sh` i.s.o. `/run-runner.sh`
+* ``docker-compose.yml``: ``entrypoint`` now uses scripts directly like ``/app/docker/scripts/run-runner.sh`` i.s.o. ``/run-runner.sh``
 * When using SQLite in a Docker Named Volume you may need to re-init the DB if you get permission issues
 * Paver is replaced by Invoke and Pixi: see the updated README and docs for new maintenance commands
 
