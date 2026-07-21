@@ -245,8 +245,8 @@ class OGCFeatDrilldown(Probe):
                                 self, result, False, msg, 'Test GetItem')
                             continue
 
-                    # At least these attributes should be present, 'id' and 'links'
-                    # not strictly required.
+                    # At least these attributes should be present.
+                    # 'id' and 'links' are not strictly required.
                     for attr in ['properties', 'geometry', 'type']:
 
                         val = item.get(attr, None)
@@ -254,14 +254,16 @@ class OGCFeatDrilldown(Probe):
                             msg = '%s:%s missing attr: %s' \
                                   % (coll_id, str(fid), attr)
                             result = push_result(
-                                self, result, False, msg, 'Test Feature attrs present')
+                                self, result, False, msg,
+                                'Test Feature attrs present')
                             continue
 
                         if attr == 'type' and val != 'Feature':
                             msg = '%s:%s type not Feature: %s' \
                                   % (coll_id, str(fid), val)
                             result = push_result(
-                                self, result, False, msg, 'Test attr type=Feature')
+                                self, result, False, msg,
+                                'Test attr type=Feature')
                             continue
 
         except Exception as err:
