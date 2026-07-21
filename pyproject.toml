@@ -124,5 +124,5 @@ prod = { features = ["server"], solve-group = "prod-group" }
 # Note: the `test` task still requires the app to be bootstrapped first
 # (`invoke setup` creates instance/config_site.py and the DB), same as CI.
 [tool.pytest.ini_options]
-pythonpath = ["GeoHealthCheck"]
+pythonpath = ["GeoHealthCheck", "GeoHealthCheck/.."]
 testpaths = ["tests"]
