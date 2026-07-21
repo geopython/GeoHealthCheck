@@ -30,7 +30,6 @@
 
 import json
 import logging
-from flask_babel import gettext as _
 from datetime import datetime, timedelta, timezone
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy import func, and_
@@ -43,7 +42,6 @@ from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
 from resourceauth import ResourceAuth
-from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 
 APP = App.get_app()
@@ -246,30 +244,21 @@ def _validate_webhook(value):
     try:
         _parse_webhook_location(value)
     except ValueError as err:
-        raise ValidationError('{}: {}'.format(value, err))
+        raise ValueError('{}: {}'.format(value, err))
     return value
 
 
 def _validate_email(value):
     if not value:
-        raise ValidationError("Email cannot be empty value")
+        raise ValueError("Email cannot be empty value")
     try:
         if not value.strip():
-            raise ValidationError("Email cannot be empty value")
+            raise ValueError("Email cannot be empty value")
     except AttributeError:
-        raise ValidationError("Email cannot be empty value")
+        raise ValueError("Email cannot be empty value")
 
-    v = Email()
-
-    class dummy_value(object):
-        data = value
-
-        @staticmethod
-        def gettext(*args, **kwargs):
-            return _(*args, **kwargs)
-
-    dummy_form = None
-    v(dummy_form, dummy_value())
+    if not util.validate_email(value):
+        raise ValueError("Invalid email address")
 
 
 class Recipient(DB.Model):
@@ -313,7 +302,7 @@ class Recipient(DB.Model):
         for v in validators:
             try:
                 v(value)
-            except (ValidationError, TypeError) as err:
+            except (ValueError, TypeError) as err:
                 raise ValueError("Bad value: {}".format(err), err)
 
     def is_email(self):
@@ -337,7 +326,7 @@ class Recipient(DB.Model):
     def get_or_create(cls, channel, location):
         try:
             cls.validate(channel, location)
-        except ValidationError as err:
+        except ValueError as err:
             raise ValueError("invalid value {}: {}".format(location, err))
 
         try:

@@ -30,6 +30,7 @@
 import io
 import logging
 import os
+import re
 import smtplib
 import base64
 import requests
@@ -47,6 +48,7 @@ from jinja2 import Environment, FileSystemLoader
 APP = App.get_app()
 CONFIG = App.get_config()
 LOGGER = logging.getLogger(__name__)
+EMAIL_REGEX = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}"
 
 
 def average(values):
@@ -191,6 +193,12 @@ def send_email(mail_config, fromaddr, toaddr, msg):
     server.quit()
 
     return True
+
+
+def validate_email(email):
+    """convenience function to validate an email address"""
+
+    return re.fullmatch(EMAIL_REGEX, email)
 
 
 def geocode(value, spatial_keyword_type='hostname'):
