@@ -1,6 +1,6 @@
 [project]
 name = "GeoHealthCheck"
-version = "0.9.1dev"
+version = "0.10.0"
 description = "Monitor uptime and availability of OGC web services and REST APIs"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"

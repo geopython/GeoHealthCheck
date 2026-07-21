@@ -123,5 +123,7 @@ Then copy-paste the hash-string into the `password`-field of the User-record in 
 Build Documentation
 -------------------
 
-Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``.
-In there, type ``make html`` plus ENTER and the documentation should be built locally.
+Open a command line, (if needed activate your virtualenv or your `pixi` environment) and
+enter `invoke refresh_docs` or `pixi run docs`.
+Find the generated HTML docs under `docs/_build/html/index.html`.
+

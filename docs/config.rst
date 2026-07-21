@@ -126,7 +126,7 @@ In summary there are three options to run GHC and its healthchecks:
 Language Translations
 ---------------------
 
-GHC supports multiple languages by using [Babel](http://babel.pocoo.org) with [Flask-Babel](https://pythonhosted.org/Flask-Babel/).
+GHC supports multiple languages by using `Babel <http://babel.pocoo.org>`_ with Flask-Babel `<https://pythonhosted.org/Flask-Babel/>`_.
 
 *"Babel is an integrated collection of utilities that assist in internationalizing*
 *and localizing Python applications, with an emphasis on web-based applications."*

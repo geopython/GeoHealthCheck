@@ -232,32 +232,36 @@ class OGCFeatDrilldown(Probe):
                     continue
 
                 if len(items['features']) > 0:
+                    item = items['features'][0]
 
-                    fid = items['features'][0]['id']
-                    try:
-                        item = oa_feat.collection_item(coll_id, fid)
-                    except Exception as e:
-                        msg = 'GetItem %s: OWSLib err: %s' \
-                              % (str(e), coll_id)
-                        result = push_result(
-                            self, result, False, msg, 'Test GetItem')
-                        continue
+                    fid = item.get('id', None)
+                    if fid is not None:
+                        try:
+                            item = oa_feat.collection_item(coll_id, fid)
+                        except Exception as e:
+                            msg = 'GetItem by id=%s from %s: OWSLib err: %s' \
+                                  % (str(fid), coll_id, str(e))
+                            result = push_result(
+                                self, result, False, msg, 'Test GetItem')
+                            continue
 
-                    for attr in \
-                            ['id', 'links', 'properties', 'geometry', 'type']:
+                    # At least these attributes should be present, 'id' and 'links'
+                    # not strictly required.
+                    for attr in ['properties', 'geometry', 'type']:
+
                         val = item.get(attr, None)
                         if val is None:
                             msg = '%s:%s missing attr: %s' \
                                   % (coll_id, str(fid), attr)
                             result = push_result(
-                                self, result, False, msg, 'Test GetItem')
+                                self, result, False, msg, 'Test Feature attrs present')
                             continue
 
                         if attr == 'type' and val != 'Feature':
                             msg = '%s:%s type not Feature: %s' \
                                   % (coll_id, str(fid), val)
                             result = push_result(
-                                self, result, False, msg, 'Test GetItem')
+                                self, result, False, msg, 'Test attr type=Feature')
                             continue
 
         except Exception as err:

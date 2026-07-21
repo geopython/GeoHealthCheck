@@ -225,7 +225,7 @@ See `closed issues/merged PRs for related Milestone 0.9.0 <https://github.com/ge
 Upgrade notes v0.10.0
 .....................
 
-This is a major upgrade. 27 issues and PRs went in from 0.9.0 to 0.10.0.
+This is a major upgrade. About 35 issues and PRs went in from 0.9.0 to 0.10.0.
 The main breaking change is that the project switched from `requirements.txt` plus `Paver` to
 `pyproject.toml` with the `Invoke Task executor <https://www.pyinvoke.org/>`_ and the `Pixi Python Environment Manager <https://pixi.prefix.dev/>`_.
 This affects the installation and management steps and the Docker Image (much smaller!) plus Docker and Docker Compose deployment settings.
