@@ -59,6 +59,15 @@ def set_accept_header(oa_feat, content_type):
     oa_feat.headers['Accept'] = content_type
 
 
+def supports_feature_items(collection):
+    item_type = collection.get('itemType')
+    if item_type is not None:
+        return item_type == 'feature'
+
+    return any(link.get('rel') == 'items'
+               for link in collection.get('links', []))
+
+
 class OGCFeatDrilldown(Probe):
     """
     Probe for OGC API Features (OAFeat) endpoint "drilldown" or
@@ -173,7 +182,9 @@ class OGCFeatDrilldown(Probe):
         try:
             for collection in collections:
                 coll_id = collection['id']
-                coll_id = coll_id
+
+                if not supports_feature_items(collection):
+                    continue
 
                 try:
                     set_accept_header(oa_feat, type_for_link(
