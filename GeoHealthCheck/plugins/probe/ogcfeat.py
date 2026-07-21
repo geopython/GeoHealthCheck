@@ -1,5 +1,5 @@
 from owslib.ogcapi.features import Features
-from openapi_spec_validator import openapi_v3_spec_validator
+from openapi_spec_validator import openapi_v30_spec_validator
 
 from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.result import Result, push_result
@@ -339,7 +339,7 @@ class OGCFeatOpenAPIValidator(Probe):
         result.start()
         try:
             # Call the openapi-spec-validator and iterate through errors
-            errors_iterator = openapi_v3_spec_validator.iter_errors(api_doc)
+            errors_iterator = openapi_v30_spec_validator.iter_errors(api_doc)
             for error in errors_iterator:
                 # Add each validation error as separate Result object
                 result = push_result(
