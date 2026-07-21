@@ -45,6 +45,7 @@ jobs:
           if [[ $VERSION == master ]]; then
             VERSION=latest
           fi
+          VERSION=0.10.0
           TAGS="${DOCKER_IMAGE}:${VERSION}"
           echo ::set-output name=image::${DOCKER_IMAGE}
           echo ::set-output name=version::${VERSION}
