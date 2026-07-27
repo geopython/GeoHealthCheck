@@ -64,7 +64,12 @@ GeoHealthCheck.wsgi
 GeoHealthCheck.conf
 
 # Data
+GeoHealthCheck/data.db
 data.db
+
+# MacOS artifacts
+.DS_Store
+
 # test report
 report.md
 
