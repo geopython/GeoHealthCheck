@@ -2,33 +2,35 @@
 
 # Runs the GHC app with gunicorn
 
-echo "START /run-web.sh"
+echo "START run-web.sh"
 
 # Set the timezone.
 # /set-timezone.sh
+pushd /app || exit 1
+source pixi-env.sh
 
 # Configure: DB and plugins.
-/configure.sh
+docker/scripts/configure.sh
 
 # Make sure PYTHONPATH includes GeoHealthCheck
-export PYTHONPATH=/GeoHealthCheck/GeoHealthCheck:$PYTHONPATH
+export PYTHONPATH=/app/GeoHealthCheck:$PYTHONPATH
 
-cd /GeoHealthCheck
-
-paver upgrade
+# pixi shell -e prod
+invoke db-action upgrade
 
 # SCRIPT_NAME should not have value '/'
 [ "${SCRIPT_NAME}" = '/' ] && export SCRIPT_NAME="" && echo "make SCRIPT_NAME empty from /"
 
 echo "Running GHC WSGI on ${HOST}:${PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
-exec gunicorn --workers ${WSGI_WORKERS} \
+gunicorn --workers ${WSGI_WORKERS} \
 		--worker-class=${WSGI_WORKER_CLASS} \
 		--timeout ${WSGI_WORKER_TIMEOUT} \
+		--chdir ${GHC_USER_HOME} \
 		--name="Gunicorn_GHC" \
 		--bind ${HOST}:${PORT} \
 		GeoHealthCheck.app:APP
 
 # Built-in Flask server, deprecated
-# python /GeoHealthCheck/GeoHealthCheck/app.py ${HOST}:${PORT}
+# python3 /app/GeoHealthCheck/app.py ${HOST}:${PORT}
 
-echo "END /run-web.sh"
+echo "END run-web.sh"

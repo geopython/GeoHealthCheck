@@ -2,6 +2,7 @@
 # https://github.com/geopython/pycsw/blob/master/.github/workflows/main.yml
 #
 # Author: Just van den Broecke - 2021
+# Migrated to pixi - 2026 by @francbartoli
 #
 name: Main GHC CI ⚙️
 
@@ -10,44 +11,50 @@ on: [ push, pull_request ]
 jobs:
   main:
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        include:
-          - python-version: 3.10.12
     steps:
     - name: Checkout ✅
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Setup Python ${{ matrix.python-version }} 🐍
-      uses: actions/setup-python@v2
+    # Installs pixi (pinned) and the `dev` environment from the committed
+    # pixi.lock (locked: true fails if the lock is out of sync). Python and
+    # all dependencies come from the lock, so no separate setup-python step.
+    - name: Setup pixi 🧰
+      uses: prefix-dev/setup-pixi@v0.10.0
       with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install Requirements 📦
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+        pixi-version: v0.72.0
+        environments: dev
+        locked: true
+        cache: true
 
     - name: Setup GHC App and init DB 🗃️
       run: |
-        paver setup
-        echo -e "admin\ntest\ntest\nyou@example.com\nyou@example.com" | python GeoHealthCheck/models.py create
+        pixi run -e dev setup
+        pixi run -e dev create -u admin -p admin -e a@a.com
 
     - name: Flake8 - Verify Coding Conventions ⚙️
-      run: flake8
+      run: pixi run -e dev flake8
 
     - name: Load Fixtures Test Data ⚙️
-      run: python GeoHealthCheck/models.py load tests/data/fixtures.json y
+      run: pixi run -e dev load-data tests/data/fixtures.json
+
+#    - name: Test DB downgrade to previous schema (via Alembic) ⚙️
+#      run: pixi run -e dev db-action downgrade
+#
+#    - name: Test DB upgrade back to current schema (via Alembic) ⚙️
+#      run: pixi run -e dev db-action upgrade
 
     - name: Run Probes ⚙️
-      run: python GeoHealthCheck/healthcheck.py
+      run: pixi run -e dev run-healthchecks
 
     - name: Run Unit Tests ⚙️
-      run: python tests/run_tests.py
+      run: pixi run -e dev test
+
+    - name: Publish Test Report 📄
+      if: always()
+      run: cat report.md >> "$GITHUB_STEP_SUMMARY" || true
 
     - name: Build Docs 📖
-      run: cd docs && make html
+      run: pixi run -e dev docs
 
     - name: Cleanup 💯
-      run: python GeoHealthCheck/models.py drop
+      run: pixi run -e dev drop-data

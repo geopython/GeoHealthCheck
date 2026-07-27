@@ -30,8 +30,7 @@
 
 import json
 import logging
-from flask_babel import gettext as _
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy import func, and_
 
@@ -43,7 +42,6 @@ from enums import RESOURCE_TYPES
 from factory import Factory
 from init import App
 from resourceauth import ResourceAuth
-from wtforms.validators import Email, ValidationError
 from owslib.util import bind_url
 
 APP = App.get_app()
@@ -58,7 +56,7 @@ def flush_runs():
     all_runs = Run.query.all()
     run_count = 0
     for run in all_runs:
-        days_old = (datetime.utcnow() - run.checked_datetime).days
+        days_old = (datetime.now(timezone.utc) - run.checked_datetime).days
         if days_old > retention_days:
             run_count += 1
             DB.session.delete(run)
@@ -87,7 +85,7 @@ class Run(DB.Model):
     report = deferred(DB.Column(DB.Text, default={}))
 
     def __init__(self, resource, result,
-                 checked_datetime=datetime.utcnow()):
+                 checked_datetime=datetime.now(timezone.utc)):
         self.resource = resource
         self.success = result.success
         self.response_time = result.response_time_str
@@ -246,30 +244,21 @@ def _validate_webhook(value):
     try:
         _parse_webhook_location(value)
     except ValueError as err:
-        raise ValidationError('{}: {}'.format(value, err))
+        raise ValueError('{}: {}'.format(value, err))
     return value
 
 
 def _validate_email(value):
     if not value:
-        raise ValidationError("Email cannot be empty value")
+        raise ValueError("Email cannot be empty value")
     try:
         if not value.strip():
-            raise ValidationError("Email cannot be empty value")
+            raise ValueError("Email cannot be empty value")
     except AttributeError:
-        raise ValidationError("Email cannot be empty value")
+        raise ValueError("Email cannot be empty value")
 
-    v = Email()
-
-    class dummy_value(object):
-        data = value
-
-        @staticmethod
-        def gettext(*args, **kwargs):
-            return _(*args, **kwargs)
-
-    dummy_form = None
-    v(dummy_form, dummy_value())
+    if not util.validate_email(value):
+        raise ValueError("Invalid email address")
 
 
 class Recipient(DB.Model):
@@ -313,7 +302,7 @@ class Recipient(DB.Model):
         for v in validators:
             try:
                 v(value)
-            except (ValidationError, TypeError) as err:
+            except (ValueError, TypeError) as err:
                 raise ValueError("Bad value: {}".format(err), err)
 
     def is_email(self):
@@ -337,7 +326,7 @@ class Recipient(DB.Model):
     def get_or_create(cls, channel, location):
         try:
             cls.validate(channel, location)
-        except ValidationError as err:
+        except ValueError as err:
             raise ValueError("invalid value {}: {}".format(location, err))
 
         try:
@@ -680,14 +669,18 @@ class ResourceLock(DB.Model):
         self.init_datetimes(interval_mins)
 
     def init_datetimes(self, interval_mins):
-        self.start_time = datetime.utcnow()
+        self.start_time = datetime.now(timezone.utc)
         # Subtract some space from end-time to allow obtain at scheduled time
         minutes = interval_mins - 1
         self.end_time = self.start_time + timedelta(minutes=minutes)
 
     def has_expired(self):
-        now = datetime.utcnow()
-        return now > self.end_time
+        now = datetime.now(timezone.utc)
+
+        # See issue https://github.com/geopython/GeoHealthCheck/issues/506
+        end_time = self.end_time.replace(
+            tzinfo=timezone.utc)
+        return now > end_time
 
     def obtain(self, owner, frequency):
         if not self.has_expired():
@@ -723,7 +716,7 @@ class User(DB.Model):
         self.set_password(password)
         self.email = email
         self.role = role
-        self.registered_on = datetime.utcnow()
+        self.registered_on = datetime.now(timezone.utc)
 
     def authenticate(self, password):
         return util.verify_hash(password, self.password)
@@ -982,7 +975,7 @@ if __name__ == '__main__':
 
         elif sys.argv[1] == 'run':
             print('NOTICE: models.py no longer here.')
-            print('Use: python healthcheck.py or upcoming cli.py')
+            print('Use: python3 healthcheck.py or upcoming cli.py')
         elif sys.argv[1] == 'flush':
             flush_runs()
 

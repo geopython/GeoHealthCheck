@@ -4,7 +4,7 @@
 # Copy possible mounted Plugins into app tree
 if [ -d /plugins ]
 then
-	cp -ar /plugins/* /GeoHealthCheck/GeoHealthCheck/plugins/
+	cp -ar /plugins/* /app/GeoHealthCheck/plugins/
 fi
 
-python /GeoHealthCheck/GeoHealthCheck/healthcheck.py
+python3 /app/GeoHealthCheck/healthcheck.py

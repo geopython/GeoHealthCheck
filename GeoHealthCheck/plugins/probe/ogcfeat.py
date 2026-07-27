@@ -1,5 +1,5 @@
 from owslib.ogcapi.features import Features
-from openapi_spec_validator import openapi_v3_spec_validator
+from openapi_spec_validator import openapi_v30_spec_validator
 
 from GeoHealthCheck.probe import Probe
 from GeoHealthCheck.result import Result, push_result
@@ -57,6 +57,15 @@ def type_for_link(links, rel):
 
 def set_accept_header(oa_feat, content_type):
     oa_feat.headers['Accept'] = content_type
+
+
+def supports_feature_items(collection):
+    item_type = collection.get('itemType')
+    if item_type is not None:
+        return item_type == 'feature'
+
+    return any(link.get('rel') == 'items'
+               for link in collection.get('links', []))
 
 
 class OGCFeatDrilldown(Probe):
@@ -173,7 +182,9 @@ class OGCFeatDrilldown(Probe):
         try:
             for collection in collections:
                 coll_id = collection['id']
-                coll_id = coll_id
+
+                if not supports_feature_items(collection):
+                    continue
 
                 try:
                     set_accept_header(oa_feat, type_for_link(
@@ -221,32 +232,38 @@ class OGCFeatDrilldown(Probe):
                     continue
 
                 if len(items['features']) > 0:
+                    item = items['features'][0]
 
-                    fid = items['features'][0]['id']
-                    try:
-                        item = oa_feat.collection_item(coll_id, fid)
-                    except Exception as e:
-                        msg = 'GetItem %s: OWSLib err: %s' \
-                              % (str(e), coll_id)
-                        result = push_result(
-                            self, result, False, msg, 'Test GetItem')
-                        continue
+                    fid = item.get('id', None)
+                    if fid is not None:
+                        try:
+                            item = oa_feat.collection_item(coll_id, fid)
+                        except Exception as e:
+                            msg = 'GetItem by id=%s from %s: OWSLib err: %s' \
+                                  % (str(fid), coll_id, str(e))
+                            result = push_result(
+                                self, result, False, msg, 'Test GetItem')
+                            continue
 
-                    for attr in \
-                            ['id', 'links', 'properties', 'geometry', 'type']:
+                    # At least these attributes should be present.
+                    # 'id' and 'links' are not strictly required.
+                    for attr in ['properties', 'geometry', 'type']:
+
                         val = item.get(attr, None)
                         if val is None:
                             msg = '%s:%s missing attr: %s' \
                                   % (coll_id, str(fid), attr)
                             result = push_result(
-                                self, result, False, msg, 'Test GetItem')
+                                self, result, False, msg,
+                                'Test Feature attrs present')
                             continue
 
                         if attr == 'type' and val != 'Feature':
                             msg = '%s:%s type not Feature: %s' \
                                   % (coll_id, str(fid), val)
                             result = push_result(
-                                self, result, False, msg, 'Test GetItem')
+                                self, result, False, msg,
+                                'Test attr type=Feature')
                             continue
 
         except Exception as err:
@@ -322,7 +339,7 @@ class OGCFeatOpenAPIValidator(Probe):
         result.start()
         try:
             # Call the openapi-spec-validator and iterate through errors
-            errors_iterator = openapi_v3_spec_validator.iter_errors(api_doc)
+            errors_iterator = openapi_v30_spec_validator.iter_errors(api_doc)
             for error in errors_iterator:
                 # Add each validation error as separate Result object
                 result = push_result(

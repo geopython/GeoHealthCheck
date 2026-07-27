@@ -36,12 +36,12 @@ GeoHealthCheck is built on the awesome Flask micro-framework and uses
 
 `APScheduler` is used to run scheduled healthchecks.
 
-These dependencies are automatically installed (see below). ``Paver`` is used
+These dependencies are automatically installed (see below). `Invoke <https://docs.pyinvoke.org>`_ is used
 for installation and management. ``Cron`` was used for scheduling the actual
-healthchecks before v0.5.0.
+healthchecks before v0.5.0 but is now obsolete.
 
-Starting from version v0.8.0.0 GeoHealthCheck requires **python 3**. Previous
-versions require **python 2**. GeoHealthCheck is at least compatible with Python versions
+Starting from version v0.8.0 GeoHealthCheck requires **python3 3**. Previous
+versions require **python3 2**. GeoHealthCheck is at least compatible with Python versions
 up to and including `3.12.3`. Higher Python versions may work but are untested.
 
 Install
@@ -49,58 +49,95 @@ Install
 
 .. note::
 
-  It is strongly recommended to install GeoHealthCheck in a Python ``virtualenv``.
-  a ``virtualenv`` is self-contained and provides the flexibility to install /
+  It is strongly recommended to install GeoHealthCheck in a Python Virtual Environment.
+  A Virtual Environment is self-contained and provides the flexibility to install /
   tear down / whatever packages without affecting system wide packages or
-  settings.
-  If installing on Ubuntu, you may need to install the python-dev package for installation to complete successfully.
-  
+  settings. The installation is driven by the standard config file ``pyproject.toml``.
+  It is strongly recommended to use `Pixi <https://pixi.prefix.dev/>`_ to manage installation and management.
+
 - Download a GeoHealthCheck release from
   https://github.com/geopython/GeoHealthCheck/releases, or clone manually from GitHub. 
 
+It is strongly recommended to install `Pixi <https://pixi.prefix.dev/>`_ to
+handle the GeoHealthCheck installation and further tasks. The GHC Dockerfile also
+uses `Pixi`.
+
 .. code-block:: bash
 
-  python3 -m venv ghc && cd ghc
-  source ./bin/activate
-  git clone https://github.com/geopython/GeoHealthCheck.git
-  cd GeoHealthCheck
+    git clone https://github.com/geopython/GeoHealthCheck.git
+    cd GeoHealthCheck
 
-  # install paver dependency for admin tool
-  pip install Paver
+    # Install production environment
+    pixi install -e prod
 
-  # setup app
-  paver setup
+    # bootstrap the app (config, static assets, i18n, local docs, DB)
+    pixi run -e prod setup
 
-  # create secret key to use for auth
-  paver create_secret_key
+    # generate secret key
+    pixi run -e prod create-secret-key
+    # setup local configuration (overrides GeoHealthCheck/config_main.py)
+    vi instance/config_site.py
+    # edit:
+    # - SQLALCHEMY_DATABASE_URI = 'sqlite:///../instance/data.db' - put in instance dir
+    # - SECRET_KEY  # paste from invoke create-secret-key
+    # - GHC_RETENTION_DAYS
+    # - GHC_SELF_REGISTER
+    # - GHC_NOTIFICATIONS
+    # - GHC_NOTIFICATIONS_VERBOSITY
+    # - GHC_ADMIN_EMAIL
+    # - GHC_NOTIFICATIONS_EMAIL
+    # - GHC_SITE_TITLE
+    # - GHC_SITE_URL
+    # - GHC_RUNNER_IN_WEBAPP # see 'running' section below
+    # - GHC_REQUIRE_WEBAPP_AUTH  # optional: to require authentication to access webapp
+    # - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled
+    # - GHC_MAP  # or use default settings
+    # - GEOIP  # or use the default settings
 
-  # almost there!  Customize config
-  vi instance/config_site.py
-  # edit:
-  # - SQLALCHEMY_DATABASE_URI
-  # - SECRET_KEY  # from paver create_secret_key
-  # - GHC_RETENTION_DAYS
-  # - GHC_SELF_REGISTER
-  # - GHC_NOTIFICATIONS
-  # - GHC_NOTIFICATIONS_VERBOSITY
-  # - GHC_ADMIN_EMAIL
-  # - GHC_NOTIFICATIONS_EMAIL
-  # - GHC_SITE_TITLE
-  # - GHC_SITE_URL
-  # - GHC_RUNNER_IN_WEBAPP # see 'running' section below
-  # - GHC_REQUIRE_WEBAPP_AUTH  # optional: to require authentication to access webapp
-  # - GHC_SMTP  # if GHC_NOTIFICATIONS is enabled
-  # - GHC_MAP  # or use default settings
-  # - GEOIP  # or use the default settings
+    # Optional: edit other settings or leave defaults (see above)
 
-  # init database
-  python GeoHealthCheck/models.py create
+    # setup superuser account password and email directly
+    pixi run -e prod create --username admin --password admin --email a@a.com
 
-  # start web-app
-  python GeoHealthCheck/app.py  # http://localhost:8000/
+    # or shorter
+    pixi run -e prod create -u admin -p admin --e a@a.com
 
-  # when you are done, you can exit the virtualenv
-  deactivate
+    # run locally
+    pixi run -e prod run
+
+    # open http://localhost:8000 in browser
+
+The following local install using the standard Python `venv` works with Python 3.12, other (lower) Python versions may need changes in `pyproject.toml`.
+
+.. code-block:: bash
+
+    python -m venv ghc && cd ghc
+    . bin/activate
+    git clone https://github.com/geopython/GeoHealthCheck.git
+    cd GeoHealthCheck
+    pip install --no-cache-dir -U pip setuptools wheel Invoke
+    pip install --no-cache-dir -e .
+
+    # setup app
+    invoke setup
+
+    # create secret key to use for auth
+    invoke create-secret-key
+
+    # almost there!  Customize config
+    vi instance/config_site.py
+    # edit:
+    # - SECRET_KEY  # paste from invoke create-secret-key
+    # See above for other variables.
+
+    # setup database and superuser account directly
+    invoke create -u admin -p admin -e a@a.com
+
+    # start web-app
+    python GeoHealthCheck/app.py  # http://localhost:8000/
+
+    # when you are done, you can exit the virtualenv
+    deactivate
 
 NB GHC supports internal scheduling, no cronjobs required.
 
@@ -114,36 +151,36 @@ An existing GHC database installation can be upgraded with:
 .. code-block:: bash
 
   # In the top directory (e.g. the topdir cloned from github)
-  paver upgrade
+  invoke db-action upgrade
 
   # Notice any output, in particular errors
 
 Notes:
 
 * **Always backup your database first!!**
-* make sure Flask-Migrate is installed (see requirements.txt), else:  `pip install Flask-Migrate==2.5.2`, but best is to run `paver setup` also for other dependencies
-* upgrading is "smart": you can always run `paver upgrade`, it has no effect when DB is already up to date
-* when upgrading from earlier versions without Plugin-support:
+* make sure Flask-Migrate is installed (see requirements.txt), else:  ``pip install Flask-Migrate==2.5.2``, but best is to run ``invoke setup`` also for other dependencies
+* upgrading is "smart": you can always run ``invoke upgrade``, it has no effect when DB is already up to date
+* when upgrading from earlier versions without Plugin support:
 
-  - adapt your `config_site.py` to Plugin settings from `config_main.py`
+  - adapt your `config_site.py` to Plugin settings from ``config_main.py``
   - assign `Probes` and `Checks` to each `Resource` via the UI
 
 When running with Docker see the
 `GHC Docker Readme <https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md>`_
-how to run `paver upgrade` within your Docker Container.
+how to run `invoke upgrade` within your Docker Container.
 
 Upgrade notes v0.5.0
 ....................
 
 In GHC v0.5.0 a new run-architecture was introduced. By default, healthchecks run under
-the control of an internal scheduler, i.s.o. of external cron-jobs. See also the :ref:`architecture` chapter
+the control of an internal scheduler, i.s.o. of external cronjobs. See also the :ref:`architecture` chapter
 and :ref:`admin_running` and below.
 
 Upgrade notes v0.6.0
 ....................
 
 In GHC v0.6.0 encryption was added for password storage. Existing passwords should be migrated via
-the `paver upgrade` command. Also password recovery was changed: a user can create a new password via
+the `invoke upgrade` command. Also password recovery was changed: a user can create a new password via
 a unique, personal URL that GHC sends by email. This requires a working email configuration and a reachable
 `SITE_URL` config value. See :ref:`admin_user_mgt` for solving password problems.
 
@@ -186,13 +223,36 @@ were added:
 * OGC 3DTiles Probe (by SpotInfo)
 * MapBox TileJSON Probe (by SpotInfo)
 * additional WMTS Probes (by SpotInfo)
-* use official OGC naming for OAFeat Probes (includes DB-upgrade)
+* use official OGC naming for OAFeat Probes (includes db-action upgrade)
 * many bugfixes and security updates
 
-Only a single DB-upgrade is required and only if your installation (DB) contains
+Only a single db-action upgrade is required and only if your installation (DB) contains
 OGC OAFeat Resources and Probes, formerly called "WFS3".
 
 See `closed issues/merged PRs for related Milestone 0.9.0 <https://github.com/geopython/GeoHealthCheck/milestone/10?closed=1>`_.
+
+Upgrade notes v0.10.0
+.....................
+
+This is a major upgrade. About 35 issues and PRs went in from 0.9.0 to 0.10.0.
+The main breaking change is that the project switched from `requirements.txt` plus `Paver` to
+`pyproject.toml` with the `Invoke Task executor <https://www.pyinvoke.org/>`_ and the `Pixi Python Environment Manager <https://pixi.prefix.dev/>`_.
+This affects the installation and management steps and the Docker Image (much smaller!) plus Docker and Docker Compose deployment settings.
+Although using Pixi is preferred, a tradional "venv" install is still supported.
+
+The preferred Python version is 3.12, default in Ubuntu 24.04. These versions are also used
+in the Docker Image. As a consequence some packages have upgrades, Flask-script was removed.
+In a next version more packages will be upgraded.
+Higher Python versions like 3.13 may work, but are not guaranteed.
+
+See `closed issues for the related GitHub Milestone 0.10.0 <https://github.com/geopython/GeoHealthCheck/milestone/11?closed=1>`_.
+
+Specifics, for existing, pre 0.10.0, installations:
+
+* Docker Containers now run under a specific non-root user. This may give permission issues.
+* ``docker-compose.yml``: ``entrypoint`` now uses scripts directly like ``/app/docker/scripts/run-runner.sh`` i.s.o. ``/run-runner.sh``
+* When using SQLite in a Docker Named Volume you may need to re-init the DB if you get permission issues
+* Paver is replaced by Invoke and Pixi: see the updated README and docs for new maintenance commands
 
 Running
 -------
@@ -201,9 +261,9 @@ Start using Flask's built-in WSGI server:
 
 .. code-block:: bash
 
-  python GeoHealthCheck/app.py  # http://localhost:8000
-  python GeoHealthCheck/app.py 0.0.0.0:8881  # http://localhost:8881
-  python GeoHealthCheck/app.py 192.168.0.105:8957  # http://192.168.0.105:8957
+  python3 GeoHealthCheck/app.py  # http://localhost:8000
+  python3 GeoHealthCheck/app.py 0.0.0.0:8881  # http://localhost:8881
+  python3 GeoHealthCheck/app.py 192.168.0.105:8957  # http://192.168.0.105:8957
 
 
 This runs the (Flask) **GHC Webapp**, by default with the **GHC Runner** (scheduled healthchecker) internally.
@@ -214,10 +274,10 @@ From the command-line run both processes, e.g. in background or different termin
 .. code-block:: bash
 
   # run GHC Runner, here in background
-  python GeoHealthCheck/scheduler.py &
+  python3 GeoHealthCheck/scheduler.py &
 
   # run GHC Webapp for http://localhost:8000
-  python GeoHealthCheck/app.py
+  python3 GeoHealthCheck/app.py
 
 
 To enable in Apache, use ``GeoHealthCheck.wsgi`` and configure in Apache
@@ -278,12 +338,11 @@ See for example the `GHC Docker run.sh <https://github.com/geopython/GeoHealthCh
 script to run the GHC Webapp with `gunicorn` and the `GHC Runner run-runner.sh <https://github.com/geopython/GeoHealthCheck/blob/master/docker/scripts/run-runner.sh>`_ script
 to run the scheduled healthchecks.
 
-Use virtualenv
-..............
+Virtual Environment
+...................
 
-This is a general Python-recommendation. Save yourself from classpath and library hells by using `virtualenv`! Starting with python 3.3
-a `venv script <https://docs.python.org/3.3/library/venv.html>`_ is provided and from python 3.6 the `venv module <https://docs.python.org/3/library/venv.html>`_
-is included in the standard library.
+Use Virtual Environment! This is a general Python-recommendation. Save yourself from classpath and library hells by using Python's built-in `virtualenv`! Starting with python3 3.3
+a `venv script <https://docs.python.org/3.12/library/venv.html>`_ is provided in the standard library.
 
 Use SSL (HTTPS)
 ...............

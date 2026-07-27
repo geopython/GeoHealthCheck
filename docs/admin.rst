@@ -7,6 +7,19 @@ This chapter describes maintenance tasks for the administrator of a GHC instance
 There is a separate :ref:`userguide` that provides guidance to the end-user to
 configure the actual Resource healthchecks.
 
+Since v0.10.0, Invoke and Pixi can be used. Before Pixi commands, run `pixi shell -e prod` in the repo top level directory.
+Below the main commands (hint: type `pixi run --help` to see commands:
+
+.. code-block:: bash
+    
+    pixi run setup  or  invoke setup
+    pixi run create  or  invoke create
+    pixi run load-data  or  invoke load-data
+    pixi run drop-data  or  invoke drop-data
+    pixi run create-secret-key  or  invoke create-secret-key
+    pixi run run  or  python GeoHealthCheck/app.py
+    pixi run db-action  (pixi run db-action --help for tasks) or  invoke db-action
+
 Each of the sections below is geared at a specific administrative task area.
 
 Database
@@ -21,7 +34,8 @@ To create the database execute the following:
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python GeoHealthCheck/models.py create
+    invoke create -u <username>> -p <password> -e you@email.com
+
 
 drop db
 .......
@@ -30,7 +44,7 @@ To delete the database execute the following, however you will loose all your in
 
 Open a command line, (if needed activate your virtualenv), and do ::
 
-    python GeoHealthCheck/models.py drop
+    invoke drop-data
 
 Note: you need to create a Database again before you can start GHC again.
 
@@ -39,7 +53,7 @@ load data
 
 To load a JSON data file, do (WARN: deletes existing data!) ::
 
-    python GeoHealthCheck/models.py load <datafile.json> [y/n]
+    invoke load-data <datafile.json>
 
 Hint: see `tests/data` for example JSON data files.
 
@@ -78,7 +92,7 @@ within an interactive Python-shell as follows: ::
 	$ pip install passlib
 	# or in Debian/Ubuntu: apt-get install python-passlib
 
-	python
+	python3
 	>>> from passlib.hash import pbkdf2_sha256
 	>>>
 	>>> hash = pbkdf2_sha256.hash("mynewpassword")
@@ -93,10 +107,9 @@ Or more compact within the root dir of your GHC installation: ::
 	>>> create_hash('mynewpassword')
 	'$pbkdf2-sha256$29000$8X4PAUAIAcC4V2rNea9Vqg$XnMx1SfEiBzBAMOQOOC7uxCcyzVuKaHENLj3IfXvfu0'
 
-Or even more compact within the root dir of your GHC installation via Paver: ::
+Or even more compact within the root dir of your GHC installation via Invoke: ::
 
-	$ paver create_hash -p mypass
-	---> pavement.create_hash
+	$ invoke create-hash -p mypass
 	Copy/paste the entire token below for example to set password
 	$pbkdf2-sha256$29000$FkJoTYnxPqc0pjQG4HxP6Q$C3SZb8jqtM7zKS1DSLcouc/CL9XMI9cL5xT6DRTOEd4
 
@@ -110,5 +123,7 @@ Then copy-paste the hash-string into the `password`-field of the User-record in 
 Build Documentation
 -------------------
 
-Open a command line, (if needed activate your virtualenv) and move into the directory  ``GeoHealthCheck/doc/``.
-In there, type ``make html`` plus ENTER and the documentation should be built locally.
+Open a command line, (if needed activate your virtualenv or your `pixi` environment) and
+enter `invoke refresh_docs` or `pixi run docs`.
+Find the generated HTML docs under `docs/_build/html/index.html`.
+

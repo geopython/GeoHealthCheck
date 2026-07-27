@@ -58,11 +58,21 @@ instance
 tmp/
 GeoHealthCheck/static/docs
 GeoHealthCheck/static/lib
+!GeoHealthCheck/static/lib/jqueryui
+!GeoHealthCheck/static/lib/jspark
 GeoHealthCheck.wsgi
 GeoHealthCheck.conf
 
 # Data
 GeoHealthCheck/data.db
+data.db
 
 # MacOS artifacts
 .DS_Store
+
+# test report
+report.md
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml

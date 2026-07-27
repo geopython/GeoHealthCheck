@@ -1,0 +1,128 @@
+[project]
+name = "GeoHealthCheck"
+version = "0.10.0"
+description = "Monitor uptime and availability of OGC web services and REST APIs"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Just van den Broecke", email = "just@justobjects.nl" },
+    { name = "Tom Kralidis", email = "tomkralidis@gmail.com" },
+    { name = "Francesco Bartoli" },
+]
+
+# Complete runtime dependency set, readable by pip and Dependabot.
+# Hybrid sourcing: the native/geo libs listed here AND in
+# [tool.pixi.dependencies] (lxml, pyproj) come from conda-forge under pixi
+# for robust native builds, and from PyPI on the plain-pip path; pixi's
+# conda->pypi name mapping keeps them from being installed twice.
+# `invoke` is pixi-only tooling, so it lives solely in [tool.pixi.dependencies].
+dependencies = [
+    "astroid==2.15.8",
+    "Jinja2==3.0.3",
+    "markupsafe==2.0.1",
+    "Flask==1.1.1",
+    "Flask-Babel==0.12.2",
+    "Flask-Login==0.4.1",
+    "Flask-Migrate==4.1.0",
+    "SQLAlchemy==1.3.8",
+    "Flask-SQLAlchemy==2.4.0",
+    "itsdangerous==1.1.0",
+    "pyproj==3.7.2",
+    "lxml==6.1.1",
+    "OWSLib==0.36.0",
+    "jsonschema==4.26.0",
+    "openapi-spec-validator==0.9.0",
+    "psycopg2-binary",
+    "Sphinx==5.3.0",
+    "sphinx-rtd-theme==1.3.0",
+    "sphinx-autoapi",
+    "requests>=2.23.0",
+    "APScheduler==3.11.2",
+    "Werkzeug==0.16.1",
+    "libpass==1.9.3",
+    "pytz==2026.2",
+    "tzlocal",
+]
+
+[project.urls]
+Homepage = "https://geohealthcheck.org"
+Documentation = "https://docs.geohealthcheck.org"
+Repository = "https://github.com/geopython/GeoHealthCheck"
+
+[build-system]
+requires = ["setuptools", "pip", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*"]
+include = ["GeoHealthCheck*"]
+
+# Pixi workspace configuration (replaces pixi.toml)
+# No [build-system] on purpose: GeoHealthCheck runs from source
+# (via `invoke setup`), so pixi manages the environment but does not
+# install GHC itself as a package.
+
+[tool.pixi.workspace]
+name = "ghc"
+channels = ["conda-forge"]
+# multi-platform support for CI (ubuntu) and docker.
+platforms = ["osx-arm64", "linux-64", "linux-aarch64"]
+
+# Packages sourced from conda-forge under pixi: `python` plus the native/geo
+# libs (lxml, pyproj). The same names in [project.dependencies] are the PyPI
+# fallback for non-pixi installs. `invoke` is pixi-only admin tooling.
+[tool.pixi.dependencies]
+python = "3.12.*"
+invoke = "==3.0.3"
+lxml = "==6.1.1"
+pyproj = ">=2.6.1"
+
+[tool.pixi.tasks]
+# App bootstrap (config, JS assets, i18n, local docs, DB). Wraps `invoke setup`
+# so it runs in the activated env without `pixi shell`. In the default feature,
+# so it works for both dev and prod (README runs `invoke setup` for prod too).
+setup = "invoke setup"
+create = "invoke create"
+load-data = "invoke load-data"
+drop-data = "invoke drop-data"
+create-secret-key = "invoke create-secret-key"
+run = "python GeoHealthCheck/app.py"
+docs = "invoke refresh-docs"
+clean = "invoke clean"
+runner-daemon = "invoke runner-daemon"
+db-action = "invoke db-action"
+run-healthchecks = "invoke run-healthchecks"
+run-tests = "invoke run-tests"
+
+[tool.pixi.feature.dev.dependencies]
+flake8 = "==5.0.4"
+pytest = "*"
+pytest-md = "*"
+pytest-asyncio = "*"
+
+[tool.pixi.feature.dev.tasks]
+test = "pytest --md=report.md"
+
+# Production WSGI server (used by the Docker image via gunicorn's gevent
+# worker). Sourced from conda-forge; formerly apt python3-gunicorn/gevent.
+[tool.pixi.feature.server.dependencies]
+gunicorn = "==26.0.0"
+gevent = "==26.5.0"
+
+[tool.pixi.environments]
+# dev and prod share exactly the same versions for shared dependencies.
+# prod includes the production WSGI server (gunicorn/gevent) for Docker.
+dev = { features = ["dev"], solve-group = "prod-group" }
+prod = { features = ["server"], solve-group = "prod-group" }
+
+# pytest needs GeoHealthCheck/ on the import path: the test modules import
+# top-level packages (models, init, ...) that live there. This mirrors the
+# sys.path setup in tests/run_tests.py (the entry point used by CI).
+# Note: the `test` task still requires the app to be bootstrapped first
+# (`invoke setup` creates instance/config_site.py and the DB), same as CI.
+[tool.pytest.ini_options]
+pythonpath = ["GeoHealthCheck", "GeoHealthCheck/.."]
+testpaths = ["tests"]

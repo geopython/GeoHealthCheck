@@ -35,7 +35,7 @@ sys.path.insert(0, os.path.abspath('../GeoHealthCheck'))
 extensions = ['autoapi.extension', 'sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.viewcode', 'sphinx_rtd_theme']
 
 autoapi_dirs = ['../GeoHealthCheck/']
-
+autoapi_ignore = ['*.pixi*', '*docker*', '*migrations*', '*instance*', '*tests*']
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

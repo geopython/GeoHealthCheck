@@ -3,29 +3,36 @@
 [![Full Documentation](https://img.shields.io/badge/ReadTheDocs-online-green.svg)](https://docs.geohealthcheck.org)
 [![Gitter](https://img.shields.io/gitter/room/geopython/GeoHealthCheck.svg?style=flat-square)](https://gitter.im/geopython/GeoHealthCheck)
 
-GeoHealthCheck
-==============
+# GeoHealthCheck
 
 GeoHealthCheck (GHC) is a Service Status and QoS Checker for OGC Web Services and web APIs in general. 
 See also the [full GHC documentation](http://docs.geohealthcheck.org/). 
 
 Easiest is [to run GHC using Docker](https://github.com/geopython/GeoHealthCheck/blob/master/docker/README.md).
-Below a quick overview of a manual install on Unix-based systems like Apple MacOS and Linux.
+
+## Standard Install
+
+Below an overview of an installation on Unix-based systems like Apple MacOS and Linux with just plain Python. 
+NB works with Python 3.12.*, other Python versions need tweaking [pyproject.toml](pyproject.toml).
 
 ```bash
-virtualenv GeoHealthCheck && cd $_
+
+python -m venv ghc && cd ghc
 . bin/activate
 git clone https://github.com/geopython/GeoHealthCheck.git
 cd GeoHealthCheck
-pip install Paver
+pip install --no-cache-dir -U pip setuptools wheel Invoke
+pip install --no-cache-dir -e . 
+
 # setup installation
-paver setup
+invoke setup
 # generate secret key
-paver create_secret_key
+invoke create-secret-key
 # setup local configuration (overrides GeoHealthCheck/config_main.py)
 vi instance/config_site.py
 # edit at least secret key:
-# - SECRET_KEY  # copy/paste result string from paver create_secret_key
+# - SECRET_KEY  # copy/paste result string from `invoke create-secret-key`
+# - SQLALCHEMY_DATABASE_URI = 'sqlite:///../instance/data.db' - put in instance dir
 
 # Optional: edit other settings or leave defaults
 # - SQLALCHEMY_DATABASE_URI
@@ -37,7 +44,7 @@ vi instance/config_site.py
 # - GHC_MAP (or use default settings)
 
 # setup database and superuser account interactively 
-paver create
+invoke create -u admin -p admin -e a@a.com
 
 # start webserver with healthcheck runner daemon inside 
 # (default is 0.0.0.0:8000)
@@ -65,5 +72,61 @@ python GeoHealthCheck/models.py drop
 python GeoHealthCheck/models.py load <.json data file> [y/n]
 
 ```
+
+## Install with Pixi
+
+[Pixi](https://pixi.sh) manages the environment; tasks run via `pixi run`,
+so no shell activation is needed.
+
+```bash
+
+git clone https://github.com/geopython/GeoHealthCheck.git
+cd GeoHealthCheck
+
+# Install production environment
+pixi install -e prod
+
+# bootstrap the app (config, static assets, i18n, local docs, DB)
+pixi run -e prod setup
+
+# generate secret key
+pixi run -e prod create-secret-key
+# setup local configuration (overrides GeoHealthCheck/config_main.py)
+vi instance/config_site.py
+# edit at least secret key:
+# - SECRET_KEY  # copy/paste result string from the command above
+
+# Optional: edit other settings or leave defaults (see above)
+
+# setup superuser account password and email directly
+pixi run -e prod create --username admin --password admin --email a@a.com
+
+# or shorter
+pixi run -e prod create -u admin -p admin --e a@a.com
+
+# run locally
+pixi run -e prod run
+ 
+# open http://localhost:8000 in browser
+
+```
+
+### Development and tests
+
+```bash
+
+# install the dev environment (adds flake8, pytest, ...)
+pixi install -e dev
+
+# bootstrap once, needed before the tests can run
+pixi run -e dev setup
+
+# run the unit tests
+pixi run -e dev test
+```
+
+Prefer an interactive shell? `pixi shell -e prod` (or `-e dev`) activates the
+environment, after which `invoke ...` and `python ...` work directly.
+
 
 More in the [full GHC documentation](http://docs.geohealthcheck.org/).

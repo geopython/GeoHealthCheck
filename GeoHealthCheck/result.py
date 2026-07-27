@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timezone
 
 
 class Result(object):
@@ -36,10 +36,10 @@ class Result(object):
         self.message = message
 
     def start(self):
-        self.start_time = datetime.datetime.utcnow()
+        self.start_time = datetime.now(timezone.utc)
 
     def stop(self):
-        self.end_time = datetime.datetime.utcnow()
+        self.end_time = datetime.now(timezone.utc)
 
         delta = self.end_time - self.start_time
         self.response_time_secs = delta.seconds
