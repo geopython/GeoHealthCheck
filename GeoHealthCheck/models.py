@@ -56,7 +56,8 @@ def flush_runs():
     all_runs = Run.query.all()
     run_count = 0
     for run in all_runs:
-        days_old = (datetime.now(timezone.utc) - run.checked_datetime).days
+        days_old = (datetime.now(timezone.utc) -
+                    run.checked_datetime.replace(tzinfo=timezone.utc)).days
         if days_old > retention_days:
             run_count += 1
             DB.session.delete(run)

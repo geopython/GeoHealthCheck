@@ -191,6 +191,15 @@ def drop_data(c):
 
 
 @task
+def flush_runs(c):
+    """delete Runs older than retention time from database"""
+
+    models_py = Path('GeoHealthCheck/models.py')
+
+    c.run(f'python {models_py} flush')
+
+
+@task
 def create_hash(c, password):
     """Create hash, mainly for passwords"""
 
