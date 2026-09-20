@@ -30,9 +30,10 @@
 
 import unittest
 import os
+from datetime import timedelta
 
 from init import App
-from models import (DB, Resource, Run, load_data, Recipient)
+from models import (DB, Resource, Run, load_data, flush_runs, Recipient)
 from healthcheck import run_test_resource
 from notifications import _parse_webhook_location
 from resourceauth import ResourceAuth
@@ -88,6 +89,43 @@ class GeoHealthCheckTest(unittest.TestCase):
                 resource.runs[0].success, True,
                 'Run should be success for %s report=%s' %
                 (resource.url, str(resource.runs[0])))
+
+    def testFlushRuns(self):
+        # Do the one healthcheck for one Resource.
+        resource = Resource.query.first()
+        result = run_test_resource(resource)
+        print('resource: %s result=%s' % (resource.url, result.success))
+        run = Run(resource, result)
+
+        print('Adding Run: success=%s, response_time=%ss\n'
+              % (str(run.success), run.response_time))
+        self.db.session.add(run)
+        self.db.session.commit()
+        self.db.session.close()
+
+        flush_runs()
+
+        # Verify
+        resource = Resource.query.first()
+        # Resource should have one recent Run
+        self.assertEqual(
+            resource.runs.count(), 1,
+            'RunCount should be 1 for %s' % resource.url)
+
+        run = resource.runs.first()
+
+        # Outdate the Run
+        run.checked_datetime = run.checked_datetime - timedelta(days=365)
+        self.db.session.add(run)
+        self.db.session.commit()
+        self.db.session.close()
+        flush_runs()
+        # Verify
+        resource = Resource.query.first()
+        # Resource should have one recent Run
+        self.assertEqual(
+            resource.runs.count(), 0,
+            'RunCount should be 0 for %s' % resource.url)
 
     def testNotificationsApi(self):
         Rcp = Recipient
@@ -157,7 +195,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             'data': {
                 'username': 'the_user',
                 'password': 'the_password'
-             }
+            }
         }
 
         resource.auth = auth_dict
@@ -172,7 +210,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             'type': 'Bearer Token',
             'data': {
                 'token': 'a8KeTFOceitnRWT3M2rt'
-             }
+            }
         }
 
         resource.auth = auth_dict
@@ -204,7 +242,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             'data': {
                 'username': 'the_user',
                 'password': 'the_password'
-             }
+            }
         }
 
         auth_obj = ResourceAuth.create(auth_dict)
@@ -223,7 +261,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             'data': {
                 'username': '',
                 'password': ''
-             }
+            }
         }
         auth_obj = ResourceAuth.create(auth_dict)
         self.assertEqual(auth_obj.verify(), False)
@@ -233,7 +271,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             'data': {
                 'username': None,
                 'password': None
-             }
+            }
         }
         auth_obj = ResourceAuth.create(auth_dict)
         self.assertEqual(auth_obj.verify(), False)
@@ -243,7 +281,7 @@ class GeoHealthCheckTest(unittest.TestCase):
             'type': 'Bearer Token',
             'data': {
                 'token': 'a8KeTFOceitnRWT3M2rt'
-             }
+            }
         }
 
         auth_obj = ResourceAuth.create(auth_dict)
