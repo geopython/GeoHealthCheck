@@ -1,0 +1,18 @@
+---
+{{- if .Values.persistence.enabled }}
+apiVersion: 'v1'
+kind: 'PersistentVolumeClaim'
+metadata:
+  name: {{ include "geohealthcheck.fullname" . | squote }}
+  labels:
+    {{- include "geohealthcheck.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - 'ReadWriteOnce'
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | squote }}
+  {{- if .Values.persistence.storageClassName }}
+  storageClassName: {{ .Values.persistence.storageClassName | squote }}
+  {{- end }}
+{{- end }}

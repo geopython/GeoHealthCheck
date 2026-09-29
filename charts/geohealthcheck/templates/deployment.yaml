@@ -1,0 +1,113 @@
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+metadata:
+  name: {{ include "geohealthcheck.fullname" . | squote }}
+  labels:
+    {{- include "geohealthcheck.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "geohealthcheck.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: 'Recreate'
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "geohealthcheck.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "geohealthcheck.serviceAccountName" . | squote }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: update-ca-certificates
+          image: '{{ .Values.initContainer.repository }}:{{ .Values.initContainer.tag }}'
+          command: ['sh', '-c', 'apt-get update && apt-get install -y ca-certificates && update-ca-certificates -v']
+          resources:
+            {{- toYaml .Values.initContainer.resources | nindent 12 }}
+          volumeMounts:
+            - name: 'custom-ca-cert'
+              mountPath: '/usr/local/share/ca-certificates'
+            - name: 'ca-bundle'
+              mountPath: '/etc/ssl/certs'
+      containers:
+        - name: {{ .Chart.Name | squote }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}'
+          imagePullPolicy: {{ .Values.image.pullPolicy | squote }}
+          ports:
+            - name: 'http'
+              containerPort: {{ include "geohealthcheck.containerPort" . }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ printf "%s-secrets" (include "geohealthcheck.fullname" .) | squote }}
+            {{- range .Values.geohealthcheck.additionalEnvSecrets }}
+            - secretRef:
+                name: {{ . | squote }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-variables" (include "geohealthcheck.fullname" .) | squote }}
+            {{- range .Values.geohealthcheck.additionalConfigMaps }}
+            - configMapRef:
+                name: {{ . | squote }}
+            {{- end }}
+          volumeMounts:
+            - name: 'custom-ca-cert'
+              mountPath: '/usr/local/share/ca-certificates'
+            - name: 'ca-bundle'
+              mountPath: '/etc/ssl/certs'
+            - name: data
+              mountPath: /data
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: custom-ca-cert
+          configMap:
+            name: {{ printf "%s-certificates" (include "geohealthcheck.fullname" .) | squote }}
+        - name: ca-bundle
+          emptyDir: {}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "geohealthcheck.fullname" . | squote }}
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.geohealthcheck.additionalEnv }}
+      env:
+        {{- range $key, $value := .Values.geohealthcheck.additionalEnv }}
+        - name: {{ $key | squote }}
+          value: {{ $value | squote }}
+        {{- end }}  
+      {{- end }}
