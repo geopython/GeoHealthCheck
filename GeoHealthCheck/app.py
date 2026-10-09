@@ -767,7 +767,10 @@ def edit_resource(resource_identifier):
         flash(gettext('Resource not found'), 'danger')
         return redirect(request.referrer)
 
-    probes_avail = views.get_probes_avail(resource.resource_type, resource)
+    # Editing must remain possible when the monitored service is unavailable.
+    # Probe expansion can make live GetCapabilities requests.
+    probes_avail = views.get_probes_avail(resource.resource_type, resource,
+                                         expand_params=False)
 
     suggestions = json.dumps(Recipient.get_suggestions('email',
                                                        g.user.username))

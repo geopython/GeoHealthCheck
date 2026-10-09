@@ -41,5 +41,8 @@ sys.path.append(GHC_DIR)
 # Shorthand to run all test scripts in tests dir.
 # TODO use nose or more intelligent test_*.py discovery
 if __name__ == '__main__':
-    unittest.main(module='test_plugins', exit=False)
-    unittest.main(module='test_resources')
+    results = [
+        unittest.main(module=module, exit=False).result
+        for module in ('test_plugins', 'test_resources', 'test_edit_offline')
+    ]
+    sys.exit(0 if all(result.wasSuccessful() for result in results) else 1)

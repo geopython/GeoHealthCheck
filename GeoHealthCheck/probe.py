@@ -90,6 +90,9 @@ class Probe(Plugin):
 
     def __init__(self):
         Plugin.__init__(self)
+        # expand_params() modifies these definitions for a Resource. Keep
+        # choices from one Resource out of other requests and edit forms.
+        self.PARAM_DEFS = Plugin.copy(self.PARAM_DEFS)
         self._resource = None
         self._session = create_requests_retry_session()
 
