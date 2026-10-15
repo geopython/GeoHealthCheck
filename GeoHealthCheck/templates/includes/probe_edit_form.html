@@ -28,8 +28,8 @@
                                         {% set probe_param_type = 'list'  %}
                                         {% set probe_param_val = probe_param_val|join(',') %}
                                      {% endif %}
-                                     <!-- parameters: use select box when range defined, else regular input box -->
-                                     {% if probe_param_range %}
+                                     <!-- Keep a saved value editable when it is absent from static choices. -->
+                                     {% if probe_param_range and (not probe_param_val or probe_param_val in probe_param_range) %}
                                      <select class="form-control" data-probe-param="{{ param }}" data-probe-param-type="{{ probe_param_type }}">
                                          <!-- select box for range: select value if defined else use default value if defined -->
                                          {% for probe_param_range_val in probe_param_range %}
