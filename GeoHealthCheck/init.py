@@ -30,7 +30,7 @@
 import os
 import sys
 import logging
-from flask import Flask
+from flask import Flask, g, request 
 from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 
@@ -48,6 +48,13 @@ def to_list(obj):
     else:
         raise TypeError('unknown type for Plugin: %s' + str(obj_type))
 
+
+
+def get_locale_selector():
+    lang_from_url = request.args.get('lang')
+    if lang_from_url:
+        return lang_from_url
+    return g.get('current_lang', 'en')
 
 class App:
     """
@@ -90,7 +97,7 @@ class App:
                                  }
         App.db_instance = SQLAlchemy(app,
                                      engine_options=SQLALCHEMY_ENGINE_OPTIONS)
-        App.babel_instance = Babel(app)
+        App.babel_instance = Babel(app, locale_selector=get_locale_selector)
 
         # Plugins (via Docker ENV) must be list, but may have been
         # specified as comma-separated string, or older set notation

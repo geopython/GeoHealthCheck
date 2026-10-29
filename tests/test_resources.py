@@ -46,6 +46,10 @@ class GeoHealthCheckTest(unittest.TestCase):
         # Need this for Resource Auth
         App.get_config()['SECRET_KEY'] = 'mysecrettestkey'
 
+        self.app = App.get_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+
         self.db = DB
         # do once per test
         load_data('%s/data/fixtures.json' % TEST_DIR)
@@ -57,6 +61,8 @@ class GeoHealthCheckTest(unittest.TestCase):
         self.db.drop_all()
         self.db.session.commit()
         self.db.session.close()
+
+        self.app_context.pop()
 
     def testResourcesPresent(self):
         resources = Resource.query.all()

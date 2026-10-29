@@ -181,7 +181,7 @@ class Plugin(object):
                             and baseclass != class_obj:
                         add_result(plugin_name, class_obj)
                 except Exception:
-                    LOGGER.warn('cannot create obj class=%s' % plugin_name)
+                    LOGGER.warning('cannot create obj class=%s' % plugin_name)
 
         return result
 

@@ -31,8 +31,8 @@
 import json
 import logging
 from datetime import datetime, timedelta, timezone
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from sqlalchemy import func, and_
+from itsdangerous import URLSafeTimedSerializer as Serializer
+from sqlalchemy import func, and_, text
 
 from sqlalchemy.orm import deferred
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -51,20 +51,21 @@ LOGGER = logging.getLogger(__name__)
 
 # Complete handle of old runs deletion
 def flush_runs():
-    retention_days = int(APP.config['GHC_RETENTION_DAYS'])
-    LOGGER.info('Flushing runs older than %d days' % retention_days)
-    all_runs = Run.query.all()
-    run_count = 0
-    for run in all_runs:
-        days_old = (datetime.now(timezone.utc) -
+    with APP.app_context():
+        retention_days = int(APP.config['GHC_RETENTION_DAYS'])
+        LOGGER.info('Flushing runs older than %d days' % retention_days)
+        all_runs = Run.query.all()
+        run_count = 0
+        for run in all_runs:
+            days_old = (datetime.now(timezone.utc) -
                     run.checked_datetime.replace(tzinfo=timezone.utc)).days
-        if days_old > retention_days:
-            run_count += 1
-            DB.session.delete(run)
-    db_commit()
-    LOGGER.info('Deleted %d Runs' % run_count)
+            if days_old > retention_days:
+                run_count += 1
+                DB.session.delete(run)
+        db_commit()
+        LOGGER.info('Deleted %d Runs' % run_count)
 
-    DB.session.remove()
+        DB.session.remove()
 
 
 class Run(DB.Model):
@@ -372,8 +373,8 @@ class ResourceNotification(DB.Model):
     recipient_id = DB.Column(DB.Integer,
                              DB.ForeignKey('recipient.id'),
                              primary_key=True)
-    resource = DB.relationship('Resource', lazy=False)
-    recipient = DB.relationship('Recipient', lazy=False)
+    resource = DB.relationship('Resource', lazy=False, overlaps="recipients,resources")
+    recipient = DB.relationship('Recipient', lazy=False, overlaps="recipients,resources")
 
 
 class Resource(DB.Model):
@@ -726,9 +727,9 @@ class User(DB.Model):
         # https://passlib.readthedocs.io/en/stable/narr/hash-tutorial.html
         return util.create_hash(string)
 
-    def get_token(self, expiration=7200):
-        s = Serializer(APP.config['SECRET_KEY'], expiration)
-        return s.dumps({'user': self.get_id()}).decode('utf-8')
+    def get_token(self):
+        s = Serializer(APP.config['SECRET_KEY'])
+        return s.dumps({'user': self.get_id()})
 
     def is_authenticated(self):
         return True
@@ -746,10 +747,10 @@ class User(DB.Model):
         self.password = self.encrypt(password)
 
     @staticmethod
-    def verify_token(token):
+    def verify_token(token, expiration=7200):
         s = Serializer(APP.config['SECRET_KEY'])
         try:
-            data = s.loads(token)
+            data = s.loads(token, max_age = expiration)
         except Exception:
             return None
         user_id = data.get('user')
@@ -789,13 +790,13 @@ def get_runs_status_count(success=True):
 def get_first_run():
     """return last Run"""
     return DB.session.query(Run).filter(
-        Run.identifier == DB.session.query(func.min(Run.identifier))).first()
+        Run.identifier == DB.session.query(func.min(Run.identifier)).scalar_subquery()).first()
 
 
 def get_last_run():
     """return last Run"""
     return DB.session.query(Run).filter(
-        Run.identifier == DB.session.query(func.max(Run.identifier))).first()
+        Run.identifier == DB.session.query(func.max(Run.identifier)).scalar_subquery()).first()
 
 
 def get_last_run_per_resource():
@@ -818,7 +819,7 @@ def get_last_run_per_resource():
 
     # Use raw query on SQLAlchemy, as the programmatic buildup
     # would be overly complex, if even possible.
-    last_runs = DB.session.execute(sql)
+    last_runs = DB.session.execute(text(sql))
     return last_runs
 
 
@@ -832,80 +833,83 @@ def get_tag_counts():
 
 
 def load_data(file_path):
-    # Beware!
-    DB.drop_all()
-    db_commit()
+    flask_app = App.get_app()
 
-    DB.create_all()
+    with flask_app.app_context():
+        # Beware!
+        DB.drop_all()
+        db_commit()
 
-    with open(file_path) as ff:
-        objects = json.load(ff)
+        DB.create_all()
 
-    # add users, keeping track of DB objects
-    users = {}
-    for user_name in objects['users']:
-        user = objects['users'][user_name]
-        user = User(user['username'],
-                    user['password'],
-                    user['email'],
-                    user['role'])
-        users[user_name] = user
-        DB.session.add(user)
+        with open(file_path) as ff:
+            objects = json.load(ff)
 
-    # add tags, keeping track of DB objects
-    tags = {}
-    for tag_str in objects['tags']:
-        tag = objects['tags'][tag_str]
+        # add users, keeping track of DB objects
+        users = {}
+        for user_name in objects['users']:
+            user = objects['users'][user_name]
+            user = User(user['username'],
+                        user['password'],
+                        user['email'],
+                        user['role'])
+            users[user_name] = user
+            DB.session.add(user)
 
-        tag = Tag(tag)
-        tags[tag_str] = tag
-        DB.session.add(tag)
+        # add tags, keeping track of DB objects
+        tags = {}
+        for tag_str in objects['tags']:
+            tag = objects['tags'][tag_str]
 
-    # add Resources, keeping track of DB objects
-    resources = {}
-    for resource_name in objects['resources']:
-        resource = objects['resources'][resource_name]
+            tag = Tag(tag)
+            tags[tag_str] = tag
+            DB.session.add(tag)
 
-        resource_tags = []
-        for tag_str in resource['tags']:
-            resource_tags.append(tags[tag_str])
+        # add Resources, keeping track of DB objects
+        resources = {}
+        for resource_name in objects['resources']:
+            resource = objects['resources'][resource_name]
 
-        resource = Resource(users[resource['owner']],
-                            resource['resource_type'],
-                            resource['title'],
-                            resource['url'],
-                            resource_tags)
+            resource_tags = []
+            for tag_str in resource['tags']:
+                resource_tags.append(tags[tag_str])
 
-        resources[resource_name] = resource
-        DB.session.add(resource)
+            resource = Resource(users[resource['owner']],
+                                resource['resource_type'],
+                                resource['title'],
+                                resource['url'],
+                                resource_tags)
 
-    # add Probes, keeping track of DB objects
-    probes = {}
-    for probe_name in objects['probe_vars']:
-        probe = objects['probe_vars'][probe_name]
+            resources[resource_name] = resource
+            DB.session.add(resource)
 
-        probe = ProbeVars(resources[probe['resource']],
-                          probe['probe_class'],
-                          probe['parameters'],
-                          )
+        # add Probes, keeping track of DB objects
+        probes = {}
+        for probe_name in objects['probe_vars']:
+            probe = objects['probe_vars'][probe_name]
 
-        probes[probe_name] = probe
-        DB.session.add(probe)
+            probe = ProbeVars(resources[probe['resource']],
+                            probe['probe_class'],
+                            probe['parameters'],
+                            )
 
-    # add Checks, keeping track of DB objects
-    checks = {}
-    for check_name in objects['check_vars']:
-        check = objects['check_vars'][check_name]
+            probes[probe_name] = probe
+            DB.session.add(probe)
 
-        check = CheckVars(probes[check['probe_vars']],
-                          check['check_class'],
-                          check['parameters'],
-                          )
+        # add Checks, keeping track of DB objects
+        checks = {}
+        for check_name in objects['check_vars']:
+            check = objects['check_vars'][check_name]
 
-        checks[check_name] = check
-        DB.session.add(check)
+            check = CheckVars(probes[check['probe_vars']],
+                            check['check_class'],
+                            check['parameters'],
+                            )
 
-    db_commit()
+            checks[check_name] = check
+            DB.session.add(check)
+
+        db_commit()
 
 
 # commit or rollback shorthand
@@ -923,61 +927,62 @@ if __name__ == '__main__':
 
     APP = App.get_app()
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] == 'create':
-            print('Creating database objects')
-            DB.create_all()
+    with APP.app_context():
+        if len(sys.argv) > 1:
+            if sys.argv[1] == 'create':
+                print('Creating database objects')
+                DB.create_all()
 
-            print('Creating superuser account')
-            if len(sys.argv) == 5:  # username/password/email sent
-                username = sys.argv[2]
-                password1 = sys.argv[3]
-                email1 = sys.argv[4]
-            else:
-                username = input('Enter your username: ').strip()
-                password1 = input('Enter your password: ').strip()
-                password2 = input('Enter your password again: ').strip()
-                if password1 != password2:
-                    raise ValueError('Passwords must match')
-                email1 = input('Enter your email: ').strip()
-                email2 = input('Enter your email again: ').strip()
-                if email1 != email2:
-                    raise ValueError('Emails must match')
-
-            user_to_add = User(username, password1, email1, role='admin')
-            DB.session.add(user_to_add)
-            db_commit()
-        elif sys.argv[1] == 'drop':
-            print('Dropping database objects')
-            DB.drop_all()
-            db_commit()
-        elif sys.argv[1] == 'load':
-            print('Load database from JSON file (e.g. tests/fixtures.json)')
-            if len(sys.argv) > 2:
-                file_path = sys.argv[2]
-                yesno = 'n'
-                if len(sys.argv) == 3:
-                    print('WARNING: all DB data will be lost! Proceed?')
-                    yesno = input(
-                        'Enter y (proceed) or n (abort): ').strip()
-                elif len(sys.argv) == 4:
-                    yesno = sys.argv[3]
+                print('Creating superuser account')
+                if len(sys.argv) == 5:  # username/password/email sent
+                    username = sys.argv[2]
+                    password1 = sys.argv[3]
+                    email1 = sys.argv[4]
                 else:
-                    sys.exit(0)
+                    username = input('Enter your username: ').strip()
+                    password1 = input('Enter your password: ').strip()
+                    password2 = input('Enter your password again: ').strip()
+                    if password1 != password2:
+                        raise ValueError('Passwords must match')
+                    email1 = input('Enter your email: ').strip()
+                    email2 = input('Enter your email again: ').strip()
+                    if email1 != email2:
+                        raise ValueError('Emails must match')
 
-                if yesno == 'y':
-                    print('Loading data....')
-                    load_data(file_path)
-                    print('Data loaded')
+                user_to_add = User(username, password1, email1, role='admin')
+                DB.session.add(user_to_add)
+                db_commit()
+            elif sys.argv[1] == 'drop':
+                print('Dropping database objects')
+                DB.drop_all()
+                db_commit()
+            elif sys.argv[1] == 'load':
+                print('Load database from JSON file (e.g. tests/fixtures.json)')
+                if len(sys.argv) > 2:
+                    file_path = sys.argv[2]
+                    yesno = 'n'
+                    if len(sys.argv) == 3:
+                        print('WARNING: all DB data will be lost! Proceed?')
+                        yesno = input(
+                            'Enter y (proceed) or n (abort): ').strip()
+                    elif len(sys.argv) == 4:
+                        yesno = sys.argv[3]
+                    else:
+                        sys.exit(0)
+
+                    if yesno == 'y':
+                        print('Loading data....')
+                        load_data(file_path)
+                        print('Data loaded')
+                    else:
+                        print('Aborted')
                 else:
-                    print('Aborted')
-            else:
-                print('Provide path to JSON file, e.g. tests/fixtures.json')
+                    print('Provide path to JSON file, e.g. tests/fixtures.json')
 
-        elif sys.argv[1] == 'run':
-            print('NOTICE: models.py no longer here.')
-            print('Use: python3 healthcheck.py or upcoming cli.py')
-        elif sys.argv[1] == 'flush':
-            flush_runs()
+            elif sys.argv[1] == 'run':
+                print('NOTICE: models.py no longer here.')
+                print('Use: python3 healthcheck.py or upcoming cli.py')
+            elif sys.argv[1] == 'flush':
+                flush_runs()
 
-        DB.session.remove()
+            DB.session.remove()

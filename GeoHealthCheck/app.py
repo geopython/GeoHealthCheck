@@ -133,15 +133,9 @@ def shutdown_session(exception=None):
     DB.session.remove()
 
 
-@BABEL.localeselector
-def get_locale():
-    return g.get('current_lang', 'en')
-    # return request.accept_languages.best_match(LANGUAGES.keys())
-
-
 @LOGIN_MANAGER.user_loader
 def load_user(identifier):
-    return User.query.get(int(identifier))
+    return DB.session.get(User, int(identifier))
 
 
 @LOGIN_MANAGER.unauthorized_handler
@@ -919,7 +913,7 @@ def reset_req():
     email = request.form['email']
     registered_user = User.query.filter_by(email=email).first()
     if registered_user is None:
-        LOGGER.warn('Invalid email for reset_req: %s' % email)
+        LOGGER.warning('Invalid email for reset_req: %s' % email)
         flash(gettext('Invalid email'), 'danger')
         return redirect(url_for('reset_req', lang=g.current_lang))
 
@@ -952,7 +946,7 @@ def reset_req():
         send_email(CONFIG['GHC_SMTP'], from_addr, to_addr, msg_text)
     except Exception as err:
         msg = 'Cannot send email. Contact admin: '
-        LOGGER.warn(msg + ' err=' + str(err))
+        LOGGER.warning(msg + ' err=' + str(err))
         flash(gettext(msg) + CONFIG['GHC_ADMIN_EMAIL'], 'danger')
         return redirect(url_for('login', lang=g.current_lang))
 
@@ -977,7 +971,7 @@ def reset(token=None):
     # Token received: verify if ok, may also time-out.
     registered_user = User.verify_token(token)
     if registered_user is None:
-        LOGGER.warn('Cannot find User from token: %s' % token)
+        LOGGER.warning('Cannot find User from token: %s' % token)
         flash(gettext('Invalid token'), 'danger')
         return redirect(url_for('login', lang=g.current_lang))
 
@@ -998,7 +992,7 @@ def reset(token=None):
         flash(gettext('Update password OK'), 'success')
     except Exception as err:
         msg = 'Update password failed!'
-        LOGGER.warn(msg + ' err=' + str(err))
+        LOGGER.warning(msg + ' err=' + str(err))
         DB.session.rollback()
         flash(gettext(msg), 'danger')
 

@@ -87,75 +87,76 @@ def run_job(resource_id, frequency):
     """
     # Generate unique id
     # https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits-in-python
-    uuid = '%d-%s' % (os.getpid(), ''.join(random.choice(
-        string.ascii_uppercase + string.digits) for _ in range(8)))
+    with App.get_app().app_context():
+        uuid = '%d-%s' % (os.getpid(), ''.join(random.choice(
+            string.ascii_uppercase + string.digits) for _ in range(8)))
 
-    resource = Resource.query.filter_by(identifier=resource_id).first()
+        resource = Resource.query.filter_by(identifier=resource_id).first()
 
-    # Resource may have been deleted, cancel job
-    if not resource:
-        stop_job(resource_id)
-        return
-
-    # Resource exists: try to obtain our Resource Lock record.
-    lock = ResourceLock.query.filter_by(identifier=resource_id).first()
-
-    if not lock:
-        # No lock at all on Resource: (hope) we're first
-        # obtain fresh lock, back-off if failed
-        LOGGER.info('%d No Lock at all: obtain new' % resource_id)
-
-        lock = ResourceLock(resource, uuid, frequency)
-        DB.session.add(lock)
-        lock_err = db_commit()
-        if lock_err:
-            # Another process may have been there first!
-            LOGGER.info('%d Error obtaining Lock %s' %
-                        (resource_id, str(lock_err)))
+        # Resource may have been deleted, cancel job
+        if not resource:
+            stop_job(resource_id)
             return
-    else:
-        # Lock record found for Resource: check if available for our UUID.
-        LOGGER.info('%d Lock present: try obtaining..' % resource_id)
-        if not lock.obtain(uuid, frequency):
-            LOGGER.info('%d Cannot obtain lock' % resource_id)
-            return
-        else:
-            LOGGER.info('%d Lock obtained, delete and renew' % resource_id)
-            DB.session.delete(lock)
-            lock_err = db_commit()
-            if lock_err:
-                # Another process may have been there first!
-                LOGGER.info('%d Lock Delete failed' % resource_id)
-                return
 
-            LOGGER.info('%d Lock deleted, add new' % resource_id)
-            # (hope) we're first
+        # Resource exists: try to obtain our Resource Lock record.
+        lock = ResourceLock.query.filter_by(identifier=resource_id).first()
+
+        if not lock:
+            # No lock at all on Resource: (hope) we're first
             # obtain fresh lock, back-off if failed
+            LOGGER.info('%d No Lock at all: obtain new' % resource_id)
+
             lock = ResourceLock(resource, uuid, frequency)
             DB.session.add(lock)
             lock_err = db_commit()
             if lock_err:
                 # Another process may have been there first!
-                LOGGER.info('%d Lock Add failed' % resource_id)
+                LOGGER.info('%d Error obtaining Lock %s' %
+                            (resource_id, str(lock_err)))
                 return
-
-            # Check if we really own the lock
-            LOGGER.info('%d Lock Add OK' % resource_id)
-            lock = ResourceLock.query.filter_by(
-                identifier=resource_id).first()
-
-            if lock.owner != uuid:
-                LOGGER.info('%d Lock Add OK, not owner: back-off'
-                            % resource_id)
+        else:
+            # Lock record found for Resource: check if available for our UUID.
+            LOGGER.info('%d Lock present: try obtaining..' % resource_id)
+            if not lock.obtain(uuid, frequency):
+                LOGGER.info('%d Cannot obtain lock' % resource_id)
                 return
+            else:
+                LOGGER.info('%d Lock obtained, delete and renew' % resource_id)
+                DB.session.delete(lock)
+                lock_err = db_commit()
+                if lock_err:
+                    # Another process may have been there first!
+                    LOGGER.info('%d Lock Delete failed' % resource_id)
+                    return
 
-    # Run Resource healthchecks only if we have lock.
-    if lock:
-        try:
-            run_resource(resource_id)
-            LOGGER.info('%d run_resource OK' % resource_id)
-        finally:
-            pass
+                LOGGER.info('%d Lock deleted, add new' % resource_id)
+                # (hope) we're first
+                # obtain fresh lock, back-off if failed
+                lock = ResourceLock(resource, uuid, frequency)
+                DB.session.add(lock)
+                lock_err = db_commit()
+                if lock_err:
+                    # Another process may have been there first!
+                    LOGGER.info('%d Lock Add failed' % resource_id)
+                    return
+
+                # Check if we really own the lock
+                LOGGER.info('%d Lock Add OK' % resource_id)
+                lock = ResourceLock.query.filter_by(
+                    identifier=resource_id).first()
+
+                if lock.owner != uuid:
+                    LOGGER.info('%d Lock Add OK, not owner: back-off'
+                                % resource_id)
+                    return
+
+        # Run Resource healthchecks only if we have lock.
+        if lock:
+            try:
+                run_resource(resource_id)
+                LOGGER.info('%d run_resource OK' % resource_id)
+            finally:
+                pass
 
 
 def start_schedule():
@@ -182,8 +183,9 @@ def start_schedule():
     # maintenance jobs.
 
     # Cold start every cron of every Resource
-    for resource in Resource.query.all():
-        add_job(resource)
+    with App.get_app().app_context():
+        for resource in Resource.query.all():
+            add_job(resource)
 
     # Start maintenance jobs
     scheduler.add_job(flush_runs, 'interval', minutes=150)
@@ -194,18 +196,19 @@ def check_schedule():
     LOGGER.info('Checking Job schedules')
 
     # Check the schedule for changed jobs
-    for resource in Resource.query.all():
-        job = get_job(resource)
-        if job is None:
-            add_job(resource)
-            continue
+    with App.get_app().app_context():
+        for resource in Resource.query.all():
+            job = get_job(resource)
+            if job is None:
+                add_job(resource)
+                continue
 
-        current_freq = job.args[1]
+            current_freq = job.args[1]
 
-        # Run frequency changed?
-        if current_freq != resource.run_frequency:
-            # Reschedule Job
-            update_job(resource)
+            # Run frequency changed?
+            if current_freq != resource.run_frequency:
+                # Reschedule Job
+                update_job(resource)
 
 
 def lifecycle_listener(event):
