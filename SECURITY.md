@@ -11,8 +11,7 @@ Please follow the [contributor guidelines](https://github.com/geopython/GeoHealt
 
 The GeoHealthCheck development team will release patches for security vulnerabilities for the following versions:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.8.x   | :white_check_mark: |
-| 0.7.x   | :white_check_mark: |
-| < 7.x   | :x:                |
+| Version  | Supported          |
+| -------  | ------------------ |
+| 0.10.x   | :white_check_mark: |
+| < 0.10.x | :x:                |
